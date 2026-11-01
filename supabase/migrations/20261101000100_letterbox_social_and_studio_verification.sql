@@ -95,8 +95,9 @@ create policy "Cinema admins manage studio verification" on public.studio_accoun
 for update to authenticated using (public.is_cinema_admin()) with check (public.is_cinema_admin());
 
 -- Realtime publication is enabled when the project has the standard Supabase publication.
-do $
-declare table_name text;
+do $$
+declare
+  table_name text;
 begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
     foreach table_name in array array['letterbox_posts','letterbox_reactions','letterbox_comments'] loop
@@ -108,4 +109,5 @@ begin
       end if;
     end loop;
   end if;
-end $;
+end
+$$;
