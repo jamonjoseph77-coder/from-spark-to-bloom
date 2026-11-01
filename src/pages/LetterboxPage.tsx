@@ -59,7 +59,8 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
 export function LetterboxPage() {
   const { user } = useAuth();
   const { data: titles } = useAsyncData(fetchPublishedTitles, []);
-  const { data: feed, error, reload } = useAsyncData(fetchLetterboxFeed, []);\n  useEffect(() => subscribeToLetterbox(reload), [reload]);
+  const { data: feed, error, reload } = useAsyncData(fetchLetterboxFeed, []);
+  useEffect(() => subscribeToLetterbox(reload), [reload]);
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
