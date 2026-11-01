@@ -1,5 +1,4 @@
-import { FunctionsHttpError } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { callTmdbServer } from '@/lib/tmdb.functions';
 
 export type TmdbMediaType = 'movie' | 'tv';
 export type TmdbListKind = 'popular' | 'trending';
@@ -76,17 +75,14 @@ function positiveNumber(value: unknown): number | null {
 }
 
 async function callTmdb(body: Record<string, unknown>): Promise<unknown> {
-  const { data, error } = await supabase.functions.invoke<unknown>('tmdb', { body });
-  if (error) {
-    if (error instanceof FunctionsHttpError) {
-      const payload: unknown = await error.context.json().catch(() => null);
-      if (isRecord(payload) && payload.error === 'tmdb_not_configured') {
-        throw new TmdbError('not_configured', 'TMDB is not configured.');
-      }
-    }
+  let result;
+  try {
+    result = await callTmdbServer({ data: body });
+  } catch {
     throw new TmdbError('unavailable', 'TMDB request failed.');
   }
-  return data;
+  if (!result.ok) throw new TmdbError(result.reason, result.message);
+  return result.data;
 }
 
 function toItem(raw: unknown, mediaType: TmdbMediaType): TmdbItem | null {
