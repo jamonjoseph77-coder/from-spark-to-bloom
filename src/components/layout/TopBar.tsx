@@ -35,9 +35,9 @@ export function TopBar() {
       <div className="ml-auto flex items-center gap-2">
         {user ? (
           <a
-            href="/my-cinema"
-            aria-label="My Cinema"
-            title={user.email ?? 'My Cinema'}
+            href="/profile"
+            aria-label="Your profile"
+            title={user.email ?? 'Your profile'}
             className="grid h-10 w-10 place-items-center rounded-full bg-cinema-600 text-sm font-extrabold uppercase text-white ring-2 ring-cinema-400/30 transition hover:bg-cinema-500"
           >
             {(user.email?.charAt(0) ?? '?').toUpperCase()}
