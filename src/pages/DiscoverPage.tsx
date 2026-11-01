@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowUpRight, Bookmark, Clapperboard, Compass, Film, MessageCircle, Play, Share2, Sparkles, Tv } from 'lucide-react';
+import { ArrowUpRight, Bookmark, Clapperboard, Compass, Film, MessageCircle, Play, Share2, Sparkles, Tv, MessageSquareText } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { VideoDialog } from '@/components/player/VideoDialog';
@@ -78,7 +78,7 @@ export function DiscoverPage() {
         <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-cinema-200"><Compass className="h-4 w-4" /> Cinema Discover</div>
         <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="max-w-2xl"><h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">The stories everyone's talking about.</h1><p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">Watch first looks, catch up on short videos, explore new releases and pass the stories you love to your friends.</p></div>
-          <div className="flex flex-wrap gap-2"><a href="/friends" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"><MessageCircle className="h-4 w-4" /> Friends</a><a href="/watch-parties" className="inline-flex items-center gap-2 rounded-full bg-cinema-500 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-cinema-950/30 transition hover:bg-cinema-400"><Sparkles className="h-4 w-4" /> Watch together</a></div>
+          <div className="flex flex-wrap gap-2"><a href="/letterbox" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"><MessageSquareText className="h-4 w-4" /> Letterbox</a><a href="/friends" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"><MessageCircle className="h-4 w-4" /> Friends</a><a href="/watch-parties" className="inline-flex items-center gap-2 rounded-full bg-cinema-500 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-cinema-950/30 transition hover:bg-cinema-400"><Sparkles className="h-4 w-4" /> Watch together</a></div>
         </div>
       </header>
 
