@@ -1,0 +1,33 @@
+name: Cinema quality checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "cinema/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinema-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Run tests
+        run: npm test
+      - name: Build production bundle
+        run: npm run build
