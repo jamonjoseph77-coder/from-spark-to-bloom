@@ -82,7 +82,7 @@ async function callTmdb(body: Record<string, unknown>): Promise<unknown> {
     throw new TmdbError('unavailable', 'TMDB request failed.');
   }
   if (!result.ok) throw new TmdbError(result.reason, result.message);
-  return result.data;
+  return JSON.parse(result.json) as unknown;
 }
 
 function toItem(raw: unknown, mediaType: TmdbMediaType): TmdbItem | null {

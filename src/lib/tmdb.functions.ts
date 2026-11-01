@@ -54,7 +54,7 @@ function buildRequest(body: RequestBody): Upstream | { error: string } {
 
 
 export type TmdbCallResult =
-  | { ok: true; data: unknown }
+  | { ok: true; json: string }
   | { ok: false; reason: "not_configured" | "unavailable"; message: string };
 
 export const callTmdbServer = createServerFn({ method: "POST" })
@@ -75,7 +75,7 @@ export const callTmdbServer = createServerFn({ method: "POST" })
     try {
       const upstream = await fetch(url, { headers });
       if (!upstream.ok) return { ok: false, reason: "unavailable", message: `TMDB returned ${upstream.status}` };
-      return { ok: true, data: JSON.parse(await upstream.text()) as unknown };
+      return { ok: true, json: await upstream.text() };
     } catch (error) {
       console.error("tmdb request failed", error);
       return { ok: false, reason: "unavailable", message: "TMDB request failed." };
