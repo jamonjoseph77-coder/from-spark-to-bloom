@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { Clapperboard, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2 } from 'lucide-react';
+import { BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2 } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
+import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -11,28 +12,81 @@ import { resumeItems } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
 
 export function MyCinemaPage() {
- const { user, isAdmin, loading: authLoading, signOut } = useAuth();
- const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
- const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
- const view = useMemo(() => {
-  if (!titles) return null;
-  return { resume: resumeItems(progress, titles), watchlist: titles.filter((title) => watchlistIds.has(title.id)), favourites: titles.filter((title) => favouriteIds.has(title.id)) };
- }, [titles, progress, watchlistIds, favouriteIds]);
- if (authLoading) return <div className={PAGE_CONTAINER}><LoadingState /></div>;
- if (!user) return <div className={PAGE_CONTAINER}><EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Your personal cinema" description="Sign in to see your watchlist, favourites and the titles you are part way through." action={<div className="flex flex-wrap justify-center gap-3"><a href="/sign-in" className={BUTTON_PRIMARY}>Sign in</a><a href="/sign-up" className={BUTTON_SECONDARY}>Create account</a></div>} /></div>;
- return (
-  <div className={`${PAGE_CONTAINER} space-y-12 pb-12`}>
-   <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/15 bg-gradient-to-br from-cinema-700/25 via-ink-900 to-ink-950 p-6 sm:p-8">
-    <div className="absolute -right-10 -top-16 -z-10 h-56 w-56 rounded-full bg-cinema-400/10 blur-3xl" />
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-     <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-cinema-300/25 bg-cinema-400/15 text-cinema-100 shadow-xl shadow-cinema-950/30"><Clapperboard className="h-8 w-8" /></span>
-     <div className="min-w-0 flex-1"><p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Your personal entertainment space</p><h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1><p className="mt-2 text-sm text-slate-300">Your watchlist, favourites and viewing journey, together in one place.</p></div>
-     <div className="flex flex-wrap gap-2"><a href="/letterbox" className={BUTTON_SECONDARY}><MessageSquareText className="h-4 w-4" /> Letterbox</a><a href="/friends" className={BUTTON_SECONDARY}><Users className="h-4 w-4" /> Friends</a><a href="/watch-parties" className={BUTTON_SECONDARY}><PartyPopper className="h-4 w-4" /> Parties</a></div>
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
+  const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
+
+  const view = useMemo(() => {
+    if (!titles) return null;
+    return {
+      resume: resumeItems(progress, titles),
+      watchlist: titles.filter((title) => watchlistIds.has(title.id)),
+      favourites: titles.filter((title) => favouriteIds.has(title.id)),
+    };
+  }, [titles, progress, watchlistIds, favouriteIds]);
+
+  if (authLoading) return <div className={PAGE_CONTAINER}><LoadingState /></div>;
+
+  if (!user) {
+    return (
+      <div className={PAGE_CONTAINER}>
+        <EmptyState
+          icon={<CinemaLogo compact />}
+          title="Your personal cinema"
+          description="Sign in to bring your watchlist, favourites and viewing journey together in one private space."
+          action={<div className="flex flex-wrap justify-center gap-3"><a href="/sign-in" className={BUTTON_PRIMARY}>Sign in</a><a href="/sign-up" className={BUTTON_SECONDARY}>Create account</a></div>}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${PAGE_CONTAINER} space-y-12 pb-12`}>
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/20 bg-gradient-to-br from-cinema-700/30 via-ink-900 to-indigo-950 p-6 shadow-2xl shadow-black/20 sm:p-8">
+        <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-cinema-400/15 blur-3xl" />
+        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
+          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[1.65rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20">
+            <CinemaLogo compact />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Your personal entertainment space</p>
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Your viewing journey, saved stories and favourites—kept together, ready whenever you are.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <a href="/friends" className={BUTTON_SECONDARY}><Users className="h-4 w-4" /> Friends</a>
+            <a href="/watch-parties" className={BUTTON_SECONDARY}><PartyPopper className="h-4 w-4" /> Watch parties</a>
+          </div>
+        </div>
+        {view && <div className="relative mt-7 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:max-w-xl sm:gap-3">
+          <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><Clock3 className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">In progress</span></div><p className="mt-2 text-2xl font-black text-white">{view.resume.length}</p></div>
+          <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><BookmarkCheck className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Watchlist</span></div><p className="mt-2 text-2xl font-black text-white">{view.watchlist.length}</p></div>
+          <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><Heart className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Favourites</span></div><p className="mt-2 text-2xl font-black text-white">{view.favourites.length}</p></div>
+        </div>}
+      </header>
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-400">Signed in as {user.email}</p>
+        <div className="flex flex-wrap gap-2">
+          {isAdmin && <a href="/admin" className={BUTTON_SECONDARY}><ShieldCheck className="h-4 w-4" /> Content manager</a>}
+          <a href="/profile" className={BUTTON_SECONDARY}><Settings2 className="h-4 w-4" /> Profile & settings</a>
+          <button type="button" onClick={() => void signOut()} className={BUTTON_SECONDARY}><LogOut className="h-4 w-4" /> Sign out</button>
+        </div>
+      </div>
+
+      {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
+      {view && <>
+        <ContinueWatchingRow items={view.resume} />
+        <section className="space-y-5">
+          <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>
+          {!ready ? <LoadingState label="Loading your list" /> : view.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.</p> : <TitleGrid titles={view.watchlist} />}
+        </section>
+        <section className="space-y-5">
+          <div><h2 className={SECTION_HEADING}>Your favourites</h2><p className="mt-1 text-sm text-slate-400">The stories that stay with you.</p></div>
+          {!ready ? <LoadingState label="Loading your favourites" /> : view.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Mark titles as favourites to keep the ones you love within reach.</p> : <TitleGrid titles={view.favourites} />}
+        </section>
+        <section className="rounded-3xl border border-white/10 bg-gradient-to-r from-ink-850 to-ink-900 p-5 sm:p-6"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-cinema-300">Keep exploring</p><h2 className="mt-1 text-lg font-extrabold text-white">There is more to experience.</h2><p className="mt-1 text-sm text-slate-400">Discover a new story, share it with friends or plan a watch party.</p></div><div className="flex flex-wrap gap-2"><a href="/discover" className={BUTTON_SECONDARY}><MessageSquareText className="h-4 w-4" /> Discover</a><a href="/watch-parties" className={BUTTON_PRIMARY}><PartyPopper className="h-4 w-4" /> Watch together</a></div></div></section>
+      </>}
     </div>
-   </header>
-   <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-slate-400">Signed in as {user.email}</p><div className="flex flex-wrap gap-2">{isAdmin && <a href="/admin" className={BUTTON_SECONDARY}><ShieldCheck className="h-4 w-4" /> Content manager</a>}<a href="/profile" className={BUTTON_SECONDARY}><Settings2 className="h-4 w-4" /> Profile & settings</a><button type="button" onClick={() => void signOut()} className={BUTTON_SECONDARY}><LogOut className="h-4 w-4" /> Sign out</button></div></div>
-   {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
-   {view && <><ContinueWatchingRow items={view.resume} /><section className="space-y-5"><h2 className={SECTION_HEADING}>Watchlist</h2>{!ready ? <LoadingState label="Loading your list" /> : view.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Titles you add with the watchlist button will appear here. Browse the catalogue to start building your list.</p> : <TitleGrid titles={view.watchlist} />}</section><section className="space-y-5"><h2 className={SECTION_HEADING}>Favourites</h2>{!ready ? <LoadingState label="Loading your favourites" /> : view.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Mark titles as favourites to keep the ones you love within reach.</p> : <TitleGrid titles={view.favourites} />}</section></>}
-  </div>
- );
+  );
 }
