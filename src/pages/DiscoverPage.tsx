@@ -100,7 +100,6 @@ export function DiscoverPage() {
             <div className="flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-cinema-300">From the Cinema community</p><h2 className="text-xl font-extrabold text-white sm:text-2xl">{tab === 'trailers' ? 'Trailers & first looks' : tab === 'clips' ? 'Featured clips' : 'The Discover feed'}</h2><p className="mt-1 text-sm text-slate-400">Publisher updates, videos and stories linked to the titles they belong to.</p></div></div>
             <div className="space-y-5">
               {tab !== 'clips' && trailers.map((item, index) => {
-                const isClip = item.type === 'clip';
                 const title = item.type === 'title' ? item.title : item.type === 'tmdb' ? null : item.clip.title;
                 const heading = item.type === 'clip' ? item.clip.headline : item.type === 'title' ? item.title.title : item.trailer.title;
                 const publisher = item.type === 'clip' ? item.clip.publisher_name : item.type === 'title' ? item.title.publisher : 'Official trailer';
