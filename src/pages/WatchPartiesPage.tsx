@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { PartyPopper, Plus, KeyRound } from 'lucide-react';
+import { PartyPopper, Plus, KeyRound, MessageSquareText, Radio, Users } from 'lucide-react';
 import { CreatePartyDialog } from '@/components/social/CreatePartyDialog';
 import { PartyCard } from '@/components/social/PartyCard';
 import { SignedOutGate } from '@/components/social/SignedOutGate';
@@ -161,12 +161,11 @@ export function WatchPartiesPage() {
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-10`}>
-      <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Your Cinema</p>
-        <h1 className="flex items-center gap-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          <PartyPopper className="h-7 w-7 text-cinema-300" /> Watch Parties
-        </h1>
-        <p className="max-w-2xl text-sm text-slate-400">Gather friends in a room with a shared chat and a common start time.</p>
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/15 bg-gradient-to-br from-cinema-700/30 via-ink-900 to-indigo-950 p-6 sm:p-8">
+        <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Radio className="h-4 w-4" /> Cinema live rooms</p>
+        <h1 className="mt-3 flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-5xl"><PartyPopper className="h-8 w-8 text-cinema-200" /> Watch Parties</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">Bring friends and communities into one viewing room. Host a private screening or discover a public watch event, with live room chat and quick reactions.</p>
+        <div className="mt-5 flex flex-wrap gap-2"><a href="/friends" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/15"><Users className="h-4 w-4" /> Invite friends</a><a href="/letterbox" className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/15"><MessageSquareText className="h-4 w-4" /> Discuss in Letterbox</a></div>
       </header>
 
       {loading && <LoadingState />}

@@ -71,6 +71,14 @@ export function PartyChat({ partyId, userId, canPost, isHost }: PartyChatProps) 
     }
   }
 
+  async function handleReaction(reaction: string) {
+    if (!canPost || sending) return;
+    setSending(true);
+    try { await sendPartyMessage(partyId, userId, reaction); chat.reload(); }
+    catch { notify('That reaction could not be sent.', 'error'); }
+    finally { setSending(false); }
+  }
+
   async function handleDelete(message: WatchPartyMessage) {
     try {
       await deleteChatMessage(message.id);
@@ -126,6 +134,10 @@ export function PartyChat({ partyId, userId, canPost, isHost }: PartyChatProps) 
         <div ref={bottomRef} />
       </div>
 
+      <div className="flex items-center gap-2 border-t border-white/5 px-4 pt-3">
+        <span className="mr-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Reactions</span>
+        {['👏','❤️','🔥','😂','🍿','😮'].map((reaction) => <button key={reaction} type="button" disabled={!canPost || sending} onClick={() => void handleReaction(reaction)} aria-label={`Send ${reaction} reaction`} className="grid h-8 w-8 place-items-center rounded-full bg-white/5 text-base transition hover:bg-cinema-500/20 disabled:opacity-40">{reaction}</button>)}
+      </div>
       <form onSubmit={handleSend} className="flex gap-2 border-t border-white/10 p-4">
         <input
           value={draft}

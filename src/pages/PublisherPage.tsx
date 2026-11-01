@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, BellPlus, BellRing, Megaphone } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, BellPlus, BellRing, Megaphone } from 'lucide-react';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { VideoCard } from '@/components/catalogue/VideoCard';
@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/useToast';
 import { fetchPublishedTitles } from '@/lib/library';
 import { findPublisher } from '@/lib/publishers';
 import { fetchFollowedPublishers, followPublisher, unfollowPublisher } from '@/lib/publisherFollows';
+import { findVerifiedStudio } from '@/lib/studios';
 import type { Title } from '@/lib/types';
 
 export function PublisherPage({ publisher }: { publisher: string }) {
@@ -26,6 +27,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
     [user?.id],
   );
   const [followBusy, setFollowBusy] = useState(false);
+  const { data: verifiedStudio } = useAsyncData(() => findVerifiedStudio(publisher).catch(() => null), [publisher]);
 
   const profile = useMemo(() => (titles ? findPublisher(titles, publisher) : null), [titles, publisher]);
 
@@ -86,7 +88,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
               {profile.name.charAt(0)}
             </span>
             <div className="min-w-0 space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Publisher</p>
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">{verifiedStudio ? "Verified studio" : "Official publisher presence"}{verifiedStudio && <BadgeCheck className="h-4 w-4 fill-cinema-400/15 text-cinema-200" aria-label="Verified by Cinema" />}</p>
               <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{profile.name}</h1>
               <p className="text-sm text-slate-300">
                 {profile.titles.length} {profile.titles.length === 1 ? 'title' : 'titles'}
@@ -107,7 +109,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
                   className={isFollowing ? BUTTON_SECONDARY : BUTTON_PRIMARY}
                 >
                   {isFollowing ? <BellRing className="h-4 w-4" /> : <BellPlus className="h-4 w-4" />}
-                  {isFollowing ? 'Following' : 'Follow publisher'}
+                  {isFollowing ? 'Following' : 'Follow'}
                 </button>
               )}
             </div>
