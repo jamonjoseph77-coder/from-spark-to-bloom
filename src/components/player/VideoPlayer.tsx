@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent, type SyntheticEvent } from 'react';
-import Hls from 'hls.js';
+import type Hls from 'hls.js';
 import { AlertTriangle, Loader2, Radio } from 'lucide-react';
 import { isHlsUrl } from '@/lib/media';
 
@@ -56,31 +56,40 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
     lastSavedRef.current = 0;
 
     let hls: Hls | null = null;
-    if (isHlsUrl(src) && Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true });
-      hlsRef.current = hls;
-      hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
-        setLevels(
-          data.levels.map((level, index) => ({
-            index,
-            label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)} kbps`,
-          })),
-        );
+    let cancelled = false;
+    if (isHlsUrl(src)) {
+      void import('hls.js').then(({ default: HlsLib }) => {
+        if (cancelled) return;
+        if (!HlsLib.isSupported()) {
+          video.src = src;
+          return;
+        }
+        hls = new HlsLib({ enableWorker: true });
+        hlsRef.current = hls;
+        hls.on(HlsLib.Events.MANIFEST_PARSED, (_event, data) => {
+          setLevels(
+            data.levels.map((level, index) => ({
+              index,
+              label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)} kbps`,
+            })),
+          );
+        });
+        hls.on(HlsLib.Events.ERROR, (_event, data) => {
+          if (!data.fatal) return;
+          setErrorText(PLAYBACK_ERROR);
+          setStatus('error');
+          hls?.destroy();
+          hlsRef.current = null;
+        });
+        hls.loadSource(src);
+        hls.attachMedia(video);
       });
-      hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (!data.fatal) return;
-        setErrorText(PLAYBACK_ERROR);
-        setStatus('error');
-        hls?.destroy();
-        hlsRef.current = null;
-      });
-      hls.loadSource(src);
-      hls.attachMedia(video);
     } else {
       video.src = src;
     }
 
     return () => {
+      cancelled = true;
       hls?.destroy();
       hlsRef.current = null;
       video.removeAttribute('src');
