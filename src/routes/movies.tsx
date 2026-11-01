@@ -4,6 +4,8 @@ import { TmdbBrowsePage } from '@/pages/TmdbBrowsePage';
 export const Route = createFileRoute('/movies')({
   head: () => ({
     meta: [
+      { property: 'og:type', content: 'website' },
+      { name: 'twitter:card', content: 'summary_large_image' },
       { title: 'Movies — Cinema' },
       { name: 'description', content: 'Browse popular and trending movies.' },
       { property: 'og:title', content: 'Movies — Cinema' },
