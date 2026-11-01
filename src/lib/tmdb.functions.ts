@@ -23,7 +23,7 @@ function buildRequest(body: RequestBody): Upstream | { error: string } {
   if (body.action === "list") {
     if (!type) return { error: "Unknown media type." };
     if (page === null) return { error: "Page must be between 1 and 500." };
-    const genre = asInteger(body.genre, 1, 100000, 0);
+    const genre = body.genre === null || body.genre === undefined || body.genre === 0 ? 0 : asInteger(body.genre, 1, 100000);
     if (genre === null) return { error: "Genre is not valid." };
     if (genre > 0) {
       return { path: `/discover/${type}`, params: { with_genres: String(genre), sort_by: "popularity.desc", include_adult: "false", page: String(page) } };
