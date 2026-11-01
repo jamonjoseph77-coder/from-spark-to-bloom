@@ -57,3 +57,12 @@ export async function addLetterboxComment(postId: string, authorId: string, body
   });
   if (error) throw error;
 }
+
+export function subscribeToLetterbox(onChange: () => void): () => void {
+ const channel = supabase.channel('cinema-letterbox-feed')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'letterbox_posts' }, onChange)
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'letterbox_reactions' }, onChange)
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'letterbox_comments' }, onChange)
+  .subscribe();
+ return () => { void supabase.removeChannel(channel); };
+}
