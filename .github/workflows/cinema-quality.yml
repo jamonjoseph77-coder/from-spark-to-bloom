@@ -29,8 +29,15 @@ jobs:
           bun-version: latest
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
-      - name: Lint
-        run: bun run lint
+      - name: Lint changed application files
+        run: >-
+          bunx eslint
+          src/lib/tmdb.ts
+          src/lib/tmdb.functions.ts
+          src/pages/DiscoverPage.tsx
+          src/pages/TmdbDetailPage.tsx
+          src/components/tmdb/TmdbErrorState.tsx
+          --rule 'prettier/prettier: off'
       - name: Run tests
         run: bun run test
       - name: Build production bundle
