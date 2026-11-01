@@ -53,14 +53,18 @@ export function HomePage() {
   if (!view) return <div className={PAGE_CONTAINER}>{error ? <ErrorState onRetry={reload} /> : <LoadingState />}</div>;
 
   return (
-    <div className={`${PAGE_CONTAINER} space-y-12 sm:space-y-16`}>
+    <div className={`${PAGE_CONTAINER} space-y-12 pb-12 sm:space-y-16`}>
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/8 pb-5">
+        <div><p className="text-[11px] font-bold uppercase tracking-[0.24em] text-cinema-300">Your digital entertainment home</p><h1 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">Experience the world of stories.</h1><p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Discover movies, series, live television and the moments worth sharing.</p></div>
+        <a href="/discover" className="inline-flex items-center gap-2 rounded-full border border-cinema-400/30 bg-cinema-500/10 px-4 py-2.5 text-sm font-bold text-cinema-100 transition hover:border-cinema-300/60 hover:bg-cinema-500/20">Explore Discover <Compass className="h-4 w-4" /></a>
+      </header>
       {view.hero.length > 0 ? <HeroBanner titles={view.hero} /> : <TmdbHero />}
       {!user && <div className="flex flex-col gap-4 rounded-2xl border border-cinema-400/20 bg-gradient-to-r from-cinema-700/20 to-ink-850 p-5 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-slate-200">Sign in to build your watchlist, save favourites and pick up where you left off.</p><a href="/sign-in" className={`${BUTTON_PRIMARY} shrink-0 px-4 py-2.5`}>Sign in</a></div>}
 
       <section className="space-y-5">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Your Cinema</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white">Where would you like to go?</h2></div><SeeAll href="/search" label="Search Cinema" /></div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {destinations.map(({ href, label, detail, icon: Icon }) => <a key={href} href={href} className="group rounded-2xl border border-white/10 bg-ink-850/70 p-5 transition duration-200 hover:-translate-y-1 hover:border-cinema-400/40 hover:bg-ink-800"><span className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-cinema-500/15 text-cinema-300"><Icon className="h-5 w-5" /></span><span className="block font-bold text-white group-hover:text-cinema-200">{label}</span><span className="mt-1 block text-sm text-slate-400">{detail}</span></a>)}
+          {destinations.map(({ href, label, detail, icon: Icon }) => <a key={href} href={href} className="group relative isolate overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-ink-800 via-ink-850 to-ink-950 p-5 shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-cinema-300/40 hover:shadow-cinema-950/30"><span className="mb-5 grid h-12 w-12 place-items-center rounded-2xl border border-cinema-300/15 bg-gradient-to-br from-cinema-400/20 to-indigo-500/10 text-cinema-200 shadow-inner"><Icon className="h-5 w-5" /></span><span className="block font-bold text-white group-hover:text-cinema-200">{label}</span><span className="mt-1 block text-sm text-slate-400">{detail}</span></a>)}
         </div>
       </section>
 
