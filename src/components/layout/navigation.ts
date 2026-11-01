@@ -50,7 +50,7 @@ export const NAV_SECTIONS: NavSection[] = [
   { title: 'Partners', items: [PUBLISHERS, BOX_OFFICE] },
 ];
 
-export const MOBILE_PRIMARY_NAV: NavItem[] = [HOME, MOVIES, SERIES, LIVE, MY_CINEMA];
+export const MOBILE_PRIMARY_NAV: NavItem[] = [HOME, DISCOVER, MOVIES, SERIES, LIVE, MY_CINEMA];
 
 export function navKeyOf(route: Route): string | null {
   switch (route.name) {
