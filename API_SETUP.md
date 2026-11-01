@@ -16,18 +16,19 @@ Copy `.env.example` to `.env.local` for local development. Never commit `.env.lo
 | `TMDB_READ_ACCESS_TOKEN` | Server-side TMDB API | Secret |
 | `TMDB_API_KEY` | Server-side TMDB API fallback | Secret |
 
-### Lovable project Secrets — required Supabase setup
+### Lovable browser environment — required Supabase setup
 
-For the browser application, add these exact names under **More → Secrets** in the Lovable project:
+Lovable's **More → Settings → Secrets** stores backend/runtime secrets. It rejects `VITE_` names because those values are embedded into the browser bundle at build time.
 
-- `VITE_SUPABASE_URL` = the existing Supabase project's **Project URL**.
-- `VITE_SUPABASE_PUBLISHABLE_KEY` = the existing Supabase project's **Publishable key** (the public `sb_publishable_...` key, or the project's anon/public key if it uses the legacy key format).
+1. In the Lovable Code tab, create or edit the root-level file named exactly `.env` (beside `package.json`).
+2. Put only these two public values in that file:
+   - `VITE_SUPABASE_URL` = the existing Supabase project's **Project URL**.
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` = the project's **Publishable key** (`sb_publishable_...`) or legacy anon/public key.
+3. Save the file, let Git sync complete, then publish again so the live build includes the values.
 
-The `VITE_` prefix is required because Vite embeds these public configuration values into the browser build. The non-prefixed `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` names are separate server-side settings; adding only those does not configure the browser bundle. After changing project Secrets, publish/update the app again so the new build receives them.
+The repository tracks the root `.env` specifically because Lovable reads it during preview and production builds. Keep `.env.local` and other local variants out of Git. The root `.env` must contain **only public browser configuration**; its values are visible in the delivered JavaScript bundle and are not passwords.
 
-Only a Supabase publishable/anon key may be exposed to the browser. Never put `SUPABASE_SERVICE_ROLE_KEY`, a Supabase secret key (`sb_secret_...`), or any other privileged credential in a `VITE_` variable.
-
-Do not prefix secrets with `VITE_`. The service-role key must never enter browser code, client bundles, logs, or chat messages.
+Keep `SUPABASE_SERVICE_ROLE_KEY`, Supabase secret keys (`sb_secret_...`), TMDB credentials, and all other private credentials out of `.env` and any `VITE_` variable. Store private runtime credentials in Lovable project Secrets or the appropriate server-side provider configuration. Non-prefixed `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are server-side settings and do not replace the two browser variables.
 
 ## Current integrations
 
