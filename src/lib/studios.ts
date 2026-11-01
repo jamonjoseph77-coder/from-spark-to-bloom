@@ -61,3 +61,31 @@ export async function setStudioVerificationStatus(
     .eq('id', studioId);
   if (error) throw error;
 }
+
+export async function fetchMyStudioApplication(ownerId: string): Promise<StudioAccount | null> {
+  const { data, error } = await supabase
+    .from('studio_accounts')
+    .select(STUDIO_FIELDS)
+    .eq('owner_id', ownerId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as StudioAccount | null;
+}
+
+export interface StudioApplicationInput {
+  owner_id: string;
+  studio_name: string;
+  description: string;
+  website_url: string | null;
+  logo_url: string | null;
+}
+
+export async function submitStudioApplication(input: StudioApplicationInput): Promise<StudioAccount> {
+  const { data, error } = await supabase
+    .from('studio_accounts')
+    .insert({ ...input, verification_status: 'pending', verified_at: null })
+    .select(STUDIO_FIELDS)
+    .single();
+  if (error) throw error;
+  return data as StudioAccount;
+}
