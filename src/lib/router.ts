@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useRouterState, type AnyRouter } from '@tanstack/react-router';
 import type { TitleType } from '@/lib/types';
 import type { TmdbMediaType } from '@/lib/tmdb';
 
@@ -50,8 +51,8 @@ function safeDecode(segment: string): string {
   }
 }
 
-export function parseHash(hash: string): Route {
-  const [pathPart = '', queryPart = ''] = hash.replace(/^#/, '').split('?');
+export function parsePath(href: string): Route {
+  const [pathPart = '', queryPart = ''] = href.split('?');
   const segments = pathPart.split('/').filter(Boolean).map(safeDecode);
   const params = new URLSearchParams(queryPart);
   const [first, second, third] = segments;
@@ -106,18 +107,18 @@ export function parseHash(hash: string): Route {
   }
 }
 
+let activeRouter: AnyRouter | null = null;
+
+export function registerRouter(router: AnyRouter): void {
+  activeRouter = router;
+}
+
 export function useRoute(): Route {
-  const [hash, setHash] = useState(() => window.location.hash);
-
-  useEffect(() => {
-    const handleChange = () => setHash(window.location.hash);
-    window.addEventListener('hashchange', handleChange);
-    return () => window.removeEventListener('hashchange', handleChange);
-  }, []);
-
-  return useMemo(() => parseHash(hash), [hash]);
+  const href = useRouterState({ select: (state) => state.location.href });
+  return useMemo(() => parsePath(href), [href]);
 }
 
 export function navigateTo(path: string): void {
-  window.location.hash = path;
+  if (activeRouter) void activeRouter.navigate({ href: path });
+  else window.location.assign(path);
 }
