@@ -85,3 +85,24 @@ This repository is connected to Lovable. Its README describes commits to the con
 ## Credential exposure response
 
 A `.env` file was present in the public Git repository. Removing it from the current branch does not erase it from Git history or revoke its values. Treat any credential in that file as exposed: rotate/revoke relevant TMDB credentials and any Supabase secret/service-role credentials in the provider dashboard, then update the deployment secrets. Do not paste the old or replacement values into chat or commit them.
+
+
+## Cinema Letterbox and studio verification
+
+The Letterbox social experience adds a database migration:
+
+- `supabase/migrations/20261101000100_letterbox_social_and_studio_verification.sql`
+
+Before publishing the updated application, apply this migration to the same Supabase project used by Cinema. In Supabase Dashboard, open **SQL Editor**, create a new query, paste the migration contents from the repository, and run it. Do not publish the Letterbox frontend before the migration has completed successfully.
+
+The migration creates:
+- `letterbox_posts` for entertainment-centred text posts and title links.
+- `letterbox_reactions` for one reaction per user per post.
+- `letterbox_comments` for replies.
+- `studio_accounts` for official studio verification applications and verified status.
+
+Row-level security is enabled. Studio verification is not self-service: applications start as pending, and only an account passing the existing `is_cinema_admin()` check can change verification status. A badge appears only for records marked verified.
+
+The current Letterbox implementation supports text-first posts, title attachments, reactions, comments and realtime refresh. It does not enable arbitrary video uploads or private direct messages. Before opening posting to a wider audience, Cinema still needs a complete report/block/moderation workflow and an administrator review interface.
+
+Watch Parties have room membership, realtime chat and quick reactions. Playback remains independent on each participant's device; synchronised playback has not yet been implemented.
