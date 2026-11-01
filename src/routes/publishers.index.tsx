@@ -4,6 +4,8 @@ import { PublishersPage } from '@/pages/PublishersPage';
 export const Route = createFileRoute('/publishers/')({
   head: () => ({
     meta: [
+      { property: 'og:type', content: 'website' },
+      { name: 'twitter:card', content: 'summary_large_image' },
       { title: 'Publishers — Cinema' },
       { name: 'description', content: 'Browse publishers.' },
       { property: 'og:title', content: 'Publishers — Cinema' },

@@ -8,6 +8,8 @@ export const Route = createFileRoute('/tmdb/$mediaType/$id')({
   },
   head: () => ({
     meta: [
+      { property: 'og:type', content: 'website' },
+      { name: 'twitter:card', content: 'summary_large_image' },
       { title: 'Details — Cinema' },
       { name: 'description', content: 'Movie and series details.' },
       { property: 'og:title', content: 'Details — Cinema' },
