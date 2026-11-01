@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Bookmark, Clapperboard, Film, Heart, MessageCircle, Send, Sparkles, Users } from 'lucide-react';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_PRIMARY, INPUT, PAGE_CONTAINER } from '@/components/ui/styles';
@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useToast } from '@/hooks/useToast';
 import { fetchPublishedTitles } from '@/lib/library';
-import { addLetterboxComment, createLetterboxPost, fetchLetterboxFeed, toggleLetterboxReaction, type LetterboxPost } from '@/lib/letterbox';
+import { addLetterboxComment, createLetterboxPost, fetchLetterboxFeed, toggleLetterboxReaction, type LetterboxPost, subscribeToLetterbox } from '@/lib/letterbox';
 
 function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: string; onChanged: () => void }) {
   const [comment, setComment] = useState('');
@@ -59,7 +59,7 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
 export function LetterboxPage() {
   const { user } = useAuth();
   const { data: titles } = useAsyncData(fetchPublishedTitles, []);
-  const { data: feed, error, reload } = useAsyncData(fetchLetterboxFeed, []);
+  const { data: feed, error, reload } = useAsyncData(fetchLetterboxFeed, []);\n  useEffect(() => subscribeToLetterbox(reload), [reload]);
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
