@@ -31,7 +31,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment files and local secrets
-.env
+# Lovable requires the root .env file in Git for public VITE_* build-time values.
+# Keep private/local variants ignored; never put private credentials in the root .env.
 .env.*
+!.env
 !.env.example
+*.local
