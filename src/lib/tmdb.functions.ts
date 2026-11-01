@@ -58,7 +58,7 @@ export type TmdbCallResult =
   | { ok: false; reason: "not_configured" | "unavailable"; message: string };
 
 export const callTmdbServer = createServerFn({ method: "POST" })
-  .inputValidator((input: RequestBody) => input)
+  .validator((input: RequestBody) => input)
   .handler(async ({ data: body }): Promise<TmdbCallResult> => {
     const readToken = process.env.TMDB_READ_ACCESS_TOKEN;
     const apiKey = process.env.TMDB_API_KEY;
