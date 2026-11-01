@@ -16,17 +16,17 @@ export function isHttpUrl(value: string): boolean {
 export function toEmbedUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
-    if (parsed.hostname.endsWith('youtube.com')) {
-      const id = parsed.searchParams.get('v');
-      if (id) return `https://www.youtube-nocookie.com/embed/${id}`;
-      if (parsed.pathname.startsWith('/embed/')) return url;
-      return null;
+    const host = parsed.hostname.toLowerCase();
+    if (host === 'youtube.com' || host === 'www.youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com' || host === 'www.youtube-nocookie.com') {
+      const id = parsed.searchParams.get('v')
+        || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
+      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0` : null;
     }
-    if (parsed.hostname === 'youtu.be') {
-      const id = parsed.pathname.slice(1);
-      return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+    if (host === 'youtu.be') {
+      const id = parsed.pathname.slice(1).split('/')[0];
+      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0` : null;
     }
-    if (parsed.hostname.endsWith('vimeo.com')) {
+    if (host.endsWith('vimeo.com')) {
       const id = parsed.pathname.split('/').filter(Boolean).pop();
       return id ? `https://player.vimeo.com/video/${id}` : null;
     }
