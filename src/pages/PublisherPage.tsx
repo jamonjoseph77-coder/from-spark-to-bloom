@@ -84,8 +84,8 @@ export function PublisherPage({ publisher }: { publisher: string }) {
             <ArrowLeft className="h-4 w-4" /> All publishers
           </a>
           <div className="flex items-end gap-5">
-            <span className="grid h-20 w-20 shrink-0 place-items-center rounded-3xl bg-cinema-600 text-3xl font-extrabold uppercase text-white shadow-2xl shadow-cinema-900/60 ring-2 ring-cinema-300/30 sm:h-24 sm:w-24">
-              {profile.name.charAt(0)}
+            <span className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-3xl border border-cinema-300/25 bg-cinema-600 text-3xl font-extrabold uppercase text-white shadow-2xl shadow-cinema-900/60 ring-2 ring-cinema-300/20 sm:h-24 sm:w-24">
+              {verifiedStudio?.logo_url ? <img src={verifiedStudio.logo_url} alt={`${profile.name} logo`} className="h-full w-full object-contain p-2" /> : profile.name.charAt(0)}
             </span>
             <div className="min-w-0 space-y-2">
               <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">{verifiedStudio ? "Verified studio" : "Official publisher presence"}{verifiedStudio && <BadgeCheck className="h-4 w-4 fill-cinema-400/15 text-cinema-200" aria-label="Verified by Cinema" />}</p>
@@ -95,6 +95,8 @@ export function PublisherPage({ publisher }: { publisher: string }) {
                 {profile.upcoming.length > 0 ? ` · ${profile.upcoming.length} upcoming` : ''}
                 {profile.trailers.length > 0 ? ` · ${profile.trailers.length} with trailers` : ''}
               </p>
+              {verifiedStudio?.description && <p className="max-w-2xl text-sm leading-6 text-slate-300">{verifiedStudio.description}</p>}
+              {verifiedStudio?.website_url && <a href={verifiedStudio.website_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold text-cinema-200 transition hover:text-white">Official website</a>}
               {!user && (
                 <a href="/sign-in" className={BUTTON_SECONDARY}>
                   <BellPlus className="h-4 w-4" /> Sign in to follow

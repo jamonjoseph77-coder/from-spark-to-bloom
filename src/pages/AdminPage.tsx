@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Pencil, Plus, Star, Trash2 } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Pencil, Plus, Star, Trash2, BadgeCheck, Building2, ShieldCheck, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { AdminGate } from '@/components/admin/AdminGate';
@@ -10,6 +10,7 @@ import { BUTTON_GHOST, BUTTON_PRIMARY, CARD, PAGE_CONTAINER } from '@/components
 import { deleteTitle, fetchAllTitles, fetchTitleDetail, setTitleFlags } from '@/lib/library';
 import { navigateTo } from '@/lib/router';
 import { TITLE_TYPE_LABELS, type Title } from '@/lib/types';
+import { fetchStudioApplications, setStudioVerificationStatus } from '@/lib/studios';
 
 function AdminPageHeader({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
@@ -22,6 +23,56 @@ function AdminPageHeader({ title, action }: { title: string; action?: React.Reac
       </div>
       {action}
     </header>
+  );
+}
+
+
+function StudioVerificationQueue() {
+  const { notify } = useToast();
+  const { data: applications, error, reload } = useAsyncData(fetchStudioApplications, []);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  async function review(studioId: string, status: 'verified' | 'rejected' | 'suspended') {
+    setBusyId(studioId);
+    try {
+      await setStudioVerificationStatus(studioId, status);
+      notify(status === 'verified' ? 'Studio verified. Its official badge is now active.' : `Studio application marked ${status}.`);
+      reload();
+    } catch {
+      notify('The studio verification decision could not be saved. Check the database migration and administrator permissions.', 'error');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  return (
+    <section className="space-y-4 rounded-3xl border border-cinema-400/15 bg-gradient-to-br from-cinema-700/10 via-ink-900 to-ink-950 p-5 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-cinema-300"><ShieldCheck className="h-4 w-4" /> Official identity review</p><h2 className="mt-2 text-xl font-extrabold text-white">Studio verification</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Review studio and broadcaster identity applications. Only approved accounts receive the verified Cinema badge.</p></div>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300">{applications?.filter((item) => item.verification_status === 'pending').length ?? 0} pending</span>
+      </div>
+      {!applications && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
+      {applications && applications.length === 0 && <p className="rounded-2xl border border-dashed border-white/10 p-5 text-sm text-slate-400">No studio verification applications have been submitted.</p>}
+      {applications && applications.length > 0 && <ul className="space-y-3">
+        {applications.map((studio) => (
+          <li key={studio.id} className="rounded-2xl border border-white/10 bg-ink-950/60 p-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-500/10 text-cinema-200"><Building2 className="h-5 w-5" /></span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-white">{studio.studio_name}</h3><span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${studio.verification_status === 'verified' ? 'bg-emerald-400/10 text-emerald-300' : studio.verification_status === 'pending' ? 'bg-amber-300/10 text-amber-200' : 'bg-slate-700/60 text-slate-300'}`}>{studio.verification_status}</span></div>
+                {studio.description && <p className="mt-2 text-sm leading-6 text-slate-300">{studio.description}</p>}
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500"><span>Owner: {studio.owner_id}</span>{studio.website_url && <a href={studio.website_url} target="_blank" rel="noreferrer" className="text-cinema-300 hover:text-white">Official website</a>}{studio.created_at && <span>Applied {new Date(studio.created_at).toLocaleDateString()}</span>}</div>
+              </div>
+              {studio.verification_status === 'pending' && <div className="flex flex-wrap gap-2 sm:justify-end">
+                <button type="button" disabled={busyId === studio.id} onClick={() => void review(studio.id, 'verified')} className={BUTTON_PRIMARY}><BadgeCheck className="h-4 w-4" /> Verify</button>
+                <button type="button" disabled={busyId === studio.id} onClick={() => void review(studio.id, 'rejected')} className={BUTTON_GHOST}><XCircle className="h-4 w-4" /> Reject</button>
+              </div>}
+              {studio.verification_status === 'verified' && <button type="button" disabled={busyId === studio.id} onClick={() => void review(studio.id, 'suspended')} className={BUTTON_GHOST}>Suspend badge</button>}
+            </div>
+          </li>
+        ))}
+      </ul>}
+    </section>
   );
 }
 
@@ -67,6 +118,8 @@ export function AdminTitleList() {
           </div>
         }
       />
+
+      <StudioVerificationQueue />
 
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
 

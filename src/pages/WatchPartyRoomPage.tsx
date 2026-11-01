@@ -149,8 +149,15 @@ function RoomView({ partyId, userId }: { partyId: string; userId: string }) {
             <p className="text-sm text-slate-400">
               {party.title?.title ?? 'Unknown title'} · Hosted by {hostNames.get(party.host_id) ?? 'the host'}
             </p>
-            <p className="text-xs text-slate-500">
-              Each guest controls their own player. Playback is not synchronised across the room yet.
+            <div className="flex flex-col gap-3 rounded-2xl border border-cinema-400/15 bg-gradient-to-r from-cinema-700/15 to-ink-900/80 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-cinema-500/15 text-cinema-200"><PartyPopper className="h-4 w-4" /></span>
+                <div><p className="text-sm font-bold text-white">A shared Cinema room</p><p className="mt-1 text-xs leading-5 text-slate-400">Meet the audience, follow the room chat and share reactions around the story.</p></div>
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1.5 text-[11px] font-semibold text-amber-100">Playback sync not enabled</span>
+            </div>
+            <p className="text-xs leading-5 text-slate-500">
+              Guests currently control their own player. Synchronized host-led playback is a planned capability, not an active feature yet.
             </p>
           </div>
 
@@ -199,7 +206,7 @@ function RoomView({ partyId, userId }: { partyId: string; userId: string }) {
 
           <section className={`${CARD} space-y-4`}>
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-white">In the room</h2>
+              <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cinema-300">Live audience</p><h2 className="mt-1 font-bold text-white">In the room</h2></div>
               <span className="text-xs text-slate-400">{members.length} joined</span>
             </div>
             <ul className="space-y-3">
@@ -227,7 +234,7 @@ function RoomView({ partyId, userId }: { partyId: string; userId: string }) {
           </section>
 
           {isMember ? (
-            <PartyChat partyId={party.id} userId={userId} canPost={isMember} isHost={isHost} />
+            <div className="space-y-3"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cinema-300">The conversation</p><h2 className="mt-1 text-lg font-extrabold text-white">Live room chat</h2><p className="mt-1 text-xs leading-5 text-slate-400">Talk about the moments, share reactions and enjoy the story together.</p></div><PartyChat partyId={party.id} userId={userId} canPost={isMember} isHost={isHost} /></div>
           ) : (
             <p className="text-sm text-slate-500">Join the room to see and send chat messages.</p>
           )}
