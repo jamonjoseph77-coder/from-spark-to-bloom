@@ -17,7 +17,7 @@ export function MobileNav({ route }: MobileNavProps) {
         aria-label="Primary"
         className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink-900/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
       >
-        <ul className="mx-auto grid max-w-xl grid-cols-6">
+        <ul className="mx-auto grid max-w-xl grid-cols-7">
           {MOBILE_PRIMARY_NAV.map((item) => {
             const active = item.key === activeKey;
             const Icon = item.icon;
