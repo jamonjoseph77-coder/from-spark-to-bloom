@@ -26,7 +26,22 @@ export interface TmdbItem {
   backdropPath: string | null;
 }
 
+export interface TmdbVideo {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;
+  official: boolean;
+}
+
+export interface TmdbTrailer extends TmdbItem {
+  videoKey: string;
+  videoName: string;
+}
+
 export interface TmdbDetail extends TmdbItem {
+  videos: TmdbVideo[];
   genres: string[];
   runtimeMinutes: number | null;
   seasons: number | null;
@@ -139,12 +154,23 @@ export async function fetchTmdbDetail(mediaType: TmdbMediaType, id: number): Pro
   const item = toItem(data, mediaType);
   if (!item || !isRecord(data)) throw new TmdbError('unavailable', 'Unexpected TMDB response.');
   const episodeRuntimes: unknown[] = Array.isArray(data.episode_run_time) ? data.episode_run_time : [];
+  const videoResults = isRecord(data.videos) && Array.isArray(data.videos.results) ? data.videos.results : [];
+  const videos = videoResults.flatMap((raw): TmdbVideo[] => {
+    if (!isRecord(raw) || text(raw.site).toLowerCase() !== 'youtube') return [];
+    const id = text(raw.id);
+    const key = text(raw.key);
+    const name = text(raw.name);
+    const type = text(raw.type);
+    if (!id || !key || !name || !['Trailer', 'Teaser', 'Clip'].includes(type)) return [];
+    return [{ id, key, name, site: 'YouTube', type, official: raw.official === true }];
+  }).sort((a, b) => Number(b.official) - Number(a.official));
   const genres = Array.isArray(data.genres)
     ? data.genres.map((genre) => (isRecord(genre) ? text(genre.name) : '')).filter(Boolean)
     : [];
   const isSeries = mediaType === 'tv';
   return {
     ...item,
+    videos,
     genres,
     runtimeMinutes: isSeries ? positiveNumber(episodeRuntimes[0]) : positiveNumber(data.runtime),
     seasons: isSeries ? positiveNumber(data.number_of_seasons) : null,
@@ -152,4 +178,33 @@ export async function fetchTmdbDetail(mediaType: TmdbMediaType, id: number): Pro
     tagline: text(data.tagline),
     status: text(data.status),
   };
+}
+
+
+/**
+ * Returns a small, bounded set of trailers for discovery. TMDB metadata is
+ * used only to locate official YouTube promotional videos; it is not a
+ * streaming source or proof of distribution rights.
+ */
+export async function fetchDiscoverTrailers(limitPerType = 3): Promise<TmdbTrailer[]> {
+  const boundedLimit = Math.max(1, Math.min(4, Math.floor(limitPerType)));
+  const mediaTypes: TmdbMediaType[] = ['movie', 'tv'];
+  const lists = await Promise.all(mediaTypes.map((mediaType) => fetchTmdbList(mediaType, 'trending')));
+  const candidates = mediaTypes.flatMap((mediaType, index) =>
+    lists[index].slice(0, boundedLimit).map((item) => ({ ...item, mediaType })),
+  );
+  const details = await Promise.all(candidates.map(async (item) => {
+    try {
+      return { item, detail: await fetchTmdbDetail(item.mediaType, item.id) };
+    } catch {
+      return null;
+    }
+  }));
+  return details.flatMap((entry): TmdbTrailer[] => {
+    if (!entry) return [];
+    const video = entry.detail.videos.find((candidate) => candidate.official && candidate.type === 'Trailer')
+      ?? entry.detail.videos.find((candidate) => candidate.type === 'Trailer');
+    if (!video) return [];
+    return [{ ...entry.item, videoKey: video.key, videoName: video.name }];
+  });
 }

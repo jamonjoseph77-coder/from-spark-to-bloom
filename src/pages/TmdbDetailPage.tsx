@@ -1,4 +1,7 @@
-import { ArrowLeft, Star } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Play, Star } from 'lucide-react';
+import { VideoDialog } from '@/components/player/VideoDialog';
+import type { VideoSource } from '@/lib/videoSource';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
 import { TmdbErrorState } from '@/components/tmdb/TmdbErrorState';
 import { Artwork } from '@/components/ui/Artwork';
@@ -13,6 +16,7 @@ function formatReleaseDate(value: string): string {
 }
 
 export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id: number }) {
+  const [activeVideo, setActiveVideo] = useState<VideoSource | null>(null);
   const { data, error, loading, reload } = useAsyncData(() => fetchTmdbDetail(mediaType, id), [mediaType, id]);
   const backLink = mediaType === 'movie' ? '/movies' : '/series';
   const backLabel = mediaType === 'movie' ? 'Back to movies' : 'Back to series';
@@ -77,17 +81,27 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
             {data.overview || 'No description has been provided for this title yet.'}
           </p>
           {data.status && <p className="text-sm text-slate-500">Status: {data.status}</p>}
+          {data.videos.length > 0 && (
+            <div className="flex flex-wrap gap-3 pt-2">
+              {data.videos.slice(0, 3).map((video) => (
+                <button key={video.id} type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} ${video.type.toLowerCase()}`, heading: `${video.type}: ${data.title}` })} className="inline-flex items-center gap-2 rounded-full border border-cinema-400/30 bg-cinema-500/10 px-4 py-2 text-sm font-semibold text-cinema-200 transition hover:bg-cinema-500/20">
+                  <Play className="h-4 w-4 fill-current" /> Watch {video.type.toLowerCase()}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         <aside className="h-fit space-y-3 rounded-2xl border border-white/10 bg-ink-850/70 p-6">
           <p className="text-sm font-semibold text-white">Not available to watch on Cinema yet</p>
           <p className="text-sm leading-relaxed text-slate-400">
-            This page shows information from TMDB only. Cinema does not stream this title, and no trailer or playback is offered here.
+            This page shows catalogue information from TMDB. A trailer may be available above; full-title playback appears only when Cinema has an authorized media source.
           </p>
         </aside>
       </div>
 
       <TmdbAttribution />
+      {activeVideo && <VideoDialog {...activeVideo} onClose={() => setActiveVideo(null)} />}
     </div>
   );
 }

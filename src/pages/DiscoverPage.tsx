@@ -13,6 +13,7 @@ import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { fetchPublishedTitles } from '@/lib/library';
 import { publisherHref } from '@/lib/publishers';
 import type { Title } from '@/lib/types';
+import { fetchDiscoverTrailers, tmdbHref, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 
 type DiscoverTab = 'all' | 'shorts' | 'trailers' | 'clips';
 
@@ -26,11 +27,16 @@ const TABS: { id: DiscoverTab; label: string }[] = [
 interface DiscoverData {
   titles: Title[];
   clips: DiscoverClip[];
+  tmdbTrailers: TmdbTrailer[];
 }
 
 async function loadDiscover(): Promise<DiscoverData> {
-  const [titles, clips] = await Promise.all([fetchPublishedTitles(), fetchPublishedClips()]);
-  return { titles, clips };
+  const [titles, clips, tmdbTrailers] = await Promise.all([
+    fetchPublishedTitles(),
+    fetchPublishedClips(),
+    fetchDiscoverTrailers().catch(() => []),
+  ]);
+  return { titles, clips, tmdbTrailers };
 }
 
 function DiscoverSection({ heading, children }: { heading: string; children: ReactNode }) {
@@ -60,7 +66,7 @@ export function DiscoverPage() {
   const clipTrailers = data.clips.filter((clip) => clip.kind === 'trailer');
   const titleTrailers = data.titles.filter((title) => title.trailer_url.trim() !== '');
   const clips = data.clips.filter((clip) => clip.kind === 'clip');
-  const hasAnything = data.clips.length > 0 || titleTrailers.length > 0;
+  const hasAnything = data.clips.length > 0 || titleTrailers.length > 0 || data.tmdbTrailers.length > 0;
 
   const openClip = (clip: DiscoverClip) =>
     setActiveVideo({ url: clip.video_url, label: clip.headline, heading: clip.headline });
@@ -72,6 +78,24 @@ export function DiscoverPage() {
       ))}
       {titleTrailers.map((title) => (
         <VideoCard key={`title-${title.id}`} title={title} onTrailer={(item) => setActiveVideo(titleTrailerSource(item))} />
+      ))}
+      {data.tmdbTrailers.map((item) => (
+        <article key={`tmdb-${item.mediaType}-${item.id}`} className="group flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${item.videoKey}`, label: `${item.title} trailer`, heading: `Official trailer: ${item.title}` })}
+            className="relative block aspect-video overflow-hidden rounded-2xl bg-ink-800 text-left ring-1 ring-white/10 transition hover:ring-cinema-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
+            aria-label={`Play trailer for ${item.title}`}
+          >
+            <Artwork src={tmdbImageUrl(item.backdropPath, 'w780') || tmdbImageUrl(item.posterPath, 'w500')} alt="" fallbackTitle={item.title} className="h-full w-full" />
+            <span className="absolute inset-0 grid place-items-center bg-ink-950/25"><span className="grid h-12 w-12 place-items-center rounded-full bg-cinema-500 text-white"><Play className="h-5 w-5 fill-current" /></span></span>
+            <span className="absolute left-3 top-3 rounded-md bg-ink-950/85 px-2 py-1 text-[11px] font-semibold text-cinema-200">Official trailer</span>
+          </button>
+          <div className="space-y-1">
+            <a href={tmdbHref(item)} className="line-clamp-2 text-sm font-semibold text-slate-100 hover:text-cinema-300">{item.title}</a>
+            <p className="text-xs text-slate-400">{item.mediaType === 'movie' ? 'Movie' : 'Series'} · Trailer via YouTube</p>
+          </div>
+        </article>
       ))}
     </div>
   );
@@ -156,7 +180,7 @@ export function DiscoverPage() {
                 {shorts.length > 0 ? shortsRow : <EmptySection label="shorts" />}
               </DiscoverSection>
               <DiscoverSection heading="Trailers">
-                {clipTrailers.length + titleTrailers.length > 0 ? trailerGrid : <EmptySection label="trailers" />}
+                {clipTrailers.length + titleTrailers.length + data.tmdbTrailers.length > 0 ? trailerGrid : <EmptySection label="trailers" />}
               </DiscoverSection>
               <DiscoverSection heading="Clips">
                 {clips.length > 0 ? clipGrid : <EmptySection label="clips" />}
@@ -168,7 +192,7 @@ export function DiscoverPage() {
             <DiscoverSection heading="Shorts">{shorts.length > 0 ? shortsRow : <EmptySection label="shorts" />}</DiscoverSection>
           )}
           {tab === 'trailers' && (
-            <DiscoverSection heading="Trailers">{clipTrailers.length + titleTrailers.length > 0 ? trailerGrid : <EmptySection label="trailers" />}</DiscoverSection>
+            <DiscoverSection heading="Trailers">{clipTrailers.length + titleTrailers.length + data.tmdbTrailers.length > 0 ? trailerGrid : <EmptySection label="trailers" />}</DiscoverSection>
           )}
           {tab === 'clips' && (
             <DiscoverSection heading="Clips">{clips.length > 0 ? clipGrid : <EmptySection label="clips" />}</DiscoverSection>

@@ -13,7 +13,7 @@ export function TmdbErrorState({ error, onRetry }: { error: unknown; onRetry?: (
         title="Movie and series information is not connected yet"
         description={
           isAdmin
-            ? 'Add the TMDB_READ_ACCESS_TOKEN secret to the Supabase edge function "tmdb" to load titles, posters and details.'
+            ? 'The movie and series information provider has not been configured for this environment. Ask the project administrator to check the server integration.'
             : 'Titles, posters and details will appear here once the information service is connected. Please check back soon.'
         }
         action={onRetry && <button type="button" onClick={onRetry} className={BUTTON_PRIMARY}>Try again</button>}
