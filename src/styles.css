@@ -18,6 +18,31 @@
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
+@theme {
+  --color-ink-950: #03070d;
+  --color-ink-900: #060d18;
+  --color-ink-850: #0a1424;
+  --color-ink-800: #0e1b30;
+  --color-ink-700: #142540;
+  --color-ink-600: #1d3256;
+  --color-ink-500: #2b4670;
+  --color-cinema-50: #eef6ff;
+  --color-cinema-100: #d9ebff;
+  --color-cinema-200: #b9dbff;
+  --color-cinema-300: #8cc5ff;
+  --color-cinema-400: #56a6fb;
+  --color-cinema-500: #2f86f0;
+  --color-cinema-600: #1d6bd6;
+  --color-cinema-700: #1a55ad;
+  --color-cinema-800: #1b4789;
+  --color-cinema-900: #1c3c70;
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --animate-fade-in: fade-in 600ms ease-out both;
+  --animate-rise-in: rise-in 500ms ease-out both;
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -137,8 +162,37 @@
     border-color: var(--color-border);
   }
 
+  html {
+    color-scheme: dark;
+  }
+
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--color-ink-950);
+    color: var(--color-slate-100);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse at 85% -10%, rgba(47, 134, 240, 0.16), transparent 45%),
+      radial-gradient(ellipse at 0% 100%, rgba(29, 107, 214, 0.1), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  :focus-visible {
+    outline: 2px solid #56a6fb;
+    outline-offset: 2px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

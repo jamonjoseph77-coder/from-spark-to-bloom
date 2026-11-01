@@ -9,29 +9,21 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { LibraryProvider } from "@/contexts/LibraryContext";
+import { ToastProvider } from "@/contexts/ToastContext";
+import { AppShell } from "@/components/layout/AppShell";
+import { NotFoundPage } from "@/pages/NotFoundPage";
+import { useRoute } from "@/lib/router";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
-      </div>
-    </div>
+    <CinemaFrame>
+      <NotFoundPage />
+    </CinemaFrame>
   );
 }
 
@@ -78,21 +70,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { name: "theme-color", content: "#03070d" },
+      { title: "Cinema — Experience the World of Stories" },
+      { name: "description", content: "Stream movies, series, sports, news and live TV on Cinema." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/cinema-icon.png", type: "image/png" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -115,13 +110,49 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function CinemaShell({ children }: { children: ReactNode }) {
+  const route = useRoute();
+  const router = useRouter();
+
+  // Keep plain <a href="/..."> links inside the app instead of reloading the page.
+  useEffect(() => {
+    function handleClick(event: MouseEvent) {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as Element | null)?.closest?.("a");
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+      const href = anchor.getAttribute("href");
+      if (!href || !href.startsWith("/") || href.startsWith("//")) return;
+      event.preventDefault();
+      void router.navigate({ href });
+    }
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [router]);
+
+  return <AppShell route={route}>{children}</AppShell>;
+}
+
+function CinemaFrame({ children }: { children: ReactNode }) {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <LibraryProvider>
+          <CinemaShell>{children}</CinemaShell>
+        </LibraryProvider>
+      </AuthProvider>
+    </ToastProvider>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <CinemaFrame>
+        <Outlet />
+      </CinemaFrame>
     </QueryClientProvider>
   );
 }
