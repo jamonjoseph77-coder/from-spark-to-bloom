@@ -97,12 +97,6 @@ export async function checkIsAdmin(): Promise<boolean> {
   return data === true;
 }
 
-export async function claimFirstAdmin(): Promise<boolean> {
-  const { data, error } = await supabase.rpc('claim_first_admin');
-  if (error) throw error;
-  return data === true;
-}
-
 export async function saveTitle(input: TitleInput, titleId: string | null): Promise<Title> {
   const payload = { ...input, updated_at: new Date().toISOString() };
   const { data, error } = titleId
