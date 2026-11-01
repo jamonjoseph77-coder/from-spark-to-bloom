@@ -89,13 +89,23 @@ create policy "Users can apply for studio verification" on public.studio_account
 drop policy if exists "Owners can update pending studio applications" on public.studio_accounts;
 create policy "Owners can update pending studio applications" on public.studio_accounts for update to authenticated using (owner_id = auth.uid() and verification_status = 'pending') with check (owner_id = auth.uid() and verification_status = 'pending' and verified_at is null);
 
+-- Only the existing Cinema admin check can approve, suspend or reject a studio.
+drop policy if exists "Cinema admins manage studio verification" on public.studio_accounts;
+create policy "Cinema admins manage studio verification" on public.studio_accounts
+for update to authenticated using (public.is_cinema_admin()) with check (public.is_cinema_admin());
+
 -- Realtime publication is enabled when the project has the standard Supabase publication.
-do $$
+do $
+declare table_name text;
 begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
-    alter publication supabase_realtime add table public.letterbox_posts;
-    alter publication supabase_realtime add table public.letterbox_reactions;
-    alter publication supabase_realtime add table public.letterbox_comments;
+    foreach table_name in array array['letterbox_posts','letterbox_reactions','letterbox_comments'] loop
+      if not exists (
+        select 1 from pg_publication_tables
+        where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = table_name
+      ) then
+        execute format('alter publication supabase_realtime add table public.%I', table_name);
+      end if;
+    end loop;
   end if;
-exception when duplicate_object then null;
-end $$;
+end $;
