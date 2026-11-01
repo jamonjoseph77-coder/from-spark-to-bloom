@@ -43,7 +43,7 @@ function buildRequest(body: RequestBody): Upstream | { error: string } {
     if (!type) return { error: "Unknown media type." };
     const id = asInteger(body.id, 1, 2147483647);
     if (id === null) return { error: "Title id is not valid." };
-    return { path: `/${type}/${id}`, params: {} };
+    return { path: `/${type}/${id}`, params: { append_to_response: "videos" } };
   }
   if (body.action === "genres") {
     if (!type) return { error: "Unknown media type." };
