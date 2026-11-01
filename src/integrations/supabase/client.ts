@@ -59,7 +59,7 @@ function createSupabaseClient() {
       ...(!SUPABASE_PUBLISHABLE_KEY ? ['VITE_SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
     const message =
-      `Missing browser Supabase configuration: ${missing.join(', ')}. Add these exact names under Lovable → More → Secrets, using the existing Supabase Project URL and Publishable key, then publish again. Server-side SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are separate settings.`;
+      `Missing browser Supabase configuration: ${missing.join(', ')}. Add these exact names under Lovable → More → Secrets, using the existing Supabase Project URL and Publishable key, then add the values to the root .env file in the Lovable Code tab and publish again. Lovable project Secrets are for backend/runtime values; server-side SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY do not configure the browser bundle.`;
     console.error(`[Supabase] ${message}`);
     throw new Error(message);
   }
