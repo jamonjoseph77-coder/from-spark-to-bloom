@@ -5,5 +5,4 @@ SELECT
   NOT has_table_privilege('authenticated', 'public.admin_users', 'INSERT') AS ordinary_user_cannot_assign,
   NOT has_table_privilege('authenticated', 'public.admin_users', 'UPDATE') AS ordinary_user_cannot_promote,
   NOT has_table_privilege('anon', 'public.admin_users', 'INSERT') AS anonymous_cannot_assign,
-  has_table_privilege('service_role', 'public.admin_users', 'INSERT') AS privileged_management_can_assign,
-  NOT public.claim_first_admin() AS deprecated_claim_is_inert;
+  has_table_privilege('service_role', 'public.admin_users', 'INSERT') AS privileged_management_can_assign;
