@@ -192,7 +192,7 @@ export function DiscoverPage() {
             <DiscoverSection heading="Shorts">{shorts.length > 0 ? shortsRow : <EmptySection label="shorts" />}</DiscoverSection>
           )}
           {tab === 'trailers' && (
-            <DiscoverSection heading="Trailers">{clipTrailers.length + titleTrailers.length > 0 ? trailerGrid : <EmptySection label="trailers" />}</DiscoverSection>
+            <DiscoverSection heading="Trailers">{clipTrailers.length + titleTrailers.length + data.tmdbTrailers.length > 0 ? trailerGrid : <EmptySection label="trailers" />}</DiscoverSection>
           )}
           {tab === 'clips' && (
             <DiscoverSection heading="Clips">{clips.length > 0 ? clipGrid : <EmptySection label="clips" />}</DiscoverSection>
