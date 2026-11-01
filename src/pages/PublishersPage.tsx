@@ -25,7 +25,7 @@ function StudioApplicationPanel({ userId }: { userId: string }) {
       notify('Enter your organisation name and a description of at least 20 characters.', 'error');
       return;
     }
-    if (websiteUrl.trim() && !/^https?:\\/\\//i.test(websiteUrl.trim())) {
+    if (websiteUrl.trim() && !(websiteUrl.trim().startsWith('https://') || websiteUrl.trim().startsWith('http://'))) {
       notify('Use a full website address beginning with https://.', 'error');
       return;
     }
