@@ -5,10 +5,7 @@ import { MobileNav } from '@/components/layout/MobileNav';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import type { Route } from '@/lib/router';
 
-interface AppShellProps {
-  route: Route;
-  children: ReactNode;
-}
+interface AppShellProps { route: Route; children: ReactNode }
 
 export function AppShell({ route, children }: AppShellProps) {
   return (
@@ -17,10 +14,10 @@ export function AppShell({ route, children }: AppShellProps) {
       <div className="flex min-h-screen flex-col lg:pl-64">
         <TopBar />
         <main className="flex-1 pb-24 lg:pb-12">{children}</main>
-        <footer className="hidden border-t border-white/5 px-10 py-8 lg:block">
-          <div className="flex items-center justify-between gap-6 text-sm text-slate-500">
+        <footer className="hidden border-t border-white/5 px-10 py-6 lg:block">
+          <div className="flex items-center justify-between gap-6 text-xs text-slate-500">
             <CinemaLogo compact />
-            <p>Cinema Entertainment Technologies. Experience the World of Stories.</p>
+            <p>Experience the World of Stories.</p>
           </div>
         </footer>
       </div>
