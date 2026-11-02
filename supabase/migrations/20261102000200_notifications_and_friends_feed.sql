@@ -275,3 +275,57 @@ begin
   end if;
 end
 $$;
+
+-- Keep reactions and comments behind the same visibility boundary as their parent post.
+drop policy if exists "Public can read published Letterbox reactions" on public.letterbox_reactions;
+create policy "People can read reactions on visible Letterbox posts"
+  on public.letterbox_reactions for select
+  using (
+    exists (
+      select 1 from public.letterbox_posts p
+      where p.id = letterbox_reactions.post_id
+        and p.status = 'published'
+        and (
+          p.visibility = 'public'
+          or p.author_id = auth.uid()
+          or (
+            p.visibility = 'friends'
+            and exists (
+              select 1 from public.friendships f
+              where f.status = 'accepted'
+                and (
+                  (f.requester_id = auth.uid() and f.addressee_id = p.author_id)
+                  or (f.addressee_id = auth.uid() and f.requester_id = p.author_id)
+                )
+            )
+          )
+        )
+    )
+  );
+
+drop policy if exists "Public can read published Letterbox comments" on public.letterbox_comments;
+create policy "People can read comments on visible Letterbox posts"
+  on public.letterbox_comments for select
+  using (
+    status = 'published'
+    and exists (
+      select 1 from public.letterbox_posts p
+      where p.id = letterbox_comments.post_id
+        and p.status = 'published'
+        and (
+          p.visibility = 'public'
+          or p.author_id = auth.uid()
+          or (
+            p.visibility = 'friends'
+            and exists (
+              select 1 from public.friendships f
+              where f.status = 'accepted'
+                and (
+                  (f.requester_id = auth.uid() and f.addressee_id = p.author_id)
+                  or (f.addressee_id = auth.uid() and f.requester_id = p.author_id)
+                )
+            )
+          )
+        )
+    )
+  );
