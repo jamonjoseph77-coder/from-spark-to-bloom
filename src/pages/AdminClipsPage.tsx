@@ -11,7 +11,6 @@ import { CLIP_KIND_LABEL, deleteClip, fetchAllClips, setClipPublished, type Disc
 import { fetchAllTitles } from '@/lib/library';
 import { fetchPendingCreatorShorts, reviewCreatorShort, type CreatorShortSubmission } from '@/lib/creator-shorts';
 import type { Title } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
 
 interface ClipsData {
   clips: DiscoverClip[];
