@@ -14,6 +14,7 @@ export interface CreatorShortSubmission {
   review_note: string;
   created_at: string;
   reviewed_at: string | null;
+  preview_url?: string;
 }
 
 export async function fetchPendingCreatorShorts(): Promise<CreatorShortSubmission[]> {
@@ -23,7 +24,13 @@ export async function fetchPendingCreatorShorts(): Promise<CreatorShortSubmissio
     .eq('status', 'pending')
     .order('created_at', { ascending: true });
   if (error) throw error;
-  return (data ?? []) as CreatorShortSubmission[];
+  const submissions = (data ?? []) as CreatorShortSubmission[];
+  return Promise.all(submissions.map(async (submission) => {
+    const { data: signed } = await supabase.storage
+      .from('cinema-creator-submissions')
+      .createSignedUrl(submission.video_path, 60 * 30);
+    return { ...submission, preview_url: signed?.signedUrl };
+  }));
 }
 
 export async function submitCreatorShort(input: {
@@ -49,6 +56,16 @@ export async function reviewCreatorShort(
   reviewNote = '',
 ): Promise<void> {
   if (decision === 'approved') {
+    const { error: videoCopyError } = await supabase.storage
+      .from('cinema-creator-submissions')
+      .copy(submission.video_path, submission.video_path, { destinationBucket: 'cinema-shorts' });
+    if (videoCopyError) throw videoCopyError;
+    if (submission.poster_path) {
+      const { error: posterCopyError } = await supabase.storage
+        .from('cinema-creator-submissions')
+        .copy(submission.poster_path, submission.poster_path, { destinationBucket: 'cinema-shorts' });
+      if (posterCopyError) throw posterCopyError;
+    }
     const { data } = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path);
     const posterUrl = submission.poster_path
       ? supabase.storage.from('cinema-shorts').getPublicUrl(submission.poster_path).data.publicUrl
