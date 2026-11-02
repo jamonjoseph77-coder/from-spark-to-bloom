@@ -56,14 +56,22 @@ export async function reviewCreatorShort(
   reviewNote = '',
 ): Promise<void> {
   if (decision === 'approved') {
-    const { error: videoCopyError } = await supabase.storage
+    const { data: videoFile, error: videoDownloadError } = await supabase.storage
       .from('cinema-creator-submissions')
-      .copy(submission.video_path, submission.video_path, { destinationBucket: 'cinema-shorts' });
+      .download(submission.video_path);
+    if (videoDownloadError || !videoFile) throw videoDownloadError ?? new Error('The submitted video could not be read.');
+    const { error: videoCopyError } = await supabase.storage
+      .from('cinema-shorts')
+      .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: false });
     if (videoCopyError) throw videoCopyError;
     if (submission.poster_path) {
-      const { error: posterCopyError } = await supabase.storage
+      const { data: posterFile, error: posterDownloadError } = await supabase.storage
         .from('cinema-creator-submissions')
-        .copy(submission.poster_path, submission.poster_path, { destinationBucket: 'cinema-shorts' });
+        .download(submission.poster_path);
+      if (posterDownloadError || !posterFile) throw posterDownloadError ?? new Error('The submitted poster could not be read.');
+      const { error: posterCopyError } = await supabase.storage
+        .from('cinema-shorts')
+        .upload(submission.poster_path, posterFile, { contentType: posterFile.type || 'image/jpeg', upsert: false });
       if (posterCopyError) throw posterCopyError;
     }
     const { data } = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path);
