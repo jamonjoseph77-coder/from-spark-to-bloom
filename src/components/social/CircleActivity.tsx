@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ArrowUpRight, Film, Heart, MessageCircle, Sparkles, Users } from 'lucide-react';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchLetterboxFeed } from '@/lib/letterbox';
+import { fetchLetterboxFeed, subscribeToLetterbox } from '@/lib/letterbox';
 
 interface CircleActivityProps {
   friendIds: string[];
@@ -11,6 +11,7 @@ interface CircleActivityProps {
 
 export function CircleActivity({ friendIds }: CircleActivityProps) {
   const feed = useAsyncData(() => fetchLetterboxFeed(100), []);
+  useEffect(() => subscribeToLetterbox(feed.reload), [feed.reload]);
   const friendSet = useMemo(() => new Set(friendIds), [friendIds]);
   const activity = useMemo(
     () => (feed.data ?? []).filter((post) => friendSet.has(post.author_id)).slice(0, 24),
