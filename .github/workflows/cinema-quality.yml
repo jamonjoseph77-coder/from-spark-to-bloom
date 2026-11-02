@@ -49,6 +49,9 @@ jobs:
           src/components/ui/styles.ts
           src/pages/TitlePage.tsx
           src/components/layout/navigation.ts
+          src/components/layout/TopBar.tsx
+          src/components/layout/MobileNav.tsx
+          src/pages/SearchPage.tsx
           src/routes/index.tsx
           src/components/tmdb/TmdbErrorState.tsx
           --rule 'prettier/prettier: off'

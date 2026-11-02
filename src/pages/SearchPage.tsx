@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Search as SearchIcon, Compass, MessageSquareText, Users, Clapperboard, Megaphone, Sparkles, BadgeCheck, Building2, Film, ArrowUpRight } from 'lucide-react';
+import { Search as SearchIcon, Compass, MessageSquareText, Users, Clapperboard, Megaphone, Sparkles, BadgeCheck, Building2, Film, ArrowUpRight, X } from 'lucide-react';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TmdbSearchResults } from '@/components/tmdb/TmdbSearchResults';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -45,24 +45,52 @@ export function SearchPage({ query }: { query: string }) {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    navigateTo(`/search?q=${encodeURIComponent(draft.trim())}`);
+    const nextQuery = draft.trim();
+    if (!nextQuery) return;
+    navigateTo(`/search?q=${encodeURIComponent(nextQuery)}`);
   }
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-9 pb-12`}>
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/15 bg-gradient-to-br from-cinema-700/25 via-ink-900 to-ink-950 p-6 sm:p-9">
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/15 bg-gradient-to-br from-cinema-700/25 via-ink-900 to-ink-950 p-6 shadow-xl shadow-black/20 sm:p-9">
         <div className="absolute -right-12 -top-16 -z-10 h-64 w-64 rounded-full bg-cinema-400/15 blur-3xl" />
-        <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Sparkles className="h-4 w-4" /> Find your next experience</p>
+        <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Sparkles aria-hidden="true" className="h-4 w-4" /> Find your next experience</p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">Search the world of stories.</h1>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">Find movies, series, genres and the studios behind the stories—all connected to the Cinema experience.</p>
+        <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">Find movies, series, genres and the studios behind the stories — all connected to the Cinema experience.</p>
         <form onSubmit={handleSubmit} role="search" className="mt-6 flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <SearchIcon aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <label htmlFor="search-page-input" className="sr-only">Search Cinema</label>
-            <input id="search-page-input" type="search" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Search titles, genres, studios or publishers..." className={`${INPUT} py-4 pl-11 text-base`} />
+            <input
+              id="search-page-input"
+              type="search"
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') setDraft('');
+              }}
+              placeholder="Search titles, genres, studios or publishers..."
+              autoComplete="off"
+              enterKeyHint="search"
+              className={`${INPUT} !rounded-full py-4 pl-11 pr-12 text-base shadow-inner shadow-black/20 focus:border-cinema-300/60 focus:ring-cinema-300/20`}
+            />
+            {draft && (
+              <button
+                type="button"
+                onClick={() => setDraft('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
+              >
+                <X aria-hidden="true" className="h-4 w-4" />
+              </button>
+            )}
           </div>
-          <button type="submit" className={`${BUTTON_PRIMARY} sm:min-w-32`}>Search</button>
+          <button type="submit" disabled={!draft.trim()} className={`${BUTTON_PRIMARY} !rounded-full min-h-12 border-cinema-200/20 bg-cinema-500 px-7 text-white shadow-cinema-950/30 hover:bg-cinema-400 disabled:border-white/10 disabled:bg-white/10 disabled:text-slate-500 sm:min-w-36`}>
+            <SearchIcon aria-hidden="true" className="h-4 w-4" />
+            Search
+          </button>
         </form>
+        <p className="mt-3 text-xs text-slate-400">Search movies, series, genres and official studios in one place.</p>
       </header>
 
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}

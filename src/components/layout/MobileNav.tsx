@@ -23,8 +23,17 @@ export function MobileNav({ route }: MobileNavProps) {
           if (item.key === 'cinema') {
             return (
               <li key={item.key} className="flex h-full items-center justify-center">
-                <a href={item.href} aria-label="Cinema catalogue — browse movies" aria-current={active ? 'page' : undefined} className="group flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
-                  <img src="/cinema-icon.png" alt="" className={`h-[50px] w-[50px] rounded-full object-cover transition duration-300 group-hover:scale-105 ${active ? 'drop-shadow-[0_0_17px_rgba(56,160,255,.62)]' : 'drop-shadow-[0_4px_12px_rgba(0,0,0,.5)]'}`} />
+                <a
+                  href={item.href}
+                  aria-label="Cinema catalogue — browse movies"
+                  aria-current={active ? 'page' : undefined}
+                  className={`group flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-2.5 py-1 transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300 ${active ? 'bg-sky-300/[.09]' : 'hover:bg-white/[.045]'}`}
+                >
+                  <img
+                    src="/cinema-icon.png"
+                    alt=""
+                    className={`h-[43px] w-[43px] rounded-full object-cover transition duration-300 group-hover:scale-[1.04] ${active ? 'drop-shadow-[0_0_13px_rgba(56,160,255,.48)]' : 'drop-shadow-[0_3px_9px_rgba(0,0,0,.42)]'}`}
+                  />
                   <span className={`text-[9px] font-extrabold tracking-[.04em] ${active ? 'text-sky-100' : 'text-slate-400 group-hover:text-white'}`}>Cinema</span>
                 </a>
               </li>
