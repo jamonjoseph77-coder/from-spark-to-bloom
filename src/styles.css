@@ -196,3 +196,64 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Cinema's high-resolution visual finish */
+html { scroll-behavior: smooth; }
+::selection { background: rgba(111, 177, 245, .32); color: #fff; }
+
+.cinema-hero { isolation: isolate; transform: translateZ(0); }
+.cinema-hero-light {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(2px);
+  opacity: .7;
+  mix-blend-mode: screen;
+}
+.cinema-hero-light--one {
+  width: min(58vw, 780px);
+  height: min(24vw, 320px);
+  right: -12%;
+  top: -16%;
+  background: radial-gradient(ellipse, rgba(108, 183, 255, .22), rgba(65, 130, 210, .06) 42%, transparent 72%);
+  animation: cinema-light-drift 14s ease-in-out infinite alternate;
+}
+.cinema-hero-light--two {
+  width: min(42vw, 580px);
+  height: min(22vw, 300px);
+  left: 18%;
+  bottom: -22%;
+  background: radial-gradient(ellipse, rgba(61, 130, 219, .18), transparent 70%);
+  animation: cinema-light-drift 18s ease-in-out infinite alternate-reverse;
+}
+@keyframes cinema-light-drift {
+  from { transform: translate3d(-2%, -2%, 0) scale(.96); opacity: .45; }
+  to { transform: translate3d(3%, 4%, 0) scale(1.08); opacity: .82; }
+}
+.cinema-short-skeleton {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(145deg, rgba(20,34,52,.95), rgba(7,13,23,.98));
+}
+.cinema-short-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(100deg, transparent 20%, rgba(157,204,255,.10) 48%, transparent 76%);
+  animation: cinema-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+@keyframes cinema-skeleton-shimmer { to { transform: translateX(100%); } }
+.cinema-short-card { contain: content; }
+.cinema-short-card button { backface-visibility: hidden; transform: translateZ(0); }
+.cinema-home { max-width: 112rem; }
+
+@media (min-width: 1800px) {
+  .cinema-home { padding-left: clamp(2.5rem, 4vw, 6rem); padding-right: clamp(2.5rem, 4vw, 6rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-hero-light, .cinema-short-skeleton::after { animation: none !important; }
+}
