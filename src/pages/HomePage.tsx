@@ -80,7 +80,7 @@ export function HomePage() {
       {shorts.length > 0 && <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Quick stories</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2><p className="mt-1 text-sm text-slate-400">Short videos and moments from official Cinema publishers.</p></div>
-          <a href="/discover?tab=shorts" className="text-sm font-semibold text-cinema-200 transition hover:text-white">Explore all Shorts</a>
+          <a href="/discover" className="text-sm font-semibold text-cinema-200 transition hover:text-white">Explore all Shorts</a>
         </div>
         <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
           {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}
