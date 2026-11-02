@@ -48,6 +48,7 @@ export function VideoPlayer({
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [quality, setQuality] = useState(-1);
   const [volume, setVolume] = useState(0.85);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
   useEffect(() => { startAtRef.current = startAt; }, [startAt]);
@@ -64,13 +65,27 @@ export function VideoPlayer({
 
     let hls: Hls | null = null;
     let cancelled = false;
+    let networkRecoveries = 0;
+    let mediaRecoveries = 0;
+    const failPlayback = (message = PLAYBACK_ERROR) => {
+      if (cancelled) return;
+      setErrorText(message);
+      setStatus('error');
+      hls?.destroy();
+      hls = null;
+      hlsRef.current = null;
+    };
 
     if (isHlsUrl(src)) {
       void import('hls.js').then(({ default: HlsLib }) => {
         if (cancelled) return;
         if (!HlsLib.isSupported()) {
-          video.src = src;
-          video.load();
+          if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = src;
+            video.load();
+          } else {
+            failPlayback('This browser cannot play this live stream format.');
+          }
           return;
         }
         hls = new HlsLib({
@@ -90,26 +105,24 @@ export function VideoPlayer({
         });
         hls.on(HlsLib.Events.ERROR, (_event, data) => {
           if (!data.fatal || cancelled) return;
-          if (data.type === HlsLib.ErrorTypes.NETWORK_ERROR) {
+          if (data.type === HlsLib.ErrorTypes.NETWORK_ERROR && networkRecoveries < 3) {
+            networkRecoveries += 1;
             hls?.startLoad();
             return;
           }
-          if (data.type === HlsLib.ErrorTypes.MEDIA_ERROR) {
+          if (data.type === HlsLib.ErrorTypes.MEDIA_ERROR && mediaRecoveries < 2) {
+            mediaRecoveries += 1;
             hls?.recoverMediaError();
             return;
           }
-          setErrorText(PLAYBACK_ERROR);
-          setStatus('error');
-          hls?.destroy();
-          hlsRef.current = null;
+          failPlayback();
         });
         hls.loadSource(src);
         hls.attachMedia(video);
       }).catch((error: unknown) => {
         if (cancelled) return;
         console.error('Could not load the HLS playback engine', error);
-        setErrorText('The playback engine could not be loaded. Please try again.');
-        setStatus('error');
+        failPlayback('The playback engine could not be loaded. Please try again.');
       });
     } else {
       video.src = src;
@@ -124,7 +137,7 @@ export function VideoPlayer({
       video.removeAttribute('src');
       video.load();
     };
-  }, [src]);
+  }, [src, retryCount]);
 
   function reportProgress(video: HTMLVideoElement, completed: boolean) {
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
@@ -213,6 +226,7 @@ export function VideoPlayer({
               <AlertTriangle className="mx-auto h-10 w-10 text-amber-400" />
               <p className="mt-4 text-base font-semibold text-white">Playback unavailable</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-400">{errorText}</p>
+              <button type="button" onClick={() => { setStatus('loading'); setRetryCount((count) => count + 1); }} className="mt-4 inline-flex items-center justify-center rounded-full bg-cinema-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-cinema-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">Try Again</button>
             </div>
           </div>
         )}

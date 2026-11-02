@@ -151,12 +151,12 @@ export async function deleteChatMessage(messageId: string): Promise<void> {
 export function subscribeToPartyChanges(
   channelName: string,
   table: 'watch_party_messages' | 'watch_party_members' | 'watch_parties',
-  filter: string,
+  filter: string | null,
   onChange: () => void,
 ): () => void {
   const channel = supabase
     .channel(channelName)
-    .on('postgres_changes', { event: '*', schema: 'public', table, filter }, onChange)
+    .on('postgres_changes', { event: '*', schema: 'public', table, ...(filter ? { filter } : {}) }, onChange)
     .subscribe();
   return () => {
     void supabase.removeChannel(channel);

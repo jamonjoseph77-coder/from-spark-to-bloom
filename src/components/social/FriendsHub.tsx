@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Activity, Users } from 'lucide-react';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { chipClass } from '@/components/ui/styles';
@@ -7,6 +7,7 @@ import { FriendRequests, FriendsList } from '@/components/social/FriendsList';
 import { CircleActivity } from '@/components/social/CircleActivity';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { loadFriendsSnapshot } from '@/lib/friends';
+import { supabase } from '@/lib/supabase';
 
 type Tab = 'activity' | 'friends' | 'requests' | 'find';
 
@@ -20,6 +21,14 @@ const TABS: { key: Tab; label: string }[] = [
 export function FriendsHub({ userId }: { userId: string }) {
   const { data: snapshot, error, reload } = useAsyncData(() => loadFriendsSnapshot(userId), [userId]);
   const [tab, setTab] = useState<Tab>('activity');
+
+  useEffect(() => {
+    const channel = supabase.channel(`cinema-friends-${userId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships', filter: `requester_id=eq.${userId}` }, reload)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships', filter: `addressee_id=eq.${userId}` }, reload)
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [reload, userId]);
 
   if (!snapshot) return error ? <ErrorState onRetry={reload} /> : <LoadingState />;
 

@@ -71,7 +71,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#03070d" },
       { title: "Cinema — Experience the World of Stories" },
-      { name: "description", content: "Stream movies, series, sports, news and live TV on Cinema." },
+      { name: "description", content: "Discover And Experience Movies, Series, Television And Sports Through Cinema — A Connected Digital Entertainment Destination." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
