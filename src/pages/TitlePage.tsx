@@ -10,7 +10,7 @@ import { LetterboxPage } from '@/pages/LetterboxPage';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { titleTrailerSource } from '@/lib/videoSource';
-import { uniqueVideos } from '@/lib/videoIdentity';
+import { uniqueVideos, videoIdentity } from '@/lib/videoIdentity';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -47,8 +47,9 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const { title, seasons } = data;
   if (!title) return <NotFoundPage />;
 
+  const trailerIdentity = videoIdentity(title.trailer_url);
   const titleClips = uniqueVideos(
-    data.clips.filter((clip) => clip.title_id === title.id),
+    data.clips.filter((clip) => clip.title_id === title.id && videoIdentity(clip.video_url) !== trailerIdentity),
     (clip) => clip.video_url,
   );
   const titleShorts = titleClips.filter((clip) => clip.kind === 'short');
