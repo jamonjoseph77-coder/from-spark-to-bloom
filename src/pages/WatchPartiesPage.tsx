@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { PartyPopper, Plus, KeyRound, MessageSquareText, Radio, Users } from 'lucide-react';
 import { CreatePartyDialog } from '@/components/social/CreatePartyDialog';
 import { PartyCard } from '@/components/social/PartyCard';
@@ -14,6 +14,7 @@ import {
   fetchVisibleParties,
   joinPartyByInviteCode,
   joinPublicParty,
+  subscribeToPartyChanges,
   type WatchPartyWithTitle,
 } from '@/lib/watchParties';
 
@@ -30,6 +31,11 @@ async function loadPartyBoard(userId: string): Promise<PartyBoard> {
 function WatchPartyBoard({ userId }: { userId: string }) {
   const { notify } = useToast();
   const board = useAsyncData(() => loadPartyBoard(userId), [userId]);
+  useEffect(() => {
+    const stopPartyUpdates = subscribeToPartyChanges(`cinema-party-board-${userId}`, 'watch_parties', null, board.reload);
+    const stopMemberUpdates = subscribeToPartyChanges(`cinema-party-members-${userId}`, 'watch_party_members', `user_id=eq.${userId}`, board.reload);
+    return () => { stopPartyUpdates(); stopMemberUpdates(); };
+  }, [board.reload, userId]);
   const [creating, setCreating] = useState(false);
   const [joiningId, setJoiningId] = useState<string | null>(null);
   const [inviteCode, setInviteCode] = useState('');
