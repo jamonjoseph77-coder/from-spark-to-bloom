@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type SyntheticEvent } from 'react';
 import type Hls from 'hls.js';
-import { AlertTriangle, Loader2, Radio, Volume2 } from 'lucide-react';
+import { AlertTriangle, Loader2, Radio, Volume2, VolumeX } from 'lucide-react';
 import { isHlsUrl } from '@/lib/media';
 
 export interface PlaybackProgress {
@@ -41,7 +41,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
   const [errorText, setErrorText] = useState(PLAYBACK_ERROR);
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [quality, setQuality] = useState(-1);
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(0.85);
 
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -153,6 +153,10 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
           onPlaying={() => setStatus('ready')}
           onWaiting={() => setStatus('loading')}
           onTimeUpdate={handleTimeUpdate}
+          onVolumeChange={(event) => {
+            const nextVolume = event.currentTarget.muted ? 0 : event.currentTarget.volume;
+            setVolume((current) => Math.abs(current - nextVolume) > 0.03 ? nextVolume : current);
+          }}
           onPause={(event) => reportProgress(event.currentTarget, false)}
           onEnded={(event) => reportProgress(event.currentTarget, true)}
           onError={() => {
@@ -189,7 +193,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
           )}
           {status === 'ready' && (
             <label className="flex min-w-0 items-center gap-2 text-sm text-slate-400">
-              <Volume2 className="h-4 w-4 shrink-0 text-cinema-200" />
+              {volume === 0 ? <VolumeX className="h-4 w-4 shrink-0 text-sky-200" /> : <Volume2 className="h-4 w-4 shrink-0 text-sky-200" />}
               <span className="sr-only">Volume</span>
               <input aria-label="Volume" type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} className="h-1.5 w-24 cursor-pointer accent-sky-300" />
               <span className="w-8 text-right text-xs tabular-nums">{Math.round(volume * 100)}%</span>

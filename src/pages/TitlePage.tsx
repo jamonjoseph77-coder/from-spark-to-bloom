@@ -3,13 +3,14 @@ import { ArrowLeft, Film, Play, Radio, Share2, Users, MessageCircle } from 'luci
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
+import { LetterboxPage } from '@/pages/LetterboxPage';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { titleTrailerSource } from '@/lib/videoSource';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING } from '@/components/ui/styles';
+import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useLibrary } from '@/hooks/useLibrary';
 import { useToast } from '@/hooks/useToast';
@@ -82,7 +83,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
             <p className="text-sm text-slate-300">{[title.release_year, runtime, title.genre].filter(Boolean).join(' · ')}</p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               {primary}
-              {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_SECONDARY}><Film className="h-4 w-4" /> Trailer</button>}
+              {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
               <TitleActions title={title} />
               <button type="button" onClick={() => void shareTitle()} className={BUTTON_SECONDARY}><Share2 className="h-4 w-4" /> Share</button>
             </div>
@@ -111,6 +112,10 @@ export function TitlePage({ titleId }: { titleId: string }) {
             <p className="pt-2 text-xs text-slate-500">{titleMeta(title)}</p>
           </aside>
         </div>
+        <section className="space-y-5 border-t border-white/10 pt-9">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/80">Around this story</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">The conversation</h2><p className="mt-1 text-sm text-slate-400">Share a Letterbox message, recommendation or thought about this title.</p></div>
+          <LetterboxPage embedded titleId={title.id} />
+        </section>
         <TitleRow heading="More like this" titles={related} />
       </div>
       {trailerOpen && <VideoDialog {...titleTrailerSource(title)} onClose={() => setTrailerOpen(false)} />}
