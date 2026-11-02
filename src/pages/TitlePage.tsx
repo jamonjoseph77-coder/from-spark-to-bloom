@@ -49,7 +49,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const uniqueTitleVideos = (clips: DiscoverClip[]) => {
     const seen = new Set<string>();
     return clips.filter((clip) => {
-      const normalized = clip.video_url.trim().replace(/\\/$/, '').toLowerCase();
+      const normalized = clip.video_url.trim().toLowerCase();
       if (!normalized || seen.has(normalized)) return false;
       seen.add(normalized);
       return true;
