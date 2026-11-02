@@ -3,13 +3,14 @@ import { ArrowLeft, Film, Play, Radio, Share2, Users, MessageCircle } from 'luci
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
+import { LetterboxPage } from '@/pages/LetterboxPage';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { titleTrailerSource } from '@/lib/videoSource';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING } from '@/components/ui/styles';
+import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useLibrary } from '@/hooks/useLibrary';
 import { useToast } from '@/hooks/useToast';
@@ -72,9 +73,9 @@ export function TitlePage({ titleId }: { titleId: string }) {
     <div className="animate-fade-in">
       <section className="relative isolate overflow-hidden border-b border-white/5">
         <Artwork src={title.backdrop_url || title.poster_url} alt="" fallbackTitle={title.title} className="absolute inset-0 -z-10 h-full w-full object-cover object-top opacity-60" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/30" />
-        <div className={`${PAGE_CONTAINER} flex min-h-[26rem] items-end gap-8 pb-10 pt-16 sm:pt-24`}>
-          <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="hidden aspect-[2/3] w-48 flex-none rounded-2xl shadow-2xl shadow-black/60 ring-1 ring-white/10 md:block lg:w-56" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/75 to-ink-950/20" />
+        <div className={`${PAGE_CONTAINER} flex min-h-[34rem] flex-col items-start gap-6 pb-12 pt-20 sm:min-h-[39rem] sm:gap-8 sm:pb-16 sm:pt-28 md:flex-row md:items-end`}>
+          <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="block aspect-[3/4] w-32 flex-none rounded-[1.2rem] border border-white/15 shadow-[0_28px_80px_rgba(0,0,0,.65)] ring-1 ring-sky-200/10 sm:w-40 md:w-52 md:rounded-[1.6rem] lg:w-64" />
           <div className="max-w-2xl space-y-5">
             <a href={`/${BROWSE_PATH[title.type]}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white"><ArrowLeft className="h-4 w-4" /> {TITLE_TYPE_LABELS[title.type]}</a>
             {!title.is_published && <p className="inline-block rounded-md bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Draft: only administrators can see this title</p>}
@@ -82,7 +83,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
             <p className="text-sm text-slate-300">{[title.release_year, runtime, title.genre].filter(Boolean).join(' · ')}</p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               {primary}
-              {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_SECONDARY}><Film className="h-4 w-4" /> Trailer</button>}
+              {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
               <TitleActions title={title} />
               <button type="button" onClick={() => void shareTitle()} className={BUTTON_SECONDARY}><Share2 className="h-4 w-4" /> Share</button>
             </div>
@@ -111,6 +112,10 @@ export function TitlePage({ titleId }: { titleId: string }) {
             <p className="pt-2 text-xs text-slate-500">{titleMeta(title)}</p>
           </aside>
         </div>
+        <section className="space-y-5 border-t border-white/10 pt-9">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-blue-200/80">Around this story</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">The conversation</h2><p className="mt-1 text-sm text-slate-400">Share a Letterbox message, recommendation or thought about this title.</p></div>
+          <LetterboxPage embedded titleId={title.id} />
+        </section>
         <TitleRow heading="More like this" titles={related} />
       </div>
       {trailerOpen && <VideoDialog {...titleTrailerSource(title)} onClose={() => setTrailerOpen(false)} />}

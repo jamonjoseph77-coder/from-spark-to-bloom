@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Info, Play, Pause, Star } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { VideoDialog } from '@/components/player/VideoDialog';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
+import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchDiscoverTrailers, fetchTmdbList, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
 
@@ -69,25 +69,36 @@ export function TmdbHero() {
         className="group relative isolate min-h-[29rem] overflow-hidden rounded-[1.75rem] border border-white/10 bg-ink-900 shadow-[0_30px_90px_rgba(0,0,0,.42)] sm:min-h-[36rem] lg:min-h-[40rem]"
       >
         <Artwork key={item.id} src={image} alt="" fallbackTitle={item.title} className="absolute inset-0 h-full w-full animate-fade-in object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0b] via-[#0c0c0b]/78 to-[#0c0c0b]/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0b] via-transparent to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#090c12] via-[#090c12]/82 to-[#090c12]/12" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090c12] via-transparent to-black/10" />
         <div key={`${item.mediaType}-${item.id}`} className="relative flex min-h-[29rem] max-w-3xl flex-col justify-end gap-4 p-6 pb-20 animate-rise-in sm:min-h-[36rem] sm:p-12 sm:pb-24 lg:min-h-[40rem]">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-cinema-300/45 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[.2em] text-cinema-200 backdrop-blur">Featured on Cinema</span>
+            <span className="rounded-full border border-cinema-300/45 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[.2em] text-blue-100 backdrop-blur">Featured on Cinema</span>
             <span className="text-xs font-semibold uppercase tracking-[.16em] text-slate-300">{label}{year ? ` · ${year}` : ''}</span>
             {item.rating !== null && <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-200"><Star className="h-3.5 w-3.5 fill-current" />{item.rating.toFixed(1)}</span>}
           </div>
           <h1 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-.035em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl">{item.title}</h1>
           {item.overview && <p className="line-clamp-3 max-w-xl text-sm leading-7 text-slate-200/90 sm:text-base">{item.overview}</p>}
           <div className="flex flex-wrap gap-3 pt-2">
-            {current.videoKey && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_PRIMARY}><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
+            {current.videoKey && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
             <a href={tmdbHref(item)} className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> Explore title</a>
           </div>
         </div>
         {entries.length > 1 && (
+          <div className="absolute right-7 top-1/2 z-10 hidden -translate-y-1/2 flex-col gap-3 xl:flex">
+            {[1, 2, 3].map((offset) => {
+              const position = (index + offset) % entries.length;
+              const preview = entries[position].item;
+              const previewImage = tmdbImageUrl(preview.posterPath, 'w500') || tmdbImageUrl(preview.backdropPath, 'w780');
+              return <button key={`${preview.mediaType}-${preview.id}`} type="button" onClick={() => setIndex(position)} aria-label={`Feature ${preview.title}`} className="group/preview flex w-52 items-center gap-3 rounded-2xl border border-white/10 bg-black/35 p-2 text-left shadow-xl backdrop-blur-xl transition hover:-translate-x-1 hover:border-blue-200/35 hover:bg-black/55">
+                <div className="h-[4.5rem] w-14 shrink-0 overflow-hidden rounded-xl bg-ink-800"><Artwork src={previewImage} alt="" fallbackTitle={preview.title} className="h-full w-full object-cover transition duration-500 group-hover/preview:scale-105" /></div>
+                <span className="min-w-0"><span className="block text-[9px] font-bold uppercase tracking-[.18em] text-blue-200/80">Up next</span><span className="mt-1 line-clamp-2 block text-xs font-bold leading-4 text-white">{preview.title}</span></span>
+              </button>;
+            })}
+          </div>
           <div className="absolute bottom-5 right-5 flex items-center gap-2 rounded-full border border-white/10 bg-black/40 p-2 backdrop-blur sm:bottom-8 sm:right-8">
             <div className="flex items-center gap-1.5" aria-label={`Featured title ${index + 1} of ${entries.length}`}>
-              {entries.map((entry, position) => <button key={`${entry.item.mediaType}-${entry.item.id}`} type="button" onClick={() => setIndex(position)} aria-label={`Show ${entry.item.title}`} aria-current={position === index} className={`h-1.5 rounded-full transition-all ${position === index ? 'w-7 bg-cinema-300' : 'w-1.5 bg-white/40 hover:bg-white/80'}`} />)}
+              {entries.map((entry, position) => <button key={`${entry.item.mediaType}-${entry.item.id}`} type="button" onClick={() => setIndex(position)} aria-label={`Show ${entry.item.title}`} aria-current={position === index} className={`h-1.5 rounded-full transition-all ${position === index ? 'w-7 bg-blue-200' : 'w-1.5 bg-white/40 hover:bg-white/80'}`} />)}
             </div>
             <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Resume featured titles' : 'Pause featured titles'} className="grid h-7 w-7 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white">{paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}</button>
           </div>

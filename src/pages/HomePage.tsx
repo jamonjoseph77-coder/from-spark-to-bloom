@@ -5,6 +5,7 @@ import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
+import { HomeSocialHighlights } from '@/components/catalogue/HomeSocialHighlights';
 import { LoadingState } from '@/components/ui/StatusViews';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -36,6 +37,7 @@ export function HomePage() {
       <TmdbHero />
 
       {user && cinemaShelves?.resume.length ? <ContinueWatchingRow items={cinemaShelves.resume} /> : null}
+      {user && <HomeSocialHighlights userId={user.id} />}
 
       <section className="space-y-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
