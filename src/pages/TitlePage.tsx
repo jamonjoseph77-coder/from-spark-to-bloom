@@ -72,9 +72,9 @@ export function TitlePage({ titleId }: { titleId: string }) {
     <div className="animate-fade-in">
       <section className="relative isolate overflow-hidden border-b border-white/5">
         <Artwork src={title.backdrop_url || title.poster_url} alt="" fallbackTitle={title.title} className="absolute inset-0 -z-10 h-full w-full object-cover object-top opacity-60" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/30" />
-        <div className={`${PAGE_CONTAINER} flex min-h-[26rem] items-end gap-8 pb-10 pt-16 sm:pt-24`}>
-          <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="hidden aspect-[2/3] w-48 flex-none rounded-2xl shadow-2xl shadow-black/60 ring-1 ring-white/10 md:block lg:w-56" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/75 to-ink-950/20" />
+        <div className={`${PAGE_CONTAINER} flex min-h-[34rem] items-end gap-8 pb-12 pt-20 sm:min-h-[39rem] sm:pb-16 sm:pt-28`}>
+          <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="hidden aspect-[3/4] w-52 flex-none rounded-[1.6rem] border border-white/15 shadow-[0_28px_80px_rgba(0,0,0,.65)] ring-1 ring-sky-200/10 md:block lg:w-64" />
           <div className="max-w-2xl space-y-5">
             <a href={`/${BROWSE_PATH[title.type]}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white"><ArrowLeft className="h-4 w-4" /> {TITLE_TYPE_LABELS[title.type]}</a>
             {!title.is_published && <p className="inline-block rounded-md bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Draft: only administrators can see this title</p>}
