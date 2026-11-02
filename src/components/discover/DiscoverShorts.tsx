@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, MessageCircle, Play, Sparkles } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
-import { EmptyState, ErrorState } from '@/components/ui/StatusViews';
+import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchPublishedClips, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
