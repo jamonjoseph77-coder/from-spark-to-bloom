@@ -46,8 +46,17 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const { title, seasons } = data;
   if (!title) return <NotFoundPage />;
 
-  const titleShorts = data.clips.filter((clip) => clip.kind === 'short' && clip.title_id === title.id);
-  const titleEditorial = data.clips.filter((clip) => clip.title_id === title.id && clip.kind !== 'short' && clip.kind !== 'trailer');
+  const uniqueTitleVideos = (clips: DiscoverClip[]) => {
+    const seen = new Set<string>();
+    return clips.filter((clip) => {
+      const normalized = clip.video_url.trim().replace(/\\/$/, '').toLowerCase();
+      if (!normalized || seen.has(normalized)) return false;
+      seen.add(normalized);
+      return true;
+    });
+  };
+  const titleShorts = uniqueTitleVideos(data.clips.filter((clip) => clip.kind === 'short' && clip.title_id === title.id));
+  const titleEditorial = uniqueTitleVideos(data.clips.filter((clip) => clip.title_id === title.id && clip.kind !== 'short' && clip.kind !== 'trailer'));
   const behindScenes = titleEditorial.filter((clip) => ['behind_the_scenes', 'making_of', 'production_diary'].includes(clip.kind));
   const interviews = titleEditorial.filter((clip) => clip.kind === 'interview');
   const additionalClips = titleEditorial.filter((clip) => ['clip', 'featured', 'deleted_scene', 'cast_featurette'].includes(clip.kind));
