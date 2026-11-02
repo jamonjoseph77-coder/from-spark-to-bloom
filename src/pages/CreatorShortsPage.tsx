@@ -9,7 +9,7 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { BUTTON_PRIMARY, CARD, INPUT, LABEL, PAGE_CONTAINER } from '@/components/ui/styles';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 
-function CreatorShortsPage() {
+export function CreatorShortsPage() {
   const { user, loading } = useAuth();
   const { notify } = useToast();
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
@@ -56,7 +56,7 @@ function CreatorShortsPage() {
 
       if (poster) {
         posterPath = `${base}/poster-${poster.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
-        const { error: posterError } = await supabase.storage.from('cinema-shorts').upload(posterPath, poster, {
+        const { error: posterError } = await supabase.storage.from('cinema-creator-submissions').upload(posterPath, poster, {
           contentType: poster.type,
           upsert: false,
         });
