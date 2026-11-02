@@ -79,6 +79,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (form.is_published && !window.confirm('Confirm that Cinema has permission from the rights holder to publish this video in the intended territories and placements.')) return;
     const result = buildInput(form);
     if (!result.input) {
       setError(result.error ?? 'Check the highlighted fields.');
