@@ -8,7 +8,7 @@ import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusView
 import { CHIP_BASE, PAGE_CONTAINER, chipClass } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useToast } from '@/hooks/useToast';
-import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
+import { CLIP_KIND_LABEL, fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, tmdbHref, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
@@ -83,7 +83,7 @@ export function DiscoverPage() {
         publisher: clip.publisher_name || 'Cinema publisher',
         image: clip.poster_url,
         description: clip.description,
-        kind: clip.kind === 'trailer' ? 'Publisher trailer' : clip.kind === 'featured' ? 'Behind-the-scenes feature' : 'Publisher clip',
+        kind: CLIP_KIND_LABEL[clip.kind],
         href: clip.title ? `/title/${clip.title.id}` : null,
         source: { url: clip.video_url, label: clip.headline, heading: clip.headline },
       }));
@@ -125,9 +125,9 @@ export function DiscoverPage() {
 
   const visibleVideos = useMemo(() => {
     if (tab === 'trailers') return videos.filter((video) => /trailer/i.test(video.kind));
-    if (tab === 'behind-scenes') return videos.filter((video) => video.kind === 'Behind-the-scenes feature' || /behind.?the.?scenes|bts/i.test(`${video.heading} ${video.description}`));
-    if (tab === 'interviews') return videos.filter((video) => /interview|conversation|cast talk/i.test(`${video.heading} ${video.description}`));
-    if (tab === 'clips') return videos.filter((video) => video.kind === 'Publisher clip');
+    if (tab === 'behind-scenes') return videos.filter((video) => ['Behind the scenes', 'Making of', 'Production diary'].includes(video.kind) || /behind.?the.?scenes|bts|making of|production diary/i.test(`${video.heading} ${video.description}`));
+    if (tab === 'interviews') return videos.filter((video) => video.kind === 'Interview' || /interview|conversation|cast talk/i.test(`${video.heading} ${video.description}`));
+    if (tab === 'clips') return videos.filter((video) => ['Clip', 'Deleted scene', 'Cast featurette'].includes(video.kind));
     return videos;
   }, [videos, tab]);
 
