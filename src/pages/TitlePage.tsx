@@ -10,6 +10,7 @@ import { LetterboxPage } from '@/pages/LetterboxPage';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { titleTrailerSource } from '@/lib/videoSource';
+import { uniqueVideos } from '@/lib/videoIdentity';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -46,17 +47,12 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const { title, seasons } = data;
   if (!title) return <NotFoundPage />;
 
-  const uniqueTitleVideos = (clips: DiscoverClip[]) => {
-    const seen = new Set<string>();
-    return clips.filter((clip) => {
-      const normalized = clip.video_url.trim().toLowerCase();
-      if (!normalized || seen.has(normalized)) return false;
-      seen.add(normalized);
-      return true;
-    });
-  };
-  const titleShorts = uniqueTitleVideos(data.clips.filter((clip) => clip.kind === 'short' && clip.title_id === title.id));
-  const titleEditorial = uniqueTitleVideos(data.clips.filter((clip) => clip.title_id === title.id && clip.kind !== 'short' && clip.kind !== 'trailer'));
+  const titleClips = uniqueVideos(
+    data.clips.filter((clip) => clip.title_id === title.id),
+    (clip) => clip.video_url,
+  );
+  const titleShorts = titleClips.filter((clip) => clip.kind === 'short');
+  const titleEditorial = titleClips.filter((clip) => clip.kind !== 'short' && clip.kind !== 'trailer');
   const behindScenes = titleEditorial.filter((clip) => ['behind_the_scenes', 'making_of', 'production_diary'].includes(clip.kind));
   const interviews = titleEditorial.filter((clip) => clip.kind === 'interview');
   const additionalClips = titleEditorial.filter((clip) => ['clip', 'featured', 'deleted_scene', 'cast_featurette'].includes(clip.kind));
@@ -114,11 +110,11 @@ export function TitlePage({ titleId }: { titleId: string }) {
                 {title.genre && <><span className="text-slate-600">·</span><span className="text-xs text-slate-300">{title.genre}</span></>}
                 {runtime && <><span className="text-slate-600">·</span><span className="inline-flex items-center gap-1 text-xs text-slate-300"><Clock3 className="h-3.5 w-3.5" />{runtime}</span></>}
               </div>
-              <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-.035em] text-white drop-shadow-lg sm:text-5xl lg:text-6xl">{title.title}</h1>
+              <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-.045em] text-white [text-wrap:balance] drop-shadow-lg sm:text-5xl lg:text-6xl">{title.title}</h1>
               <p className="line-clamp-2 max-w-2xl text-sm leading-7 text-slate-200/90 sm:text-base">{title.synopsis || 'More information about this title will be available soon.'}</p>
-              <div className="flex flex-wrap items-center gap-2 pt-1">
+              <div className="flex flex-wrap items-center gap-2.5 pt-2">
                 {primary}
-                {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
+                {title.trailer_url.trim() !== '' && <button type="button" aria-label={`Watch the official trailer for ${title.title}`} onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
                 <TitleActions title={title} />
                 <button type="button" onClick={() => void shareTitle()} className={BUTTON_SECONDARY}><Share2 className="h-4 w-4" /> Share</button>
               </div>
