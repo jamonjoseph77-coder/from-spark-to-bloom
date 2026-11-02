@@ -6,9 +6,10 @@ interface ArtworkProps {
   alt: string;
   className?: string;
   fallbackTitle?: string;
+  priority?: boolean;
 }
 
-export function Artwork({ src, alt, className = '', fallbackTitle }: ArtworkProps) {
+export function Artwork({ src, alt, className = '', fallbackTitle, priority = false }: ArtworkProps) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   if (!src || failedSrc === src) {
@@ -28,7 +29,9 @@ export function Artwork({ src, alt, className = '', fallbackTitle }: ArtworkProp
     <img
       src={src}
       alt={alt}
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      decoding="async"
       onError={() => setFailedSrc(src)}
       className={`object-cover ${className}`}
     />
