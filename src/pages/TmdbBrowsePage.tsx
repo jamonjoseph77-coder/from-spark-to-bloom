@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
+import { FeaturedBoard } from '@/components/catalogue/FeaturedBoard';
 import { TmdbCard } from '@/components/tmdb/TmdbCard';
 import { TmdbErrorState } from '@/components/tmdb/TmdbErrorState';
 import { EmptyState, LoadingState } from '@/components/ui/StatusViews';
@@ -41,6 +42,7 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8`}>
+      <div className="-mx-4 -mt-6 mb-8 sm:-mx-6 lg:-mx-10"><FeaturedBoard mediaType={mediaType} /></div>
       <header className="space-y-3">
         <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{heading}</h1>
         <p className="max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
