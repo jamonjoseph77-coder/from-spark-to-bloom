@@ -67,7 +67,7 @@ export function HomePage() {
   const { progress } = useLibrary();
   const { data: titles } = useAsyncData(() => fetchPublishedTitles().catch((error) => { console.warn('Cinema licensed catalogue is temporarily unavailable', error); return []; }), []);
   const { data: publishedClips = [] } = useAsyncData(() => fetchPublishedClips().catch((error) => { console.warn('Cinema Shorts are temporarily unavailable', error); return []; }), []);
-  const shorts = useMemo(() => publishedClips.filter((clip) => clip.kind === 'short'), [publishedClips]);
+  const shorts = useMemo(() => (publishedClips ?? []).filter((clip) => clip.kind === 'short'), [publishedClips]);
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
