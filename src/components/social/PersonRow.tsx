@@ -9,8 +9,8 @@ export function PersonRow({ profile, children }: { profile: Profile | null; chil
       <div className="flex min-w-0 items-center gap-4">
         <ProfileAvatar name={name} />
         <div className="min-w-0">
-          <p className="truncate font-semibold text-white">{name}</p>
-          {profile && <p className="truncate text-sm text-slate-400">@{profile.username}</p>}
+          {profile ? <a href={`/profile?username=${encodeURIComponent(profile.username)}`} className="block truncate font-semibold text-white transition hover:text-sky-200">{name}</a> : <p className="truncate font-semibold text-white">{name}</p>}
+          {profile && <a href={`/profile?username=${encodeURIComponent(profile.username)}`} className="block truncate text-sm text-slate-400 hover:text-sky-200">@{profile.username}</a>}
           {profile?.bio && <p className="mt-1 line-clamp-1 text-sm text-slate-300">{profile.bio}</p>}
         </div>
       </div>
