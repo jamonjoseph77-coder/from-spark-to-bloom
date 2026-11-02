@@ -63,7 +63,7 @@ export function CinemaPulse() {
       </div>
       {!data && !error && <LoadingState label="Gathering The Conversation" />}
       {!data && error && <ErrorState onRetry={reload} />}
-      {data && data.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The Conversation starts here" description="Public Posts About Movies And Series Will Appear Here As The Cinema Community Shares Its Thoughts." />}
+      {data && data.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The Conversation Starts Here" description="Public Posts About Movies And Series Will Appear Here As The Cinema Community Shares Its Thoughts." />}
       {data && data.length > 0 && <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{data.slice(0, 6).map((post) => <PulseCard key={post.id} post={post} />)}</div>}
     </section>
   );
