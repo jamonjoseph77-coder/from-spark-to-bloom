@@ -54,7 +54,7 @@ export function SearchPage({ query }: { query: string }) {
     <div className={`${PAGE_CONTAINER} space-y-9 pb-12`}>
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/15 bg-gradient-to-br from-cinema-700/25 via-ink-900 to-ink-950 p-6 shadow-xl shadow-black/20 sm:p-9">
         <div className="absolute -right-12 -top-16 -z-10 h-64 w-64 rounded-full bg-cinema-400/15 blur-3xl" />
-        <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Sparkles aria-hidden="true" className="h-4 w-4" /> Find Your Next Experience</p>
+        <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Sparkles aria-hidden="true" className="h-4 w-4" /> Find your next experience</p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">Search the world of stories.</h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">Find movies, series, genres and the studios behind the stories — all connected to the Cinema experience.</p>
         <form onSubmit={handleSubmit} role="search" className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -78,7 +78,7 @@ export function SearchPage({ query }: { query: string }) {
               <button
                 type="button"
                 onClick={() => setDraft('')}
-                aria-label="Clear Search"
+                aria-label="Clear search"
                 className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
               >
                 <X aria-hidden="true" className="h-4 w-4" />
@@ -111,7 +111,7 @@ export function SearchPage({ query }: { query: string }) {
           </div>
           <div className="space-y-3">
             <p className={LABEL}>Browse by genre</p>
-            {suggestions.length ? <div className="flex flex-wrap gap-2">{suggestions.map((genre) => <a key={genre} href={`/search?q=${encodeURIComponent(genre)}`} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cinema-400/40 hover:text-white">{genre}</a>)}</div> : <p className="text-sm text-slate-400">Genres Will Appear As Titles Are Published.</p>}
+            {suggestions.length ? <div className="flex flex-wrap gap-2">{suggestions.map((genre) => <a key={genre} href={`/search?q=${encodeURIComponent(genre)}`} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cinema-400/40 hover:text-white">{genre}</a>)}</div> : <p className="text-sm text-slate-400">Genres will appear as titles are published.</p>}
           </div>
         </section>
       )}
