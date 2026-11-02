@@ -21,7 +21,7 @@ export function ShortCard({ clip, onOpen }: ShortCardProps) {
         <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/55 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white backdrop-blur-md"><Play className="h-3 w-3 fill-current" /> Short</span>
         <span className="absolute inset-x-3 bottom-3 space-y-2">
           <span className="line-clamp-2 block text-[13px] font-extrabold leading-snug text-white drop-shadow">{clip.headline}</span>
-          <span className="flex items-center gap-1.5 truncate text-[11px] font-medium text-slate-200"><BadgeCheck className="h-3.5 w-3.5 shrink-0 text-sky-300" /> {clip.publisher_name}</span>
+          <span className="flex items-center gap-1.5 truncate text-[11px] font-medium text-slate-200"><BadgeCheck className="h-3.5 w-3.5 shrink-0 text-sky-300" /> {clip.publisher_name || 'Cinema Publisher'}</span>
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-ink-950 shadow-lg transition group-hover:bg-sky-100"><Play className="h-3 w-3 fill-current" /> Watch Short</span>
         </span>
       </button>
