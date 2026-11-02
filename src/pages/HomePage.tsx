@@ -71,7 +71,9 @@ export function HomePage() {
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
-    return { movies: titlesOfType(titles, 'movie'), series: titlesOfType(titles, 'series'), resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
+    const today = new Date().toISOString().slice(0, 10);
+    const comingSoon = titles.filter((title) => Boolean(title.release_date) && title.release_date > today).sort((a, b) => a.release_date.localeCompare(b.release_date));
+    return { movies: titlesOfType(titles, 'movie'), series: titlesOfType(titles, 'series'), comingSoon, resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
   }, [titles, progress]);
 
   return (
@@ -103,6 +105,7 @@ export function HomePage() {
       <TmdbRow heading="Popular series" mediaType="tv" list="popular" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See all</a>} />
       {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available on Cinema" description="Content published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
       {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series available on Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
+      {cinemaShelves && cinemaShelves.comingSoon.length > 0 && <TitleRow heading="Coming Soon" description="Upcoming titles already announced in Cinema." titles={cinemaShelves.comingSoon} />}
       {!titles && <LoadingState label="Loading your Cinema catalogue" />}
       <section className="grid gap-4 md:grid-cols-2">
         <a href="/live-tv" className="group relative isolate min-h-40 overflow-hidden rounded-3xl border border-sky-300/20 bg-[radial-gradient(circle_at_85%_10%,rgba(56,145,255,.2),transparent_45%),linear-gradient(120deg,#0b1728,#080b12)] p-6 transition hover:-translate-y-1 hover:border-sky-200/40">
