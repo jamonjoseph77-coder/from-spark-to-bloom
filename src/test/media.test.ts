@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isDirectVideoUrl, isHlsUrl, isHttpUrl, toEmbedUrl } from '@/lib/media';
+import { getYouTubeThumbnailUrl, getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, isHttpUrl, toEmbedUrl } from '@/lib/media';
 import { isPlayableShort, type DiscoverClip } from '@/lib/clips';
 
 describe('Cinema media URL validation', () => {
@@ -24,6 +24,13 @@ describe('Cinema media URL validation', () => {
     expect(isHttpUrl('https://example.com')).toBe(true);
     expect(isHttpUrl('http://example.com')).toBe(true);
     expect(isHttpUrl('not a URL')).toBe(false);
+  });
+
+  it('extracts YouTube video IDs and thumbnails from supported URL forms', () => {
+    expect(getYouTubeVideoId('https://www.youtube.com/shorts/abcdefgh')).toBe('abcdefgh');
+    expect(getYouTubeVideoId('https://youtu.be/abcdefgh')).toBe('abcdefgh');
+    expect(getYouTubeThumbnailUrl('https://www.youtube.com/watch?v=abcdefgh')).toContain('/vi/abcdefgh/hqdefault.jpg');
+    expect(getYouTubeVideoId('https://youtube.evil.com/shorts/abcdefgh')).toBeNull();
   });
 
   it('builds safe YouTube and Vimeo embeds', () => {
