@@ -1,73 +1,75 @@
 import { useMemo } from 'react';
-import { ArrowRight, Radio, Trophy, Tv, Users, Sparkles } from 'lucide-react';
-import { FeaturedBoard } from '@/components/catalogue/FeaturedBoard';
+import { ArrowRight, Clapperboard, Compass, Users } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleRow } from '@/components/catalogue/TitleRow';
+import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
-import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
+import { LoadingState } from '@/components/ui/StatusViews';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
+import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
-import { comingSoonTitles, progressRatioByTitle, resumeItems, titlesOfType, genresOf, hasGenre } from '@/lib/catalogue';
+import { progressRatioByTitle, resumeItems, titlesOfType } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
 
-function SeeAll({ href, label }: { href: string; label: string }) {
-  return <a href={href} className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-semibold text-cinema-200 transition hover:text-white">{label}<ArrowRight className="h-4 w-4" /></a>;
-}
-
 export function HomePage() {
+  const { user } = useAuth();
   const { progress } = useLibrary();
-  const { data: titles, error, reload } = useAsyncData(
-    () => fetchPublishedTitles().catch((cause) => { console.warn('Cinema catalogue is temporarily unavailable', cause); return []; }),
-    [],
-  );
-  const view = useMemo(() => {
+  const { data: titles } = useAsyncData(() => fetchPublishedTitles().catch((error) => {
+    console.warn('Cinema licensed catalogue is temporarily unavailable', error);
+    return [];
+  }), []);
+
+  const cinemaShelves = useMemo(() => {
     if (!titles) return null;
-    const genres = genresOf(titles).slice(0, 4);
     return {
-      recent: titles.slice(0, 12),
-      upcoming: comingSoonTitles(titles),
       movies: titlesOfType(titles, 'movie'),
       series: titlesOfType(titles, 'series'),
-      live: titlesOfType(titles, 'live'),
-      sports: titlesOfType(titles, 'sport'),
-      news: titlesOfType(titles, 'news'),
       resume: resumeItems(progress, titles),
       ratios: progressRatioByTitle(progress),
-      genreShelves: genres.map((genre) => ({ genre, titles: titles.filter((title) => hasGenre(title, genre)).slice(0, 10) })),
     };
   }, [titles, progress]);
 
-  if (!view) return <div className={PAGE_CONTAINER}>{error ? <ErrorState onRetry={reload} /> : <LoadingState />}</div>;
-
   return (
-    <div className="cinema-home">
-      <div className={PAGE_CONTAINER}>
-        <FeaturedBoard fallbackTitles={titles.slice(0, 5)} />
-      </div>
+    <div className={`${PAGE_CONTAINER} space-y-10 pb-14 sm:space-y-14`}>
+      <TmdbHero />
 
-      <div className={`${PAGE_CONTAINER} space-y-12 pb-16 pt-10 sm:space-y-16`}>
-        <ContinueWatchingRow items={view.resume} />
-        <TitleRow heading="Coming Soon" description="Get a first look at stories arriving next." titles={view.upcoming} action={<SeeAll href="/movies" label="Explore releases" />} />
-        <TitleRow heading="Recently Added to Cinema" description="Titles published by Cinema and its authorised content partners." titles={view.recent} progressById={view.ratios} />
-        <TmdbRow heading="Trending Movies" description="Films audiences are exploring across the world." mediaType="movie" list="trending" action={<SeeAll href="/movies" label="All movies" />} />
-        <TitleRow heading="Movies on Cinema" titles={view.movies} progressById={view.ratios} action={<SeeAll href="/movies" label="Explore movies" />} />
-        <TmdbRow heading="Popular Series" description="Series to discover, follow and explore." mediaType="tv" list="popular" action={<SeeAll href="/series" label="All series" />} />
-        <TitleRow heading="Series on Cinema" titles={view.series} progressById={view.ratios} action={<SeeAll href="/series" label="Explore series" />} />
-        <section className="cinema-home-shortcuts">
-          <a href="/live-tv"><Radio /><span><b>Live TV</b><small>Television, channels and programmes</small></span><ArrowRight /></a>
-          <a href="/sports"><Trophy /><span><b>Sports</b><small>Live events, competitions and highlights</small></span><ArrowRight /></a>
-          <a href="/discover"><Sparkles /><span><b>Discover</b><small>Trailers, clips, shorts and official updates</small></span><ArrowRight /></a>
-          <a href="/friends"><Users /><span><b>Friends</b><small>Share recommendations and enjoy stories together</small></span><ArrowRight /></a>
-        </section>
-        <TitleRow heading="Live Now" description="Live programming available through Cinema." titles={view.live} landscape action={<SeeAll href="/live-tv" label="Open Live TV" />} />
-        <TitleRow heading="Your Sports" description="Sports content available in the Cinema catalogue." titles={view.sports} landscape action={<SeeAll href="/sports" label="Explore sports" />} />
-        <TitleRow heading="News & Current Affairs" titles={view.news} landscape action={<SeeAll href="/news" label="Explore news" />} />
-        {view.genreShelves.map(({ genre, titles }) => <TitleRow key={genre} heading={genre} titles={titles} />)}
-        <TmdbRow heading="More Films to Explore" mediaType="movie" list="popular" action={<SeeAll href="/movies" label="Browse films" />} />
-        <TmdbRow heading="More Series to Explore" mediaType="tv" list="trending" action={<SeeAll href="/series" label="Browse series" />} />
-      </div>
+      {user && cinemaShelves?.resume.length ? <ContinueWatchingRow items={cinemaShelves.resume} /> : null}
+
+      <section className="space-y-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">A world of stories</p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Find your next favourite.</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Explore real movie and series information, official trailers and stories from across the world.</p>
+          </div>
+          <a href="/discover" className="inline-flex items-center gap-2 text-sm font-semibold text-cinema-200 transition hover:text-white">Go to Discover <ArrowRight className="h-4 w-4" /></a>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <a href="/movies" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:border-cinema-300/35 hover:bg-white/[.06]"><span className="grid h-12 w-12 place-items-center rounded-xl bg-cinema-400/10 text-cinema-200"><Clapperboard className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Movies</span><span className="mt-1 block text-xs text-slate-400">Films worth discovering</span></span><ArrowRight className="h-4 w-4 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-200" /></a>
+          <a href="/series" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:border-cinema-300/35 hover:bg-white/[.06]"><span className="grid h-12 w-12 place-items-center rounded-xl bg-cinema-400/10 text-cinema-200"><Clapperboard className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Series</span><span className="mt-1 block text-xs text-slate-400">Stories told episode by episode</span></span><ArrowRight className="h-4 w-4 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-200" /></a>
+          <a href="/friends" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:border-cinema-300/35 hover:bg-white/[.06]"><span className="grid h-12 w-12 place-items-center rounded-xl bg-cinema-400/10 text-cinema-200"><Users className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Friends</span><span className="mt-1 block text-xs text-slate-400">Share what you love</span></span><ArrowRight className="h-4 w-4 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-200" /></a>
+        </div>
+      </section>
+
+      <TmdbRow heading="Trending movies" description="Films audiences are exploring this week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See all</a>} />
+      <TmdbRow heading="Popular movies" mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See all</a>} />
+      <TmdbRow heading="Trending series" description="Series creating conversation around the world." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See all</a>} />
+      <TmdbRow heading="Popular series" mediaType="tv" list="popular" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See all</a>} />
+
+      {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available on Cinema" description="Content published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
+      {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series available on Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
+
+      {!titles && <LoadingState label="Loading your Cinema catalogue" />}
+      <section className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(115deg,rgba(183,164,133,.12),rgba(255,255,255,.025)_50%,rgba(255,255,255,.01))] p-6 sm:p-8">
+        <div className="max-w-3xl">
+          <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">The Cinema experience</p>
+          <h2 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">Discover a story. Experience it. Share it.</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-300">Cinema brings entertainment and the people who love it into one connected destination. Move from a trailer to a title, from a title to a conversation, and from a conversation to watching together.</p>
+          <a href="/discover" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">Explore Discover <Compass className="h-4 w-4" /></a>
+        </div>
+      </section>
       <TmdbAttribution />
     </div>
   );
