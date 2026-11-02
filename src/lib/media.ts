@@ -13,22 +13,23 @@ export function isHttpUrl(value: string): boolean {
   return /^https?:\/\/\S+$/i.test(value.trim());
 }
 
-export function toEmbedUrl(url: string): string | null {
+export function toEmbedUrl(url: string, options: { autoplay?: boolean; muted?: boolean } = {}): string | null {
   try {
     const parsed = new URL(url);
     const host = parsed.hostname.toLowerCase();
+    const autoplay = options.autoplay ? '1' : '0';
+    const muted = options.muted ? '1' : '0';
     if (host === 'youtube.com' || host === 'www.youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com' || host === 'www.youtube-nocookie.com') {
-      const id = parsed.searchParams.get('v')
-        || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
-      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0` : null;
+      const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
+      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}` : null;
     }
     if (host === 'youtu.be') {
       const id = parsed.pathname.slice(1).split('/')[0];
-      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0` : null;
+      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}` : null;
     }
     if (host.endsWith('vimeo.com')) {
       const id = parsed.pathname.split('/').filter(Boolean).pop();
-      return id ? `https://player.vimeo.com/video/${id}` : null;
+      return id ? `https://player.vimeo.com/video/${id}?autoplay=${autoplay}&muted=${muted}` : null;
     }
     return null;
   } catch {
