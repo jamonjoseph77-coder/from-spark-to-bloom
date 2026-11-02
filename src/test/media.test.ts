@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isDirectVideoUrl, isHlsUrl, isHttpUrl, toEmbedUrl } from '@/lib/media';
+import { isPlayableShort, type DiscoverClip } from '@/lib/clips';
 
 describe('Cinema media URL validation', () => {
   it('accepts secure direct video URLs with signed query strings', () => {
@@ -31,5 +32,32 @@ describe('Cinema media URL validation', () => {
     expect(toEmbedUrl('https://vimeo.com/123456')).toContain('player.vimeo.com/video/123456');
     expect(toEmbedUrl('https://evilvimeo.com/123456')).toBeNull();
     expect(toEmbedUrl('http://youtu.be/abcdefgh')).toBeNull();
+  });
+});
+
+describe('Cinema Shorts eligibility', () => {
+  const short = {
+    id: 'short-1',
+    kind: 'short',
+    headline: 'Official Behind-The-Scenes Moment',
+    description: '',
+    video_url: 'https://cdn.example.com/short.mp4?token=abc',
+    poster_url: '',
+    publisher_name: '',
+    title_id: null,
+    duration_seconds: null,
+    sort_order: 1,
+    is_published: true,
+    title: null,
+  } as DiscoverClip;
+
+  it('does not hide approved shorts just because optional poster, publisher, or duration metadata is missing', () => {
+    expect(isPlayableShort(short)).toBe(true);
+  });
+
+  it('rejects unpublished, unsupported, and overlong shorts', () => {
+    expect(isPlayableShort({ ...short, is_published: false })).toBe(false);
+    expect(isPlayableShort({ ...short, video_url: 'https://example.com/article' })).toBe(false);
+    expect(isPlayableShort({ ...short, duration_seconds: 91 })).toBe(false);
   });
 });
