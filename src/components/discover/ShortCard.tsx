@@ -1,4 +1,4 @@
-import { Play } from 'lucide-react';
+import { BadgeCheck, Play } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import type { DiscoverClip } from '@/lib/clips';
 
@@ -9,20 +9,20 @@ interface ShortCardProps {
 
 export function ShortCard({ clip, onOpen }: ShortCardProps) {
   return (
-    <article className="group w-44 shrink-0 snap-start sm:w-52">
+    <article className="group w-[min(43vw,208px)] shrink-0 snap-start sm:w-52">
       <button
         type="button"
         onClick={() => onOpen(clip)}
-        aria-label={`Watch now: ${clip.headline}`}
-        className="relative block aspect-[9/16] w-full overflow-hidden rounded-2xl bg-ink-800 text-left ring-1 ring-white/5 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-2xl group-hover:shadow-black/60 group-hover:ring-cinema-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
+        aria-label={`Watch short: ${clip.headline}`}
+        className="relative block aspect-[9/16] w-full overflow-hidden rounded-[1.35rem] bg-ink-800 text-left shadow-lg shadow-black/25 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cinema-950/40 hover:ring-cinema-300/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
       >
-        <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full transition duration-500 group-hover:scale-105" />
-        <span className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/15 to-transparent" aria-hidden="true" />
-        <span className="absolute left-3 top-3 rounded-md bg-cinema-600 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">Short</span>
+        <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full transition duration-700 group-hover:scale-105" />
+        <span className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/90" aria-hidden="true" />
+        <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/55 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white backdrop-blur-md"><Play className="h-3 w-3 fill-current" /> Short</span>
         <span className="absolute inset-x-3 bottom-3 space-y-2">
-          <span className="line-clamp-2 block text-sm font-semibold leading-snug text-white">{clip.headline}</span>
-          {clip.publisher_name && <span className="block truncate text-xs text-slate-300">{clip.publisher_name}</span>}
-          <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-ink-950 shadow-lg"><Play className="h-3 w-3 fill-current" /> Watch now</span>
+          <span className="line-clamp-2 block text-[13px] font-extrabold leading-snug text-white drop-shadow">{clip.headline}</span>
+          <span className="flex items-center gap-1.5 truncate text-[11px] font-medium text-slate-200"><BadgeCheck className="h-3.5 w-3.5 shrink-0 text-sky-300" /> {clip.publisher_name}</span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-ink-950 shadow-lg transition group-hover:bg-sky-100"><Play className="h-3 w-3 fill-current" /> Watch short</span>
         </span>
       </button>
     </article>
