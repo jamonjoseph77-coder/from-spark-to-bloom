@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type SyntheticEvent } from 'react';
 import type Hls from 'hls.js';
-import { AlertTriangle, Loader2, Radio } from 'lucide-react';
+import { AlertTriangle, Loader2, Radio, Volume2 } from 'lucide-react';
 import { isHlsUrl } from '@/lib/media';
 
 export interface PlaybackProgress {
@@ -41,6 +41,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
   const [errorText, setErrorText] = useState(PLAYBACK_ERROR);
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [quality, setQuality] = useState(-1);
+  const [volume, setVolume] = useState(1);
 
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -107,6 +108,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
 
   function handleLoadedMetadata(event: SyntheticEvent<HTMLVideoElement>) {
     const video = event.currentTarget;
+    video.volume = volume;
     const target = startAtRef.current;
     if (target > 0 && Number.isFinite(video.duration) && target < video.duration - 5) {
       video.currentTime = target;
@@ -128,6 +130,12 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
   }
 
   const hasQualityMenu = levels.length > 1;
+
+  function handleVolumeChange(event: ChangeEvent<HTMLInputElement>) {
+    const next = Number(event.target.value);
+    setVolume(next);
+    if (videoRef.current) videoRef.current.volume = next;
+  }
 
   return (
     <div className="space-y-3">
@@ -172,12 +180,20 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
         )}
       </div>
 
-      {(hasQualityMenu || isLive) && (
+      {(hasQualityMenu || isLive || status === 'ready') && (
         <div className="flex flex-wrap items-center gap-3">
           {isLive && (
             <span className="inline-flex items-center gap-2 rounded-full bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300">
               <Radio className="h-3.5 w-3.5" /> Live
             </span>
+          )}
+          {status === 'ready' && (
+            <label className="flex min-w-0 items-center gap-2 text-sm text-slate-400">
+              <Volume2 className="h-4 w-4 shrink-0 text-cinema-200" />
+              <span className="sr-only">Volume</span>
+              <input aria-label="Volume" type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} className="h-1.5 w-24 cursor-pointer accent-sky-300" />
+              <span className="w-8 text-right text-xs tabular-nums">{Math.round(volume * 100)}%</span>
+            </label>
           )}
           {hasQualityMenu && (
             <label className="flex items-center gap-2 text-sm text-slate-400">
@@ -185,7 +201,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
               <select
                 value={quality}
                 onChange={handleQualityChange}
-                className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-cinema-400 focus:outline-none"
+                className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-sky-300/50 focus:outline-none"
               >
                 <option value={-1}>Auto</option>
                 {levels.map((level) => (

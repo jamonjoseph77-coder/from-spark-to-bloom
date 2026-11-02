@@ -45,6 +45,9 @@ jobs:
           src/pages/LetterboxPage.tsx
           src/components/tmdb/TmdbHero.tsx
           src/components/tmdb/TmdbCard.tsx
+          src/components/player/VideoPlayer.tsx
+          src/components/ui/styles.ts
+          src/pages/TitlePage.tsx
           src/components/layout/navigation.ts
           src/routes/index.tsx
           src/components/tmdb/TmdbErrorState.tsx
