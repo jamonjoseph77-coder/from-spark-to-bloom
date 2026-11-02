@@ -80,13 +80,20 @@ export function hasGenre(title: Title, genre: string): boolean {
   return splitGenres(title.genre).includes(genre);
 }
 
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
+}
+
 export function matchesQuery(title: Title, query: string): boolean {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return true;
-  return [title.title, title.genre, title.synopsis, title.publisher]
-    .join(' ')
-    .toLowerCase()
-    .includes(needle);
+  const tokens = normalizeSearchText(query).split(/\s+/).filter(Boolean);
+  if (!tokens.length) return true;
+  const searchableText = normalizeSearchText([title.title, title.genre, title.synopsis, title.publisher].join(' '));
+  return tokens.every((token) => searchableText.includes(token));
 }
 
 export function sortTitles(titles: Title[], sort: SortOption): Title[] {

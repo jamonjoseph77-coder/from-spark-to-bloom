@@ -4,6 +4,11 @@ const TMDB_BASE = "https://api.themoviedb.org/3";
 const MEDIA_TYPES = ["movie", "tv"];
 const LIST_KINDS = ["popular", "trending"];
 
+// Cache read-only discovery responses briefly to reduce repeat requests and speed up search.
+const responseCache = new Map<string, { expiresAt: number; json: string }>();
+const RESPONSE_CACHE_TTL_MS = 3 * 60 * 1000;
+const MAX_CACHED_RESPONSES = 200;
+
 type RequestBody = { action?: unknown; type?: unknown; list?: unknown; genre?: unknown; page?: unknown; query?: unknown; id?: unknown };
 type Upstream = { path: string; params: Record<string, string> };
 
@@ -69,15 +74,26 @@ export const callTmdbServer = createServerFn({ method: "POST" })
     if ("error" in built) return { ok: false, reason: "unavailable", message: built.error };
     const url = new URL(`${TMDB_BASE}${built.path}`);
     Object.entries(built.params).forEach(([key, value]) => url.searchParams.set(key, value));
+    const cacheKey = url.toString();
+    const cached = responseCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) return { ok: true, json: cached.json };
+    if (cached) responseCache.delete(cacheKey);
+
     const headers: Record<string, string> = { Accept: "application/json" };
     if (readToken) headers.Authorization = `Bearer ${readToken}`;
     else url.searchParams.set("api_key", apiKey as string);
     try {
-      const upstream = await fetch(url, { headers });
+      const upstream = await fetch(url, { headers, signal: AbortSignal.timeout(12_000) });
       if (!upstream.ok) return { ok: false, reason: "unavailable", message: `TMDB returned ${upstream.status}` };
-      return { ok: true, json: await upstream.text() };
+      const json = await upstream.text();
+      responseCache.set(cacheKey, { json, expiresAt: Date.now() + RESPONSE_CACHE_TTL_MS });
+      if (responseCache.size > MAX_CACHED_RESPONSES) {
+        const oldestKey = responseCache.keys().next().value;
+        if (oldestKey) responseCache.delete(oldestKey);
+      }
+      return { ok: true, json };
     } catch (error) {
       console.error("tmdb request failed", error);
-      return { ok: false, reason: "unavailable", message: "TMDB request failed." };
+      return { ok: false, reason: "unavailable", message: "TMDB request timed out or is temporarily unavailable." };
     }
   });

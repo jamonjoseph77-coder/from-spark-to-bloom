@@ -150,9 +150,9 @@ export function SearchPage({ query }: { query: string }) {
               })}</ul> : <p className="rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-400">No Studio Or Publisher Profiles Match This Search.</p>}
             </div>
           )}
-          {(scope === 'all' || scope === 'titles') && <section className="space-y-6"><p className={LABEL}>More To Discover</p><TmdbSearchResults query={trimmed} /></section>}
         </section>
       )}
+      {trimmed && <section className="space-y-4"><div><p className={LABEL}>Search Across Movies & Series</p><p className="mt-1 text-xs text-slate-500">Cinema catalogue results remain available above while additional discovery results load.</p></div><TmdbSearchResults query={trimmed} /></section>}
       <p className="text-xs leading-5 text-slate-500">Studio Verification Confirms An Official Organisation Presence On Cinema. It Does Not Mean Every Title In A Profile Is Licensed For Viewing.</p>
     </div>
   );
