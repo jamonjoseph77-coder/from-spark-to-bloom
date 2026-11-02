@@ -109,7 +109,7 @@ function AdminClipsManager() {
       )}
 
       {editor && (
-        <Modal label={editor.mode === 'edit' ? 'Edit clip' : 'New clip'} onClose={() => setEditor(null)} wide>
+        <Modal label={editor.mode === 'edit' ? 'Edit video' : 'New video'} onClose={() => setEditor(null)} wide>
           <div className="space-y-6 pr-8">
             <h2 className="text-xl font-extrabold text-white">{editor.mode === 'edit' ? 'Edit clip' : 'New clip'}</h2>
             <ClipForm
