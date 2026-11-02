@@ -28,7 +28,7 @@ async function loadHomeSocial(userId: string): Promise<HomeSocial> {
   return { friends, posts, follows };
 }
 
-function HomeCommunity({ social, loading }: { social?: HomeSocial; loading: boolean }) {
+function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loading: boolean }) {
   if (loading && !social) return <section className="rounded-3xl border border-white/8 bg-white/[.025] p-6"><LoadingState label="Loading your Cinema circle" /></section>;
   return (
     <section className="space-y-5">
