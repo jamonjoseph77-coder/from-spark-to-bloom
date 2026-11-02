@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import {
-  ArrowLeft, Building2, CalendarDays, ChevronRight, Clock3, Film,
+  ArrowLeft, Building2, ChevronRight, Clock3, Film,
   MessageCircle, Play, Radio, Share2, Users,
 } from 'lucide-react';
 import { EpisodeList } from '@/components/title/EpisodeList';
