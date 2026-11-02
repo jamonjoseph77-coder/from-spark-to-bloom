@@ -63,6 +63,14 @@ jobs:
           src/routes/index.tsx
           src/components/tmdb/TmdbErrorState.tsx
           src/components/tmdb/TmdbSearchResults.tsx
+          src/components/discover/DiscoverShorts.tsx
+          src/components/discover/ShortCard.tsx
+          src/components/discover/ShortViewer.tsx
+          src/components/discover/OfficialTrailers.tsx
+          src/lib/clips.ts
+          src/lib/media.ts
+          src/pages/BrowsePage.tsx
+          src/test/media.test.ts
           src/hooks/useAsyncData.ts
           src/lib/catalogue.ts
           --rule 'prettier/prettier: off'
