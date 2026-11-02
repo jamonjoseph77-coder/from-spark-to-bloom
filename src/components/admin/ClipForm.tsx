@@ -128,7 +128,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
         <div className="sm:col-span-2">
           <label htmlFor="clip-video" className={LABEL}>Video link</label>
           <input id="clip-video" type="url" className={INPUT} placeholder="https://" value={form.video_url} onChange={(e) => update('video_url', e.target.value)} required />
-          <p className="mt-1.5 text-xs text-slate-500">Direct MP4 or HLS (.m3u8) link, or an approved YouTube or Vimeo link. Only publish material Cinema has permission to distribute.</p>
+          <p className="mt-1.5 text-xs text-slate-500">Paste a direct MP4 or HLS link, or a public YouTube Shorts / YouTube video URL. YouTube thumbnails are filled in automatically when no poster is supplied. Only publish videos Cinema has permission to display.</p>
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="clip-poster" className={LABEL}>Poster image link</label>

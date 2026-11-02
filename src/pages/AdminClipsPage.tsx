@@ -9,16 +9,18 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useToast } from '@/hooks/useToast';
 import { CLIP_KIND_LABEL, deleteClip, fetchAllClips, setClipPublished, type DiscoverClip } from '@/lib/clips';
 import { fetchAllTitles } from '@/lib/library';
+import { fetchPendingCreatorShorts, reviewCreatorShort, type CreatorShortSubmission } from '@/lib/creator-shorts';
 import type { Title } from '@/lib/types';
 
 interface ClipsData {
   clips: DiscoverClip[];
   titles: Title[];
+  submissions: CreatorShortSubmission[];
 }
 
 async function loadClipsData(): Promise<ClipsData> {
-  const [clips, titles] = await Promise.all([fetchAllClips(), fetchAllTitles()]);
-  return { clips, titles };
+  const [clips, titles, submissions] = await Promise.all([fetchAllClips(), fetchAllTitles(), fetchPendingCreatorShorts()]);
+  return { clips, titles, submissions };
 }
 
 type EditorState = { mode: 'new' } | { mode: 'edit'; clip: DiscoverClip } | null;
@@ -37,6 +39,20 @@ function AdminClipsManager() {
       reload();
     } catch {
       notify('That change could not be saved.', 'error');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function reviewSubmission(submission: CreatorShortSubmission, decision: 'approved' | 'rejected') {
+    if (decision === 'approved' && !window.confirm('Publish this creator video to the public Cinema Shorts feed? Confirm that the submitted rights declaration is valid.')) return;
+    setBusyId(submission.id);
+    try {
+      await reviewCreatorShort(submission, decision);
+      notify(decision === 'approved' ? 'Creator Short approved and published.' : 'Creator Short rejected.');
+      reload();
+    } catch {
+      notify('The creator submission could not be reviewed.', 'error');
     } finally {
       setBusyId(null);
     }
@@ -73,6 +89,30 @@ function AdminClipsManager() {
           <Plus className="h-4 w-4" /> New video
         </button>
       </header>
+
+      <section className="space-y-3">
+        <div><h2 className="text-xl font-extrabold text-white">Creator Submissions</h2><p className="text-sm text-slate-400">Review uploaded videos before they appear in Cinema Shorts.</p></div>
+        {data.submissions.length === 0 ? (
+          <p className={`${CARD} text-sm text-slate-400`}>No Creator Shorts Are Waiting For Review.</p>
+        ) : (
+          <ul className="space-y-3">
+            {data.submissions.map((submission) => (
+              <li key={submission.id} className={`${CARD} flex flex-col gap-3 p-4 sm:flex-row sm:items-center`}>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-white">{submission.headline}</p>
+                  <p className="text-xs text-slate-400">{submission.publisher_name} · {submission.duration_seconds ? `${submission.duration_seconds}s` : 'Duration Not Supplied'} · {new Date(submission.created_at).toLocaleDateString()}</p>
+                  {submission.description && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{submission.description}</p>}
+                  <a className="mt-2 inline-block text-xs font-semibold text-cinema-200 underline" href={submission.preview_url ?? '#'} target="_blank" rel="noreferrer">Preview Submitted Video</a>
+                </div>
+                <div className="flex gap-2">
+                  <button type="button" disabled={busyId === submission.id} onClick={() => void reviewSubmission(submission, 'approved')} className={BUTTON_PRIMARY}>Approve</button>
+                  <button type="button" disabled={busyId === submission.id} onClick={() => void reviewSubmission(submission, 'rejected')} className={BUTTON_GHOST}>Reject</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {data.clips.length === 0 ? (
         <p className={`${CARD} text-sm text-slate-400`}>No publisher videos yet. Add approved trailers, behind-the-scenes footage, interviews and clips.</p>

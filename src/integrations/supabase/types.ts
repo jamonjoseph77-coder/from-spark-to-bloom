@@ -271,6 +271,62 @@ export type Database = {
           },
         ]
       }
+      creator_short_submissions: {
+        Row: {
+          id: string
+          user_id: string
+          headline: string
+          description: string
+          publisher_name: string
+          video_path: string
+          poster_path: string | null
+          title_id: string | null
+          duration_seconds: number | null
+          status: 'pending' | 'approved' | 'rejected'
+          review_note: string
+          created_at: string
+          reviewed_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          headline: string
+          description?: string
+          publisher_name: string
+          video_path: string
+          poster_path?: string | null
+          title_id?: string | null
+          duration_seconds?: number | null
+          status?: 'pending' | 'approved' | 'rejected'
+          review_note?: string
+          created_at?: string
+          reviewed_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          headline?: string
+          description?: string
+          publisher_name?: string
+          video_path?: string
+          poster_path?: string | null
+          title_id?: string | null
+          duration_seconds?: number | null
+          status?: 'pending' | 'approved' | 'rejected'
+          review_note?: string
+          created_at?: string
+          reviewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_short_submissions_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       episodes: {
         Row: {
           created_at: string

@@ -23,11 +23,14 @@ export function DiscoverShorts() {
           <h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2>
           <p className="mt-1 max-w-2xl text-sm text-slate-400">Quick, Useful Moments From Official Publishers — Highlights, Previews And Behind-The-Scenes Stories.</p>
         </div>
-        <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up To 90 Seconds</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up To 90 Seconds</span>
+          <a href="/creator/shorts" className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-cinema-300/50 hover:text-cinema-200">Submit A Short</a>
+        </div>
       </div>
       {!data && !error && <LoadingState label="Finding Short Stories" />}
       {!data && error && <ErrorState onRetry={reload} />}
-      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Official Short Videos Will Appear Here When A Publisher-Approved Video And Working Playback Link Are Available." />}
+      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="YouTube Videos And Creator Uploads Will Appear Here After They Are Added And Approved By Cinema." />}
       {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
       </div>}
