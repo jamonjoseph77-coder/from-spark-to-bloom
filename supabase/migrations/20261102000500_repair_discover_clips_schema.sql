@@ -2,6 +2,23 @@
 -- was never applied or where an earlier table was created with an incomplete shape.
 create extension if not exists pgcrypto;
 
+-- Bootstrap the admin roster when the base Drizzle schema has not been applied.
+-- This does NOT grant anyone admin access: only the trusted service role can
+-- insert or change memberships; authenticated users can only check their own row.
+create table if not exists public.admin_users (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+alter table public.admin_users enable row level security;
+revoke all on table public.admin_users from public, anon, authenticated;
+grant select on table public.admin_users to authenticated;
+grant all on table public.admin_users to service_role;
+drop policy if exists "select_own_admin_row" on public.admin_users;
+create policy "select_own_admin_row"
+  on public.admin_users for select to authenticated
+  using (user_id = (select auth.uid()));
+
 -- Match the app's established admin model: membership in public.admin_users.
 -- SECURITY DEFINER lets RLS policies check membership without granting users
 -- direct read access to the admin roster.
