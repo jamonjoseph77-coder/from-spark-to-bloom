@@ -4,9 +4,13 @@ import { BUTTON_PRIMARY } from '@/components/ui/styles';
 
 export function LoadingState({ label = 'Loading' }: { label?: string }) {
   return (
-    <div role="status" className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-slate-400">
-      <Loader2 className="h-7 w-7 animate-spin text-cinema-400" aria-hidden="true" />
-      <span className="text-sm">{label}...</span>
+    <div role="status" aria-live="polite" className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-slate-400">
+      <span className="relative grid h-16 w-16 place-items-center rounded-2xl border border-cinema-300/20 bg-cinema-500/[0.08] shadow-[0_0_40px_rgba(37,99,235,.12)]">
+        <span className="absolute inset-0 animate-ping rounded-2xl border border-cinema-300/20" />
+        <Loader2 className="h-7 w-7 animate-spin text-cinema-300" aria-hidden="true" />
+      </span>
+      <span className="text-sm font-medium">{label}...</span>
+      <span className="h-1 w-32 overflow-hidden rounded-full bg-white/10"><span className="block h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-cinema-500 to-sky-300" /></span>
     </div>
   );
 }
