@@ -48,7 +48,7 @@ function CreatorShortsPage() {
     const videoPath = `${base}/video-${video.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
     let posterPath: string | null = null;
     try {
-      const { error: uploadError } = await supabase.storage.from('cinema-shorts').upload(videoPath, video, {
+      const { error: uploadError } = await supabase.storage.from('cinema-creator-submissions').upload(videoPath, video, {
         contentType: video.type,
         upsert: false,
       });
