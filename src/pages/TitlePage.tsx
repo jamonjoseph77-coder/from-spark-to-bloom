@@ -1,5 +1,8 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { ArrowLeft, Film, Play, Radio, Share2, Users, MessageCircle } from 'lucide-react';
+import {
+  ArrowLeft, Building2, CalendarDays, ChevronRight, Clock3, Film,
+  MessageCircle, Play, Radio, Share2, Users,
+} from 'lucide-react';
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
@@ -51,12 +54,16 @@ export function TitlePage({ titleId }: { titleId: string }) {
 
   let primary: ReactNode;
   if (title.type === 'series') {
-    primary = firstEpisode ? <a href={`/watch/${title.id}?ep=${firstEpisode.id}`} className={BUTTON_PRIMARY}><Play className="h-4 w-4 fill-current" /> Play first episode</a> : <span className="text-sm text-slate-400">Episodes are not available yet.</span>;
+    primary = firstEpisode
+      ? <a href={`/watch/${title.id}?ep=${firstEpisode.id}`} className={BUTTON_PRIMARY}><Play className="h-4 w-4 fill-current" /> Play first episode</a>
+      : <span className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-400">Episodes are not available yet.</span>;
   } else if (title.playback_url.trim() !== '') {
-    primary = <a href={`/watch/${title.id}`} className={BUTTON_PRIMARY}>{title.type === 'live' ? <Radio className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}{title.type === 'live' ? 'Watch live' : canResume ? 'Resume' : 'Play'}</a>;
-  } else primary = <span className="text-sm text-slate-400">This title is not available to watch yet.</span>;
+    primary = <a href={`/watch/${title.id}`} className={BUTTON_PRIMARY}>{title.type === 'live' ? <Radio className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}{title.type === 'live' ? 'Watch live' : canResume ? 'Resume watching' : 'Watch now'}</a>;
+  } else {
+    primary = <span className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-400">Viewing is not available yet</span>;
+  }
 
-  const shareableTitle = title as NonNullable<typeof title>;
+  const shareableTitle = title;
   async function shareTitle() {
     const url = window.location.href;
     try {
@@ -69,54 +76,117 @@ export function TitlePage({ titleId }: { titleId: string }) {
   }
 
   const runtime = formatDuration(title.duration_minutes);
+  const release = title.release_date
+    ? new Date(title.release_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+    : title.release_year ? String(title.release_year) : '';
+
   return (
     <div className="animate-fade-in">
       <section className="relative isolate overflow-hidden border-b border-white/5">
-        <Artwork src={title.backdrop_url || title.poster_url} alt="" fallbackTitle={title.title} className="absolute inset-0 -z-10 h-full w-full object-cover object-top opacity-60" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/75 to-ink-950/20" />
-        <div className={`${PAGE_CONTAINER} flex min-h-[34rem] flex-col items-start gap-6 pb-12 pt-20 sm:min-h-[39rem] sm:gap-8 sm:pb-16 sm:pt-28 md:flex-row md:items-end`}>
-          <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="block aspect-[3/4] w-32 flex-none rounded-[1.2rem] border border-white/15 shadow-[0_28px_80px_rgba(0,0,0,.65)] ring-1 ring-sky-200/10 sm:w-40 md:w-52 md:rounded-[1.6rem] lg:w-64" />
-          <div className="max-w-2xl space-y-5">
-            <a href={`/${BROWSE_PATH[title.type]}`} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white"><ArrowLeft className="h-4 w-4" /> {TITLE_TYPE_LABELS[title.type]}</a>
-            {!title.is_published && <p className="inline-block rounded-md bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Draft: only administrators can see this title</p>}
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">{title.title}</h1>
-            <p className="text-sm text-slate-300">{[title.release_year, runtime, title.genre].filter(Boolean).join(' · ')}</p>
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              {primary}
-              {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
-              <TitleActions title={title} />
-              <button type="button" onClick={() => void shareTitle()} className={BUTTON_SECONDARY}><Share2 className="h-4 w-4" /> Share</button>
+        <Artwork src={title.backdrop_url || title.poster_url} alt="" fallbackTitle={title.title} className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-55" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#080d14] via-[#080d14]/85 to-[#080d14]/35" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/35 to-[#080d14]/20" />
+        <div className={`${PAGE_CONTAINER} !pb-12 !pt-8 sm:!pt-12`}>
+          <a href={`/${BROWSE_PATH[title.type]}`} className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-2 text-xs font-semibold text-slate-200 backdrop-blur transition hover:border-white/25 hover:bg-black/40 hover:text-white">
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to {TITLE_TYPE_LABELS[title.type]}
+          </a>
+          {!title.is_published && <p className="mb-4 inline-flex rounded-md bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Draft · visible to administrators only</p>}
+          <div className="grid items-end gap-7 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10 lg:grid-cols-[minmax(220px,300px)_minmax(0,1fr)]">
+            <div className="mx-auto w-36 sm:w-44 md:mx-0 md:w-full">
+              <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="aspect-[2/3] w-full rounded-2xl border border-white/15 shadow-[0_28px_90px_rgba(0,0,0,.65)] ring-1 ring-sky-200/10 sm:rounded-3xl" />
+            </div>
+            <div className="max-w-3xl space-y-5 pb-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-sky-200/25 bg-sky-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[.18em] text-sky-100">{TITLE_TYPE_LABELS[title.type]}</span>
+                {title.release_year && <span className="text-xs font-semibold text-slate-300">{title.release_year}</span>}
+                {title.genre && <><span className="text-slate-600">·</span><span className="text-xs text-slate-300">{title.genre}</span></>}
+                {runtime && <><span className="text-slate-600">·</span><span className="inline-flex items-center gap-1 text-xs text-slate-300"><Clock3 className="h-3.5 w-3.5" />{runtime}</span></>}
+              </div>
+              <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-.035em] text-white drop-shadow-lg sm:text-5xl lg:text-6xl">{title.title}</h1>
+              <p className="max-w-2xl text-sm leading-7 text-slate-200/90 sm:text-base">{title.synopsis || 'More information about this title will be available soon.'}</p>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {primary}
+                {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
+                <TitleActions title={title} />
+                <button type="button" onClick={() => void shareTitle()} className={BUTTON_SECONDARY}><Share2 className="h-4 w-4" /> Share</button>
+              </div>
+              {title.publisher && (
+                <a href={publisherHref(title.publisher)} className="inline-flex items-center gap-2 pt-1 text-sm font-semibold text-slate-300 transition hover:text-white">
+                  <Building2 className="h-4 w-4 text-sky-200" /> {title.publisher} <ChevronRight className="h-4 w-4 text-slate-500" />
+                </a>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      <div className={`${PAGE_CONTAINER} space-y-12`}>
-        <section className="grid gap-4 sm:grid-cols-2">
-          <a href="/friends" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900/75 p-5 transition hover:border-cinema-400/35 hover:bg-ink-850"><span className="grid h-11 w-11 place-items-center rounded-xl bg-cinema-500/15 text-cinema-200"><Users className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Share with your friends</span><span className="mt-1 block text-sm text-slate-400">Bring your circle into the conversation.</span></span><MessageCircle className="h-5 w-5 text-slate-500 transition group-hover:text-cinema-200" /></a>
-          <a href={`/watch-parties`} className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900/75 p-5 transition hover:border-cinema-400/35 hover:bg-ink-850"><span className="grid h-11 w-11 place-items-center rounded-xl bg-cinema-500/15 text-cinema-200"><Play className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Experience it together</span><span className="mt-1 block text-sm text-slate-400">Create or join a watch party.</span></span><ArrowLeft className="h-5 w-5 rotate-180 text-slate-500 transition group-hover:text-cinema-200" /></a>
+      <div className={`${PAGE_CONTAINER} !pt-8 sm:!pt-10`}>
+        <section className="grid gap-3 sm:grid-cols-2">
+          <a href="/friends" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900/75 p-4 transition hover:border-sky-200/25 hover:bg-ink-850 sm:p-5">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-sky-300/10 text-sky-100"><Users className="h-5 w-5" /></span>
+            <span className="min-w-0 flex-1"><span className="block font-bold text-white">Bring your friends in</span><span className="mt-1 block text-sm text-slate-400">Share this title and see what your circle is talking about.</span></span>
+            <ChevronRight className="h-5 w-5 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-sky-100" />
+          </a>
+          <a href="/watch-parties" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-ink-900/75 p-4 transition hover:border-sky-200/25 hover:bg-ink-850 sm:p-5">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white/5 text-slate-100"><Play className="h-5 w-5" /></span>
+            <span className="min-w-0 flex-1"><span className="block font-bold text-white">Watch together</span><span className="mt-1 block text-sm text-slate-400">Explore watch parties connected to this title.</span></span>
+            <ChevronRight className="h-5 w-5 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-sky-100" />
+          </a>
         </section>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <div className="space-y-10">
-            <section className="space-y-4"><h2 className={SECTION_HEADING}>About this title</h2><p className="max-w-3xl text-base leading-relaxed text-slate-300">{title.synopsis || 'A synopsis has not been added for this title yet.'}</p></section>
-            {titleShorts.length > 0 && <section className="space-y-5"><div><h2 className={SECTION_HEADING}>Shorts from this story</h2><p className="mt-1 text-sm text-slate-400">Short videos and first looks connected to {title.title}.</p></div><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}</div></section>}
-            {titleClips.length > 0 && <section className="space-y-4"><h2 className={SECTION_HEADING}>More from the publisher</h2><div className="grid gap-3 sm:grid-cols-2">{titleClips.map((clip) => <button key={clip.id} type="button" onClick={() => setActiveShort(clip)} className="rounded-xl border border-white/10 bg-ink-900 p-4 text-left transition hover:border-cinema-400/30"><p className="font-semibold text-white">{clip.headline}</p><p className="mt-1 line-clamp-2 text-sm text-slate-400">{clip.description}</p></button>)}</div></section>}
-            {title.type === 'series' && <section className="space-y-5"><h2 className={SECTION_HEADING}>Episodes</h2><EpisodeList titleId={title.id} seasons={seasons} /></section>}
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_290px] lg:gap-12">
+          <div className="min-w-0 space-y-11">
+            <section className="space-y-3">
+              <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">The story</p><h2 className={SECTION_HEADING}>About {title.title}</h2></div>
+              <p className="max-w-3xl text-sm leading-8 text-slate-300 sm:text-base">{title.synopsis || 'A synopsis has not been added for this title yet.'}</p>
+            </section>
+
+            {title.type === 'series' && (
+              <section className="space-y-5">
+                <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Explore the series</p><h2 className={SECTION_HEADING}>Episodes and seasons</h2></div>
+                <EpisodeList titleId={title.id} seasons={seasons} />
+              </section>
+            )}
+
+            {(titleShorts.length > 0 || titleClips.length > 0) && (
+              <section className="space-y-5">
+                <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">More to experience</p><h2 className={SECTION_HEADING}>Videos from this title</h2><p className="mt-1 text-sm text-slate-400">Publisher-provided shorts and clips connected to {title.title}.</p></div>
+                {titleShorts.length > 0 && <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}</div>}
+                {titleClips.length > 0 && <div className="grid gap-3 sm:grid-cols-2">{titleClips.map((clip) => <button key={clip.id} type="button" onClick={() => setActiveShort(clip)} className="rounded-xl border border-white/10 bg-ink-900/70 p-4 text-left transition hover:border-sky-200/25 hover:bg-ink-850"><span className="mb-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[.16em] text-sky-200"><Film className="h-3 w-3" /> Publisher clip</span><span className="block font-semibold text-white">{clip.headline}</span><span className="mt-1 block line-clamp-2 text-sm leading-6 text-slate-400">{clip.description}</span></button>)}</div>}
+              </section>
+            )}
+
+            <section className="space-y-5 border-t border-white/10 pt-9">
+              <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Your circle and the story</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">The conversation</h2><p className="mt-1 text-sm text-slate-400">Share a Letterbox message, recommendation or thought about this title.</p></div>
+              <LetterboxPage embedded titleId={title.id} />
+            </section>
           </div>
-          <aside className={`${CARD} h-fit space-y-4 text-sm`} aria-label="Title details">
-            <DetailRow label="Type" value={TITLE_TYPE_LABELS[title.type]} />
-            <DetailRow label="Publisher" value={title.publisher} href={title.publisher ? publisherHref(title.publisher) : undefined} />
-            <DetailRow label="Release date" value={title.release_date ? new Date(title.release_date).toLocaleDateString() : title.release_year ? String(title.release_year) : ''} />
-            <DetailRow label="Runtime" value={runtime} /><DetailRow label="Genre" value={title.genre} /><DetailRow label="Availability" value={title.availability} />
-            <p className="pt-2 text-xs text-slate-500">{titleMeta(title)}</p>
+
+          <aside className="space-y-5">
+            <section className={`${CARD} space-y-4`} aria-label="Title information">
+              <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-sky-200/75">At a glance</p><h2 className="mt-1 text-lg font-extrabold text-white">Title information</h2></div>
+              <DetailRow label="Format" value={TITLE_TYPE_LABELS[title.type]} />
+              <DetailRow label="Publisher" value={title.publisher} href={title.publisher ? publisherHref(title.publisher) : undefined} />
+              <DetailRow label="Release" value={release} />
+              <DetailRow label="Runtime" value={runtime} />
+              <DetailRow label="Genre" value={title.genre} />
+              <DetailRow label="Availability" value={title.availability} />
+              <p className="border-t border-white/5 pt-3 text-xs leading-5 text-slate-500">{titleMeta(title)}</p>
+            </section>
+            {title.publisher && (
+              <a href={publisherHref(title.publisher)} className="group block rounded-2xl border border-white/10 bg-gradient-to-br from-sky-300/[.10] to-ink-900 p-5 transition hover:border-sky-200/25">
+                <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-black/20 text-sky-100"><Building2 className="h-5 w-5" /></span>
+                <span className="mt-4 block text-[10px] font-bold uppercase tracking-[.18em] text-sky-200/75">Explore publisher</span>
+                <span className="mt-1 flex items-center justify-between gap-3 font-bold text-white">{title.publisher}<ChevronRight className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-sky-100" /></span>
+                <span className="mt-2 block text-sm leading-6 text-slate-400">Discover more titles and published videos from this publisher.</span>
+              </a>
+            )}
           </aside>
         </div>
-        <section className="space-y-5 border-t border-white/10 pt-9">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/80">Around this story</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">The conversation</h2><p className="mt-1 text-sm text-slate-400">Share a Letterbox message, recommendation or thought about this title.</p></div>
-          <LetterboxPage embedded titleId={title.id} />
+
+        <section className="mt-12 border-t border-white/10 pt-9">
+          <TitleRow heading="More like this" titles={related} />
         </section>
-        <TitleRow heading="More like this" titles={related} />
       </div>
       {trailerOpen && <VideoDialog {...titleTrailerSource(title)} onClose={() => setTrailerOpen(false)} />}
       {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
@@ -126,5 +196,5 @@ export function TitlePage({ titleId }: { titleId: string }) {
 
 function DetailRow({ label, value, href }: { label: string; value: string; href?: string }) {
   if (!value) return null;
-  return <div className="flex justify-between gap-4 border-b border-white/5 pb-3 last:border-0 last:pb-0"><span className="text-slate-400">{label}</span>{href ? <a href={href} className="text-right font-semibold text-cinema-300 transition hover:text-white">{value}</a> : <span className="text-right font-semibold text-slate-100">{value}</span>}</div>;
+  return <div className="flex justify-between gap-4 border-b border-white/5 pb-3 last:border-0 last:pb-0"><span className="text-slate-400">{label}</span>{href ? <a href={href} className="text-right font-semibold text-sky-200 transition hover:text-white">{value}</a> : <span className="text-right font-semibold text-slate-100">{value}</span>}</div>;
 }
