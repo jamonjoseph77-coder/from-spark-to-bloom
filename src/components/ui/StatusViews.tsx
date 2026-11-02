@@ -23,9 +23,9 @@ export function ErrorState({ onRetry }: { onRetry?: () => void }) {
   return (
     <EmptyState
       icon={<AlertTriangle className="h-7 w-7 text-amber-400" />}
-      title="We could not load this right now"
-      description="Check your connection and try again. If the problem continues, come back in a few minutes."
-      action={onRetry && <button type="button" onClick={onRetry} className={BUTTON_PRIMARY}>Try again</button>}
+      title="We Could Not Load This Right Now"
+      description="Check Your Connection And Try Again. If The Problem Continues, Please Try Again In A Few Minutes."
+      action={onRetry && <button type="button" onClick={onRetry} className={BUTTON_PRIMARY}>Try Again</button>}
     />
   );
 }
