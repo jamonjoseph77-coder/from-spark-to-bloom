@@ -29,6 +29,156 @@ export type Database = {
         }
         Relationships: []
       }
+      letterbox_posts: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          image_url: string | null
+          status: string
+          title_id: string | null
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          status?: string
+          title_id?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          status?: string
+          title_id?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letterbox_posts_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      letterbox_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          reaction?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letterbox_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "letterbox_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      letterbox_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          status: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          status?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letterbox_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "letterbox_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_accounts: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          logo_url: string | null
+          owner_id: string
+          studio_name: string
+          updated_at: string
+          verification_status: string
+          verified_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          logo_url?: string | null
+          owner_id: string
+          studio_name: string
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          logo_url?: string | null
+          owner_id?: string
+          studio_name?: string
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       discover_clips: {
         Row: {
           created_at: string
