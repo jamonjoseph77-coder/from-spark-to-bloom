@@ -55,10 +55,11 @@ export function TitlePage({ titleId }: { titleId: string }) {
     primary = <a href={`/watch/${title.id}`} className={BUTTON_PRIMARY}>{title.type === 'live' ? <Radio className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}{title.type === 'live' ? 'Watch live' : canResume ? 'Resume' : 'Play'}</a>;
   } else primary = <span className="text-sm text-slate-400">This title is not available to watch yet.</span>;
 
+  const shareableTitle = title as NonNullable<typeof title>;
   async function shareTitle() {
     const url = window.location.href;
     try {
-      if (navigator.share) await navigator.share({ title: title.title, text: `Explore ${title.title} on Cinema`, url });
+      if (navigator.share) await navigator.share({ title: shareableTitle.title, text: `Explore ${shareableTitle.title} on Cinema`, url });
       else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url); notify('Title link copied. Share it with your friends.'); }
       else notify('Copy this page address to share the title.');
     } catch (cause) {
