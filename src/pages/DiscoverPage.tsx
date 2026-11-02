@@ -10,7 +10,7 @@ export function DiscoverPage() {
         <div className="relative max-w-2xl space-y-3">
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-cinema-300"><Compass className="h-4 w-4" /> Explore Cinema</p>
           <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Find your next story.</h1>
-          <p className="text-sm leading-relaxed text-slate-300 sm:text-base">Watch official trailers and explore movies and series worth discovering. Every trailer is presented as a preview of its full title.</p>
+          <p className="text-sm leading-relaxed text-slate-300 sm:text-base">Watch official trailers and teasers, then explore movies and series worth discovering. Promotional videos come from the approved official-video feed.</p>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-300"><Sparkles className="h-3.5 w-3.5 text-cinema-300" /> Official previews. More to explore.</div>
         </div>
       </header>
