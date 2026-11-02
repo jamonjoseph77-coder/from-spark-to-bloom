@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import {
   ArrowLeft, Building2, ChevronRight, Clock3, Film,
-  MessageCircle, Play, Radio, Share2, Users,
+  Play, Radio, Share2, Users,
 } from 'lucide-react';
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
