@@ -53,6 +53,11 @@ export function SearchPage({ query }: { query: string }) {
   const suggestions = useMemo(() => genresOf(titles ?? []).slice(0, 10), [titles]);
   const trimmed = query.trim();
 
+  function clearSearch() {
+    setDraft('');
+    if (query.trim()) navigateTo('/search');
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextQuery = draft.trim();
@@ -77,7 +82,7 @@ export function SearchPage({ query }: { query: string }) {
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === 'Escape') setDraft('');
+                if (event.key === 'Escape') clearSearch();
               }}
               placeholder="Search Titles, Genres, Studios Or Publishers..."
               autoComplete="off"
@@ -85,7 +90,7 @@ export function SearchPage({ query }: { query: string }) {
               className={`${INPUT} !rounded-full !border-0 !bg-transparent py-4 pl-11 pr-12 text-base shadow-none focus:!ring-0`}
             />
             {draft && (
-              <button type="button" onClick={() => setDraft('')} aria-label="Clear Search" className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
+              <button type="button" onClick={clearSearch} aria-label="Clear Search" className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
                 <X aria-hidden="true" className="h-4 w-4" />
               </button>
             )}
