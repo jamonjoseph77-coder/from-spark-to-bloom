@@ -72,7 +72,7 @@ export function HomePage() {
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
     const today = new Date().toISOString().slice(0, 10);
-    const comingSoon = titles.filter((title) => Boolean(title.release_date) && title.release_date > today).sort((a, b) => a.release_date.localeCompare(b.release_date));
+    const comingSoon = titles.filter((title) => title.release_date != null && title.release_date > today).sort((a, b) => (a.release_date ?? '').localeCompare(b.release_date ?? ''));
     return { movies: titlesOfType(titles, 'movie'), series: titlesOfType(titles, 'series'), comingSoon, resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
   }, [titles, progress]);
 
