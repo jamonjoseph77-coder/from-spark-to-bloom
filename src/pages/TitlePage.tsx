@@ -103,7 +103,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
                 {runtime && <><span className="text-slate-600">·</span><span className="inline-flex items-center gap-1 text-xs text-slate-300"><Clock3 className="h-3.5 w-3.5" />{runtime}</span></>}
               </div>
               <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-.035em] text-white drop-shadow-lg sm:text-5xl lg:text-6xl">{title.title}</h1>
-              <p className="max-w-2xl text-sm leading-7 text-slate-200/90 sm:text-base">{title.synopsis || 'More information about this title will be available soon.'}</p>
+              <p className="line-clamp-2 max-w-2xl text-sm leading-7 text-slate-200/90 sm:text-base">{title.synopsis || 'More information about this title will be available soon.'}</p>
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 {primary}
                 {title.trailer_url.trim() !== '' && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Film className="h-4 w-4" /> Watch trailer</button>}
