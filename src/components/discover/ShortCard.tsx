@@ -13,7 +13,7 @@ export function ShortCard({ clip, onOpen }: ShortCardProps) {
       <button
         type="button"
         onClick={() => onOpen(clip)}
-        aria-label={`Watch short: ${clip.headline}`}
+        aria-label={`Watch Short: ${clip.headline}`}
         className="relative block aspect-[9/16] w-full overflow-hidden rounded-[1.35rem] bg-ink-800 text-left shadow-lg shadow-black/25 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cinema-950/40 hover:ring-cinema-300/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
       >
         <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full transition duration-700 group-hover:scale-105" />
@@ -22,7 +22,7 @@ export function ShortCard({ clip, onOpen }: ShortCardProps) {
         <span className="absolute inset-x-3 bottom-3 space-y-2">
           <span className="line-clamp-2 block text-[13px] font-extrabold leading-snug text-white drop-shadow">{clip.headline}</span>
           <span className="flex items-center gap-1.5 truncate text-[11px] font-medium text-slate-200"><BadgeCheck className="h-3.5 w-3.5 shrink-0 text-sky-300" /> {clip.publisher_name}</span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-ink-950 shadow-lg transition group-hover:bg-sky-100"><Play className="h-3 w-3 fill-current" /> Watch short</span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-extrabold text-ink-950 shadow-lg transition group-hover:bg-sky-100"><Play className="h-3 w-3 fill-current" /> Watch Short</span>
         </span>
       </button>
     </article>
