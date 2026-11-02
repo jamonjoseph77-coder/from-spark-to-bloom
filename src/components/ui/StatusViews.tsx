@@ -1,22 +1,20 @@
 import type { ReactNode } from 'react';
-import { AlertTriangle, Clapperboard, Sparkles } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { BUTTON_PRIMARY } from '@/components/ui/styles';
 
-export function LoadingState({ label = 'Getting your stories ready' }: { label?: string }) {
+export function LoadingState({ label = 'Getting Your Stories Ready' }: { label?: string }) {
   return (
     <div role="status" aria-live="polite" className="flex min-h-[28vh] flex-col items-center justify-center gap-3 px-4 py-8 text-center text-slate-400">
-      <span className="relative grid h-16 w-16 place-items-center rounded-[1.35rem] border border-sky-200/20 bg-[radial-gradient(circle_at_30%_20%,rgba(125,190,255,.24),rgba(21,55,99,.18)_52%,rgba(5,12,25,.9))] shadow-[inset_0_1px_12px_rgba(255,255,255,.08),0_10px_36px_rgba(22,103,210,.16)]">
-        <span className="absolute -inset-1 rounded-[1.55rem] border border-sky-300/20 animate-ping [animation-duration:2.8s]" />
-        <span className="absolute inset-0 rounded-[1.35rem] bg-sky-300/10 animate-pulse" />
-        <Clapperboard className="relative h-7 w-7 origin-top text-sky-100 drop-shadow-[0_0_12px_rgba(96,165,250,.8)] animate-[cinema-clap_1.6s_ease-in-out_infinite]" aria-hidden="true" />
-        <Sparkles className="absolute -right-2 -top-2 h-4 w-4 animate-bounce text-cyan-200" aria-hidden="true" />
+      <span className="relative grid h-16 w-16 place-items-center rounded-full border border-sky-200/20 bg-ink-900 shadow-[0_12px_40px_rgba(22,103,210,.18)]">
+        <span className="absolute -inset-2 rounded-full border border-sky-300/15 animate-pulse" />
+        <img src="/cinema-icon.png" alt="" className="relative h-12 w-12 rounded-full object-cover" />
       </span>
       <span className="text-sm font-bold text-slate-100">{label}</span>
-      <span className="max-w-xs text-xs leading-5 text-slate-500">A little moment while we get everything ready for you.</span>
+      <span className="max-w-xs text-xs leading-5 text-slate-500">Getting Your Cinema Experience Ready.</span>
       <span className="mt-1 h-1 w-28 overflow-hidden rounded-full bg-white/[.08]">
         <span className="block h-full w-2/5 animate-[cinema-loading_1.5s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-cinema-500 via-sky-200 to-cinema-400" />
       </span>
-      <style>{`@keyframes cinema-clap { 0%, 100% { transform: rotate(0deg); } 18%, 34% { transform: rotate(-17deg); } 48% { transform: rotate(3deg); } } @keyframes cinema-loading { 0% { transform: translateX(-130%); } 100% { transform: translateX(280%); } }`}</style>
+      <style>{`@keyframes cinema-loading { 0% { transform: translateX(-130%); } 100% { transform: translateX(280%); } }`}</style>
     </div>
   );
 }
