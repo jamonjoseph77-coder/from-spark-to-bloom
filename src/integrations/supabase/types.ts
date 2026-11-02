@@ -36,10 +36,10 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
-          status: string
+          status: 'published' | 'hidden' | 'removed'
           title_id: string | null
           updated_at: string
-          visibility: string
+          visibility: 'public' | 'friends'
         }
         Insert: {
           author_id: string
@@ -47,10 +47,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
-          status?: string
+          status?: 'published' | 'hidden' | 'removed'
           title_id?: string | null
           updated_at?: string
-          visibility?: string
+          visibility?: 'public' | 'friends'
         }
         Update: {
           author_id?: string
@@ -58,10 +58,10 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
-          status?: string
+          status?: 'published' | 'hidden' | 'removed'
           title_id?: string | null
           updated_at?: string
-          visibility?: string
+          visibility?: 'public' | 'friends'
         }
         Relationships: [
           {
@@ -78,21 +78,21 @@ export type Database = {
           created_at: string
           id: string
           post_id: string
-          reaction: string
+          reaction: 'like' | 'love' | 'fire' | 'laugh' | 'wow'
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           post_id: string
-          reaction?: string
+          reaction?: 'like' | 'love' | 'fire' | 'laugh' | 'wow'
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
           post_id?: string
-          reaction?: string
+          reaction?: 'like' | 'love' | 'fire' | 'laugh' | 'wow'
           user_id?: string
         }
         Relationships: [
@@ -149,7 +149,7 @@ export type Database = {
           owner_id: string
           studio_name: string
           updated_at: string
-          verification_status: string
+          verification_status: 'pending' | 'verified' | 'rejected' | 'suspended'
           verified_at: string | null
           website_url: string | null
         }
@@ -161,7 +161,7 @@ export type Database = {
           owner_id: string
           studio_name: string
           updated_at?: string
-          verification_status?: string
+          verification_status?: 'pending' | 'verified' | 'rejected' | 'suspended'
           verified_at?: string | null
           website_url?: string | null
         }
