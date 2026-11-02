@@ -20,7 +20,6 @@ export async function fetchLetterboxFeed(limit = 40, authorId?: string): Promise
     .from('letterbox_posts')
     .select('*')
     .eq('status', 'published')
-    .eq('visibility', 'public')
     .order('created_at', { ascending: false })
     .limit(limit);
   if (authorId) postsQuery = postsQuery.eq('author_id', authorId);
