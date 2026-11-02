@@ -29,26 +29,26 @@ export function HeroBanner({ titles }: { titles: Title[] }) {
       aria-label="Featured titles"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="relative isolate h-[30rem] overflow-hidden rounded-3xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/40 sm:h-[34rem]"
+      className="group relative isolate h-[31rem] overflow-hidden rounded-[1.75rem] border border-sky-200/15 bg-ink-900 shadow-[0_28px_90px_rgba(0,0,0,.48)] sm:h-[36rem] sm:rounded-[2rem]"
     >
       <Artwork
         key={current.id}
         src={current.backdrop_url || current.poster_url}
         alt=""
         fallbackTitle={current.title}
-        className="absolute inset-0 h-full w-full animate-fade-in object-cover object-top"
+        className="absolute inset-0 h-full w-full scale-[1.015] animate-fade-in object-cover object-center transition-transform duration-[9000ms] group-hover:scale-[1.06]"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/75 to-ink-950/10" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#030711] via-[#030711]/85 via-45% to-[#030711]/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#030711] via-[#030711]/25 to-transparent" />
 
-      <div key={`copy-${current.id}`} className="relative flex h-full max-w-2xl animate-rise-in flex-col justify-end gap-4 p-6 sm:p-10">
+      <div key={`copy-${current.id}`} className="relative flex h-full max-w-2xl animate-rise-in flex-col justify-end gap-4 p-6 pb-12 sm:justify-center sm:p-10 lg:p-14">
         <div className="flex flex-wrap items-center gap-3">
           <span className="rounded-full border border-cinema-400/40 bg-cinema-500/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-cinema-100">
             Featured
           </span>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">{titleMeta(current)}</p>
         </div>
-        <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl">{current.title}</h1>
+        <h1 className="max-w-xl text-4xl font-black leading-[1.02] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,.55)] sm:text-5xl lg:text-6xl">{current.title}</h1>
         {current.synopsis && (
           <p className="line-clamp-3 text-sm leading-relaxed text-slate-300 sm:text-base">{current.synopsis}</p>
         )}
