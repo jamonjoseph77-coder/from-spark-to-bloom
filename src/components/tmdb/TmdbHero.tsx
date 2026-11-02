@@ -85,6 +85,7 @@ export function TmdbHero() {
           </div>
         </div>
         {entries.length > 1 && (
+          <>
           <div className="absolute right-7 top-1/2 z-10 hidden -translate-y-1/2 flex-col gap-3 xl:flex">
             {[1, 2, 3].map((offset) => {
               const position = (index + offset) % entries.length;
@@ -102,6 +103,7 @@ export function TmdbHero() {
             </div>
             <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Resume featured titles' : 'Pause featured titles'} className="grid h-7 w-7 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white">{paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}</button>
           </div>
+          </>
         )}
       </section>
       {trailerOpen && current.videoKey && <VideoDialog url={`https://www.youtube.com/watch?v=${current.videoKey}`} label={`${item.title} official trailer`} heading={`Trailer · ${item.title}`} onClose={() => setTrailerOpen(false)} />}
