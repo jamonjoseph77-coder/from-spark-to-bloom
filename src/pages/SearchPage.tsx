@@ -45,7 +45,7 @@ export function SearchPage({ query }: { query: string }) {
       .filter((studio) => studio.studio_name.toLowerCase().includes(needle))
       .forEach((studio) => {
         const key = studio.studio_name.trim().toLowerCase();
-        if (!matches.has(key)) matches.set(key, { name: studio.studio_name, titles: [] });
+        if (!matches.has(key)) matches.set(key, { name: studio.studio_name, titles: [], upcoming: [], trailers: [] });
       });
     return [...matches.values()].sort((a, b) => a.name.localeCompare(b.name));
   }, [publishers, query, verifiedStudios]);
