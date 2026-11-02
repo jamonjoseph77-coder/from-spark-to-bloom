@@ -2,6 +2,26 @@
 -- was never applied or where an earlier table was created with an incomplete shape.
 create extension if not exists pgcrypto;
 
+-- Match the app's established admin model: membership in public.admin_users.
+-- SECURITY DEFINER lets RLS policies check membership without granting users
+-- direct read access to the admin roster.
+create or replace function public.is_cinema_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $
+  select exists (
+    select 1
+    from public.admin_users
+    where user_id = (select auth.uid())
+  );
+$;
+
+revoke all on function public.is_cinema_admin() from public, anon;
+grant execute on function public.is_cinema_admin() to authenticated, service_role;
+
 create table if not exists public.discover_clips (
   id uuid primary key default gen_random_uuid(),
   kind text not null default 'short',
