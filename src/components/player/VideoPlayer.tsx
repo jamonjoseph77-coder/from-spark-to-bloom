@@ -16,6 +16,9 @@ interface VideoPlayerProps {
   startAt?: number;
   poster?: string;
   isLive?: boolean;
+  autoPlay?: boolean;
+  muted?: boolean;
+  layout?: 'landscape' | 'portrait';
   onProgress?: (progress: PlaybackProgress) => void;
 }
 
@@ -31,7 +34,10 @@ const MIN_SAVED_POSITION_SECONDS = 1;
 const COMPLETE_RATIO = 0.95;
 const PLAYBACK_ERROR = 'This video could not be played. The link may be offline, or the host may not allow playback in a browser.';
 
-export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLive = false, onProgress }: VideoPlayerProps) {
+export function VideoPlayer({
+  src, title, subtitleUrl, startAt = 0, poster, isLive = false,
+  autoPlay = false, muted = false, layout = 'landscape', onProgress,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const startAtRef = useRef(startAt);
@@ -43,40 +49,55 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
   const [quality, setQuality] = useState(-1);
   const [volume, setVolume] = useState(0.85);
 
-  useEffect(() => {
-    onProgressRef.current = onProgress;
-  }, [onProgress]);
+  useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
+  useEffect(() => { startAtRef.current = startAt; }, [startAt]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     setStatus('loading');
+    setErrorText(PLAYBACK_ERROR);
     setLevels([]);
     setQuality(-1);
     lastSavedRef.current = 0;
 
     let hls: Hls | null = null;
     let cancelled = false;
+
     if (isHlsUrl(src)) {
       void import('hls.js').then(({ default: HlsLib }) => {
         if (cancelled) return;
         if (!HlsLib.isSupported()) {
           video.src = src;
+          video.load();
           return;
         }
-        hls = new HlsLib({ enableWorker: true });
+        hls = new HlsLib({
+          enableWorker: true,
+          capLevelToPlayerSize: true,
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60,
+          startLevel: -1,
+        });
         hlsRef.current = hls;
         hls.on(HlsLib.Events.MANIFEST_PARSED, (_event, data) => {
-          setLevels(
-            data.levels.map((level, index) => ({
-              index,
-              label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)} kbps`,
-            })),
-          );
+          if (cancelled) return;
+          setLevels(data.levels.map((level, index) => ({
+            index,
+            label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)} kbps`,
+          })));
         });
         hls.on(HlsLib.Events.ERROR, (_event, data) => {
-          if (!data.fatal) return;
+          if (!data.fatal || cancelled) return;
+          if (data.type === HlsLib.ErrorTypes.NETWORK_ERROR) {
+            hls?.startLoad();
+            return;
+          }
+          if (data.type === HlsLib.ErrorTypes.MEDIA_ERROR) {
+            hls?.recoverMediaError();
+            return;
+          }
           setErrorText(PLAYBACK_ERROR);
           setStatus('error');
           hls?.destroy();
@@ -84,15 +105,22 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
         });
         hls.loadSource(src);
         hls.attachMedia(video);
+      }).catch((error: unknown) => {
+        if (cancelled) return;
+        console.error('Could not load the HLS playback engine', error);
+        setErrorText('The playback engine could not be loaded. Please try again.');
+        setStatus('error');
       });
     } else {
       video.src = src;
+      video.load();
     }
 
     return () => {
       cancelled = true;
       hls?.destroy();
-      hlsRef.current = null;
+      if (hlsRef.current === hls) hlsRef.current = null;
+      video.pause();
       video.removeAttribute('src');
       video.load();
     };
@@ -129,27 +157,30 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
     if (hlsRef.current) hlsRef.current.currentLevel = next;
   }
 
-  const hasQualityMenu = levels.length > 1;
-
   function handleVolumeChange(event: ChangeEvent<HTMLInputElement>) {
     const next = Number(event.target.value);
     setVolume(next);
     if (videoRef.current) videoRef.current.volume = next;
   }
 
+  const hasQualityMenu = levels.length > 1;
+
   return (
     <div className="space-y-3">
-      <div className="relative aspect-video overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/60 ring-1 ring-white/10">
+      <div className={`relative mx-auto overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/60 ring-1 ring-white/10 ${layout === 'portrait' ? 'aspect-[9/16] max-h-[78vh] w-auto' : 'aspect-video w-full'}`}>
         <video
           ref={videoRef}
-          className="h-full w-full bg-black"
+          className="h-full w-full bg-black object-contain"
           controls
           playsInline
-          preload="metadata"
+          autoPlay={autoPlay}
+          muted={muted}
+          preload={autoPlay ? 'auto' : 'metadata'}
           poster={poster || undefined}
           aria-label={title}
           crossOrigin={subtitleUrl ? 'anonymous' : undefined}
           onLoadedMetadata={handleLoadedMetadata}
+          onCanPlay={() => setStatus('ready')}
           onPlaying={() => setStatus('ready')}
           onWaiting={() => setStatus('loading')}
           onTimeUpdate={handleTimeUpdate}
@@ -168,11 +199,10 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
         </video>
 
         {status === 'loading' && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35">
             <Loader2 className="h-10 w-10 animate-spin text-cinema-300" aria-label="Loading video" />
           </div>
         )}
-
         {status === 'error' && (
           <div className="absolute inset-0 flex items-center justify-center bg-ink-950/95 p-6">
             <div className="max-w-md text-center">
@@ -186,11 +216,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
 
       {(hasQualityMenu || isLive || status === 'ready') && (
         <div className="flex flex-wrap items-center gap-3">
-          {isLive && (
-            <span className="inline-flex items-center gap-2 rounded-full bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300">
-              <Radio className="h-3.5 w-3.5" /> Live
-            </span>
-          )}
+          {isLive && <span className="inline-flex items-center gap-2 rounded-full bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300"><Radio className="h-3.5 w-3.5" /> Live</span>}
           {status === 'ready' && (
             <label className="flex min-w-0 items-center gap-2 text-sm text-slate-400">
               {volume === 0 ? <VolumeX className="h-4 w-4 shrink-0 text-sky-200" /> : <Volume2 className="h-4 w-4 shrink-0 text-sky-200" />}
@@ -202,17 +228,9 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
           {hasQualityMenu && (
             <label className="flex items-center gap-2 text-sm text-slate-400">
               <span className="font-semibold">Quality</span>
-              <select
-                value={quality}
-                onChange={handleQualityChange}
-                className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-sky-300/50 focus:outline-none"
-              >
+              <select value={quality} onChange={handleQualityChange} className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-sky-300/50 focus:outline-none">
                 <option value={-1}>Auto</option>
-                {levels.map((level) => (
-                  <option key={level.index} value={level.index}>
-                    {level.label}
-                  </option>
-                ))}
+                {levels.map((level) => <option key={level.index} value={level.index}>{level.label}</option>)}
               </select>
             </label>
           )}
