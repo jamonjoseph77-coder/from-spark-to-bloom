@@ -25,7 +25,7 @@ export function MobileNav({ route }: MobileNavProps) {
               <li key={item.key} className="flex h-full items-center justify-center">
                 <a
                   href={item.href}
-                  aria-label="Cinema Catalogue — Browse Movies"
+                  aria-label="Cinema catalogue — browse movies"
                   aria-current={active ? 'page' : undefined}
                   className={`group flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-2.5 py-1 transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300 ${active ? 'bg-sky-300/[.09]' : 'hover:bg-white/[.045]'}`}
                 >
