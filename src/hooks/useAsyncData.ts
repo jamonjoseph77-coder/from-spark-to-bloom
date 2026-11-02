@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState, type DependencyList } from 'react';
 
 interface AsyncState<T> { data: T | null; error: Error | null; loading: boolean; }
-const REQUEST_TIMEOUT_MS = 12_000;
-const MAX_ATTEMPTS = 3;
+const REQUEST_TIMEOUT_MS = 9_000;
+const MAX_ATTEMPTS = 2;
 
 function normalizeAsyncError(reason: unknown): Error {
   if (reason instanceof Error) return reason;
