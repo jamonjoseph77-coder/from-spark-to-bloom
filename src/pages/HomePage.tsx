@@ -14,16 +14,18 @@ import { progressRatioByTitle, resumeItems, titlesOfType } from '@/lib/catalogue
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
+import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { groupByPublisher } from '@/lib/publishers';
 import type { Title } from '@/lib/types';
 
-interface HomeSocial { friends: FriendsSnapshot['friends']; posts: LetterboxPost[] }
+interface HomeSocial { friends: FriendsSnapshot['friends']; posts: LetterboxPost[]; follows: string[] }
 async function loadHomeSocial(userId: string): Promise<HomeSocial> {
-  const [friendsResult, postsResult] = await Promise.allSettled([loadFriendsSnapshot(userId), fetchLetterboxFeed(24)]);
+  const [friendsResult, postsResult, followsResult] = await Promise.allSettled([loadFriendsSnapshot(userId), fetchLetterboxFeed(24), fetchFollowedPublishers(userId)]);
   const friends = friendsResult.status === 'fulfilled' ? friendsResult.value.friends : [];
   const friendIds = new Set(friends.map((friend) => friend.otherUserId));
   const posts = postsResult.status === 'fulfilled' ? postsResult.value.filter((post) => friendIds.has(post.author_id)).slice(0, 4) : [];
-  return { friends, posts };
+  const follows = followsResult.status === 'fulfilled' ? followsResult.value : [];
+  return { friends, posts, follows };
 }
 
 function HomeCommunity({ social, loading }: { social?: HomeSocial; loading: boolean }) {
@@ -40,6 +42,11 @@ function HomeCommunity({ social, loading }: { social?: HomeSocial; loading: bool
         <div className="space-y-3">
           {social?.posts.length ? social.posts.map((post) => <article key={post.id} className="rounded-2xl border border-white/10 bg-ink-900/75 p-4 transition hover:border-sky-300/20"><div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-sky-300/10 text-xs font-black text-cinema-200">{(post.author?.display_name || post.author?.username || 'C').slice(0,1).toUpperCase()}</span><div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-white">{post.author?.display_name || post.author?.username || 'Cinema member'}</p><p className="text-[10px] text-slate-500">Shared a Letterbox message · {new Date(post.created_at).toLocaleDateString()}</p></div><MessageCircle className="h-4 w-4 text-cinema-300" /></div><p className="mt-3 line-clamp-3 whitespace-pre-wrap text-sm leading-6 text-slate-300">{post.body}</p>{post.title && <a href={`/title/${post.title.id}`} className="mt-3 flex items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-sky-300/25"><span className="h-12 w-9 shrink-0 overflow-hidden rounded-lg bg-ink-800">{post.title.poster_url && <img src={post.title.poster_url} alt="" className="h-full w-full object-cover" />}</span><span className="min-w-0"><span className="block text-[10px] font-bold uppercase tracking-wider text-cinema-300">Talking about</span><span className="block truncate text-xs font-bold text-white">{post.title.title}</span></span><ArrowRight className="ml-auto h-4 w-4 text-slate-500" /></a>}</article>) : <div className="flex h-full min-h-44 flex-col justify-center rounded-2xl border border-dashed border-white/10 bg-white/[.015] p-5"><p className="text-sm font-bold text-white">Friends’ conversations will appear here</p><p className="mt-1 max-w-md text-xs leading-5 text-slate-500">When your friends share a Letterbox message about a title, you’ll see it in this space.</p><a href="/friends" className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-cinema-200 hover:text-white">Visit Friends <ArrowRight className="h-3.5 w-3.5" /></a></div>}
         </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold text-white">Your follows</p><p className="mt-1 text-xs text-slate-500">Studios and publishers you choose to keep up with.</p></div><a href="/publishers" className="text-xs font-bold text-cinema-200 hover:text-white">Discover publishers</a></div>
+        {social?.follows.length ? <div className="mt-3 flex flex-wrap gap-2">{social.follows.map((name) => <a key={name} href={`/publishers/${encodeURIComponent(name)}`} className="rounded-full border border-sky-300/20 bg-sky-300/[.07] px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-sky-300/40 hover:bg-sky-300/[.12]">{name}</a>)}</div> : <p className="mt-3 text-xs text-slate-500">You haven’t followed a publisher yet. Explore publisher destinations to find the studios and broadcasters you want to hear from.</p>}
       </div>
     </section>
   );
