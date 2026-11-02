@@ -1,107 +1,38 @@
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { MOBILE_PRIMARY_NAV, NAV_SECTIONS, navKeyOf } from '@/components/layout/navigation';
+import { Compass, Home, Tv, Heart } from 'lucide-react';
+import { navKeyOf } from '@/components/layout/navigation';
+import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import type { Route } from '@/lib/router';
 
-interface MobileNavProps {
-  route: Route;
-}
+interface MobileNavProps { route: Route }
+
+const ITEMS = [
+  { key: 'home', label: 'Home', href: '/', icon: Home },
+  { key: 'discover', label: 'Explore', href: '/discover', icon: Compass },
+  { key: 'live-tv', label: 'Live TV', href: '/live-tv', icon: Tv },
+  { key: 'my-cinema', label: 'My Cinema', href: '/my-cinema', icon: Heart },
+];
 
 export function MobileNav({ route }: MobileNavProps) {
-  const [moreOpen, setMoreOpen] = useState(false);
   const activeKey = navKeyOf(route);
-
   return (
-    <>
-      <nav
-        aria-label="Primary"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink-900/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
-      >
-        <ul className="mx-auto grid max-w-xl grid-cols-7">
-          {MOBILE_PRIMARY_NAV.map((item) => {
-            const active = item.key === activeKey;
-            const Icon = item.icon;
-            return (
-              <li key={item.key}>
-                <a
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className={`flex flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-semibold transition ${
-                    active ? 'text-cinema-300' : 'text-slate-400 hover:text-slate-100'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span className="truncate">{item.label}</span>
-                </a>
-              </li>
-            );
-          })}
-          <li>
-            <button
-              type="button"
-              onClick={() => setMoreOpen(true)}
-              className="flex w-full flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-semibold text-slate-400 transition hover:text-slate-100"
-            >
-              <Menu className="h-5 w-5" />
-              <span>More</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
-
-      {moreOpen && (
-        <div className="fixed inset-0 z-40 flex items-end bg-black/70 backdrop-blur-sm animate-fade-in lg:hidden" onClick={() => setMoreOpen(false)}>
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="All sections"
-            onClick={(event) => event.stopPropagation()}
-            className="max-h-[80vh] w-full animate-rise-in overflow-y-auto rounded-t-3xl border-t border-white/10 bg-ink-900 p-6 pb-10"
-          >
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-lg font-extrabold text-white">All sections</p>
-              <button
-                type="button"
-                onClick={() => setMoreOpen(false)}
-                aria-label="Close menu"
-                className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-slate-200"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="space-y-6">
-              {NAV_SECTIONS.map((section) => (
-                <div key={section.title}>
-                  <p className="pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{section.title}</p>
-                  <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      const active = item.key === activeKey;
-                      return (
-                        <li key={item.key}>
-                          <a
-                            href={item.href}
-                            onClick={() => setMoreOpen(false)}
-                            aria-current={active ? 'page' : undefined}
-                            className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-                              active
-                                ? 'border-cinema-400/50 bg-cinema-600/20 text-white'
-                                : 'border-white/10 bg-white/5 text-slate-200 hover:bg-white/10'
-                            }`}
-                          >
-                            <Icon className="h-5 w-5 text-cinema-300" />
-                            {item.label}
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    <nav aria-label="Primary" className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#050912]/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(0,0,0,0.45)] backdrop-blur-2xl lg:hidden">
+      <ul className="mx-auto grid max-w-xl grid-cols-5 items-end px-2 pt-2">
+        {ITEMS.slice(0, 2).map((item) => {
+          const Icon = item.icon;
+          const active = item.key === activeKey;
+          return <li key={item.key}><a href={item.href} aria-current={active ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold transition ${active ? 'text-cinema-200' : 'text-slate-400 hover:text-white'}`}><Icon className={`h-5 w-5 ${active ? 'drop-shadow-[0_0_9px_rgba(74,165,255,0.8)]' : ''}`} /><span>{item.label}</span></a></li>;
+        })}
+        <li className="-mt-7 flex justify-center">
+          <a href="/" aria-label="Cinema home" className="grid h-[66px] w-[66px] place-items-center rounded-full border border-cinema-400/80 bg-[#07101f] shadow-[0_0_0_5px_rgba(5,9,18,0.95),0_0_28px_rgba(39,130,255,0.45)] transition hover:scale-105">
+            <img src="/cinema-icon.png" alt="" className="h-11 w-11 object-contain drop-shadow-[0_0_12px_rgba(77,161,255,0.75)]" />
+          </a>
+        </li>
+        {ITEMS.slice(2).map((item) => {
+          const Icon = item.icon;
+          const active = item.key === activeKey;
+          return <li key={item.key}><a href={item.href} aria-current={active ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold transition ${active ? 'text-cinema-200' : 'text-slate-400 hover:text-white'}`}><Icon className={`h-5 w-5 ${active ? 'drop-shadow-[0_0_9px_rgba(74,165,255,0.8)]' : ''}`} /><span>{item.label}</span></a></li>;
+        })}
+      </ul>
+    </nav>
   );
 }
