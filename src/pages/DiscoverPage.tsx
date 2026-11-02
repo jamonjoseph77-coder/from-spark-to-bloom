@@ -18,6 +18,7 @@ import type { VideoSource } from '@/lib/videoSource';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot } from '@/lib/friends';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 
 type FeedTab = 'for-you' | 'following' | 'shorts' | 'trailers' | 'behind-scenes' | 'interviews' | 'clips';
 const TABS: { id: FeedTab; label: string }[] = [
@@ -65,6 +66,7 @@ export function DiscoverPage() {
   const { data, error, reload } = useAsyncData(loadDiscover, []);
   const { user } = useAuth();
   const { data: friendSnapshot } = useAsyncData(() => user ? loadFriendsSnapshot(user.id) : Promise.resolve(null), [user?.id]);
+  const { data: followedPublishers = [] } = useAsyncData(() => user ? fetchFollowedPublishers(user.id).catch(() => []) : Promise.resolve([]), [user?.id]);
   const [tab, setTab] = useState<FeedTab>('for-you');
   const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
   const [activeVideo, setActiveVideo] = useState<VideoSource | null>(null);
@@ -115,6 +117,11 @@ export function DiscoverPage() {
     const friendIds = new Set(friendSnapshot.friends.map((friend) => friend.otherUserId));
     return data.posts.filter((post) => friendIds.has(post.author_id));
   }, [data, friendSnapshot]);
+
+  const followingVideos = useMemo(() => {
+    const followed = new Set((followedPublishers ?? []).map((publisher) => publisher.toLowerCase()));
+    return videos.filter((video) => followed.has(video.publisher.toLowerCase()));
+  }, [videos, followedPublishers]);
 
   const visibleVideos = useMemo(() => {
     if (tab === 'trailers') return videos.filter((video) => /trailer/i.test(video.kind));
@@ -204,6 +211,27 @@ export function DiscoverPage() {
       )}
 
 
+
+      {tab === 'following' && followingVideos.length > 0 && (
+        <section className="space-y-4">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/80">Publisher updates</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">New from publishers you follow</h2><p className="mt-1 text-sm text-slate-400">Official clips and trailers from the studios and broadcasters you chose.</p></div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {followingVideos.map((video) => (
+              <article key={video.id} className="group min-w-0">
+                <button type="button" onClick={() => setActiveVideo(video.source)} className="relative block aspect-video w-full overflow-hidden rounded-2xl bg-ink-800 text-left ring-1 ring-white/10 transition group-hover:ring-sky-200/35">
+                  <Artwork src={video.image} alt="" fallbackTitle={video.heading} className="h-full w-full transition duration-500 group-hover:scale-[1.035]" />
+                  <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">{video.kind}</span>
+                  <span className="absolute inset-0 grid place-items-center"><span className="grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/35 text-white shadow-xl backdrop-blur transition group-hover:bg-sky-400/30"><Play className="h-4 w-4 fill-current" /></span></span>
+                </button>
+                <p className="mt-2 line-clamp-2 text-sm font-bold text-white">{video.heading}</p>
+                <p className="mt-1 text-xs text-slate-400">{video.publisher}</p>
+                {video.href && <a href={video.href} className="mt-2 inline-flex text-xs font-semibold text-sky-200 hover:text-white">Open title</a>}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {tab === 'following' && (
         <section className="space-y-5">
