@@ -1,4 +1,4 @@
-export const PAGE_CONTAINER = 'mx-auto w-full max-w-7xl animate-rise-in px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pt-10';
+export const PAGE_CONTAINER = 'mx-auto w-full max-w-[100rem] animate-rise-in px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pt-10';
 
 export const BUTTON_PRIMARY =
   'inline-flex items-center justify-center gap-2 rounded-xl border border-white/70 bg-slate-100 px-5 py-3 text-sm font-bold text-ink-950 shadow-lg shadow-black/25 transition hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
