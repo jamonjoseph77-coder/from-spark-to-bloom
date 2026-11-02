@@ -12,6 +12,7 @@ import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, tmdbHref, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
+import { LetterboxPage } from '@/pages/LetterboxPage';
 import type { Title } from '@/lib/types';
 import type { VideoSource } from '@/lib/videoSource';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
