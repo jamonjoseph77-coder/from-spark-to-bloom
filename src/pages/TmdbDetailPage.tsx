@@ -9,6 +9,7 @@ import { LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_GHOST, CHIP_BASE, PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbDetail, tmdbImageUrl, type TmdbMediaType } from '@/lib/tmdb';
+import { fetchKinoCheckVideos, type KinoCheckVideo } from '@/lib/kinocheck';
 
 function formatReleaseDate(value: string): string {
   const date = new Date(`${value}T00:00:00`);
@@ -18,6 +19,7 @@ function formatReleaseDate(value: string): string {
 export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id: number }) {
   const [activeVideo, setActiveVideo] = useState<VideoSource | null>(null);
   const { data, error, loading, reload } = useAsyncData(() => fetchTmdbDetail(mediaType, id), [mediaType, id]);
+  const { data: kinoVideos = [] } = useAsyncData(() => fetchKinoCheckVideos(mediaType, id), [mediaType, id]);
   const backLink = mediaType === 'movie' ? '/movies' : '/series';
   const backLabel = mediaType === 'movie' ? 'Back to movies' : 'Back to series';
 
@@ -81,13 +83,51 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
             {data.overview || 'No description has been provided for this title yet.'}
           </p>
           {data.status && <p className="text-sm text-slate-500">Status: {data.status}</p>}
-          {data.videos.length > 0 && (
-            <div className="flex flex-wrap gap-3 pt-2">
-              {data.videos.slice(0, 3).map((video) => (
-                <button key={video.id} type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} ${video.type.toLowerCase()}`, heading: `${video.type}: ${data.title}` })} className="inline-flex items-center gap-2 rounded-full border border-cinema-400/30 bg-cinema-500/10 px-4 py-2 text-sm font-semibold text-cinema-200 transition hover:bg-cinema-500/20">
-                  <Play className="h-4 w-4 fill-current" /> Watch {video.type.toLowerCase()}
-                </button>
-              ))}
+          {(() => {
+            const tmdbExtras = data.videos.filter((video) => video.type !== 'Trailer' && ['Featurette', 'Clip', 'Behind the Scenes'].includes(video.type)).map((video) => ({
+              id: `tmdb-${video.id}`,
+              key: video.key,
+              name: video.name,
+              kind: video.type,
+            }));
+            const seen = new Set(tmdbExtras.map((video) => video.key));
+            const kinoExtras = kinoVideos.flatMap((video: KinoCheckVideo) => {
+              const kind = video.categories.includes('Featurette') ? 'Featurette' : video.categories.includes('Clip') ? 'Clip' : '';
+              if (!kind || seen.has(video.youtubeVideoId) || video.categories.includes('Trailer')) return [];
+              seen.add(video.youtubeVideoId);
+              return [{ id: `kino-${video.id}`, key: video.youtubeVideoId, name: video.title, kind }];
+            });
+            const extras = [...tmdbExtras, ...kinoExtras];
+            return extras.length > 0 ? (
+              <section className="space-y-4 border-t border-white/10 pt-6">
+                <div>
+                  <h2 className="text-xl font-extrabold tracking-tight text-white">Featurettes and clips</h2>
+                  <p className="mt-1 text-sm text-slate-400">Official promotional videos matched to this title.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {extras.map((video) => (
+                    <article key={video.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-ink-850/70 p-3">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-sky-200">{video.kind}</p>
+                        <p className="mt-1 line-clamp-2 text-sm font-semibold text-white">{video.name}</p>
+                      </div>
+                      <button type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} ${video.kind.toLowerCase()}`, heading: `${video.kind}: ${data.title}` })} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:bg-white/10">
+                        <Play className="h-3.5 w-3.5 fill-current" /> Watch {video.kind.toLowerCase()}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ) : null;
+          })()}
+          {data.videos.some((video) => video.type === 'Trailer') && (
+            <div className="pt-2">
+              <button type="button" onClick={() => {
+                const video = data.videos.find((candidate) => candidate.type === 'Trailer');
+                if (video) setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} trailer`, heading: `Trailer: ${data.title}` });
+              }} className="inline-flex items-center gap-2 rounded-full border border-cinema-400/30 bg-cinema-500/10 px-4 py-2 text-sm font-semibold text-cinema-200 transition hover:bg-cinema-500/20">
+                <Play className="h-4 w-4 fill-current" /> Watch trailer
+              </button>
             </div>
           )}
         </section>
