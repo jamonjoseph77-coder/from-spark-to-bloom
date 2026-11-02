@@ -40,7 +40,9 @@ create policy "Cinema admins review creator Shorts"
   using (public.is_cinema_admin()) with check (public.is_cinema_admin());
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('cinema-shorts', 'cinema-shorts', true, 104857600, array['video/mp4','video/webm','video/quicktime','image/jpeg','image/png','image/webp'])
+values
+  ('cinema-shorts', 'cinema-shorts', true, 104857600, array['video/mp4','video/webm','video/quicktime','image/jpeg','image/png','image/webp']),
+  ('cinema-creator-submissions', 'cinema-creator-submissions', false, 104857600, array['video/mp4','video/webm','video/quicktime','image/jpeg','image/png','image/webp'])
 on conflict (id) do update set
   public = excluded.public,
   file_size_limit = excluded.file_size_limit,
@@ -51,19 +53,18 @@ create policy "Public can play approved creator Shorts"
   on storage.objects for select to public
   using (bucket_id = 'cinema-shorts');
 
-drop policy if exists "Creators upload to own Shorts folder" on storage.objects;
-create policy "Creators upload to own Shorts folder"
+drop policy if exists "Creators upload private Shorts submissions" on storage.objects;
+create policy "Creators upload private Shorts submissions"
   on storage.objects for insert to authenticated
-  with check (bucket_id = 'cinema-shorts' and (storage.foldername(name))[1] = auth.uid()::text);
+  with check (bucket_id = 'cinema-creator-submissions' and (storage.foldername(name))[1] = auth.uid()::text);
 
-drop policy if exists "Creators delete own pending Shorts files" on storage.objects;
-create policy "Creators delete own pending Shorts files"
-  on storage.objects for delete to authenticated
-  using (bucket_id = 'cinema-shorts' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "Creators and admins read private Shorts submissions" on storage.objects;
+create policy "Creators and admins read private Shorts submissions"
+  on storage.objects for select to authenticated
+  using (bucket_id = 'cinema-creator-submissions' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_cinema_admin()));
 
--- Only administrators can remove or replace uploaded objects after submission.
-drop policy if exists "Cinema admins manage Shorts files" on storage.objects;
-create policy "Cinema admins manage Shorts files"
+drop policy if exists "Cinema admins manage public Shorts files" on storage.objects;
+create policy "Cinema admins manage public Shorts files"
   on storage.objects for all to authenticated
   using (bucket_id = 'cinema-shorts' and public.is_cinema_admin())
   with check (bucket_id = 'cinema-shorts' and public.is_cinema_admin());
