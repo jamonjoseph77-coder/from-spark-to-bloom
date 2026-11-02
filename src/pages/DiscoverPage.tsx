@@ -119,7 +119,7 @@ export function DiscoverPage() {
   }, [data, friendSnapshot]);
 
   const followingVideos = useMemo(() => {
-    const followed = new Set(followedPublishers.map((publisher) => publisher.toLowerCase()));
+    const followed = new Set((followedPublishers ?? []).map((publisher) => publisher.toLowerCase()));
     return videos.filter((video) => followed.has(video.publisher.toLowerCase()));
   }, [videos, followedPublishers]);
 
