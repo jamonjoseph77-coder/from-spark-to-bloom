@@ -34,6 +34,9 @@ jobs:
           bunx eslint
           src/lib/tmdb.ts
           src/lib/tmdb.functions.ts
+          src/lib/letterbox.ts
+          src/lib/router.ts
+          src/integrations/supabase/types.ts
           src/pages/DiscoverPage.tsx
           src/pages/HomePage.tsx
           src/pages/TmdbBrowsePage.tsx
