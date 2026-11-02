@@ -32,7 +32,6 @@ export function navKeyOf(route: Route): string | null {
     case 'home': return 'home';
     case 'browse': return { movie: 'movies', series: 'series', sport: 'sports', live: 'live-tv', news: 'news' }[route.kind];
     case 'discover': return 'discover';
-    case 'letterbox': return 'friends';
     case 'search': return 'search';
     case 'my-cinema': return 'my-cinema';
     case 'friends': return 'friends';
