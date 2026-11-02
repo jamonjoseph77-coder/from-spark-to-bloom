@@ -10,6 +10,7 @@ import { BUTTON_GHOST, CHIP_BASE, PAGE_CONTAINER } from '@/components/ui/styles'
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbDetail, tmdbImageUrl, type TmdbMediaType } from '@/lib/tmdb';
 import { fetchKinoCheckVideos, type KinoCheckVideo } from '@/lib/kinocheck';
+import { uniqueVideos } from '@/lib/videoIdentity';
 
 function formatReleaseDate(value: string): string {
   const date = new Date(`${value}T00:00:00`);
@@ -38,6 +39,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
   const runtime = data.runtimeMinutes ? (mediaType === 'movie' ? `${data.runtimeMinutes} min` : `${data.runtimeMinutes} min per episode`) : null;
   const seasonLabel = data.seasons ? `${data.seasons} ${data.seasons === 1 ? 'season' : 'seasons'}` : null;
   const facts = [typeLabel, data.releaseDate ? formatReleaseDate(data.releaseDate) : null, runtime, seasonLabel].filter(Boolean);
+  const trailer = uniqueVideos(data.videos.filter((video) => video.type === 'Trailer'), (video) => `https://www.youtube.com/watch?v=${video.key}`)[0] ?? null;
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-10`}>
@@ -57,9 +59,10 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
           </div>
           <div className="space-y-5">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">{facts.join(' · ')}</p>
-            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl">{data.title}</h1>
+            <h1 className="max-w-4xl text-4xl font-black leading-[1.02] tracking-[-.045em] text-white [text-wrap:balance] sm:text-5xl lg:text-6xl">{data.title}</h1>
             {data.tagline && <p className="text-base italic text-slate-300">{data.tagline}</p>}
             <div className="flex flex-wrap items-center gap-3">
+              {trailer && <button type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${trailer.key}`, label: `${data.title} trailer`, heading: `Trailer: ${data.title}` })} className="inline-flex items-center gap-2 rounded-full border border-sky-200/25 bg-sky-300/10 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200/40 hover:bg-sky-300/15"><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
               {data.rating !== null && (
                 <span className="flex items-center gap-1.5 rounded-full bg-amber-400/15 px-3 py-1.5 text-sm font-semibold text-amber-300">
                   <Star className="h-4 w-4 fill-current" aria-hidden="true" />
@@ -97,7 +100,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
               seen.add(video.youtubeVideoId);
               return [{ id: `kino-${video.id}`, key: video.youtubeVideoId, name: video.title, kind }];
             });
-            const extras = [...tmdbExtras, ...kinoExtras];
+            const extras = uniqueVideos([...tmdbExtras, ...kinoExtras], (video) => `https://www.youtube.com/watch?v=${video.key}`);
             return extras.length > 0 ? (
               <section className="space-y-4 border-t border-white/10 pt-6">
                 <div>
@@ -120,16 +123,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
               </section>
             ) : null;
           })()}
-          {data.videos.some((video) => video.type === 'Trailer') && (
-            <div className="pt-2">
-              <button type="button" onClick={() => {
-                const video = data.videos.find((candidate) => candidate.type === 'Trailer');
-                if (video) setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} trailer`, heading: `Trailer: ${data.title}` });
-              }} className="inline-flex items-center gap-2 rounded-full border border-cinema-400/30 bg-cinema-500/10 px-4 py-2 text-sm font-semibold text-cinema-200 transition hover:bg-cinema-500/20">
-                <Play className="h-4 w-4 fill-current" /> Watch trailer
-              </button>
-            </div>
-          )}
+
         </section>
 
         <aside className="h-fit space-y-3 rounded-2xl border border-white/10 bg-ink-850/70 p-6">

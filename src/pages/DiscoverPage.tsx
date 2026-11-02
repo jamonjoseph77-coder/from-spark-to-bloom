@@ -12,6 +12,7 @@ import { CLIP_KIND_LABEL, fetchPublishedClips, type DiscoverClip } from '@/lib/c
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, fetchTmdbList, tmdbHref, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { fetchDiscoverKinoCheckVideos, type KinoCheckDiscoverVideo } from '@/lib/kinocheck';
+import { uniqueVideos } from '@/lib/videoIdentity';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
 import { LetterboxPage } from '@/pages/LetterboxPage';
 import type { Title } from '@/lib/types';
@@ -131,15 +132,10 @@ export function DiscoverPage() {
       href: tmdbHref({ id: video.tmdbId, mediaType: video.mediaType, title: video.titleName, overview: video.overview, releaseDate: null, rating: null, posterPath: video.posterPath, backdropPath: video.backdropPath }),
       source: { url: 'https://www.youtube.com/watch?v=' + video.youtubeVideoId, label: video.title, heading: video.title },
     }));
-    const combined = [...publisherClips, ...titleTrailers, ...tmdbTrailers, ...kinoEditorial];
-    const seen = new Set<string>();
-    return combined.filter((video) => {
-      const match = video.source.url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,20})/);
-      const key = match?.[1] ?? video.id;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    return uniqueVideos(
+      [...publisherClips, ...titleTrailers, ...tmdbTrailers, ...kinoEditorial],
+      (video) => video.source.url,
+    );
   }, [data]);
 
   const followingPosts = useMemo(() => {
