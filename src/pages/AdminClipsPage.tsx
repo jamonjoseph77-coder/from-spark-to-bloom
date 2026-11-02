@@ -103,7 +103,7 @@ function AdminClipsManager() {
                   <p className="font-semibold text-white">{submission.headline}</p>
                   <p className="text-xs text-slate-400">{submission.publisher_name} · {submission.duration_seconds ? `${submission.duration_seconds}s` : 'Duration Not Supplied'} · {new Date(submission.created_at).toLocaleDateString()}</p>
                   {submission.description && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{submission.description}</p>}
-                  <a className="mt-2 inline-block text-xs font-semibold text-cinema-200 underline" href={supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path).data.publicUrl} target="_blank" rel="noreferrer">Preview Submitted Video</a>
+                  <a className="mt-2 inline-block text-xs font-semibold text-cinema-200 underline" href={submission.preview_url ?? '#'} target="_blank" rel="noreferrer">Preview Submitted Video</a>
                 </div>
                 <div className="flex gap-2">
                   <button type="button" disabled={busyId === submission.id} onClick={() => void reviewSubmission(submission, 'approved')} className={BUTTON_PRIMARY}>Approve</button>
