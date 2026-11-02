@@ -1,14 +1,17 @@
 import { useState } from 'react';
+import { Activity, Users } from 'lucide-react';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { chipClass } from '@/components/ui/styles';
 import { FindPeople } from '@/components/social/FindPeople';
 import { FriendRequests, FriendsList } from '@/components/social/FriendsList';
+import { CircleActivity } from '@/components/social/CircleActivity';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { loadFriendsSnapshot } from '@/lib/friends';
 
-type Tab = 'friends' | 'requests' | 'find';
+type Tab = 'activity' | 'friends' | 'requests' | 'find';
 
 const TABS: { key: Tab; label: string }[] = [
+  { key: 'activity', label: 'Activity' },
   { key: 'friends', label: 'Friends' },
   { key: 'requests', label: 'Requests' },
   { key: 'find', label: 'Find people' },
@@ -16,14 +19,26 @@ const TABS: { key: Tab; label: string }[] = [
 
 export function FriendsHub({ userId }: { userId: string }) {
   const { data: snapshot, error, reload } = useAsyncData(() => loadFriendsSnapshot(userId), [userId]);
-  const [tab, setTab] = useState<Tab>('friends');
+  const [tab, setTab] = useState<Tab>('activity');
 
   if (!snapshot) return error ? <ErrorState onRetry={reload} /> : <LoadingState />;
 
   const requestCount = snapshot.incoming.length;
+  const friendIds = snapshot.friends.map((friend) => friend.otherUserId);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <Activity className="h-4 w-4 text-cinema-300" />
+          <span>Your entertainment circle</span>
+          <span className="text-slate-600">·</span>
+          <span>{snapshot.friends.length} {snapshot.friends.length === 1 ? 'friend' : 'friends'}</span>
+        </div>
+        <a href="/letterbox" className="inline-flex items-center gap-2 text-xs font-bold text-cinema-200 transition hover:text-white">
+          <Users className="h-4 w-4" /> Community conversations
+        </a>
+      </div>
       <div role="tablist" aria-label="Friends sections" className="flex gap-2 overflow-x-auto pb-1">
         {TABS.map((item) => (
           <button
@@ -43,6 +58,7 @@ export function FriendsHub({ userId }: { userId: string }) {
         ))}
       </div>
 
+      {tab === 'activity' && <CircleActivity friendIds={friendIds} />}
       {tab === 'friends' && <FriendsList friends={snapshot.friends} onChanged={reload} />}
       {tab === 'requests' && (
         <FriendRequests incoming={snapshot.incoming} outgoing={snapshot.outgoing} onChanged={reload} />
