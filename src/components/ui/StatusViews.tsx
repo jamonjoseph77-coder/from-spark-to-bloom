@@ -13,7 +13,7 @@ export function LoadingState({ label = 'Getting your stories ready' }: { label?:
       <span className="text-sm font-bold text-slate-100">{label}</span>
       <span className="max-w-xs text-xs leading-5 text-slate-500">A little moment while we get everything ready for you.</span>
       <span className="mt-1 h-1 w-28 overflow-hidden rounded-full bg-white/[.08]">
-        <span className="block h-full w-2/5 animate-[loading-sweep_1.7s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-cinema-500 via-sky-200 to-cinema-400" />
+        <span className="block h-full w-2/5 animate-pulse rounded-full bg-gradient-to-r from-cinema-500 via-sky-200 to-cinema-400" />
       </span>
     </div>
   );
