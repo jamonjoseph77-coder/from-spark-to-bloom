@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
 import { Film, UploadCloud } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
@@ -7,11 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { submitCreatorShort } from '@/lib/creator-shorts';
 import { fetchPublishedTitles } from '@/lib/library';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import type { Title } from '@/lib/types';
 import { BUTTON_PRIMARY, CARD, INPUT, LABEL, PAGE_CONTAINER } from '@/components/ui/styles';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-
-export const Route = createFileRoute('/creator/shorts')({ component: CreatorShortsPage });
 
 function CreatorShortsPage() {
   const { user, loading } = useAuth();
@@ -111,7 +107,7 @@ function CreatorShortsPage() {
           <div><label className={LABEL} htmlFor="creator-poster">Poster Image (Optional · Up To 5 MB)</label><input id="creator-poster" className={INPUT} type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setPoster(event.target.files?.[0] ?? null)} /></div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div><label className={LABEL} htmlFor="creator-duration">Duration In Seconds (Optional)</label><input id="creator-duration" className={INPUT} inputMode="numeric" value={duration} onChange={(event) => setDuration(event.target.value)} placeholder="Maximum 90" /></div>
-            <div><label className={LABEL} htmlFor="creator-title">Related Cinema Title (Optional)</label><select id="creator-title" className={INPUT} value={titleId} onChange={(event) => setTitleId(event.target.value)}><option value="">No Linked Title</option>{(titles ?? [] as Title[]).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select></div>
+            <div><label className={LABEL} htmlFor="creator-title">Related Cinema Title (Optional)</label><select id="creator-title" className={INPUT} value={titleId} onChange={(event) => setTitleId(event.target.value)}><option value="">No Linked Title</option>{(titles ?? []).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select></div>
           </div>
           <label className="flex items-start gap-3 text-xs leading-5 text-slate-400"><input type="checkbox" className="mt-1 accent-cinema-500" required /><span>I Confirm I Own This Video Or Have Permission To Submit And Display It On Cinema.</span></label>
           <button className={BUTTON_PRIMARY} type="submit" disabled={busy || !video}><UploadCloud className="mr-2 inline h-4 w-4" />{busy ? 'Uploading And Submitting...' : 'Submit For Review'}</button>
