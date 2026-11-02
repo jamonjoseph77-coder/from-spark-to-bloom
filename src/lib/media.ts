@@ -36,11 +36,11 @@ export function getYouTubeVideoId(value: string): string | null {
     const host = parsed.hostname.toLowerCase();
     if (host === 'youtu.be') {
       const id = parsed.pathname.split('/').filter(Boolean)[0];
-      return id && /^[\\w-]{6,}$/.test(id) ? id : null;
+      return id && /^[\w-]{6,}$/.test(id) ? id : null;
     }
     if (!['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) return null;
-    const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\\/(?:shorts|live|embed)\\/([\\w-]{6,})/)?.[1];
-    return id && /^[\\w-]{6,}$/.test(id) ? id : null;
+    const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
+    return id && /^[\w-]{6,}$/.test(id) ? id : null;
   } catch {
     return null;
   }
