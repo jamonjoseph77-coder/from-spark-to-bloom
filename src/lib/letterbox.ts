@@ -15,14 +15,16 @@ export interface LetterboxPost {
   comments?: { id: string; author_id: string; body: string; created_at: string }[];
 }
 
-export async function fetchLetterboxFeed(limit = 40): Promise<LetterboxPost[]> {
-  const { data: posts, error } = await supabase
+export async function fetchLetterboxFeed(limit = 40, authorId?: string): Promise<LetterboxPost[]> {
+  let postsQuery = supabase
     .from('letterbox_posts')
     .select('*')
     .eq('status', 'published')
     .eq('visibility', 'public')
     .order('created_at', { ascending: false })
     .limit(limit);
+  if (authorId) postsQuery = postsQuery.eq('author_id', authorId);
+  const { data: posts, error } = await postsQuery;
   if (error) throw error;
   if (!posts?.length) return [];
 

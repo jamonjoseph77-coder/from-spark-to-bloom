@@ -7,6 +7,7 @@ export interface ClipTitle {
   id: string;
   title: string;
   type: TitleType;
+  playback_url?: string | null;
 }
 
 export interface DiscoverClip {
@@ -40,7 +41,7 @@ export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
 export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
   const { data, error } = await supabase
     .from('discover_clips')
-    .select('*, title:titles(id, title, type)')
+    .select('*, title:titles(id, title, type, playback_url)')
     .eq('is_published', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
@@ -64,7 +65,7 @@ export interface ClipInput {
 export async function fetchAllClips(): Promise<DiscoverClip[]> {
   const { data, error } = await supabase
     .from('discover_clips')
-    .select('*, title:titles(id, title, type)')
+    .select('*, title:titles(id, title, type, playback_url)')
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
   if (error) throw error;

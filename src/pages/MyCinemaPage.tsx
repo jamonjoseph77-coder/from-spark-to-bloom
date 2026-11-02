@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2 } from 'lucide-react';
+import { BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2 } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -10,11 +10,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { resumeItems } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
+import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 
 export function MyCinemaPage() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
+  const { data: followedPublishers = [] } = useAsyncData(
+    () => user ? fetchFollowedPublishers(user.id).catch((cause) => { console.warn('Followed publishers unavailable', cause); return []; }) : Promise.resolve([]),
+    [user?.id],
+  );
 
   const view = useMemo(() => {
     if (!titles) return null;
@@ -45,9 +50,7 @@ export function MyCinemaPage() {
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/20 bg-gradient-to-br from-cinema-700/30 via-ink-900 to-indigo-950 p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-cinema-400/15 blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[1.65rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20">
-            <CinemaLogo compact />
-          </span>
+          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[1.65rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20"><CinemaLogo compact /></span>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Your personal entertainment space</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>
@@ -84,6 +87,10 @@ export function MyCinemaPage() {
         <section className="space-y-5">
           <div><h2 className={SECTION_HEADING}>Your favourites</h2><p className="mt-1 text-sm text-slate-400">The stories that stay with you.</p></div>
           {!ready ? <LoadingState label="Loading your favourites" /> : view.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Mark titles as favourites to keep the ones you love within reach.</p> : <TitleGrid titles={view.favourites} />}
+        </section>
+        <section className="space-y-5">
+          <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your publishers</h2><p className="mt-1 text-sm text-slate-400">Studios and broadcasters you choose to follow.</p></div><a href="/publishers" className="text-sm font-semibold text-cinema-300 hover:text-white">Discover publishers</a></div>
+          {(followedPublishers ?? []).length ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{(followedPublishers ?? []).map((publisher) => <a key={publisher} href={`/publishers/${encodeURIComponent(publisher)}`} className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/70 p-4 transition hover:border-sky-200/25 hover:bg-ink-850"><span className="grid h-10 w-10 place-items-center rounded-xl border border-sky-200/15 bg-sky-200/[.07] text-sky-100"><Building2 className="h-5 w-5" /></span><span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{publisher}</span><span className="text-xs font-semibold text-sky-200 transition group-hover:text-white">Following</span></a>)}</div> : <p className={`${CARD} text-sm text-slate-400`}>Publishers you follow will appear here. Visit publisher destinations to keep up with their official titles and updates.</p>}
         </section>
         <section className="rounded-3xl border border-white/10 bg-gradient-to-r from-ink-850 to-ink-900 p-5 sm:p-6"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-cinema-300">Keep exploring</p><h2 className="mt-1 text-lg font-extrabold text-white">There is more to experience.</h2><p className="mt-1 text-sm text-slate-400">Discover a new story, share it with friends or plan a watch party.</p></div><div className="flex flex-wrap gap-2"><a href="/discover" className={BUTTON_SECONDARY}><MessageSquareText className="h-4 w-4" /> Discover</a><a href="/watch-parties" className={BUTTON_PRIMARY}><PartyPopper className="h-4 w-4" /> Watch together</a></div></div></section>
       </>}

@@ -49,7 +49,7 @@ async function loadDiscover(): Promise<DiscoverData> {
   const [titles, clips, trailers, posts] = await Promise.allSettled([
     fetchPublishedTitles(),
     fetchPublishedClips(),
-    fetchDiscoverTrailers(4),
+    fetchDiscoverTrailers(8),
     fetchLetterboxFeed(18),
   ]);
   let kinoVideos: KinoCheckDiscoverVideo[] = [];
@@ -58,7 +58,7 @@ async function loadDiscover(): Promise<DiscoverData> {
       fetchTmdbList('movie', 'trending'),
       fetchTmdbList('tv', 'trending'),
     ]);
-    kinoVideos = await fetchDiscoverKinoCheckVideos([...movieTrending.slice(0, 3), ...seriesTrending.slice(0, 3)], 3);
+    kinoVideos = await fetchDiscoverKinoCheckVideos([...movieTrending.slice(0, 4), ...seriesTrending.slice(0, 4)], 4);
   } catch (cause) {
     console.warn('KinoCheck featurette discovery unavailable', cause);
   }

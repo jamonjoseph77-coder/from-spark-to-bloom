@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, Compass, MessageCircle, Play, Users } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
+import { ShortCard } from '@/components/discover/ShortCard';
+import { ShortViewer } from '@/components/discover/ShortViewer';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
@@ -12,6 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { progressRatioByTitle, resumeItems, titlesOfType } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
+import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
@@ -60,8 +63,11 @@ function PublisherDestinations({ titles }: { titles: Title[] }) {
 
 export function HomePage() {
   const { user } = useAuth();
+  const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
   const { progress } = useLibrary();
   const { data: titles } = useAsyncData(() => fetchPublishedTitles().catch((error) => { console.warn('Cinema licensed catalogue is temporarily unavailable', error); return []; }), []);
+  const { data: publishedClips = [] } = useAsyncData(() => fetchPublishedClips().catch((error) => { console.warn('Cinema Shorts are temporarily unavailable', error); return []; }), []);
+  const shorts = useMemo(() => (publishedClips ?? []).filter((clip) => clip.kind === 'short'), [publishedClips]);
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
@@ -71,6 +77,15 @@ export function HomePage() {
   return (
     <div className={`${PAGE_CONTAINER} space-y-10 pb-14 sm:space-y-14`}>
       <TmdbHero />
+      {shorts.length > 0 && <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Quick stories</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2><p className="mt-1 text-sm text-slate-400">Short videos and moments from official Cinema publishers.</p></div>
+          <a href="/discover" className="text-sm font-semibold text-cinema-200 transition hover:text-white">Explore all Shorts</a>
+        </div>
+        <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
+          {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}
+        </div>
+      </section>}
       {user && <HomeCommunity social={social} loading={socialLoading} />}
       {cinemaShelves?.resume.length ? <ContinueWatchingRow items={cinemaShelves.resume} /> : null}
       <PublisherDestinations titles={titles ?? []} />
@@ -88,6 +103,7 @@ export function HomePage() {
       {!titles && <LoadingState label="Loading your Cinema catalogue" />}
       <section className="relative overflow-hidden rounded-[1.75rem] border border-sky-300/15 bg-[linear-gradient(115deg,rgba(96,165,250,.10),rgba(255,255,255,.025)_50%,rgba(255,255,255,.01))] p-6 sm:p-8"><div className="max-w-3xl"><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">The Cinema experience</p><h2 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">Discover a story. Experience it. Share it.</h2><p className="mt-3 text-sm leading-7 text-slate-300">Cinema brings entertainment and the people who love it into one connected destination. Move from a trailer to a title, from a title to a conversation, and from a conversation to watching together.</p><a href="/discover" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">Explore Discover <Compass className="h-4 w-4" /></a></div></section>
       <TmdbAttribution />
+      {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
     </div>
   );
 }
