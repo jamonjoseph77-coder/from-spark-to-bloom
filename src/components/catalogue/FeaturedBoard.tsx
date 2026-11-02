@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Info, Pause, Play, Sparkles } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
+import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbDetail, fetchTmdbList, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbDetail, type TmdbItem, type TmdbMediaType } from '@/lib/tmdb';
@@ -68,7 +68,7 @@ export function FeaturedBoard({ fallbackTitles = [], mediaType }: { fallbackTitl
             {localItem && localItem.playback_url.trim()
               ? <a href={href} className={BUTTON_PRIMARY}><Play className="h-4 w-4 fill-current" /> Watch now</a>
               : <a href={href} className={BUTTON_PRIMARY}><Info className="h-4 w-4" /> Explore title</a>}
-            {remoteTrailer && <button type="button" onClick={() => setTrailer({ url: 'https://www.youtube.com/watch?v=' + remoteTrailer.key, label: title + ' official trailer', heading: 'Official trailer · ' + title })} className={BUTTON_SECONDARY}><Play className="h-4 w-4" /> Watch trailer</button>}
+            {remoteTrailer && <button type="button" onClick={() => setTrailer({ url: 'https://www.youtube.com/watch?v=' + remoteTrailer.key, label: title + ' official trailer', heading: 'Official trailer · ' + title })} className={BUTTON_ACCENT}><Play className="h-4 w-4" /> Watch trailer</button>}
             {localItem && localItem.trailer_url.trim() && <button type="button" onClick={() => setTrailer({ url: localItem.trailer_url, label: title + ' trailer', heading: 'Trailer · ' + title })} className={BUTTON_SECONDARY}><Play className="h-4 w-4" /> Watch trailer</button>}
           </div>
         </div>

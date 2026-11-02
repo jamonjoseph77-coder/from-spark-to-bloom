@@ -56,23 +56,25 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
   );
 }
 
-export function LetterboxPage({ embedded = false }: { embedded?: boolean }) {
+export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { embedded?: boolean; titleId?: string }) {
   const { user } = useAuth();
   const { data: titles } = useAsyncData(fetchPublishedTitles, []);
   const { data: feed, error, reload } = useAsyncData(fetchLetterboxFeed, []);
   useEffect(() => subscribeToLetterbox(reload), [reload]);
   const [body, setBody] = useState('');
-  const [titleId, setTitleId] = useState('');
+  const [selectedTitleId, setSelectedTitleId] = useState('');
   const [posting, setPosting] = useState(false);
   const { notify } = useToast();
-  const linkedTitle = useMemo(() => (titles ?? []).find((title) => title.id === titleId), [titles, titleId]);
+  const activeTitleId = scopedTitleId || selectedTitleId;
+  const linkedTitle = useMemo(() => (titles ?? []).find((title) => title.id === activeTitleId), [titles, activeTitleId]);
+  const visibleFeed = useMemo(() => scopedTitleId ? (feed ?? []).filter((post) => post.title_id === scopedTitleId) : feed, [feed, scopedTitleId]);
 
   async function publish(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) return notify('Sign in to publish a post.', 'error');
     if (!body.trim()) return;
     setPosting(true);
-    try { await createLetterboxPost(user.id, body, titleId || null); setBody(''); setTitleId(''); reload(); notify('Your message has been shared.'); }
+    try { await createLetterboxPost(user.id, body, activeTitleId || null); setBody(''); setSelectedTitleId(''); reload(); notify('Your message has been shared.'); }
     catch { notify('We could not publish your post. Please try again.', 'error'); }
     finally { setPosting(false); }
   }
@@ -85,11 +87,11 @@ export function LetterboxPage({ embedded = false }: { embedded?: boolean }) {
         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">Share recommendations, discuss releases and exchange thoughts with people who enjoy the same stories.</p>
         <div className="mt-5 flex flex-wrap gap-3"><a href="/friends" className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/10"><Users className="h-4 w-4" /> Your friends</a><a href="/watch-parties" className="inline-flex items-center gap-2 rounded-full bg-cinema-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-cinema-400"><Clapperboard className="h-4 w-4" /> Watch together</a></div>
       </header>}
-      {user && <form onSubmit={publish} className="space-y-3 rounded-3xl border border-white/10 bg-ink-900/80 p-5 shadow-xl"><label htmlFor="letterbox-post" className="block text-sm font-extrabold text-white">Write a Letterbox message</label><textarea id="letterbox-post" value={body} onChange={(event) => setBody(event.target.value)} maxLength={2000} rows={4} placeholder="Share a thought, review, recommendation or something you are looking forward to…" className={`${INPUT} resize-y py-3`} /><div className="flex flex-col gap-3 sm:flex-row sm:items-center"><select value={titleId} onChange={(event) => setTitleId(event.target.value)} className={`${INPUT} min-w-0 flex-1 py-2.5`}><option value="">No title attached</option>{(titles ?? []).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select><span className="text-xs text-slate-500">{body.length}/2000</span><button type="submit" disabled={posting || !body.trim()} className={BUTTON_PRIMARY}>{posting ? 'Publishing…' : 'Share message'}</button></div>{linkedTitle && <p className="text-xs text-cinema-200">Linked to {linkedTitle.title}</p>}<p className="text-xs text-slate-500">Keep posts about entertainment. Only approved media can be published; video uploads are not enabled.</p></form>}
+      {user && <form onSubmit={publish} className="space-y-3 rounded-3xl border border-white/10 bg-ink-900/80 p-5 shadow-xl"><label htmlFor="letterbox-post" className="block text-sm font-extrabold text-white">Write a Letterbox message</label><textarea id="letterbox-post" value={body} onChange={(event) => setBody(event.target.value)} maxLength={2000} rows={4} placeholder="Share a thought, review, recommendation or something you are looking forward to…" className={`${INPUT} resize-y py-3`} /><div className="flex flex-col gap-3 sm:flex-row sm:items-center">{!scopedTitleId && <select value={selectedTitleId} onChange={(event) => setSelectedTitleId(event.target.value)} className={`${INPUT} min-w-0 flex-1 py-2.5`}><option value="">No title attached</option>{(titles ?? []).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select>}<span className="text-xs text-slate-500">{body.length}/2000</span><button type="submit" disabled={posting || !body.trim()} className={BUTTON_PRIMARY}>{posting ? 'Publishing…' : 'Share message'}</button></div>{linkedTitle && <p className="text-xs text-sky-200">{scopedTitleId ? 'Message about' : 'Linked to'} {linkedTitle.title}</p>}<p className="text-xs text-slate-500">Keep posts about entertainment. Only approved media can be published; video uploads are not enabled.</p></form>}
       {!user && <div className="rounded-2xl border border-white/10 bg-ink-900 p-5 text-sm text-slate-300"><a href="/sign-in" className="font-bold text-cinema-200">Sign in</a> to share recommendations and join the conversation.</div>}
       {!feed && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
-      {feed && feed.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The conversation starts here" description="When the Cinema community shares entertainment recommendations and discussions, they will appear here." />}
-      {feed && feed.length > 0 && <div className="mx-auto max-w-3xl space-y-5">{feed.map((post) => <PostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}
+      {feed && visibleFeed && visibleFeed.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The conversation starts here" description="When the Cinema community shares entertainment recommendations and discussions, they will appear here." />}
+      {feed && visibleFeed && visibleFeed.length > 0 && <div className="mx-auto max-w-3xl space-y-5">{visibleFeed.map((post) => <PostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}
     </div>
   );
 }

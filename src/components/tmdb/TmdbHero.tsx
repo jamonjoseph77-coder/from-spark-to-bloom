@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Info, Play, Pause, Star } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { VideoDialog } from '@/components/player/VideoDialog';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
+import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchDiscoverTrailers, fetchTmdbList, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
 
@@ -41,7 +41,7 @@ export function TmdbHero() {
 
   if (!entries?.length || !current) {
     return (
-      <section className="relative flex min-h-[25rem] items-end overflow-hidden rounded-[1.75rem] border border-white/10 bg-[radial-gradient(ellipse_at_75%_20%,rgba(96,165,250,.14),transparent_42%),linear-gradient(120deg,#242321,#111110_68%)] p-7 sm:min-h-[34rem] sm:p-12">
+      <section className="relative flex min-h-[25rem] items-end overflow-hidden rounded-[1.75rem] border border-white/10 bg-[radial-gradient(ellipse_at_78%_16%,rgba(96,165,250,.16),transparent_44%),linear-gradient(120deg,#111925,#080c12_70%)] p-7 sm:min-h-[34rem] sm:p-12">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[.24em] text-cinema-300">Cinema · Experience the World of Stories</p>
           <h1 className="mt-5 text-4xl font-black tracking-tight text-white sm:text-6xl">Your world of entertainment starts here.</h1>
@@ -80,17 +80,30 @@ export function TmdbHero() {
           <h1 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-.035em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl">{item.title}</h1>
           {item.overview && <p className="line-clamp-3 max-w-xl text-sm leading-7 text-slate-200/90 sm:text-base">{item.overview}</p>}
           <div className="flex flex-wrap gap-3 pt-2">
-            {current.videoKey && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_PRIMARY}><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
+            {current.videoKey && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
             <a href={tmdbHref(item)} className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> Explore title</a>
           </div>
         </div>
         {entries.length > 1 && (
+          <>
+          <div className="absolute right-7 top-1/2 z-10 hidden -translate-y-1/2 flex-col gap-3 xl:flex">
+            {[1, 2, 3].map((offset) => {
+              const position = (index + offset) % entries.length;
+              const preview = entries[position].item;
+              const previewImage = tmdbImageUrl(preview.posterPath, 'w500') || tmdbImageUrl(preview.backdropPath, 'w780');
+              return <button key={`${preview.mediaType}-${preview.id}`} type="button" onClick={() => setIndex(position)} aria-label={`Feature ${preview.title}`} className="group/preview flex w-52 items-center gap-3 rounded-2xl border border-white/10 bg-black/35 p-2 text-left shadow-xl backdrop-blur-xl transition hover:-translate-x-1 hover:border-sky-200/35 hover:bg-black/55">
+                <div className="h-[4.5rem] w-14 shrink-0 overflow-hidden rounded-xl bg-ink-800"><Artwork src={previewImage} alt="" fallbackTitle={preview.title} className="h-full w-full object-cover transition duration-500 group-hover/preview:scale-105" /></div>
+                <span className="min-w-0"><span className="block text-[9px] font-bold uppercase tracking-[.18em] text-sky-200/80">Up next</span><span className="mt-1 line-clamp-2 block text-xs font-bold leading-4 text-white">{preview.title}</span></span>
+              </button>;
+            })}
+          </div>
           <div className="absolute bottom-5 right-5 flex items-center gap-2 rounded-full border border-white/10 bg-black/40 p-2 backdrop-blur sm:bottom-8 sm:right-8">
             <div className="flex items-center gap-1.5" aria-label={`Featured title ${index + 1} of ${entries.length}`}>
               {entries.map((entry, position) => <button key={`${entry.item.mediaType}-${entry.item.id}`} type="button" onClick={() => setIndex(position)} aria-label={`Show ${entry.item.title}`} aria-current={position === index} className={`h-1.5 rounded-full transition-all ${position === index ? 'w-7 bg-sky-300' : 'w-1.5 bg-white/40 hover:bg-white/80'}`} />)}
             </div>
             <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Resume featured titles' : 'Pause featured titles'} className="grid h-7 w-7 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white">{paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}</button>
           </div>
+          </>
         )}
       </section>
       {trailerOpen && current.videoKey && <VideoDialog url={`https://www.youtube.com/watch?v=${current.videoKey}`} label={`${item.title} official trailer`} heading={`Trailer · ${item.title}`} onClose={() => setTrailerOpen(false)} />}

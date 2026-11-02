@@ -1,7 +1,10 @@
 export const PAGE_CONTAINER = 'mx-auto w-full max-w-7xl animate-rise-in px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pt-10';
 
 export const BUTTON_PRIMARY =
-  'inline-flex items-center justify-center gap-2 rounded-xl border border-sky-300/25 bg-sky-400/15 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-950/20 backdrop-blur-md transition hover:border-sky-200/45 hover:bg-sky-400/25 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-white/70 bg-slate-100 px-5 py-3 text-sm font-bold text-ink-950 shadow-lg shadow-black/25 transition hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
+
+export const BUTTON_ACCENT =
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-sky-200/25 bg-sky-300/15 px-5 py-3 text-sm font-bold text-sky-100 shadow-[0_8px_28px_rgba(48,91,150,.16)] backdrop-blur-xl transition hover:border-sky-200/45 hover:bg-sky-300/25 hover:text-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 
 export const BUTTON_SECONDARY =
   'inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-sky-300/35 hover:bg-white/10 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
