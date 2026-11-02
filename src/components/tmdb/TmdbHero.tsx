@@ -66,18 +66,20 @@ export function TmdbHero() {
         onMouseLeave={() => setPaused(false)}
         onFocus={() => setPaused(true)}
         onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false); }}
-        className="group relative isolate min-h-[29rem] overflow-hidden rounded-[2rem] border border-sky-200/15 bg-ink-900 shadow-[0_34px_100px_rgba(0,0,0,.55)] sm:min-h-[39rem] lg:min-h-[43rem]"
+        className="group cinema-hero relative isolate min-h-[31rem] overflow-hidden rounded-[2rem] border border-sky-200/20 bg-ink-900 shadow-[0_40px_120px_rgba(0,0,0,.58)] sm:min-h-[40rem] lg:min-h-[46rem]"
       >
-        <Artwork key={item.id} src={image} alt="" fallbackTitle={item.title} className="absolute inset-0 h-full w-full animate-fade-in object-cover object-center" />
+        <Artwork key={item.id} src={image} alt="" fallbackTitle={item.title} className="absolute inset-0 h-full w-full animate-fade-in object-cover object-center saturate-[1.12] transition-transform duration-[12000ms] group-hover:scale-[1.035]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#080d14] via-[#080d14]/80 to-[#080d14]/8" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080d14] via-transparent to-black/15" />
-        <div key={`${item.mediaType}-${item.id}`} className="relative flex min-h-[29rem] max-w-3xl flex-col justify-end gap-4 p-6 pb-20 animate-rise-in sm:min-h-[39rem] sm:p-14 sm:pb-28 lg:min-h-[43rem]">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050a12] via-[#050a12]/10 to-black/20" />
+        <div className="cinema-hero-light cinema-hero-light--one" aria-hidden="true" />
+        <div className="cinema-hero-light cinema-hero-light--two" aria-hidden="true" />
+        <div key={`${item.mediaType}-${item.id}`} className="relative flex min-h-[31rem] max-w-3xl flex-col justify-end gap-4 p-6 pb-20 animate-rise-in sm:min-h-[40rem] sm:p-14 sm:pb-28 lg:min-h-[46rem]">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full border border-sky-200/30 bg-sky-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[.2em] text-cinema-200 backdrop-blur">Featured on Cinema</span>
             <span className="text-xs font-semibold uppercase tracking-[.16em] text-slate-300">{label}{year ? ` · ${year}` : ''}</span>
             {item.rating !== null && <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-100"><Star className="h-3.5 w-3.5 fill-current" />{item.rating.toFixed(1)}</span>}
           </div>
-          <h1 className="max-w-2xl text-4xl font-black leading-[1.02] tracking-[-.035em] text-white drop-shadow-lg sm:text-6xl lg:text-7xl">{item.title}</h1>
+          <h1 className="max-w-2xl text-4xl font-black leading-[.98] tracking-[-.045em] text-white drop-shadow-[0_8px_34px_rgba(0,0,0,.55)] sm:text-6xl lg:text-7xl">{item.title}</h1>
           {item.overview && <p className="line-clamp-3 max-w-xl text-sm leading-7 text-slate-200/90 sm:text-base">{item.overview}</p>}
           <div className="flex flex-wrap gap-3 pt-2">
             {current.videoKey && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
