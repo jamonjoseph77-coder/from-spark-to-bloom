@@ -47,7 +47,6 @@ jobs:
           src/components/tmdb/TmdbCard.tsx
           src/components/layout/navigation.ts
           src/routes/index.tsx
-          src/routes/letterbox.tsx
           src/components/tmdb/TmdbErrorState.tsx
           --rule 'prettier/prettier: off'
       - name: Type-check application
