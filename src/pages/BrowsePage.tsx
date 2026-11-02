@@ -17,10 +17,7 @@ const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: str
 const ALL_GENRES = 'All';
 
 export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
-  const { data: titles, error, reload } = useAsyncData(() => fetchPublishedTitles().catch((cause) => {
-    console.warn(`Cinema catalogue unavailable on ${kind}`, cause);
-    return [];
-  }), [kind]);
+  const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, [kind]);
   const [query, setQuery] = useState('');
   const [genre, setGenre] = useState(ALL_GENRES);
   const [sort, setSort] = useState<SortOption>('newest');
