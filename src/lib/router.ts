@@ -6,7 +6,7 @@ import type { TmdbMediaType } from '@/lib/tmdb';
 export type ComingSoonSection = 'box-office';
 export type Route =
   | { name: 'home' } | { name: 'browse'; kind: TitleType } | { name: 'discover' }
-  | { name: 'letterbox' } | { name: 'search'; query: string } | { name: 'title'; id: string }
+  | { name: 'search'; query: string } | { name: 'title'; id: string }
   | { name: 'tmdb'; mediaType: TmdbMediaType; id: number } | { name: 'watch'; id: string; episodeId: string | null }
   | { name: 'my-cinema' } | { name: 'sign-in' } | { name: 'sign-up' } | { name: 'forgot-password' }
   | { name: 'reset-password' } | { name: 'admin' } | { name: 'admin-new' } | { name: 'admin-clips' }
@@ -30,7 +30,6 @@ export function parsePath(href: string): Route {
   if (comingSoon) return { name: 'coming-soon', section: comingSoon };
   switch (first) {
     case 'discover': return { name: 'discover' };
-    case 'letterbox': return { name: 'letterbox' };
     case 'search': return { name: 'search', query: params.get('q') ?? '' };
     case 'title': return second ? { name: 'title', id: second } : { name: 'not-found' };
     case 'tmdb': { const id = Number(third); const mediaType = second === 'movie' || second === 'tv' ? second : null; return mediaType && Number.isInteger(id) && id > 0 ? { name: 'tmdb', mediaType, id } : { name: 'not-found' }; }
