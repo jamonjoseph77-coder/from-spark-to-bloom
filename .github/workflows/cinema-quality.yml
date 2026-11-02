@@ -34,8 +34,16 @@ jobs:
           bunx eslint
           src/lib/tmdb.ts
           src/lib/tmdb.functions.ts
+          src/lib/letterbox.ts
+          src/pages/HomePage.tsx
           src/pages/DiscoverPage.tsx
+          src/pages/LetterboxPage.tsx
+          src/pages/FriendsPage.tsx
+          src/pages/TmdbBrowsePage.tsx
           src/pages/TmdbDetailPage.tsx
+          src/components/catalogue/FeaturedBoard.tsx
+          src/components/layout/navigation.ts
+          src/routes/letterbox.tsx
           src/components/tmdb/TmdbErrorState.tsx
           --rule 'prettier/prettier: off'
       - name: Run tests
