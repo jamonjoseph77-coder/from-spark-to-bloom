@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { TitleType } from '@/lib/types';
+import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 
 export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured' | 'behind_the_scenes' | 'interview' | 'making_of' | 'deleted_scene' | 'cast_featurette' | 'production_diary';
 
@@ -41,12 +42,35 @@ export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
 export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
   const { data, error } = await supabase
     .from('discover_clips')
-    .select('*, title:titles(id, title, type, playback_url)')
+    .select('*')
     .eq('is_published', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as DiscoverClip[];
+
+  const clips = (data ?? []) as Omit<DiscoverClip, 'title'>[];
+  const titleIds = [...new Set(clips.map((clip) => clip.title_id).filter((id): id is string => Boolean(id)))];
+  if (titleIds.length === 0) return clips.map((clip) => ({ ...clip, title: null }));
+
+  // The short-video feed must not fail just because optional title metadata is unavailable.
+  const { data: titles, error: titleError } = await supabase
+    .from('titles')
+    .select('id, title, type, playback_url')
+    .in('id', titleIds);
+  if (titleError) console.warn('Cinema Shorts title metadata is temporarily unavailable', titleError);
+
+  const titleById = new Map((titles ?? []).map((title) => [title.id, title]));
+  return clips.map((clip) => ({
+    ...clip,
+    title: clip.title_id ? (titleById.get(clip.title_id) as ClipTitle | undefined) ?? null : null,
+  }));
+}
+
+export function isPlayableShort(clip: DiscoverClip): boolean {
+  const supported = isDirectVideoUrl(clip.video_url) || Boolean(toEmbedUrl(clip.video_url));
+  const durationIsValid = clip.duration_seconds === null
+    || (clip.duration_seconds > 0 && clip.duration_seconds <= 90);
+  return clip.is_published && supported && durationIsValid;
 }
 
 export interface ClipInput {
