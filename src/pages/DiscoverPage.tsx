@@ -15,10 +15,13 @@ import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
 import type { Title } from '@/lib/types';
 import type { VideoSource } from '@/lib/videoSource';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
+import { loadFriendsSnapshot } from '@/lib/friends';
+import { useAuth } from '@/hooks/useAuth';
 
-type FeedTab = 'for-you' | 'shorts' | 'trailers' | 'clips';
+type FeedTab = 'for-you' | 'following' | 'shorts' | 'trailers' | 'clips';
 const TABS: { id: FeedTab; label: string }[] = [
   { id: 'for-you', label: 'For you' },
+  { id: 'following', label: 'Following' },
   { id: 'shorts', label: 'Shorts' },
   { id: 'trailers', label: 'Trailers' },
   { id: 'clips', label: 'Clips & features' },
@@ -57,6 +60,8 @@ async function loadDiscover(): Promise<DiscoverData> {
 
 export function DiscoverPage() {
   const { data, error, reload } = useAsyncData(loadDiscover, []);
+  const { user } = useAuth();
+  const { data: friendSnapshot } = useAsyncData(() => user ? loadFriendsSnapshot(user.id) : Promise.resolve(null), [user?.id]);
   const [tab, setTab] = useState<FeedTab>('for-you');
   const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
   const [activeVideo, setActiveVideo] = useState<VideoSource | null>(null);
@@ -101,6 +106,12 @@ export function DiscoverPage() {
     }));
     return [...publisherClips, ...titleTrailers, ...tmdbTrailers];
   }, [data]);
+
+  const followingPosts = useMemo(() => {
+    if (!data || !friendSnapshot) return [];
+    const friendIds = new Set(friendSnapshot.friends.map((friend) => friend.otherUserId));
+    return data.posts.filter((post) => friendIds.has(post.author_id));
+  }, [data, friendSnapshot]);
 
   const visibleVideos = useMemo(() => {
     if (tab === 'trailers') return videos.filter((video) => /trailer/i.test(video.kind));
@@ -154,7 +165,7 @@ export function DiscoverPage() {
         </section>
       )}
 
-      {(tab !== 'shorts') && (
+      {(tab !== 'shorts' && tab !== 'following') && (
         <section className="space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Watch something</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">{tab === 'trailers' ? 'Trailers & first looks' : tab === 'clips' ? 'Clips & features' : 'Videos picked for discovery'}</h2></div>
@@ -188,6 +199,13 @@ export function DiscoverPage() {
       )}
 
 
+
+      {tab === 'following' && (
+        <section className="space-y-5">
+          <div className="flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Your people</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Following</h2><p className="mt-1 text-sm text-slate-400">Messages and title conversations shared by your Cinema friends.</p></div><a href="/friends" className="text-sm font-semibold text-cinema-200 hover:text-white">Manage friends</a></div>
+          {!user ? <EmptyState icon={<Users className="h-7 w-7 text-cinema-300" />} title="Sign in to see your Following feed" description="Connect with friends to see the stories and recommendations they share." /> : !friendSnapshot ? <LoadingState label="Loading your friends" /> : followingPosts.length ? <div className="grid gap-3 lg:grid-cols-2">{followingPosts.map((post) => <article key={post.id} className="rounded-2xl border border-white/10 bg-ink-900/75 p-4"><div className="flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-full bg-sky-300/10 text-xs font-black text-cinema-200">{(post.author?.display_name || post.author?.username || 'C').slice(0,1).toUpperCase()}</span><div><p className="text-xs font-bold text-white">{post.author?.display_name || post.author?.username || 'Cinema member'}</p><p className="text-[10px] text-slate-500">{new Date(post.created_at).toLocaleDateString()}</p></div></div><p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-300">{post.body}</p>{post.title && <a href={`/title/${post.title.id}`} className="mt-3 inline-flex items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-sky-300/25"><span className="h-12 w-9 overflow-hidden rounded-lg bg-ink-800">{post.title.poster_url && <img src={post.title.poster_url} alt="" className="h-full w-full object-cover" />}</span><span><span className="block text-[10px] font-bold uppercase tracking-wider text-cinema-300">Discussing</span><span className="block text-xs font-bold text-white">{post.title.title}</span></span></a>}</article>)}</div> : <EmptyState icon={<Users className="h-7 w-7 text-cinema-300" />} title="Your friends haven't posted yet" description="When your friends share public Letterbox messages, their conversations will appear here." />}
+        </section>
+      )}
       {tab === 'for-you' && data.posts.length > 0 && (
         <section className="space-y-5">
           <div className="flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">The conversation</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">From the Cinema community</h2><p className="mt-1 text-sm text-slate-400">Public Letterbox messages about the entertainment people enjoy.</p></div><a href="/friends" className="text-sm font-semibold text-cinema-200 hover:text-white">Open Friends</a></div>
