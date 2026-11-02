@@ -35,7 +35,7 @@ export function TopBar() {
             }}
             placeholder="Search Movies, Series, Sports..."
             aria-label="Search Cinema"
-            className={`${INPUT} rounded-full py-2.5 pl-11 pr-4 text-sm shadow-inner shadow-black/20 focus:border-cinema-300/60 focus:ring-cinema-300/20`}
+            className={`${INPUT} !rounded-full py-2.5 pl-11 pr-4 text-sm shadow-inner shadow-black/20 focus:border-cinema-300/60 focus:ring-cinema-300/20`}
           />
         </div>
         <button
