@@ -36,15 +36,16 @@ function ProfileEditor({ userId }: { userId: string }) {
 }
 
 function PublicFriendProfile({ username }: { username: string }) {
-  const { data, error, reload } = useAsyncData(async () => {
+  const { data, error, reload, loading } = useAsyncData(async () => {
     const profile = await fetchProfileByUsername(username);
     if (!profile) return null;
     const posts = await fetchLetterboxFeed(20, profile.user_id);
     return { profile, posts };
   }, [username]);
 
-  if (!data) return <div className="space-y-5">{error ? <ErrorState onRetry={reload} /> : <LoadingState label="Opening profile" />}</div>;
-  if (!data.profile) return <EmptyState icon={<UserRound className="h-7 w-7 text-cinema-300" />} title="Profile unavailable" description="This profile may be private, unavailable or no longer active." action={<a href="/friends" className="text-sm font-bold text-cinema-200 hover:text-white">Back to Friends</a>} />;
+  if (loading && !data) return <LoadingState label="Opening profile" />;
+  if (error) return <ErrorState onRetry={reload} />;
+  if (!data || !data.profile) return <EmptyState icon={<UserRound className="h-7 w-7 text-cinema-300" />} title="Profile unavailable" description="This profile may be private, unavailable or no longer active." action={<a href="/friends" className="text-sm font-bold text-cinema-200 hover:text-white">Back to Friends</a>} />;
 
   const { profile, posts } = data;
   return (
