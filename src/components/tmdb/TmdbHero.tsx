@@ -16,10 +16,12 @@ async function loadHero(): Promise<HeroEntry[]> {
   } catch (error) {
     console.warn('Cinema featured trailers are temporarily unavailable', error);
   }
-  const [movies, series] = await Promise.all([
+  const [moviesResult, seriesResult] = await Promise.allSettled([
     fetchTmdbList('movie', 'trending'),
     fetchTmdbList('tv', 'trending'),
   ]);
+  const movies = moviesResult.status === 'fulfilled' ? moviesResult.value : [];
+  const series = seriesResult.status === 'fulfilled' ? seriesResult.value : [];
   return [
     ...movies.slice(0, 4).map((item) => ({ item })),
     ...series.slice(0, 4).map((item) => ({ item })),
@@ -68,7 +70,7 @@ export function TmdbHero() {
         onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false); }}
         className="group cinema-hero relative isolate min-h-[31rem] overflow-hidden rounded-[2rem] border border-sky-200/20 bg-ink-900 shadow-[0_40px_120px_rgba(0,0,0,.58)] sm:min-h-[40rem] lg:min-h-[46rem]"
       >
-        <Artwork key={item.id} src={image} alt="" fallbackTitle={item.title} className="absolute inset-0 h-full w-full animate-fade-in object-cover object-center saturate-[1.12] transition-transform duration-[12000ms] group-hover:scale-[1.035]" />
+        <Artwork key={item.id} src={image} alt="" fallbackTitle={item.title} priority className="absolute inset-0 h-full w-full animate-fade-in object-cover object-center saturate-[1.12] transition-transform duration-[12000ms] group-hover:scale-[1.035]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#080d14] via-[#080d14]/80 to-[#080d14]/8" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050a12] via-[#050a12]/10 to-black/20" />
         <div className="cinema-hero-light cinema-hero-light--one" aria-hidden="true" />
