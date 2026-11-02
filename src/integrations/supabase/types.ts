@@ -29,6 +29,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          body: string
+          created_at: string
+          href: string
+          id: string
+          read_at: string | null
+          title: string
+          type: 'friend_request' | 'friend_accepted' | 'post_reaction' | 'post_comment' | 'watch_party_joined' | 'watch_party_live'
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string
+          created_at?: string
+          href?: string
+          id?: string
+          read_at?: string | null
+          title: string
+          type: 'friend_request' | 'friend_accepted' | 'post_reaction' | 'post_comment' | 'watch_party_joined' | 'watch_party_live'
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string
+          created_at?: string
+          href?: string
+          id?: string
+          read_at?: string | null
+          title?: string
+          type?: 'friend_request' | 'friend_accepted' | 'post_reaction' | 'post_comment' | 'watch_party_joined' | 'watch_party_live'
+          user_id?: string
+        }
+        Relationships: []
+      }
       letterbox_posts: {
         Row: {
           author_id: string
