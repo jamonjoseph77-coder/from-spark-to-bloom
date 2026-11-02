@@ -108,6 +108,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
 
   function handleLoadedMetadata(event: SyntheticEvent<HTMLVideoElement>) {
     const video = event.currentTarget;
+    video.volume = volume;
     const target = startAtRef.current;
     if (target > 0 && Number.isFinite(video.duration) && target < video.duration - 5) {
       video.currentTime = target;
