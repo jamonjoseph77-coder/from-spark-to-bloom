@@ -13,7 +13,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       <div className="mx-auto flex max-h-[88vh] max-w-[min(92vw,480px)] flex-col gap-3 pr-7">
         <div className="flex min-h-0 justify-center overflow-hidden rounded-2xl bg-black ring-1 ring-white/10">
           {direct && <VideoPlayer src={clip.video_url} title={clip.headline} layout="portrait" autoPlay muted />}
-          {embed && <iframe src={embed} title={clip.headline} className="aspect-[9/16] max-h-[76vh] w-full bg-black" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
+          {embed && <iframe src={embed} title={clip.headline} className="aspect-[9/16] h-[76vh] max-h-[76vh] w-auto max-w-full bg-black" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
           {!direct && !embed && <div className="grid aspect-[9/16] w-full place-items-center p-6 text-center text-sm text-slate-400">This short needs a supported MP4, HLS, YouTube or Vimeo video link.</div>}
         </div>
         <div className="flex items-center gap-3">
