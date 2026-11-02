@@ -2,7 +2,7 @@
 -- No direct messages and no unrestricted video uploads are introduced.
 create table if not exists public.letterbox_posts (
   id uuid primary key default gen_random_uuid(),
-  author_id uuid not null references public.profiles(user_id) on delete cascade,
+  author_id uuid not null references auth.users(id) on delete cascade,
   body text not null check (char_length(body) between 1 and 2000),
   title_id uuid null references public.titles(id) on delete set null,
   image_url text null,
