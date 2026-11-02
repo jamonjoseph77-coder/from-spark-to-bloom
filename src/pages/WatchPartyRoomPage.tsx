@@ -114,13 +114,13 @@ function RoomView({ partyId, userId }: { partyId: string; userId: string }) {
   const hostNames = new Map(members.map((member) => [member.userId, member.profile?.display_name ?? 'Cinema member']));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 rounded-[2rem] border border-sky-300/10 bg-[radial-gradient(ellipse_at_50%_0%,rgba(39,112,235,.12),transparent_52%)] p-3 sm:p-5">
       <a href="/watch-parties" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white">
         <ArrowLeft className="h-4 w-4" /> All watch parties
       </a>
 
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="min-w-0 space-y-6">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0 space-y-6 rounded-3xl border border-white/10 bg-black/35 p-3 shadow-[0_24px_90px_rgba(0,0,0,.45)] sm:p-5">
           {playbackUrl ? (
             <VideoPlayer
               key={`${party.id}-${playbackUrl}`}
@@ -186,7 +186,7 @@ function RoomView({ partyId, userId }: { partyId: string; userId: string }) {
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5 rounded-3xl border border-white/10 bg-[#080d17]/90 p-4 shadow-xl sm:p-5">
           {!isMember && (
             <section className={`${CARD} space-y-4`}>
               <h2 className="font-bold text-white">Join this party</h2>

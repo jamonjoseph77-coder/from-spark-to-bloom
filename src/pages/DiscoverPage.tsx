@@ -85,7 +85,7 @@ export function DiscoverPage() {
   const [activeVideo, setActiveVideo] = useState<VideoSource | null>(null);
   const { notify } = useToast();
 
-  const shorts = useMemo(() => (data?.clips ?? []).filter((clip) => clip.kind === 'short'), [data]);
+  const shorts = useMemo(() => (data?.clips ?? []).filter((clip) => clip.kind === 'short').slice(0, 8), [data]);
   const videos = useMemo<VideoTileData[]>(() => {
     if (!data) return [];
     const publisherClips: VideoTileData[] = data.clips
@@ -135,7 +135,7 @@ export function DiscoverPage() {
     return uniqueVideos(
       [...publisherClips, ...titleTrailers, ...tmdbTrailers, ...kinoEditorial],
       (video) => video.source.url,
-    );
+    ).slice(0, 18);
   }, [data]);
 
   const followingPosts = useMemo(() => {

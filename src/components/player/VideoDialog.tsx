@@ -14,7 +14,7 @@ export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) 
   return (
     <Modal label={label} onClose={onClose} wide>
       <div className="space-y-4 pr-8">
-        <p className="text-sm font-semibold text-slate-300">{heading}</p>
+        <div className="rounded-2xl border border-sky-300/15 bg-gradient-to-r from-sky-400/[.08] to-white/[.02] px-4 py-3"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200">Cinema · Official video</p><p className="mt-1 text-sm font-semibold text-white">{heading}</p></div>
         {direct && <VideoPlayer src={url} title={label} />}
         {embedUrl && (
           <div className="aspect-video overflow-hidden rounded-2xl bg-black ring-1 ring-white/10">
