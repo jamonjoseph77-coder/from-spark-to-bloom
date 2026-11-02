@@ -1,5 +1,6 @@
 import { UserPlus, Users, Compass, PartyPopper, ShieldCheck, UserRound, Sparkles } from 'lucide-react';
 import { FriendsHub } from '@/components/social/FriendsHub';
+import { LetterboxPage } from '@/pages/LetterboxPage';
 import { SignedOutGate } from '@/components/social/SignedOutGate';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, PAGE_CONTAINER } from '@/components/ui/styles';
@@ -52,7 +53,13 @@ export function FriendsPage() {
       </div>
       {loading && <LoadingState />}
       {!loading && !user && <SignedOutGate icon={<Users className="h-7 w-7 text-cinema-300" />} title="Sign in to build your circle" description="Create your Cinema profile, find people by username and connect around stories you enjoy." />}
-      {!loading && user && <FriendsGate userId={user.id} />}
+      {!loading && user && <>
+        <FriendsGate userId={user.id} />
+        <section className="space-y-4 border-t border-white/10 pt-8">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Your voice</p><h2 className="mt-2 text-xl font-extrabold text-white sm:text-2xl">Share a Letterbox message</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Post a thought, review or recommendation about a movie, series or other entertainment. Your message lives alongside your friends experience.</p></div>
+          <LetterboxPage embedded />
+        </section>
+      </>}
     </div>
   );
 }
