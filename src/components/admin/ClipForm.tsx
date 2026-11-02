@@ -79,6 +79,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (form.is_published && !window.confirm('Confirm that Cinema has permission from the rights holder to publish this video in the intended territories and placements.')) return;
     const result = buildInput(form);
     if (!result.input) {
       setError(result.error ?? 'Check the highlighted fields.');
@@ -127,7 +128,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
         <div className="sm:col-span-2">
           <label htmlFor="clip-video" className={LABEL}>Video link</label>
           <input id="clip-video" type="url" className={INPUT} placeholder="https://" value={form.video_url} onChange={(e) => update('video_url', e.target.value)} required />
-          <p className="mt-1.5 text-xs text-slate-500">Direct MP4 or HLS (.m3u8) link, or a YouTube or Vimeo link.</p>
+          <p className="mt-1.5 text-xs text-slate-500">Direct MP4 or HLS (.m3u8) link, or an approved YouTube or Vimeo link. Only publish material Cinema has permission to distribute.</p>
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="clip-poster" className={LABEL}>Poster image link</label>
@@ -153,6 +154,8 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
           </div>
         </div>
       </div>
+
+      <p className="rounded-xl border border-sky-200/10 bg-sky-300/[.05] p-3 text-xs leading-5 text-slate-400">Before publishing, confirm the publisher has authorised Cinema to display this video in the intended territories and placements. Trailer permission does not automatically cover other footage.</p>
 
       <label className="flex items-center gap-3 text-sm font-semibold text-slate-200">
         <input type="checkbox" className="h-4 w-4 accent-cinema-500" checked={form.is_published} onChange={(e) => update('is_published', e.target.checked)} />

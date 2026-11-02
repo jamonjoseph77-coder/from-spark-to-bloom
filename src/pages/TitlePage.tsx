@@ -21,7 +21,7 @@ import { relatedTitles, titleMeta } from '@/lib/catalogue';
 import { formatDuration } from '@/lib/format';
 import { publisherHref } from '@/lib/publishers';
 import { fetchPublishedTitles, fetchTitleDetail } from '@/lib/library';
-import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
+import { CLIP_KIND_LABEL, fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { TITLE_TYPE_LABELS, type TitleType } from '@/lib/types';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
@@ -47,7 +47,10 @@ export function TitlePage({ titleId }: { titleId: string }) {
   if (!title) return <NotFoundPage />;
 
   const titleShorts = data.clips.filter((clip) => clip.kind === 'short' && clip.title_id === title.id);
-  const titleClips = data.clips.filter((clip) => clip.kind === 'clip' && clip.title_id === title.id);
+  const titleEditorial = data.clips.filter((clip) => clip.title_id === title.id && clip.kind !== 'short' && clip.kind !== 'trailer');
+  const behindScenes = titleEditorial.filter((clip) => ['behind_the_scenes', 'making_of', 'production_diary'].includes(clip.kind));
+  const interviews = titleEditorial.filter((clip) => clip.kind === 'interview');
+  const additionalClips = titleEditorial.filter((clip) => ['clip', 'featured', 'deleted_scene', 'cast_featurette'].includes(clip.kind));
   const firstEpisode = seasons.flatMap((season) => season.episodes).find((episode) => episode.playback_url.trim() !== '');
   const savedProgress = progress.find((entry) => entry.content_id === title.id);
   const canResume = savedProgress && !savedProgress.completed && savedProgress.position_seconds > 5;
@@ -148,14 +151,15 @@ export function TitlePage({ titleId }: { titleId: string }) {
               </section>
             )}
 
-            {(titleShorts.length > 0 || titleClips.length > 0) && (
-              <section className="space-y-5">
-                <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">More to experience</p><h2 className={SECTION_HEADING}>Videos from this title</h2><p className="mt-1 text-sm text-slate-400">Publisher-provided shorts and clips connected to {title.title}.</p></div>
-                {titleShorts.length > 0 && <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}</div>}
-                {titleClips.length > 0 && <div className="grid gap-3 sm:grid-cols-2">{titleClips.map((clip) => <button key={clip.id} type="button" onClick={() => setActiveShort(clip)} className="rounded-xl border border-white/10 bg-ink-900/70 p-4 text-left transition hover:border-sky-200/25 hover:bg-ink-850"><span className="mb-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[.16em] text-sky-200"><Film className="h-3 w-3" /> Publisher clip</span><span className="block font-semibold text-white">{clip.headline}</span><span className="mt-1 block line-clamp-2 text-sm leading-6 text-slate-400">{clip.description}</span></button>)}</div>}
+            {(titleShorts.length > 0 || titleEditorial.length > 0) && (
+              <section className="space-y-6">
+                <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Official extras</p><h2 className={SECTION_HEADING}>More from {title.title}</h2><p className="mt-1 text-sm text-slate-400">Official extras and publisher-approved videos connected to this title.</p></div>
+                {behindScenes.length > 0 && <EditorialVideoGroup heading="Behind the scenes" clips={behindScenes} onOpen={setActiveShort} />}
+                {interviews.length > 0 && <EditorialVideoGroup heading="Cast and crew conversations" clips={interviews} onOpen={setActiveShort} />}
+                {additionalClips.length > 0 && <EditorialVideoGroup heading="More from this title" clips={additionalClips} onOpen={setActiveShort} />}
+                {titleShorts.length > 0 && <div className="space-y-3"><h3 className="text-sm font-bold text-slate-200">Short videos</h3><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}</div></div>}
               </section>
             )}
-
             <section className="space-y-5 border-t border-white/10 pt-9">
               <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Your circle and the story</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">The conversation</h2><p className="mt-1 text-sm text-slate-400">Share a Letterbox message, recommendation or thought about this title.</p></div>
               <LetterboxPage embedded titleId={title.id} />
@@ -197,4 +201,27 @@ export function TitlePage({ titleId }: { titleId: string }) {
 function DetailRow({ label, value, href }: { label: string; value: string; href?: string }) {
   if (!value) return null;
   return <div className="flex justify-between gap-4 border-b border-white/5 pb-3 last:border-0 last:pb-0"><span className="text-slate-400">{label}</span>{href ? <a href={href} className="text-right font-semibold text-sky-200 transition hover:text-white">{value}</a> : <span className="text-right font-semibold text-slate-100">{value}</span>}</div>;
+}
+
+function EditorialVideoGroup({ heading, clips, onOpen }: { heading: string; clips: DiscoverClip[]; onOpen: (clip: DiscoverClip) => void }) {
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-bold text-slate-200">{heading}</h3>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {clips.map((clip) => (
+          <button key={clip.id} type="button" onClick={() => onOpen(clip)} className="group overflow-hidden rounded-2xl border border-white/10 bg-ink-900/70 text-left transition hover:border-sky-200/25 hover:bg-ink-850">
+            <div className="relative aspect-video overflow-hidden bg-ink-950">
+              <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+              <span className="absolute inset-0 grid place-items-center bg-black/15 text-white"><span className="grid h-11 w-11 place-items-center rounded-full border border-white/25 bg-black/45 backdrop-blur"><Play className="h-4 w-4 fill-current" /></span></span>
+            </div>
+            <div className="p-4">
+              <span className="text-[10px] font-bold uppercase tracking-[.16em] text-sky-200">{CLIP_KIND_LABEL[clip.kind]}</span>
+              <span className="mt-1 block font-semibold text-white">{clip.headline}</span>
+              {clip.description && <span className="mt-1 block line-clamp-2 text-sm leading-6 text-slate-400">{clip.description}</span>}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }

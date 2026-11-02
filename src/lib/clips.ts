@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type { TitleType } from '@/lib/types';
 
-export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured';
+export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured' | 'behind_the_scenes' | 'interview' | 'making_of' | 'deleted_scene' | 'cast_featurette' | 'production_diary';
 
 export interface ClipTitle {
   id: string;
@@ -29,6 +29,12 @@ export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
   short: 'Short',
   clip: 'Clip',
   featured: 'Featured',
+  behind_the_scenes: 'Behind the scenes',
+  interview: 'Interview',
+  making_of: 'Making of',
+  deleted_scene: 'Deleted scene',
+  cast_featurette: 'Cast featurette',
+  production_diary: 'Production diary',
 };
 
 export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
