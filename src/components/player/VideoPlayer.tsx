@@ -167,7 +167,7 @@ export function VideoPlayer({
 
   return (
     <div className="space-y-3">
-      <div className={`relative mx-auto overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/60 ring-1 ring-white/10 ${layout === 'portrait' ? 'aspect-[9/16] max-h-[78vh] w-auto' : 'aspect-video w-full'}`}>
+      <div className={`relative mx-auto overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/60 ring-1 ring-white/10 ${layout === 'portrait' ? 'aspect-[9/16] h-[78vh] max-h-[78vh] w-auto max-w-full' : 'aspect-video w-full'}`}>
         <video
           ref={videoRef}
           className="h-full w-full bg-black object-contain"
