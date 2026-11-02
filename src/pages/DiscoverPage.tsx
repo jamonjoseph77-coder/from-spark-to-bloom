@@ -10,7 +10,8 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useToast } from '@/hooks/useToast';
 import { CLIP_KIND_LABEL, fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { fetchPublishedTitles } from '@/lib/library';
-import { fetchDiscoverTrailers, tmdbHref, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
+import { fetchDiscoverTrailers, fetchTmdbList, tmdbHref, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
+import { fetchDiscoverKinoCheckVideos, type KinoCheckDiscoverVideo } from '@/lib/kinocheck';
 import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
 import { LetterboxPage } from '@/pages/LetterboxPage';
 import type { Title } from '@/lib/types';
@@ -31,7 +32,7 @@ const TABS: { id: FeedTab; label: string }[] = [
   { id: 'clips', label: 'Clips' },
 ];
 
-interface DiscoverData { titles: Title[]; clips: DiscoverClip[]; trailers: TmdbTrailer[]; posts: LetterboxPost[] }
+interface DiscoverData { titles: Title[]; clips: DiscoverClip[]; trailers: TmdbTrailer[]; kinoVideos: KinoCheckDiscoverVideo[]; posts: LetterboxPost[] }
 interface VideoTileData {
   id: string;
   heading: string;
@@ -50,6 +51,16 @@ async function loadDiscover(): Promise<DiscoverData> {
     fetchDiscoverTrailers(4),
     fetchLetterboxFeed(18),
   ]);
+  let kinoVideos: KinoCheckDiscoverVideo[] = [];
+  try {
+    const [movieTrending, seriesTrending] = await Promise.all([
+      fetchTmdbList('movie', 'trending'),
+      fetchTmdbList('tv', 'trending'),
+    ]);
+    kinoVideos = await fetchDiscoverKinoCheckVideos([...movieTrending.slice(0, 3), ...seriesTrending.slice(0, 3)], 3);
+  } catch (cause) {
+    console.warn('KinoCheck featurette discovery unavailable', cause);
+  }
   if (titles.status === 'rejected') console.warn('Cinema titles unavailable in Discover', titles.reason);
   if (clips.status === 'rejected') console.warn('Cinema publisher clips unavailable in Discover', clips.reason);
   if (trailers.status === 'rejected') console.warn('Cinema official trailer discovery unavailable', trailers.reason);
@@ -58,6 +69,7 @@ async function loadDiscover(): Promise<DiscoverData> {
     titles: titles.status === 'fulfilled' ? titles.value : [],
     clips: clips.status === 'fulfilled' ? clips.value : [],
     trailers: trailers.status === 'fulfilled' ? trailers.value : [],
+    kinoVideos,
     posts: posts.status === 'fulfilled' ? posts.value : [],
   };
 }
@@ -109,7 +121,25 @@ export function DiscoverPage() {
       href: tmdbHref(trailer),
       source: { url: `https://www.youtube.com/watch?v=${trailer.videoKey}`, label: `${trailer.title} official trailer`, heading: `Trailer · ${trailer.title}` },
     }));
-    return [...publisherClips, ...titleTrailers, ...tmdbTrailers];
+    const kinoEditorial: VideoTileData[] = data.kinoVideos.map((video) => ({
+      id: 'kino-' + video.mediaType + '-' + video.tmdbId + '-' + video.id,
+      heading: video.title,
+      publisher: 'Official ' + (video.categories.includes('Featurette') ? 'featurette' : 'clip') + ' · ' + video.titleName,
+      image: video.thumbnail || tmdbImageUrl(video.backdropPath, 'w780') || tmdbImageUrl(video.posterPath, 'w500'),
+      description: video.overview,
+      kind: video.categories.includes('Featurette') ? 'Featurette' : 'Clip',
+      href: tmdbHref({ id: video.tmdbId, mediaType: video.mediaType, title: video.titleName, overview: video.overview, releaseDate: null, rating: null, posterPath: video.posterPath, backdropPath: video.backdropPath }),
+      source: { url: 'https://www.youtube.com/watch?v=' + video.youtubeVideoId, label: video.title, heading: video.title },
+    }));
+    const combined = [...publisherClips, ...titleTrailers, ...tmdbTrailers, ...kinoEditorial];
+    const seen = new Set<string>();
+    return combined.filter((video) => {
+      const match = video.source.url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,20})/);
+      const key = match?.[1] ?? video.id;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }, [data]);
 
   const followingPosts = useMemo(() => {
@@ -125,7 +155,7 @@ export function DiscoverPage() {
 
   const visibleVideos = useMemo(() => {
     if (tab === 'trailers') return videos.filter((video) => /trailer/i.test(video.kind));
-    if (tab === 'behind-scenes') return videos.filter((video) => ['Behind the scenes', 'Making of', 'Production diary'].includes(video.kind) || /behind.?the.?scenes|bts|making of|production diary/i.test(`${video.heading} ${video.description}`));
+    if (tab === 'behind-scenes') return videos.filter((video) => ['Behind the scenes', 'Making of', 'Production diary', 'Featurette'].includes(video.kind) || /behind.?the.?scenes|bts|making of|production diary|featurette/i.test(`${video.heading} ${video.description}`));
     if (tab === 'interviews') return videos.filter((video) => video.kind === 'Interview' || /interview|conversation|cast talk/i.test(`${video.heading} ${video.description}`));
     if (tab === 'clips') return videos.filter((video) => ['Clip', 'Deleted scene', 'Cast featurette'].includes(video.kind));
     return videos;
