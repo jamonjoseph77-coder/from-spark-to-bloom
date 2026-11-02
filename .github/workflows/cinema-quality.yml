@@ -50,6 +50,14 @@ jobs:
           src/pages/TitlePage.tsx
           src/components/layout/navigation.ts
           src/components/layout/TopBar.tsx
+          src/components/layout/NotificationBell.tsx
+          src/components/social/CircleActivity.tsx
+          src/components/social/FriendsHub.tsx
+          src/pages/WatchPartiesPage.tsx
+          src/lib/watchParties.ts
+          src/components/ui/StatusViews.tsx
+          src/pages/ComingSoonPage.tsx
+          src/routes/__root.tsx
           src/components/layout/MobileNav.tsx
           src/pages/SearchPage.tsx
           src/routes/index.tsx
