@@ -91,7 +91,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
               kind: video.type,
             }));
             const seen = new Set(tmdbExtras.map((video) => video.key));
-            const kinoExtras = kinoVideos.flatMap((video: KinoCheckVideo) => {
+            const kinoExtras = (kinoVideos ?? []).flatMap((video: KinoCheckVideo) => {
               const kind = video.categories.includes('Featurette') ? 'Featurette' : video.categories.includes('Clip') ? 'Clip' : '';
               if (!kind || seen.has(video.youtubeVideoId) || video.categories.includes('Trailer')) return [];
               seen.add(video.youtubeVideoId);
