@@ -29,8 +29,8 @@ export function DiscoverShorts() {
         </div>
       </div>
       {!data && !error && <LoadingState label="Finding Short Stories" />}
-      {!data && error && <ErrorState onRetry={reload} description={error.message} />}
-      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="YouTube Videos And Creator Uploads Will Appear Here After They Are Added And Approved By Cinema." />}
+      {!data && error && <ErrorState onRetry={reload} description="Cinema Shorts Could Not Connect To The Video Library. We Have Retried Automatically. Please Try Again Shortly." />}
+      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Official Publisher Videos And Approved Creator Uploads Will Appear Here When They Are Published." />}
       {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
       </div>}
