@@ -19,12 +19,12 @@ export function LoadingState({ label = 'Getting Your Stories Ready' }: { label?:
   );
 }
 
-export function ErrorState({ onRetry }: { onRetry?: () => void }) {
+export function ErrorState({ onRetry, description }: { onRetry?: () => void; description?: string }) {
   return (
     <EmptyState
       icon={<AlertTriangle className="h-7 w-7 text-amber-400" />}
       title="We Could Not Load This Right Now"
-      description="Check Your Connection And Try Again. If The Problem Continues, Please Try Again In A Few Minutes."
+      description={description || "Check Your Connection And Try Again. If The Problem Continues, Please Try Again In A Few Minutes."}
       action={onRetry && <button type="button" onClick={onRetry} className={BUTTON_PRIMARY}>Try Again</button>}
     />
   );
