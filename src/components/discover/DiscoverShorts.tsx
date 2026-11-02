@@ -2,10 +2,18 @@ import { useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, MessageCircle, Play, Sparkles } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
+import { EmptyState, ErrorState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchPublishedClips, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
+
+function ShortsLoading() {
+  return (
+    <div role="status" aria-label="Loading Cinema Shorts" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+      {Array.from({ length: 6 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] rounded-[1.4rem]" />)}
+    </div>
+  );
+}
 
 export function DiscoverShorts() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
@@ -28,7 +36,7 @@ export function DiscoverShorts() {
           <a href="/creator/shorts" className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-cinema-300/50 hover:text-cinema-200">Submit A Short</a>
         </div>
       </div>
-      {!data && !error && <LoadingState label="Finding Short Stories" />}
+      {!data && !error && <ShortsLoading />}
       {!data && error && <ErrorState onRetry={reload} description="Cinema Shorts Could Not Connect To The Video Library. We Have Retried Automatically. Please Try Again Shortly." />}
       {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Official Publisher Videos And Approved Creator Uploads Will Appear Here When They Are Published." />}
       {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
