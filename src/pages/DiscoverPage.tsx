@@ -24,7 +24,7 @@ const TABS: { id: FeedTab; label: string }[] = [
   { id: 'following', label: 'Following' },
   { id: 'shorts', label: 'Shorts' },
   { id: 'trailers', label: 'Trailers' },
-  { id: 'clips', label: 'Clips & features' },
+  { id: 'clips', label: 'Clips & BTS' },
 ];
 
 interface DiscoverData { titles: Title[]; clips: DiscoverClip[]; trailers: TmdbTrailer[]; posts: LetterboxPost[] }
@@ -78,7 +78,7 @@ export function DiscoverPage() {
         publisher: clip.publisher_name || 'Cinema publisher',
         image: clip.poster_url,
         description: clip.description,
-        kind: clip.kind === 'trailer' ? 'Publisher trailer' : 'Publisher feature',
+        kind: clip.kind === 'trailer' ? 'Publisher trailer' : clip.kind === 'featured' ? 'Behind-the-scenes feature' : 'Publisher clip',
         href: clip.title ? `/title/${clip.title.id}` : null,
         source: { url: clip.video_url, label: clip.headline, heading: clip.headline },
       }));
