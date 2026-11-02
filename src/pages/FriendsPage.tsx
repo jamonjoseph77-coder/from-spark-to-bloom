@@ -1,5 +1,6 @@
 import { UserPlus, Users, Compass, PartyPopper, ShieldCheck, UserRound, Sparkles } from 'lucide-react';
 import { FriendsHub } from '@/components/social/FriendsHub';
+import { LetterboxPage } from '@/pages/LetterboxPage';
 import { SignedOutGate } from '@/components/social/SignedOutGate';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, PAGE_CONTAINER } from '@/components/ui/styles';
@@ -52,7 +53,7 @@ export function FriendsPage() {
       </div>
       {loading && <LoadingState />}
       {!loading && !user && <SignedOutGate icon={<Users className="h-7 w-7 text-cinema-300" />} title="Sign in to build your circle" description="Create your Cinema profile, find people by username and connect around stories you enjoy." />}
-      {!loading && user && <FriendsGate userId={user.id} />}
+      {!loading && user && <><FriendsGate userId={user.id} /><div className="border-t border-white/8 pt-9"><LetterboxPage /></div></>}
     </div>
   );
 }
