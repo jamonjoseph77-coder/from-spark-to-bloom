@@ -89,11 +89,26 @@ export interface ClipInput {
 export async function fetchAllClips(): Promise<DiscoverClip[]> {
   const { data, error } = await supabase
     .from('discover_clips')
-    .select('*, title:titles(id, title, type, playback_url)')
+    .select('*')
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as DiscoverClip[];
+
+  const clips = (data ?? []) as Omit<DiscoverClip, 'title'>[];
+  const titleIds = [...new Set(clips.map((clip) => clip.title_id).filter((id): id is string => Boolean(id)))];
+  if (titleIds.length === 0) return clips.map((clip) => ({ ...clip, title: null }));
+
+  const { data: titles, error: titleError } = await supabase
+    .from('titles')
+    .select('id, title, type, playback_url')
+    .in('id', titleIds);
+  if (titleError) console.warn('Publisher video title metadata is temporarily unavailable', titleError);
+
+  const titleById = new Map((titles ?? []).map((title) => [title.id, title]));
+  return clips.map((clip) => ({
+    ...clip,
+    title: clip.title_id ? (titleById.get(clip.title_id) as ClipTitle | undefined) ?? null : null,
+  }));
 }
 
 export async function saveClip(id: string | null, input: ClipInput): Promise<void> {
