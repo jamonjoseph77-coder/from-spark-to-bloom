@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Search } from 'lucide-react';
+import { NotificationBell } from '@/components/layout/NotificationBell';
 import { useAuth } from '@/hooks/useAuth';
 import { BUTTON_SECONDARY } from '@/components/ui/styles';
 import { navigateTo } from '@/lib/router';
