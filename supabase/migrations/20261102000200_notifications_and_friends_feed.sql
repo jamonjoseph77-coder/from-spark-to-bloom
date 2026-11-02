@@ -65,6 +65,30 @@ create policy "People can read published Letterbox posts"
     )
   );
 
+-- Reactions and comments must target a post the acting member is allowed to read.
+drop policy if exists "Users react as themselves" on public.letterbox_reactions;
+create policy "Users react to visible Letterbox posts"
+  on public.letterbox_reactions for insert to authenticated
+  with check (
+    user_id = auth.uid()
+    and exists (
+      select 1 from public.letterbox_posts p
+      where p.id = post_id and p.status = 'published'
+    )
+  );
+
+drop policy if exists "Users create their own Letterbox comments" on public.letterbox_comments;
+create policy "Users comment on visible Letterbox posts"
+  on public.letterbox_comments for insert to authenticated
+  with check (
+    author_id = auth.uid()
+    and status = 'published'
+    and exists (
+      select 1 from public.letterbox_posts p
+      where p.id = post_id and p.status = 'published'
+    )
+  );
+
 create or replace function public.cinema_create_notification(
   p_user_id uuid,
   p_actor_id uuid,
