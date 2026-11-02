@@ -1,16 +1,20 @@
 import type { ReactNode } from 'react';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Clapperboard, Sparkles } from 'lucide-react';
 import { BUTTON_PRIMARY } from '@/components/ui/styles';
 
-export function LoadingState({ label = 'Loading' }: { label?: string }) {
+export function LoadingState({ label = 'Getting your stories ready' }: { label?: string }) {
   return (
-    <div role="status" aria-live="polite" className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-slate-400">
-      <span className="relative grid h-16 w-16 place-items-center rounded-2xl border border-cinema-300/20 bg-cinema-500/[0.08] shadow-[0_0_40px_rgba(37,99,235,.12)]">
-        <span className="absolute inset-0 animate-ping rounded-2xl border border-cinema-300/20" />
-        <Loader2 className="h-7 w-7 animate-spin text-cinema-300" aria-hidden="true" />
+    <div role="status" aria-live="polite" className="flex min-h-[28vh] flex-col items-center justify-center gap-3 px-4 py-8 text-center text-slate-400">
+      <span className="relative grid h-16 w-16 place-items-center rounded-[1.35rem] border border-sky-200/20 bg-[radial-gradient(circle_at_30%_20%,rgba(125,190,255,.24),rgba(21,55,99,.18)_52%,rgba(5,12,25,.9))] shadow-[inset_0_1px_12px_rgba(255,255,255,.08),0_10px_36px_rgba(22,103,210,.16)]">
+        <span className="absolute -inset-1 rounded-[1.55rem] border border-sky-300/10 animate-pulse" />
+        <Clapperboard className="h-7 w-7 text-sky-200 drop-shadow-[0_0_10px_rgba(96,165,250,.6)]" aria-hidden="true" />
+        <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-cyan-200" aria-hidden="true" />
       </span>
-      <span className="text-sm font-medium">{label}...</span>
-      <span className="h-1 w-32 overflow-hidden rounded-full bg-white/10"><span className="block h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-cinema-500 to-sky-300" /></span>
+      <span className="text-sm font-bold text-slate-100">{label}</span>
+      <span className="max-w-xs text-xs leading-5 text-slate-500">A little moment while we get everything ready for you.</span>
+      <span className="mt-1 h-1 w-28 overflow-hidden rounded-full bg-white/[.08]">
+        <span className="block h-full w-2/5 animate-[loading-sweep_1.7s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-cinema-500 via-sky-200 to-cinema-400" />
+      </span>
     </div>
   );
 }
