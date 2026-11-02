@@ -35,9 +35,20 @@ jobs:
           src/lib/tmdb.ts
           src/lib/tmdb.functions.ts
           src/pages/DiscoverPage.tsx
+          src/pages/HomePage.tsx
+          src/pages/TmdbBrowsePage.tsx
           src/pages/TmdbDetailPage.tsx
+          src/pages/FriendsPage.tsx
+          src/pages/LetterboxPage.tsx
+          src/components/tmdb/TmdbHero.tsx
+          src/components/tmdb/TmdbCard.tsx
+          src/components/layout/navigation.ts
+          src/routes/index.tsx
+          src/routes/letterbox.tsx
           src/components/tmdb/TmdbErrorState.tsx
           --rule 'prettier/prettier: off'
+      - name: Type-check application
+        run: bunx tsc --noEmit
       - name: Run tests
         run: bun run test
       - name: Build production bundle
