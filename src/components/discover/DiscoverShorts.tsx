@@ -6,13 +6,7 @@ import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusView
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
-import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
-
-function isPlayableShort(clip: DiscoverClip): boolean {
-  const supported = isDirectVideoUrl(clip.video_url) || Boolean(toEmbedUrl(clip.video_url));
-  return supported && Boolean(clip.poster_url) && Boolean(clip.publisher_name?.trim())
-    && clip.duration_seconds !== null && clip.duration_seconds > 0 && clip.duration_seconds <= 90;
-}
+import { isPlayableShort } from '@/lib/clips';
 
 export function DiscoverShorts() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
@@ -26,15 +20,15 @@ export function DiscoverShorts() {
     <section className="space-y-5" aria-label="Cinema Shorts">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300"><Play className="h-3.5 w-3.5 fill-current" /> Short-form video</p>
+          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300"><Play className="h-3.5 w-3.5 fill-current" /> Short-Form Video</p>
           <h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2>
-          <p className="mt-1 max-w-2xl text-sm text-slate-400">Quick, useful moments from official publishers — highlights, previews and behind-the-scenes stories.</p>
+          <p className="mt-1 max-w-2xl text-sm text-slate-400">Quick, Useful Moments From Official Publishers — Highlights, Previews And Behind-The-Scenes Stories.</p>
         </div>
-        <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up to 90 seconds</span>
+        <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up To 90 Seconds</span>
       </div>
-      {!data && !error && <LoadingState label="Finding short stories" />}
+      {!data && !error && <LoadingState label="Finding Short Stories" />}
       {!data && error && <ErrorState onRetry={reload} />}
-      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Good Shorts are being prepared" description="Official short videos will appear here when a publisher-approved video, poster and working playback link are available." />}
+      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Official Short Videos Will Appear Here When A Publisher-Approved Video And Working Playback Link Are Available." />}
       {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
       </div>}
