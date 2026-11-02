@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { TitleType } from '@/lib/types';
-import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
+import { getYouTubeThumbnailUrl, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 
 export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured' | 'behind_the_scenes' | 'interview' | 'making_of' | 'deleted_scene' | 'cast_featurette' | 'production_diary';
 
@@ -48,7 +48,7 @@ export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
     .order('created_at', { ascending: false });
   if (error) throw error;
 
-  const clips = (data ?? []) as Omit<DiscoverClip, 'title'>[];
+  const clips = (data ?? []).map((clip) => ({ ...clip, poster_url: clip.poster_url || getYouTubeThumbnailUrl(clip.video_url) || '' })) as Omit<DiscoverClip, 'title'>[];
   const titleIds = [...new Set(clips.map((clip) => clip.title_id).filter((id): id is string => Boolean(id)))];
   if (titleIds.length === 0) return clips.map((clip) => ({ ...clip, title: null }));
 
