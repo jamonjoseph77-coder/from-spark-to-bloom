@@ -3,7 +3,7 @@ import { Search as SearchIcon, Compass, MessageSquareText, Users, Clapperboard, 
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TmdbSearchResults } from '@/components/tmdb/TmdbSearchResults';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-import { BUTTON_PRIMARY, INPUT, PAGE_CONTAINER, LABEL, chipClass, CHIP_BASE } from '@/components/ui/styles';
+import { INPUT, PAGE_CONTAINER, LABEL, chipClass, CHIP_BASE } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { genresOf, matchesQuery } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
@@ -18,11 +18,11 @@ const scopes: { id: SearchScope; label: string }[] = [
   { id: 'studios', label: 'Studios & Publishers' },
 ];
 const destinations = [
-  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts and new releases', icon: Compass },
-  { href: '/letterbox', label: 'Letterbox', detail: 'Entertainment conversations', icon: MessageSquareText },
-  { href: '/friends', label: 'Friends', detail: 'Find people and recommendations', icon: Users },
-  { href: '/publishers', label: 'Studios', detail: 'Explore official industry profiles', icon: Megaphone },
-  { href: '/my-cinema', label: 'My Cinema', detail: 'Your saved entertainment', icon: Clapperboard },
+  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass },
+  { href: '/letterbox', label: 'Letterbox', detail: 'Entertainment Conversations', icon: MessageSquareText },
+  { href: '/friends', label: 'Friends', detail: 'Find People And Recommendations', icon: Users },
+  { href: '/publishers', label: 'Studios', detail: 'Explore Official Industry Profiles', icon: Megaphone },
+  { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard },
 ];
 
 export function SearchPage({ query }: { query: string }) {
@@ -85,20 +85,15 @@ export function SearchPage({ query }: { query: string }) {
               className={`${INPUT} !rounded-full !border-0 !bg-transparent py-4 pl-11 pr-12 text-base shadow-none focus:!ring-0`}
             />
             {draft && (
-              <button
-                type="button"
-                onClick={() => setDraft('')}
-                aria-label="Clear search"
-                className="absolute right-[8.25rem] top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300 sm:right-[9rem]"
-              >
+              <button type="button" onClick={() => setDraft('')} aria-label="Clear Search" className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
                 <X aria-hidden="true" className="h-4 w-4" />
               </button>
             )}
+            <button type="submit" disabled={!draft.trim()} aria-label="Search Cinema" className="ml-1 inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-cinema-200/20 bg-cinema-500 px-5 text-sm font-bold text-white shadow-lg shadow-cinema-950/25 transition hover:bg-cinema-400 active:scale-[.98] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/10 disabled:text-slate-500">
+              <SearchIcon aria-hidden="true" className="h-4 w-4" />
+              Search
+            </button>
           </div>
-          <button type="submit" disabled={!draft.trim()} aria-label="Search Cinema" className="ml-2 inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-cinema-200/20 bg-cinema-500 px-5 text-sm font-bold text-white shadow-lg shadow-cinema-950/25 transition hover:bg-cinema-400 active:scale-[.98] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/10 disabled:text-slate-500">
-            <SearchIcon aria-hidden="true" className="h-4 w-4" />
-            Search
-          </button>
         </form>
         <p className="mt-3 text-xs text-slate-400">Search Movies, Series, Genres And Official Studios In One Place.</p>
       </header>
@@ -132,13 +127,13 @@ export function SearchPage({ query }: { query: string }) {
             <div><p className="text-sm text-slate-400">Search Results For <span className="font-semibold text-slate-100">“{trimmed}”</span></p><p className="mt-1 text-xs text-slate-500">{results.length} titles · {publisherResults.length} publisher profiles</p></div>
             <a href="/discover" className="text-sm font-semibold text-cinema-300 hover:text-white">Explore Discover</a>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Search result type">
+          <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Search Result Type">
             {scopes.map((item) => <button key={item.id} type="button" role="tab" aria-selected={scope === item.id} onClick={() => setScope(item.id)} className={`${CHIP_BASE} shrink-0 ${chipClass(scope === item.id)}`}>{item.label}</button>)}
           </div>
           {(scope === 'all' || scope === 'titles') && (
             <div className="space-y-4">
               <div className="flex items-center gap-2"><Film className="h-4 w-4 text-cinema-300" /><h2 className="text-lg font-extrabold text-white">Movies & shows</h2></div>
-              {results.length ? <TitleGrid titles={results} /> : <p className="rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-400">No published Cinema titles match this search.</p>}
+              {results.length ? <TitleGrid titles={results} /> : <p className="rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-400">No Published Cinema Titles Match This Search.</p>}
             </div>
           )}
           {(scope === 'all' || scope === 'studios') && (
@@ -146,14 +141,14 @@ export function SearchPage({ query }: { query: string }) {
               <div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-cinema-300" /><h2 className="text-lg font-extrabold text-white">Studios & publishers</h2></div>
               {publisherResults.length ? <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{publisherResults.map((publisher) => {
                 const verified = verifiedNames.has(publisher.name.trim().toLowerCase());
-                return <li key={publisher.name}><a href={publisherHref(publisher.name)} className="group flex h-full items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/80 p-4 transition hover:border-cinema-400/35 hover:bg-ink-800"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-cinema-500/15 text-lg font-black uppercase text-cinema-100">{publisher.name.slice(0, 1)}</span><span className="min-w-0 flex-1"><span className="flex items-center gap-1.5"><span className="truncate text-sm font-bold text-white">{publisher.name}</span>{verified && <BadgeCheck className="h-4 w-4 shrink-0 text-cinema-300" aria-label="Verified studio" />}</span><span className="mt-1 block text-xs text-slate-400">{verified ? "Official Profile" : `${publisher.titles.length} Titles On Cinema`}</span></span><ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-cinema-200" /></a></li>;
-              })}</ul> : <p className="rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-400">No studio or publisher profiles match this search.</p>}
+                return <li key={publisher.name}><a href={publisherHref(publisher.name)} className="group flex h-full items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/80 p-4 transition hover:border-cinema-400/35 hover:bg-ink-800"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-cinema-500/15 text-lg font-black uppercase text-cinema-100">{publisher.name.slice(0, 1)}</span><span className="min-w-0 flex-1"><span className="flex items-center gap-1.5"><span className="truncate text-sm font-bold text-white">{publisher.name}</span>{verified && <BadgeCheck className="h-4 w-4 shrink-0 text-cinema-300" aria-label="Verified Studio" />}</span><span className="mt-1 block text-xs text-slate-400">{verified ? "Official Profile" : `${publisher.titles.length} Titles On Cinema`}</span></span><ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-cinema-200" /></a></li>;
+              })}</ul> : <p className="rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-400">No Studio Or Publisher Profiles Match This Search.</p>}
             </div>
           )}
           {(scope === 'all' || scope === 'titles') && <section className="space-y-6"><p className={LABEL}>More To Discover</p><TmdbSearchResults query={trimmed} /></section>}
         </section>
       )}
-      <p className="text-xs leading-5 text-slate-500">Studio verification confirms an official organisation presence on Cinema. It does not mean every title in a profile is licensed for viewing.</p>
+      <p className="text-xs leading-5 text-slate-500">Studio Verification Confirms An Official Organisation Presence On Cinema. It Does Not Mean Every Title In A Profile Is Licensed For Viewing.</p>
     </div>
   );
 }
