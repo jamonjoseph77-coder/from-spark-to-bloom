@@ -42,7 +42,6 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [quality, setQuality] = useState(-1);
   const [volume, setVolume] = useState(0.85);
-  const [volume, setVolume] = useState(1);
 
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -202,9 +201,9 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
           )}
           {status === 'ready' && (
             <label className="flex min-w-0 items-center gap-2 text-sm text-slate-400">
-              <Volume2 className="h-4 w-4 shrink-0 text-cinema-200" />
+              <Volume2 className="h-4 w-4 shrink-0 text-blue-200" />
               <span className="sr-only">Volume</span>
-              <input aria-label="Volume" type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} className="h-1.5 w-24 cursor-pointer accent-sky-300" />
+              <input aria-label="Volume" type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolumeChange} className="h-1.5 w-24 cursor-pointer accent-blue-300" />
               <span className="w-8 text-right text-xs tabular-nums">{Math.round(volume * 100)}%</span>
             </label>
           )}
@@ -214,7 +213,7 @@ export function VideoPlayer({ src, title, subtitleUrl, startAt = 0, poster, isLi
               <select
                 value={quality}
                 onChange={handleQualityChange}
-                className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-sky-300/50 focus:outline-none"
+                className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-300/50 focus:outline-none"
               >
                 <option value={-1}>Auto</option>
                 {levels.map((level) => (
