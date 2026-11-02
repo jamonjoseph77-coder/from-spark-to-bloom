@@ -11,19 +11,19 @@ export function DiscoverPage() {
         <div className="absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-sky-400/[.07] blur-3xl" />
         <div className="relative max-w-2xl space-y-3">
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-cinema-300"><Compass className="h-4 w-4" /> Explore Cinema</p>
-          <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">More than a trailer. Find the story.</h1>
-          <p className="text-sm leading-relaxed text-slate-300 sm:text-base">Watch official previews, catch short moments, discover what people are saying and move straight to the stories worth your time.</p>
+          <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">More Than A Trailer. Find The Story.</h1>
+          <p className="text-sm leading-relaxed text-slate-300 sm:text-base">Watch Official Previews, Catch Short Moments, Discover What People Are Saying And Move Straight To The Stories Worth Your Time.</p>
           <div className="flex flex-wrap gap-2 pt-1">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-200"><Sparkles className="h-3.5 w-3.5 text-cinema-300" /> Watch. Discover. Talk.</span>
-            <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-400">Official video + community conversation</span>
+            <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-400">Official Video + Community Conversation</span>
           </div>
         </div>
       </header>
 
       <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">From studios and publishers</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Official trailers</h2><p className="mt-1 text-sm text-slate-400">Trailers and teasers from official studio and publisher sources.</p></div>
-          <span className="rounded-full border border-sky-300/15 bg-sky-300/[.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sky-200">Verified sources</span>
+          <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">From Studios And Publishers</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Official Trailers</h2><p className="mt-1 text-sm text-slate-400">Trailers And Teasers From Official Studio And Publisher Sources.</p></div>
+          <span className="rounded-full border border-sky-300/15 bg-sky-300/[.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sky-200">Verified Sources</span>
         </div>
         <OfficialTrailers />
       </section>
@@ -33,11 +33,11 @@ export function DiscoverPage() {
       <CinemaPulse />
 
       <section className="space-y-4">
-        <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Explore the catalogue</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Stories worth your time</h2><p className="mt-1 text-sm text-slate-400">Useful recommendations with a direct path to each movie or series.</p></div>
-        <TmdbRow heading="Trending movies" description="Films audiences are exploring right now." mediaType="movie" list="trending" />
-        <TmdbRow heading="Trending series" description="Series creating a buzz." mediaType="tv" list="trending" />
-        <TmdbRow heading="Popular movies" description="More films to add to your watchlist." mediaType="movie" list="popular" />
-        <TmdbRow heading="Popular series" description="Discover your next series." mediaType="tv" list="popular" />
+        <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Explore The Catalogue</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Stories Worth Your Time</h2><p className="mt-1 text-sm text-slate-400">Useful Recommendations With A Direct Path To Each Movie Or Series.</p></div>
+        <TmdbRow heading="Trending Movies" description="Films Audiences Are Exploring Right Now." mediaType="movie" list="trending" />
+        <TmdbRow heading="Trending Series" description="Series Creating A Buzz." mediaType="tv" list="trending" />
+        <TmdbRow heading="Popular Movies" description="More Films To Add To Your Watchlist." mediaType="movie" list="popular" />
+        <TmdbRow heading="Popular Series" description="Discover Your Next Series." mediaType="tv" list="popular" />
       </section>
     </div>
   );
