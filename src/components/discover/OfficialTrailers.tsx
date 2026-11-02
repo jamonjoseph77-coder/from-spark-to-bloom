@@ -19,17 +19,17 @@ export function OfficialTrailers() {
   );
 
   return (
-    <section className="space-y-5" aria-label="Official trailers">
+    <section className="space-y-5" aria-label="Official Trailers">
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter official trailers">
-        {([{ id: 'all', label: 'All previews' }, { id: 'movie', label: 'Movies' }, { id: 'tv', label: 'Series' }] as const).map((option) => (
+        {([{ id: 'all', label: 'All Previews' }, { id: 'movie', label: 'Movies' }, { id: 'tv', label: 'Series' }] as const).map((option) => (
           <button key={option.id} type="button" aria-pressed={filter === option.id} onClick={() => setFilter(option.id)} className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${filter === option.id ? 'border-cinema-300/50 bg-cinema-400/15 text-white' : 'border-white/10 bg-white/[.03] text-slate-400 hover:bg-white/[.08] hover:text-white'}`}>
             {option.label}
           </button>
         ))}
       </div>
-      {!trailers && !error && <LoadingState label="Finding official trailers" />}
+      {!trailers && !error && <LoadingState label="Finding Official Trailers" />}
       {!trailers && error && <ErrorState onRetry={reload} />}
-      {trailers && visible.length === 0 && <EmptyState icon={<Film className="h-7 w-7 text-cinema-300" />} title="No official trailers available yet" description="Official trailers will appear here when verified studio and publisher previews are available." />}
+      {trailers && visible.length === 0 && <EmptyState icon={<Film className="h-7 w-7 text-cinema-300" />} title="No Official Trailers Available Yet" description="Official Trailers Will Appear Here When Verified Studio And Publisher Previews Are Available." />}
       {visible.length > 0 && (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((item) => (
@@ -37,7 +37,7 @@ export function OfficialTrailers() {
               <button type="button" onClick={() => setActive(item)} aria-label={`Play official trailer for ${item.title}`} className="relative block aspect-video w-full overflow-hidden rounded-2xl bg-ink-900 text-left ring-1 ring-white/10 transition hover:ring-cinema-300/50">
                 <Artwork src={tmdbImageUrl(item.backdropPath, 'w780') || tmdbImageUrl(item.posterPath, 'w500')} alt="" fallbackTitle={item.title} className="h-full w-full transition duration-500 group-hover:scale-[1.04]" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-                <span className="absolute bottom-3 left-3 rounded-full border border-white/15 bg-black/55 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">Official trailer</span>
+                <span className="absolute bottom-3 left-3 rounded-full border border-white/15 bg-black/55 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">Official Trailer</span>
                 <span className="absolute inset-0 grid place-items-center"><span className="grid h-12 w-12 place-items-center rounded-full border border-white/40 bg-black/40 text-white backdrop-blur transition group-hover:scale-110 group-hover:bg-cinema-500/70"><Play className="h-5 w-5 fill-current" /></span></span>
               </button>
               <div className="mt-3 flex items-start gap-3">

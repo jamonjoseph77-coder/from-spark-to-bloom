@@ -32,7 +32,7 @@ type PlayerStatus = 'loading' | 'ready' | 'error';
 const SAVE_INTERVAL_SECONDS = 10;
 const MIN_SAVED_POSITION_SECONDS = 1;
 const COMPLETE_RATIO = 0.95;
-const PLAYBACK_ERROR = 'This video could not be played. The link may be offline, or the host may not allow playback in a browser.';
+const PLAYBACK_ERROR = 'This Video Could Not Be Played. The Link May Be Offline, Or The Host May Not Allow Playback In A Browser.';
 
 export function VideoPlayer({
   src, title, subtitleUrl, startAt = 0, poster, isLive = false,
@@ -52,6 +52,16 @@ export function VideoPlayer({
 
   useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
   useEffect(() => { startAtRef.current = startAt; }, [startAt]);
+
+  // Never leave a player spinning indefinitely when a provider stalls or blocks playback.
+  useEffect(() => {
+    if (status !== 'loading') return;
+    const timeoutId = window.setTimeout(() => {
+      setErrorText('Playback Is Taking Too Long. Check The Video Link Or Your Connection, Then Try Again.');
+      setStatus('error');
+    }, 25_000);
+    return () => window.clearTimeout(timeoutId);
+  }, [status, src, retryCount]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -84,7 +94,7 @@ export function VideoPlayer({
             video.src = src;
             video.load();
           } else {
-            failPlayback('This browser cannot play this live stream format.');
+            failPlayback('This Browser Cannot Play This Live Stream Format.');
           }
           return;
         }
@@ -122,7 +132,7 @@ export function VideoPlayer({
       }).catch((error: unknown) => {
         if (cancelled) return;
         console.error('Could not load the HLS playback engine', error);
-        failPlayback('The playback engine could not be loaded. Please try again.');
+        failPlayback('The Playback Engine Could Not Be Loaded. Please Try Again.');
       });
     } else {
       video.src = src;
@@ -224,7 +234,7 @@ export function VideoPlayer({
           <div className="absolute inset-0 flex items-center justify-center bg-ink-950/95 p-6">
             <div className="max-w-md text-center">
               <AlertTriangle className="mx-auto h-10 w-10 text-amber-400" />
-              <p className="mt-4 text-base font-semibold text-white">Playback unavailable</p>
+              <p className="mt-4 text-base font-semibold text-white">Playback Unavailable</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-400">{errorText}</p>
               <button type="button" onClick={() => { setStatus('loading'); setRetryCount((count) => count + 1); }} className="mt-4 inline-flex items-center justify-center rounded-full bg-cinema-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-cinema-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">Try Again</button>
             </div>

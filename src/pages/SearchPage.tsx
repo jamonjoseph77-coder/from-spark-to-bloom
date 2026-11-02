@@ -103,7 +103,8 @@ export function SearchPage({ query }: { query: string }) {
         <p className="mt-3 text-xs text-slate-400">Search Movies, Series, Genres And Official Studios In One Place.</p>
       </header>
 
-      {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
+      {!titles && !trimmed && (error ? <ErrorState onRetry={reload} /> : <LoadingState label="Loading Cinema Catalogue" />)}
+      {!titles && trimmed && error && <div className="rounded-xl border border-amber-300/15 bg-amber-300/[.05] p-4 text-sm text-amber-100/80">Cinema Catalogue Results Could Not Be Loaded. External Movie And Series Search Is Still Available Below. <button type="button" onClick={reload} className="ml-2 font-bold underline">Try Again</button></div>}
 
       {titles && !trimmed && (
         <section className="space-y-6">
@@ -121,7 +122,7 @@ export function SearchPage({ query }: { query: string }) {
           </div>
           <div className="space-y-3">
             <p className={LABEL}>Browse By Genre</p>
-            {suggestions.length ? <div className="flex flex-wrap gap-2">{suggestions.map((genre) => <a key={genre} href={`/search?q=${encodeURIComponent(genre)}`} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cinema-400/40 hover:text-white">{genre}</a>)}</div> : <p className="text-sm text-slate-400">Genres will appear as titles are published.</p>}
+            {suggestions.length ? <div className="flex flex-wrap gap-2">{suggestions.map((genre) => <a key={genre} href={`/search?q=${encodeURIComponent(genre)}`} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cinema-400/40 hover:text-white">{genre}</a>)}</div> : <p className="text-sm text-slate-400">Genres Will Appear As Titles Are Published.</p>}
           </div>
         </section>
       )}
@@ -137,13 +138,13 @@ export function SearchPage({ query }: { query: string }) {
           </div>
           {(scope === 'all' || scope === 'titles') && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2"><Film className="h-4 w-4 text-cinema-300" /><h2 className="text-lg font-extrabold text-white">Movies & shows</h2></div>
+              <div className="flex items-center gap-2"><Film className="h-4 w-4 text-cinema-300" /><h2 className="text-lg font-extrabold text-white">Movies & Shows</h2></div>
               {results.length ? <TitleGrid titles={results} /> : <p className="rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-400">No Published Cinema Titles Match This Search.</p>}
             </div>
           )}
           {(scope === 'all' || scope === 'studios') && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-cinema-300" /><h2 className="text-lg font-extrabold text-white">Studios & publishers</h2></div>
+              <div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-cinema-300" /><h2 className="text-lg font-extrabold text-white">Studios & Publishers</h2></div>
               {publisherResults.length ? <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{publisherResults.map((publisher) => {
                 const verified = verifiedNames.has(publisher.name.trim().toLowerCase());
                 return <li key={publisher.name}><a href={publisherHref(publisher.name)} className="group flex h-full items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/80 p-4 transition hover:border-cinema-400/35 hover:bg-ink-800"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-cinema-500/15 text-lg font-black uppercase text-cinema-100">{publisher.name.slice(0, 1)}</span><span className="min-w-0 flex-1"><span className="flex items-center gap-1.5"><span className="truncate text-sm font-bold text-white">{publisher.name}</span>{verified && <BadgeCheck className="h-4 w-4 shrink-0 text-cinema-300" aria-label="Verified Studio" />}</span><span className="mt-1 block text-xs text-slate-400">{verified ? "Official Profile" : `${publisher.titles.length} Titles On Cinema`}</span></span><ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 group-hover:text-cinema-200" /></a></li>;
@@ -152,7 +153,7 @@ export function SearchPage({ query }: { query: string }) {
           )}
         </section>
       )}
-      {trimmed && <section className="space-y-4"><div><p className={LABEL}>Search Across Movies & Series</p><p className="mt-1 text-xs text-slate-500">Cinema catalogue results remain available above while additional discovery results load.</p></div><TmdbSearchResults query={trimmed} /></section>}
+      {trimmed && <section className="space-y-4"><div><p className={LABEL}>Search Across Movies & Series</p><p className="mt-1 text-xs text-slate-500">Cinema Catalogue Results Remain Available Above While Additional Discovery Results Load.</p></div><TmdbSearchResults query={trimmed} /></section>}
       <p className="text-xs leading-5 text-slate-500">Studio Verification Confirms An Official Organisation Presence On Cinema. It Does Not Mean Every Title In A Profile Is Licensed For Viewing.</p>
     </div>
   );
