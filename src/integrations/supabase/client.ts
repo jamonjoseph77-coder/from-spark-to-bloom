@@ -51,12 +51,18 @@ function createSupabaseClient() {
   // Supabase URL and publishable key in the client bundle at build time.
   // Server-only SUPABASE_* variables are separate and do not configure the browser.
   const SUPABASE_URL = import.meta.env['VITE_SUPABASE_URL'] || process.env['SUPABASE_URL'];
-  const SUPABASE_PUBLISHABLE_KEY = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || process.env['SUPABASE_PUBLISHABLE_KEY'];
+  // Support both modern Supabase publishable keys and existing anon keys used by
+  // older Lovable project environments. Both are intended for browser clients.
+  const SUPABASE_PUBLISHABLE_KEY =
+    import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
+    import.meta.env['VITE_SUPABASE_ANON_KEY'] ||
+    process.env['SUPABASE_PUBLISHABLE_KEY'] ||
+    process.env['SUPABASE_ANON_KEY'];
 
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [
       ...(!SUPABASE_URL ? ['VITE_SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['VITE_SUPABASE_PUBLISHABLE_KEY'] : []),
+      ...(!SUPABASE_PUBLISHABLE_KEY ? ['VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY)'] : []),
     ];
     const message =
       `Missing browser Supabase configuration: ${missing.join(', ')}. Add these exact names under Lovable → More → Secrets, using the existing Supabase Project URL and Publishable key, then add the values to the root .env file in the Lovable Code tab and publish again. Lovable project Secrets are for backend/runtime values; server-side SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY do not configure the browser bundle.`;
