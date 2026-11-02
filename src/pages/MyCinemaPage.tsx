@@ -77,18 +77,21 @@ export function MyCinemaPage() {
         </div>
       </div>
 
+      {view && <nav aria-label="My Cinema sections" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
+      </nav>}
       {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {view && <>
-        <ContinueWatchingRow items={view.resume} />
-        <section className="space-y-5">
+        <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
+        <section id="my-watchlist" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>
           {!ready ? <LoadingState label="Loading your list" /> : view.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.</p> : <TitleGrid titles={view.watchlist} />}
         </section>
-        <section className="space-y-5">
+        <section id="my-favourites" className="scroll-mt-24 space-y-5">
           <div><h2 className={SECTION_HEADING}>Your favourites</h2><p className="mt-1 text-sm text-slate-400">The stories that stay with you.</p></div>
           {!ready ? <LoadingState label="Loading your favourites" /> : view.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Mark titles as favourites to keep the ones you love within reach.</p> : <TitleGrid titles={view.favourites} />}
         </section>
-        <section className="space-y-5">
+        <section id="my-publishers" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your publishers</h2><p className="mt-1 text-sm text-slate-400">Studios and broadcasters you choose to follow.</p></div><a href="/publishers" className="text-sm font-semibold text-cinema-300 hover:text-white">Discover publishers</a></div>
           {(followedPublishers ?? []).length ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{(followedPublishers ?? []).map((publisher) => <a key={publisher} href={`/publishers/${encodeURIComponent(publisher)}`} className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/70 p-4 transition hover:border-sky-200/25 hover:bg-ink-850"><span className="grid h-10 w-10 place-items-center rounded-xl border border-sky-200/15 bg-sky-200/[.07] text-sky-100"><Building2 className="h-5 w-5" /></span><span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{publisher}</span><span className="text-xs font-semibold text-sky-200 transition group-hover:text-white">Following</span></a>)}</div> : <p className={`${CARD} text-sm text-slate-400`}>Publishers you follow will appear here. Visit publisher destinations to keep up with their official titles and updates.</p>}
         </section>
