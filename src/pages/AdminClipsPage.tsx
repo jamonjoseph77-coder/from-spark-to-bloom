@@ -30,6 +30,7 @@ function AdminClipsManager() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   async function togglePublished(clip: DiscoverClip) {
+    if (!clip.is_published && !window.confirm('Only publish this video if the rights holder has authorised Cinema to distribute it. Have you confirmed permission for the intended territories and placements?')) return;
     setBusyId(clip.id);
     try {
       await setClipPublished(clip.id, !clip.is_published);
@@ -46,7 +47,7 @@ function AdminClipsManager() {
     setBusyId(clip.id);
     try {
       await deleteClip(clip.id);
-      notify('Clip deleted.');
+      notify('Publisher video deleted.');
       reload();
     } catch {
       notify('The clip could not be deleted.', 'error');
@@ -66,15 +67,15 @@ function AdminClipsManager() {
           <a href="/admin" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 transition hover:text-white">
             <ArrowLeft className="h-4 w-4" /> Content manager
           </a>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">Discover clips</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-white">Publisher videos</h1>
         </div>
         <button type="button" onClick={() => setEditor({ mode: 'new' })} className={BUTTON_PRIMARY}>
-          <Plus className="h-4 w-4" /> New clip
+          <Plus className="h-4 w-4" /> New video
         </button>
       </header>
 
       {data.clips.length === 0 ? (
-        <p className={`${CARD} text-sm text-slate-400`}>No clips yet. Add shorts, trailers or clips to fill the Discover page.</p>
+        <p className={`${CARD} text-sm text-slate-400`}>No publisher videos yet. Add approved trailers, behind-the-scenes footage, interviews and clips.</p>
       ) : (
         <ul className="space-y-3">
           {data.clips.map((clip) => (
@@ -116,7 +117,7 @@ function AdminClipsManager() {
               titles={data.titles}
               onSaved={() => {
                 setEditor(null);
-                notify('Clip saved.');
+                notify('Publisher video saved.');
                 reload();
               }}
             />
