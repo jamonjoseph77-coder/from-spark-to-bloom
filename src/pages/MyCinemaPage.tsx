@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download } from 'lucide-react';
+import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -73,6 +73,11 @@ export function MyCinemaPage() {
         </div>}
       </header>
 
+      <a href="#my-downloads" className="group relative isolate flex flex-col gap-4 overflow-hidden rounded-3xl border border-cyan-100/15 bg-[radial-gradient(ellipse_at_88%_10%,rgba(105,205,190,.13),transparent_38%),linear-gradient(115deg,#101713,#090b0c_62%,#111820)] p-5 shadow-[0_18px_55px_rgba(0,0,0,.24)] transition hover:-translate-y-0.5 hover:border-cyan-100/30 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <span className="pointer-events-none absolute -right-8 -top-12 -z-10 h-48 w-48 rounded-full bg-emerald-200/[.07] blur-3xl" />
+        <span className="flex items-center gap-4"><span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-cyan-100/20 bg-black/45 text-cyan-100 shadow-[0_0_35px_rgba(100,190,170,.10)]"><Download className="h-7 w-7" /></span><span><span className="block text-[10px] font-black uppercase tracking-[.2em] text-cyan-100/75">Your Saved Videos</span><span className="mt-1 block text-xl font-extrabold text-white">Downloads</span><span className="mt-1 block text-xs text-slate-400">Open videos that publishers have approved for saving offline.</span></span></span>
+        <span className="inline-flex items-center gap-2 self-start rounded-full border border-cyan-100/20 bg-cyan-100/[.08] px-4 py-2.5 text-xs font-extrabold text-cyan-50 transition group-hover:bg-cyan-100/[.14] sm:self-center">View Downloads <ArrowRight className="h-4 w-4" /></span>
+      </a>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-400">Signed in as {user.email}</p>
         <div className="flex flex-wrap gap-2">
@@ -100,8 +105,6 @@ export function MyCinemaPage() {
       {view && <nav aria-label="My Cinema sections" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
       </nav>}
-      {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
-      {view && <>
         <section id="my-downloads" className="scroll-mt-24 space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Available Offline</p><h2 className={SECTION_HEADING}>Downloads</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Only videos that their rights holders have explicitly approved for download appear here. Most films, series and third-party streams remain view-only.</p></div>
@@ -117,6 +120,8 @@ export function MyCinemaPage() {
             </article>)}
           </div>}
         </section>
+      {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
+      {view && <>
         <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
         <section id="my-watchlist" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>
