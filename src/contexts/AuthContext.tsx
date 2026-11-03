@@ -21,10 +21,20 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 
 function describeAuthError(error: AuthError): string {
   const message = error.message.toLowerCase();
+  const code = (error as AuthError & { code?: string }).code?.toLowerCase() ?? '';
+
+  if (code === 'email_address_not_authorized' || message.includes('email address not authorized')) {
+    return 'Cinema could not send the confirmation email. Supabase’s default email service only sends to project team members. Email delivery needs a configured email provider.';
+  }
+  if (code === 'over_email_send_rate_limit' || message.includes('email rate limit') || message.includes('too many emails')) {
+    return 'Cinema has reached Supabase’s email sending limit. No confirmation email was sent. Please wait before requesting another email.';
+  }
+  if (code === 'over_request_rate_limit' || error.status === 429 || message.includes('rate limit') || message.includes('too many requests')) {
+    return 'Too many sign-in or sign-up attempts were made from this connection. Please wait for the limit to reset before trying once more.';
+  }
   if (message.includes('invalid login credentials')) return 'Email or password is incorrect.';
   if (message.includes('already registered')) return 'An account with this email already exists. Try signing in instead.';
   if (message.includes('email not confirmed')) return 'Your email is not confirmed yet. Check your inbox or request a new confirmation email.';
-  if (message.includes('rate limit')) return 'Too many attempts. Wait a moment before trying again.';
   if (message.includes('password')) return error.message;
   if (message.includes('fetch') || message.includes('network')) return 'We could not reach Cinema. Check your connection and try again.';
   return error.message || 'Something went wrong. Please try again.';
