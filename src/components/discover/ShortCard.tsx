@@ -9,12 +9,12 @@ interface ShortCardProps {
 
 export function ShortCard({ clip, onOpen }: ShortCardProps) {
   return (
-    <article className="group cinema-short-card w-[min(43vw,220px)] shrink-0 snap-start sm:w-56">
+    <article className="group cinema-short-card w-[min(46vw,232px)] shrink-0 snap-start sm:w-56">
       <button
         type="button"
         onClick={() => onOpen(clip)}
         aria-label={`Watch short: ${clip.headline}`}
-        className="relative block aspect-[9/16] w-full overflow-hidden rounded-[1.5rem] bg-ink-800 text-left shadow-[0_18px_55px_rgba(0,0,0,.38)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_70px_rgba(22,100,190,.24)] hover:ring-sky-200/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
+        className="relative block aspect-[9/16] w-full overflow-hidden rounded-[1.55rem] bg-[#070b12] text-left shadow-[0_18px_55px_rgba(0,0,0,.38)] ring-1 ring-white/10 transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_70px_rgba(22,100,190,.30)] hover:ring-sky-200/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
       >
         <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.07]" />
         <span className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/0 via-40% to-black/95" aria-hidden="true" />

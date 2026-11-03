@@ -38,7 +38,7 @@ export function getYouTubeVideoId(value: string): string | null {
       const id = parsed.pathname.split('/').filter(Boolean)[0];
       return id && /^[\w-]{6,}$/.test(id) ? id : null;
     }
-    if (!['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) return null;
+    if (!['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) return null;
     const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
     return id && /^[\w-]{6,}$/.test(id) ? id : null;
   } catch {
@@ -58,7 +58,7 @@ export function toEmbedUrl(value: string, options: { autoplay?: boolean; muted?:
     const host = parsed.hostname.toLowerCase();
     const autoplay = options.autoplay ? '1' : '0';
     const muted = options.muted ? '1' : '0';
-    if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) {
+    if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) {
       const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
       return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}` : null;
     }
