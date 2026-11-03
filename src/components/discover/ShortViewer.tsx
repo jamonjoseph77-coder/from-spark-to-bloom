@@ -110,23 +110,23 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
           </div>
         </div>
 
-        <div className={`absolute bottom-36 right-3 z-20 flex flex-col items-center gap-4 transition-opacity sm:right-4 ${commentOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}>
-          <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Unlike this short' : 'Like this short'} className="group flex w-12 flex-col items-center gap-1 rounded-full border border-white/15 bg-black/45 p-2 text-white shadow-lg backdrop-blur-xl transition hover:border-rose-200/40 hover:bg-rose-500/15 disabled:opacity-60">
+        <div className={`absolute right-3 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-3 transition-opacity sm:right-4 ${commentOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}>
+          <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Unlike this short' : 'Like this short'} className="group flex min-h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl border border-white/20 bg-black/75 p-2 text-white shadow-[0_8px_28px_rgba(0,0,0,.55)] backdrop-blur-xl transition hover:border-rose-200/50 hover:bg-rose-500/20 disabled:opacity-60">
             <Heart className={`h-5 w-5 transition ${liked ? 'fill-rose-400 text-rose-400' : 'text-white group-hover:text-rose-200'}`} />
             <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
           </button>
-          <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open comments" className="flex w-12 flex-col items-center gap-1 rounded-full border border-white/15 bg-black/45 p-2 text-white shadow-lg backdrop-blur-xl transition hover:border-sky-200/40 hover:bg-sky-500/15">
+          <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open comments" className="flex min-h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl border border-white/20 bg-black/75 p-2 text-white shadow-[0_8px_28px_rgba(0,0,0,.55)] backdrop-blur-xl transition hover:border-sky-200/50 hover:bg-sky-500/20">
             <MessageCircle className="h-5 w-5" />
             <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
           </button>
-          <button type="button" disabled={sharing} onClick={() => void shareShort()} aria-label="Share this short" className="grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-black/45 text-white shadow-lg backdrop-blur-xl transition hover:border-sky-200/40 hover:bg-sky-500/15 disabled:opacity-50"><Share2 className="h-5 w-5" /></button>
+          <button type="button" disabled={sharing} onClick={() => void shareShort()} aria-label="Share this short" className="grid h-14 w-14 place-items-center rounded-2xl border border-white/20 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.55)] backdrop-blur-xl transition hover:border-sky-200/50 hover:bg-sky-500/20 disabled:opacity-50"><Share2 className="h-5 w-5" /></button>
         </div>
 
         {commentOpen && (
-          <section aria-label="Short comments" className="absolute inset-x-3 bottom-3 z-30 max-h-[48dvh] overflow-hidden rounded-2xl border border-white/15 bg-[#0b111b]/95 p-4 shadow-2xl backdrop-blur-2xl sm:inset-x-5">
-            <div className="mb-3 flex items-center justify-between gap-3"><div><p className="text-sm font-extrabold text-white">Conversation</p><p className="text-[11px] text-slate-400">Keep it about the story.</p></div><button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10">Close</button></div>
+          <section aria-label="Short comments" className="absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-2xl border border-white/20 bg-[#090d0c]/[.98] p-4 shadow-[0_24px_80px_rgba(0,0,0,.8)] backdrop-blur-2xl sm:inset-x-4">
+            <div className="mb-3 flex items-center justify-between gap-3"><div><p className="text-sm font-extrabold text-white">Comments <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Keep it about the story.</p></div><button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10">Close</button></div>
             <div className="max-h-[25dvh] space-y-3 overflow-y-auto pr-1">
-              {comments.length === 0 && <p className="py-4 text-center text-xs text-slate-500">No comments yet. Start a thoughtful conversation.</p>}
+              {loadingEngagement ? <p className="py-4 text-center text-xs text-slate-400">Loading comments…</p> : comments.length === 0 && <p className="py-4 text-center text-xs text-slate-400">No comments yet. Start a thoughtful conversation.</p>}
               {comments.map((comment) => <article key={comment.id} className="border-b border-white/[.07] pb-2"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 whitespace-pre-wrap break-words text-xs leading-5 text-slate-300">{comment.body}</p></article>)}
             </div>
             <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2">
