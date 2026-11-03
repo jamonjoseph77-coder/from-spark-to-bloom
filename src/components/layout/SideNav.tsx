@@ -33,13 +33,13 @@ export function SideNav({ route }: SideNavProps) {
                     <a
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
-                      className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                      className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition ${
                         active
                           ? 'bg-cinema-600/20 text-white ring-1 ring-cinema-400/30'
                           : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
                       }`}
                     >
-                      <Icon className={`h-[18px] w-[18px] ${active ? 'text-cinema-300' : 'text-slate-500 group-hover:text-cinema-300'}`} />
+                      <Icon className={`h-5 w-5 ${active ? 'text-cinema-300' : 'text-slate-500 group-hover:text-cinema-300'}`} />
                       {item.label}
                     </a>
                   </li>

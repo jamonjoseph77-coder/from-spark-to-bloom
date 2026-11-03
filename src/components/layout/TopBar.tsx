@@ -23,7 +23,7 @@ export function TopBar() {
       </a>
       <form role="search" onSubmit={handleSearch} className="min-w-0 w-full max-w-xl">
         <label htmlFor="global-cinema-search" className="sr-only">Search Cinema</label>
-        <div className="group flex min-w-0 items-center rounded-full border border-white/10 bg-ink-850/90 p-1 transition focus-within:border-cinema-300/60 focus-within:ring-2 focus-within:ring-cinema-300/15">
+        <div className="group flex min-w-0 items-center rounded-2xl border border-white/15 bg-ink-850/95 p-1.5 transition focus-within:border-cinema-300/60 focus-within:ring-2 focus-within:ring-cinema-300/15">
           <Search aria-hidden="true" className="ml-3 h-4 w-4 shrink-0 text-slate-400" />
           <input
             id="global-cinema-search"
@@ -42,7 +42,7 @@ export function TopBar() {
             disabled={!query.trim()}
             aria-label="Search"
             title="Search"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cinema-500 text-white transition hover:bg-cinema-400 active:scale-95 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cinema-500 text-white transition hover:bg-cinema-400 active:scale-95 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200"
           >
             <Search aria-hidden="true" className="h-4 w-4" />
           </button>
