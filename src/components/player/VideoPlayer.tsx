@@ -18,6 +18,7 @@ interface VideoPlayerProps {
   isLive?: boolean;
   autoPlay?: boolean;
   muted?: boolean;
+  showControls?: boolean;
   layout?: 'landscape' | 'portrait';
   onProgress?: (progress: PlaybackProgress) => void;
 }
@@ -36,7 +37,7 @@ const PLAYBACK_ERROR = 'This Video Could Not Be Played. The Link May Be Offline,
 
 export function VideoPlayer({
   src, title, subtitleUrl, startAt = 0, poster, isLive = false,
-  autoPlay = false, muted = false, layout = 'landscape', onProgress,
+  autoPlay = false, muted = false, showControls = true, layout = 'landscape', onProgress,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -221,7 +222,7 @@ export function VideoPlayer({
         <video
           ref={videoRef}
           className="h-full w-full bg-black object-contain"
-          controls
+          controls={showControls}
           controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
