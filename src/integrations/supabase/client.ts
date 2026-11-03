@@ -3,6 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
+// Cinema's production data lives in this project. Keeping a safe public fallback
+// prevents a stale Lovable VITE_ setting from silently pointing the feed elsewhere.
+const CINEMA_SUPABASE_URL = 'https://apswsxeaendntdtejrde.supabase.co';
+const CINEMA_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_EZezo_Bxl2szONBZIsru4Q_pM4pnHYk';
+
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith('sb_publishable_') || value.startsWith('sb_secret_');
 }
@@ -10,13 +15,13 @@ function isNewSupabaseApiKey(value: string): boolean {
 // The public URL can be reachable only from the browser, so server requests go to the runtime URL of the same backend.
 function serverSupabaseUrl(publicUrl: string, supabaseKey: string): string | undefined {
   if (typeof window !== 'undefined' || typeof process === 'undefined') return undefined;
-  const serverUrl = process.env['SUPABASE_URL']?.replace(/\/+$/, '');
+  const serverUrl = process.env['SUPABASE_URL']?.replace(/\\/+$/, '');
   if (!serverUrl || serverUrl === publicUrl || process.env['SUPABASE_PUBLISHABLE_KEY'] !== supabaseKey) return undefined;
   return serverUrl;
 }
 
 function createSupabaseFetch(supabaseUrl: string, supabaseKey: string): typeof fetch {
-  const publicUrl = supabaseUrl.replace(/\/+$/, '');
+  const publicUrl = supabaseUrl.replace(/\\/+$/, '');
   const serverUrl = serverSupabaseUrl(publicUrl, supabaseKey);
   return (input, init) => {
     const headers = new Headers(
@@ -45,29 +50,30 @@ function createSupabaseFetch(supabaseUrl: string, supabaseKey: string): typeof f
   };
 }
 
-
 function createSupabaseClient() {
-  // Browser configuration must use VITE_ variables so Vite embeds the public
-  // Supabase URL and publishable key in the client bundle at build time.
-  // Server-only SUPABASE_* variables are separate and do not configure the browser.
-  const SUPABASE_URL = import.meta.env['VITE_SUPABASE_URL'] || process.env['SUPABASE_URL'];
-  // Support both modern Supabase publishable keys and existing anon keys used by
-  // older Lovable project environments. Both are intended for browser clients.
-  const SUPABASE_PUBLISHABLE_KEY =
+  const configuredUrl =
+    import.meta.env['VITE_SUPABASE_URL'] ||
+    process.env['SUPABASE_URL'] ||
+    CINEMA_SUPABASE_URL;
+  const normalizedConfiguredUrl = configuredUrl.replace(/\\/+$/, '');
+  const isCinemaProject = normalizedConfiguredUrl === CINEMA_SUPABASE_URL;
+
+  // A URL from a different Supabase project must never be paired with Cinema's
+  // credentials. Fall back as a matched URL/key pair instead of loading an empty feed.
+  const SUPABASE_URL = isCinemaProject ? normalizedConfiguredUrl : CINEMA_SUPABASE_URL;
+  const configuredKey =
     import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
     import.meta.env['VITE_SUPABASE_ANON_KEY'] ||
     process.env['SUPABASE_PUBLISHABLE_KEY'] ||
     process.env['SUPABASE_ANON_KEY'];
+  const SUPABASE_PUBLISHABLE_KEY =
+    isCinemaProject && configuredKey ? configuredKey : CINEMA_SUPABASE_PUBLISHABLE_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    const missing = [
-      ...(!SUPABASE_URL ? ['VITE_SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['VITE_SUPABASE_PUBLISHABLE_KEY (or VITE_SUPABASE_ANON_KEY)'] : []),
-    ];
-    const message =
-      `Missing browser Supabase configuration: ${missing.join(', ')}. Add these exact names under Lovable → More → Secrets, using the existing Supabase Project URL and Publishable key, then add the values to the root .env file in the Lovable Code tab and publish again. Lovable project Secrets are for backend/runtime values; server-side SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY do not configure the browser bundle.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+  if (!isCinemaProject) {
+    console.warn('[Cinema] Supabase URL did not match the Cinema production project. Using the verified Cinema project configuration.');
+  }
+  if (!configuredKey) {
+    console.warn('[Cinema] No browser Supabase key was configured. Using Cinema’s public publishable key.');
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
