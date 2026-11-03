@@ -19,7 +19,7 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/5 bg-ink-950/90 px-3 backdrop-blur-xl sm:gap-4 sm:px-6 lg:px-10">
       <a href="/" className="flex h-11 w-[116px] shrink-0 items-center lg:hidden" aria-label="Cinema home">
-        <img src="/cinema-wordmark.png" alt="Cinema" className="h-8 w-auto max-w-full object-contain object-left" />
+        <span className="flex flex-col leading-none"><span className="text-[1.45rem] font-black tracking-[-.065em] text-white">Cinema</span><span className="mt-1 whitespace-nowrap text-[7px] font-bold uppercase tracking-[.16em] text-slate-400">Experience The World Of Stories</span></span>
       </a>
       <form role="search" onSubmit={handleSearch} className="min-w-0 w-full max-w-xl">
         <label htmlFor="global-cinema-search" className="sr-only">Search Cinema</label>

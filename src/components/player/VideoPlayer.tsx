@@ -43,6 +43,8 @@ export function VideoPlayer({
   const startAtRef = useRef(startAt);
   const onProgressRef = useRef(onProgress);
   const lastSavedRef = useRef(0);
+  const automaticRetryRef = useRef(false);
+  const lastSourceRef = useRef(src);
   const [status, setStatus] = useState<PlayerStatus>('loading');
   const [errorText, setErrorText] = useState(PLAYBACK_ERROR);
   const [levels, setLevels] = useState<QualityLevel[]>([]);
@@ -67,6 +69,10 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
+    if (lastSourceRef.current !== src) {
+      automaticRetryRef.current = false;
+      lastSourceRef.current = src;
+    }
     setStatus('loading');
     setErrorText(PLAYBACK_ERROR);
     setLevels([]);
@@ -179,10 +185,17 @@ export function VideoPlayer({
 
   function handleVideoError(event: SyntheticEvent<HTMLVideoElement>) {
     const mediaError = event.currentTarget.error;
+    if (mediaError?.code === MediaError.MEDIA_ERR_NETWORK && !automaticRetryRef.current) {
+      automaticRetryRef.current = true;
+      setErrorText('Reconnecting To The Video…');
+      setStatus('loading');
+      setRetryCount((count) => count + 1);
+      return;
+    }
     const message = mediaError?.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED
       ? 'This Video Format Or Source Is Not Supported By The Browser.'
       : mediaError?.code === MediaError.MEDIA_ERR_NETWORK
-        ? 'The Video Could Not Be Reached. Check Your Connection And Try Again.'
+        ? 'The Video Could Not Be Reached After Reconnecting. Check The Link And Try Again.'
         : PLAYBACK_ERROR;
     setErrorText(message);
     setStatus('error');
@@ -210,7 +223,7 @@ export function VideoPlayer({
   const hasQualityMenu = levels.length > 1;
 
   return (
-    <div className="cinema-video-player mx-auto w-full space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[#080b11] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3">
+    <div className="cinema-video-player mx-auto w-full space-y-3 rounded-2xl border border-white/10 bg-[#090b0e] p-2 shadow-[0_24px_70px_rgba(0,0,0,.42)] sm:rounded-3xl sm:p-3">
       <div className="flex items-center justify-between gap-3 px-2 pt-1">
         <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
         {isLive && <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-200"><Radio className="h-3 w-3" /> Live</span>}
