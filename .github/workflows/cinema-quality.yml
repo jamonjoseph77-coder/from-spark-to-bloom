@@ -47,6 +47,9 @@ jobs:
           src/components/tmdb/TmdbCard.tsx
           src/components/player/VideoPlayer.tsx
           src/components/ui/styles.ts
+          src/contexts/AuthContext.tsx
+          src/pages/AuthPage.tsx
+          src/pages/ResetPasswordPage.tsx
           src/pages/TitlePage.tsx
           src/components/layout/navigation.ts
           src/components/layout/TopBar.tsx

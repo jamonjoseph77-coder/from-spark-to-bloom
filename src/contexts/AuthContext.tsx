@@ -30,22 +30,32 @@ function getAuthRedirectBaseUrl(): string {
   return origin;
 }
 
-
 function describeAuthError(error: AuthError): string {
   const message = error.message.toLowerCase();
   const code = (error as AuthError & { code?: string }).code?.toLowerCase() ?? '';
 
   if (code === 'email_address_not_authorized' || message.includes('email address not authorized')) {
-    return 'Cinema could not send the confirmation email. Supabase’s default email service only sends to project team members. Email delivery needs a configured email provider.';
+    return 'Cinema could not send this email because the configured email service did not authorize the recipient. Please contact Cinema support.';
   }
+
+  // Supabase uses a separate per-user frequency window for password recovery.
+  // Its response includes the remaining wait time; distinguish it from the
+  // project-wide hourly email quota even when both use HTTP 429.
+  const userWait = message.match(/only request this after\s+(\d+)\s+seconds?/i);
+  if (userWait) {
+    const seconds = Math.max(1, Number(userWait[1]));
+    return `For security, wait ${seconds} seconds before requesting another reset email.`;
+  }
+
   if (
-    code === 'over_email_send_rate_limit' ||
     message.includes('email rate limit exceeded') ||
     message.includes('email sending limit') ||
-    message.includes('too many emails')
+    message.includes('too many emails') ||
+    (code === 'over_email_send_rate_limit' && !message.includes('only request this after'))
   ) {
-    return 'Cinema has reached Supabase’s email sending limit. No email was sent. Please wait before requesting another email.';
+    return 'Cinema’s email service has reached its project sending limit. No email was sent. Please avoid repeated attempts; the Supabase email configuration or sending quota needs to be checked.';
   }
+
   if (
     code === 'over_request_rate_limit' ||
     message.includes('too many requests') ||
@@ -59,6 +69,14 @@ function describeAuthError(error: AuthError): string {
   if (message.includes('password')) return error.message;
   if (message.includes('fetch') || message.includes('network')) return 'We could not reach Cinema. Check your connection and try again.';
   return error.message || 'Something went wrong. Please try again.';
+}
+
+function describeUnexpectedAuthError(error: unknown): string {
+  if (error instanceof Error && (error.message.toLowerCase().includes('fetch') || error.message.toLowerCase().includes('network'))) {
+    return 'We could not reach Cinema. Check your connection and try again.';
+  }
+  console.warn('Cinema password-reset request failed unexpectedly.', error);
+  return 'Cinema could not process this request right now. Please check your connection and try again later.';
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -132,10 +150,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => { await supabase.auth.signOut(); }, []);
 
   const requestPasswordReset = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${getAuthRedirectBaseUrl()}/reset-password`,
-    });
-    return error ? describeAuthError(error) : null;
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${getAuthRedirectBaseUrl()}/reset-password`,
+      });
+      return error ? describeAuthError(error) : null;
+    } catch (error: unknown) {
+      return describeUnexpectedAuthError(error);
+    }
   }, []);
 
   const completePasswordReset = useCallback(async (password: string) => {
