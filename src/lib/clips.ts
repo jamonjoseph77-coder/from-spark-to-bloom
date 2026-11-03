@@ -44,11 +44,11 @@ export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
     .from('discover_clips')
     .select('*')
     .eq('is_published', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .order('sort_order', { ascending: true });
   if (error) throw error;
 
-  const clips = (data ?? []).map((clip) => ({ ...clip, poster_url: clip.poster_url || getYouTubeThumbnailUrl(clip.video_url) || '' })) as Omit<DiscoverClip, 'title'>[];
+  const clips = (data ?? []).map((clip) => ({ ...clip, video_url: typeof clip.video_url === 'string' ? clip.video_url.trim() : '', poster_url: clip.poster_url?.trim() || getYouTubeThumbnailUrl(clip.video_url) || '' })) as Omit<DiscoverClip, 'title'>[];
   const titleIds = [...new Set(clips.map((clip) => clip.title_id).filter((id): id is string => Boolean(id)))];
   if (titleIds.length === 0) return clips.map((clip) => ({ ...clip, title: null }));
 
@@ -67,7 +67,8 @@ export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
 }
 
 export function isPlayableShort(clip: DiscoverClip): boolean {
-  const supported = isDirectVideoUrl(clip.video_url) || Boolean(toEmbedUrl(clip.video_url));
+  const videoUrl = clip.video_url?.trim() ?? '';
+  const supported = Boolean(videoUrl) && (isDirectVideoUrl(videoUrl) || Boolean(toEmbedUrl(videoUrl)));
   const durationIsValid = clip.duration_seconds === null
     || (clip.duration_seconds > 0 && clip.duration_seconds <= 90);
   return clip.is_published && supported && durationIsValid;
