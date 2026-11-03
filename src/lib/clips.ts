@@ -22,6 +22,7 @@ export interface DiscoverClip {
   title_id: string | null;
   duration_seconds: number | null;
   sort_order: number;
+  created_at?: string;
   is_published: boolean;
   title: ClipTitle | null;
 }
