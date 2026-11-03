@@ -19,10 +19,10 @@
  */
 
 @theme {
-  --color-ink-950: #080c12;
-  --color-ink-900: #0e141d;
-  --color-ink-850: #141c27;
-  --color-ink-800: #1b2633;
+  --color-ink-950: #03060b;
+  --color-ink-900: #080e17;
+  --color-ink-850: #101a29;
+  --color-ink-800: #17263a;
   --color-ink-700: #273648;
   --color-ink-600: #354b63;
   --color-ink-500: #526b86;
@@ -31,11 +31,11 @@
   --color-cinema-200: #c9def6;
   --color-cinema-300: #a9c8ec;
   --color-cinema-400: #83addb;
-  --color-cinema-500: #6595c9;
-  --color-cinema-600: #4b79ae;
-  --color-cinema-700: #3b628f;
-  --color-cinema-800: #2c4a6e;
-  --color-cinema-900: #203954;
+  --color-cinema-500: #398bff;
+  --color-cinema-600: #2876e8;
+  --color-cinema-700: #1f5fc5;
+  --color-cinema-800: #174b9b;
+  --color-cinema-900: #10366f;
   --font-sans: "Manrope", system-ui, sans-serif;
   --animate-fade-in: fade-in 600ms ease-out both;
   --animate-rise-in: rise-in 500ms ease-out both;
@@ -167,18 +167,18 @@
   }
 
   body {
-    background-color: var(--color-ink-950);
+    background-color: #03060b;
     color: var(--color-slate-100);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     background-image:
-      radial-gradient(ellipse at 86% -12%, rgba(96, 165, 250, 0.105), transparent 44%),
-      radial-gradient(ellipse at 0% 100%, rgba(71, 119, 173, 0.055), transparent 42%);
+      radial-gradient(ellipse at 86% -12%, rgba(38, 126, 255, 0.16), transparent 44%),
+      radial-gradient(ellipse at 0% 100%, rgba(25, 91, 190, 0.075), transparent 42%);
     background-attachment: fixed;
   }
 
   :focus-visible {
-    outline: 2px solid #8db9e8;
+    outline: 2px solid #4b9cff;
     outline-offset: 2px;
   }
 
@@ -217,7 +217,7 @@ html { scroll-behavior: smooth; }
   height: min(24vw, 320px);
   right: -12%;
   top: -16%;
-  background: radial-gradient(ellipse, rgba(108, 183, 255, .22), rgba(65, 130, 210, .06) 42%, transparent 72%);
+  background: radial-gradient(ellipse, rgba(45, 139, 255, .30), rgba(26, 91, 190, .09) 42%, transparent 72%);
   animation: cinema-light-drift 14s ease-in-out infinite alternate;
 }
 .cinema-hero-light--two {
@@ -225,7 +225,7 @@ html { scroll-behavior: smooth; }
   height: min(22vw, 300px);
   left: 18%;
   bottom: -22%;
-  background: radial-gradient(ellipse, rgba(61, 130, 219, .18), transparent 70%);
+  background: radial-gradient(ellipse, rgba(35, 111, 235, .24), transparent 70%);
   animation: cinema-light-drift 18s ease-in-out infinite alternate-reverse;
 }
 @keyframes cinema-light-drift {
@@ -257,3 +257,24 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   .cinema-hero-light, .cinema-short-skeleton::after { animation: none !important; }
 }
+
+
+/* Deep-black Cinema finish with restrained electric-blue light */
+:root { color-scheme: dark; }
+body {
+  background-image:
+    radial-gradient(ellipse at 82% -10%, rgba(30, 111, 255, .13), transparent 42%),
+    radial-gradient(ellipse at 4% 78%, rgba(17, 75, 170, .075), transparent 40%),
+    linear-gradient(180deg, #03060b 0%, #050912 52%, #03060b 100%);
+}
+.cinema-blue-swipe { position: relative; isolation: isolate; }
+.cinema-blue-swipe::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 2px;
+  border-radius: 999px; background: linear-gradient(90deg, transparent, #277dff 22%, #75b7ff 50%, #277dff 78%, transparent);
+  opacity: .82; filter: drop-shadow(0 0 7px rgba(39,125,255,.55));
+}
+.cinema-blue-glow { box-shadow: 0 0 0 1px rgba(64,145,255,.2), 0 10px 34px rgba(0,72,190,.12); }
+.cinema-premium-panel { background: linear-gradient(145deg, rgba(12,20,34,.94), rgba(4,8,15,.98)); border: 1px solid rgba(91,158,255,.13); }
+.cinema-blue-scroll { scrollbar-color: rgba(54,132,245,.5) transparent; }
+.cinema-blue-scroll::-webkit-scrollbar { height: 5px; width: 5px; }
+.cinema-blue-scroll::-webkit-scrollbar-thumb { border-radius: 999px; background: linear-gradient(90deg,#175ac2,#65adff); }

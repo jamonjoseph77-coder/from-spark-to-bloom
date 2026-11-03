@@ -11,6 +11,7 @@ import { CLIP_KIND_LABEL, deleteClip, fetchAllClips, setClipPublished, type Disc
 import { fetchAllTitles } from '@/lib/library';
 import { fetchPendingCreatorShorts, reviewCreatorShort, type CreatorShortSubmission } from '@/lib/creator-shorts';
 import type { Title } from '@/lib/types';
+import { toEmbedUrl } from '@/lib/media';
 
 interface ClipsData {
   clips: DiscoverClip[];
@@ -91,7 +92,7 @@ function AdminClipsManager() {
       </header>
 
       <section className="space-y-3">
-        <div><h2 className="text-xl font-extrabold text-white">Creator Submissions</h2><p className="text-sm text-slate-400">Review uploaded videos before they appear in Cinema Shorts.</p></div>
+        <div><h2 className="text-xl font-extrabold text-white">Creator Submissions</h2><p className="text-sm text-slate-400">Preview each submission here. Approve only after checking the video, publisher details and rights declaration; approval publishes it to Cinema Shorts.</p></div>
         {data.submissions.length === 0 ? (
           <p className={`${CARD} text-sm text-slate-400`}>No Creator Shorts Are Waiting For Review.</p>
         ) : (
@@ -102,7 +103,18 @@ function AdminClipsManager() {
                   <p className="font-semibold text-white">{submission.headline}</p>
                   <p className="text-xs text-slate-400">{submission.publisher_name} · {submission.duration_seconds ? `${submission.duration_seconds}s` : 'Duration Not Supplied'} · {new Date(submission.created_at).toLocaleDateString()}</p>
                   {submission.description && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{submission.description}</p>}
-                  <a className="mt-2 inline-block text-xs font-semibold text-cinema-200 underline" href={submission.preview_url ?? '#'} target="_blank" rel="noreferrer">Preview Submitted Video</a>
+                  {submission.preview_url && (
+                    <div className="mt-3 max-w-xs overflow-hidden rounded-xl border border-cinema-300/20 bg-black cinema-blue-glow">
+                      {submission.video_path ? (
+                        <video className="aspect-[9/16] max-h-80 w-full bg-black object-contain" src={submission.preview_url} controls playsInline preload="metadata" />
+                      ) : toEmbedUrl(submission.preview_url) ? (
+                        <iframe className="aspect-[9/16] max-h-80 w-full bg-black" src={toEmbedUrl(submission.preview_url) ?? undefined} title={`Preview: ${submission.headline}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+                      ) : (
+                        <a className="block p-3 text-xs font-semibold text-cinema-200 underline" href={submission.preview_url} target="_blank" rel="noreferrer">Open Submitted Video</a>
+                      )}
+                    </div>
+                  )}
+                  <p className="mt-2 text-[11px] text-amber-200/80">Pending Review · Not Public Yet</p>
                 </div>
                 <div className="flex gap-2">
                   <button type="button" disabled={busyId === submission.id} onClick={() => void reviewSubmission(submission, 'approved')} className={BUTTON_PRIMARY}>Approve</button>
