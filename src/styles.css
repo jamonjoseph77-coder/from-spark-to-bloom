@@ -307,3 +307,83 @@ body {
   --sidebar-border: oklch(0.26 0 0);
   --sidebar-ring: oklch(0.65 0.19 255);
 }
+
+
+/* Cinema Futuristic Palette — Obsidian Black, Brushed Silver, Controlled Electric Blue */
+:root {
+  color-scheme: dark;
+  --cinema-obsidian: #050607;
+  --cinema-carbon: #0b0d10;
+  --cinema-surface: #12161b;
+  --cinema-surface-raised: #191e24;
+  --cinema-silver: #c4cbd3;
+  --cinema-silver-bright: #edf1f5;
+  --cinema-silver-muted: #89939e;
+  --cinema-electric: #438bdc;
+  --cinema-electric-soft: #6aa8ed;
+}
+.dark {
+  --background: oklch(0.105 0.004 255);
+  --foreground: oklch(0.96 0.006 255);
+  --card: oklch(0.155 0.006 255);
+  --card-foreground: oklch(0.96 0.006 255);
+  --popover: oklch(0.17 0.006 255);
+  --popover-foreground: oklch(0.96 0.006 255);
+  --primary: oklch(0.68 0.105 250);
+  --primary-foreground: oklch(0.99 0.002 255);
+  --secondary: oklch(0.205 0.006 255);
+  --secondary-foreground: oklch(0.91 0.008 255);
+  --muted: oklch(0.19 0.005 255);
+  --muted-foreground: oklch(0.69 0.012 255);
+  --accent: oklch(0.225 0.012 250);
+  --accent-foreground: oklch(0.95 0.006 255);
+  --border: oklch(0.31 0.008 255 / 72%);
+  --input: oklch(0.29 0.008 255 / 82%);
+  --ring: oklch(0.66 0.12 250);
+  --sidebar: oklch(0.125 0.005 255);
+  --sidebar-foreground: oklch(0.94 0.006 255);
+  --sidebar-primary: oklch(0.68 0.105 250);
+  --sidebar-primary-foreground: oklch(0.99 0.002 255);
+  --sidebar-accent: oklch(0.19 0.006 255);
+  --sidebar-accent-foreground: oklch(0.94 0.006 255);
+  --sidebar-border: oklch(0.27 0.006 255);
+  --sidebar-ring: oklch(0.66 0.12 250);
+}
+html, body, #root {
+  min-height: 100%;
+  background-color: var(--cinema-obsidian) !important;
+}
+body {
+  color: var(--cinema-silver-bright);
+  background-image:
+    radial-gradient(ellipse at 50% -42%, rgba(170, 190, 212, .045), transparent 58%),
+    radial-gradient(ellipse at 92% 8%, rgba(53, 119, 190, .035), transparent 36%) !important;
+}
+:focus-visible {
+  outline-color: rgba(91, 157, 224, .82);
+  box-shadow: 0 0 0 3px rgba(65, 133, 205, .12);
+}
+::selection {
+  background: rgba(89, 145, 199, .32);
+  color: #fff;
+}
+/* Silver carries the interface; blue is reserved for active states and small signals. */
+.cinema-hero-light--one {
+  background: radial-gradient(ellipse, rgba(77, 139, 205, .105), rgba(63, 111, 164, .025) 44%, transparent 72%);
+  opacity: .52;
+}
+.cinema-hero-light--two {
+  background: radial-gradient(ellipse, rgba(180, 194, 210, .055), transparent 70%);
+  opacity: .48;
+}
+.cinema-short-skeleton {
+  border-color: rgba(190, 202, 216, .11);
+  background: linear-gradient(145deg, #171b20, #070809 78%);
+}
+.cinema-short-skeleton::after {
+  background: linear-gradient(100deg, transparent 20%, rgba(196, 209, 224, .075) 48%, transparent 76%);
+}
+.cinema-video-player {
+  background-color: rgba(9, 11, 14, .94);
+  border-color: rgba(190, 202, 216, .16);
+}
