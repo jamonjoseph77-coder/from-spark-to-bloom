@@ -69,11 +69,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      setSession(data.session);
-      setLoading(false);
-    });
+    // A transient auth/network failure must not leave the entire app stuck in
+    // its loading state. Keep the visitor signed out and allow the UI to render.
+    void supabase.auth.getSession()
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) console.warn("Cinema could not restore the saved session.", error.message);
+        setSession(data.session ?? null);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.warn("Cinema could not restore the saved session.", error);
+        setSession(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
     const { data: subscription } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
       setLoading(false);
