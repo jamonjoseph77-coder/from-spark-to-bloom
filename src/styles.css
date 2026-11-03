@@ -19,13 +19,13 @@
  */
 
 @theme {
-  --color-ink-950: #080c12;
-  --color-ink-900: #0e141d;
-  --color-ink-850: #141c27;
-  --color-ink-800: #1b2633;
-  --color-ink-700: #273648;
-  --color-ink-600: #354b63;
-  --color-ink-500: #526b86;
+  --color-ink-950: #050505;
+  --color-ink-900: #0b0b0c;
+  --color-ink-850: #111112;
+  --color-ink-800: #171719;
+  --color-ink-700: #242426;
+  --color-ink-600: #343438;
+  --color-ink-500: #55555b;
   --color-cinema-50: #f4f8ff;
   --color-cinema-100: #e7f0fc;
   --color-cinema-200: #c9def6;
@@ -167,18 +167,16 @@
   }
 
   body {
-    background-color: var(--color-ink-950);
-    color: var(--color-slate-100);
+    background-color: #050505;
+    color: #f5f5f5;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    background-image:
-      radial-gradient(ellipse at 86% -12%, rgba(96, 165, 250, 0.105), transparent 44%),
-      radial-gradient(ellipse at 0% 100%, rgba(71, 119, 173, 0.055), transparent 42%);
+    background-image: radial-gradient(ellipse at 50% -35%, rgba(255,255,255,.035), transparent 55%);
     background-attachment: fixed;
   }
 
   :focus-visible {
-    outline: 2px solid #8db9e8;
+    outline: 2px solid #4b8cff;
     outline-offset: 2px;
   }
 
@@ -217,7 +215,7 @@ html { scroll-behavior: smooth; }
   height: min(24vw, 320px);
   right: -12%;
   top: -16%;
-  background: radial-gradient(ellipse, rgba(108, 183, 255, .22), rgba(65, 130, 210, .06) 42%, transparent 72%);
+  background: radial-gradient(ellipse, rgba(65, 125, 220, .14), rgba(45, 90, 165, .035) 42%, transparent 72%);
   animation: cinema-light-drift 14s ease-in-out infinite alternate;
 }
 .cinema-hero-light--two {
@@ -225,7 +223,7 @@ html { scroll-behavior: smooth; }
   height: min(22vw, 300px);
   left: 18%;
   bottom: -22%;
-  background: radial-gradient(ellipse, rgba(61, 130, 219, .18), transparent 70%);
+  background: radial-gradient(ellipse, rgba(55, 105, 190, .10), transparent 70%);
   animation: cinema-light-drift 18s ease-in-out infinite alternate-reverse;
 }
 @keyframes cinema-light-drift {
@@ -236,14 +234,14 @@ html { scroll-behavior: smooth; }
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.08);
-  background: linear-gradient(145deg, rgba(20,34,52,.95), rgba(7,13,23,.98));
+  background: linear-gradient(145deg, rgba(22,22,24,.96), rgba(5,5,5,.99));
 }
 .cinema-short-skeleton::after {
   content: "";
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(100deg, transparent 20%, rgba(157,204,255,.10) 48%, transparent 76%);
+  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.075) 48%, transparent 76%);
   animation: cinema-skeleton-shimmer 1.8s ease-in-out infinite;
 }
 @keyframes cinema-skeleton-shimmer { to { transform: translateX(100%); } }
@@ -273,4 +271,39 @@ html { scroll-behavior: smooth; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cinema-short-card button:active { transform: none; }
+}
+
+
+/* True-black Cinema palette: blue is an accent, never the page surface. */
+html, body, #root { min-height: 100%; background: #050505 !important; }
+body {
+  background-color: #050505 !important;
+  background-image: radial-gradient(ellipse at 50% -42%, rgba(255,255,255,.028), transparent 58%) !important;
+}
+.dark {
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.17 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.65 0.19 255);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.21 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.25 0 0);
+  --accent-foreground: oklch(0.98 0 0);
+  --border: oklch(0.29 0 0);
+  --input: oklch(0.29 0 0);
+  --ring: oklch(0.65 0.19 255);
+  --sidebar: oklch(0.14 0 0);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.65 0.19 255);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.21 0 0);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.26 0 0);
+  --sidebar-ring: oklch(0.65 0.19 255);
 }
