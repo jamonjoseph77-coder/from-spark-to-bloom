@@ -19,6 +19,18 @@ export interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
+const CINEMA_PRODUCTION_URL = 'https://from-spark-to-bloom.lovable.app';
+
+function getAuthRedirectBaseUrl(): string {
+  if (typeof window === 'undefined') return CINEMA_PRODUCTION_URL;
+  const { origin, hostname } = window.location;
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+    return CINEMA_PRODUCTION_URL;
+  }
+  return origin;
+}
+
+
 function describeAuthError(error: AuthError): string {
   const message = error.message.toLowerCase();
   const code = (error as AuthError & { code?: string }).code?.toLowerCase() ?? '';
@@ -82,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: getAuthRedirectBaseUrl() },
     });
     if (error) return { error: describeAuthError(error), needsConfirmation: false };
     return { error: null, needsConfirmation: !data.session };
@@ -92,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: getAuthRedirectBaseUrl() },
     });
     return error ? describeAuthError(error) : null;
   }, []);
@@ -101,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const requestPasswordReset = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${getAuthRedirectBaseUrl()}/reset-password`,
     });
     return error ? describeAuthError(error) : null;
   }, []);
