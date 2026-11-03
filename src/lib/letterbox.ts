@@ -6,7 +6,7 @@ export interface LetterboxPost {
   body: string;
   title_id: string | null;
   image_url: string | null;
-  visibility: 'public' | 'friends';
+  visibility: string;
   status: 'published' | 'hidden' | 'removed';
   created_at: string;
   updated_at: string;
