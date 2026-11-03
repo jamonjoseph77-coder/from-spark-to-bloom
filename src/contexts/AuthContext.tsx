@@ -75,7 +75,7 @@ function describeUnexpectedAuthError(error: unknown): string {
   if (error instanceof Error && (error.message.toLowerCase().includes('fetch') || error.message.toLowerCase().includes('network'))) {
     return 'We could not reach Cinema. Check your connection and try again.';
   }
-  console.warn('Cinema password-reset request failed unexpectedly.', error);
+  console.warn('Cinema authentication request failed unexpectedly.', error);
   return 'Cinema could not process this request right now. Please check your connection and try again later.';
 }
 
@@ -161,10 +161,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const completePasswordReset = useCallback(async (password: string) => {
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) return describeAuthError(error);
-    setRecoveryMode(false);
-    return null;
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) return describeAuthError(error);
+      setRecoveryMode(false);
+      return null;
+    } catch (error: unknown) {
+      return describeUnexpectedAuthError(error);
+    }
   }, []);
 
   const value = useMemo<AuthContextValue>(() => ({
