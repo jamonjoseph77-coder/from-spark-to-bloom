@@ -15,6 +15,13 @@
       "when": 1793506975833,
       "tag": "0001_disable_admin_self_claim",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793721948104,
+      "tag": "0002_pending_cinema_social_and_shorts",
+      "breakpoints": true
     }
   ]
 }
