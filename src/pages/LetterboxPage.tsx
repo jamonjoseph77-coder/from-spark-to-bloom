@@ -51,7 +51,7 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
         <span className="rounded-full border border-cinema-400/20 bg-cinema-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Message</span>
       </div>
       <div className="space-y-4 px-5 pb-4">
-        <p className="whitespace-pre-wrap text-sm leading-7 text-slate-200">{post.body}</p>
+        <p className="cinema-user-content whitespace-pre-wrap text-sm leading-7 text-slate-200">{post.body}</p>
         {post.title && <a href={`/title/${post.title.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-cinema-400/30"><div className="grid h-14 w-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-ink-800"><Film className="h-5 w-5 text-cinema-300" /></div><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-cinema-300">About this title</p><p className="truncate font-bold text-white">{post.title.title}</p><p className="text-xs text-slate-500">{post.title.type}</p></div></a>}
       </div>
       <div className="flex items-center gap-2 border-t border-white/5 px-4 py-3">
@@ -73,10 +73,16 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
   const [body, setBody] = useState('');
   const [selectedTitleId, setSelectedTitleId] = useState('');
   const [posting, setPosting] = useState(false);
+  const [feedMode, setFeedMode] = useState<'latest' | 'talked' | 'with_titles'>('latest');
   const { notify } = useToast();
   const activeTitleId = scopedTitleId || selectedTitleId;
   const linkedTitle = useMemo(() => (titles ?? []).find((title) => title.id === activeTitleId), [titles, activeTitleId]);
-  const visibleFeed = useMemo(() => scopedTitleId ? (feed ?? []).filter((post) => post.title_id === scopedTitleId) : feed, [feed, scopedTitleId]);
+  const visibleFeed = useMemo(() => {
+    const scoped = scopedTitleId ? (feed ?? []).filter((post) => post.title_id === scopedTitleId) : [...(feed ?? [])];
+    if (feedMode === 'with_titles') return scoped.filter((post) => Boolean(post.title));
+    if (feedMode === 'talked') return scoped.sort((a, b) => ((b.reactions?.length ?? 0) + (b.comments?.length ?? 0)) - ((a.reactions?.length ?? 0) + (a.comments?.length ?? 0)));
+    return scoped;
+  }, [feed, scopedTitleId, feedMode]);
 
   async function publish(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,6 +105,7 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
       {user && <form onSubmit={publish} className="space-y-3 rounded-3xl border border-white/10 bg-ink-900/80 p-5 shadow-xl"><label htmlFor="letterbox-post" className="block text-sm font-extrabold text-white">Write a Letterbox message</label><textarea id="letterbox-post" value={body} onChange={(event) => setBody(event.target.value)} maxLength={2000} rows={4} placeholder="Share a thought, review, recommendation or something you are looking forward to…" className={`${INPUT} resize-y py-3`} /><div className="flex flex-col gap-3 sm:flex-row sm:items-center">{!scopedTitleId && <select value={selectedTitleId} onChange={(event) => setSelectedTitleId(event.target.value)} className={`${INPUT} min-w-0 flex-1 py-2.5`}><option value="">No title attached</option>{(titles ?? []).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select>}<span className="text-xs text-slate-500">{body.length}/2000</span><button type="submit" disabled={posting || !body.trim()} className={BUTTON_PRIMARY}>{posting ? 'Publishing…' : 'Share message'}</button></div>{linkedTitle && <p className="text-xs text-sky-200">{scopedTitleId ? 'Message about' : 'Linked to'} {linkedTitle.title}</p>}<p className="text-xs text-slate-500">Keep posts about entertainment. Only approved media can be published; video uploads are not enabled.</p></form>}
       {!user && <div className="rounded-2xl border border-white/10 bg-ink-900 p-5 text-sm text-slate-300"><a href="/sign-in" className="font-bold text-cinema-200">Sign in</a> to share recommendations and join the conversation.</div>}
       {!feed && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
+      {feed && visibleFeed && visibleFeed.length > 0 && !scopedTitleId && <div className="mx-auto flex max-w-3xl flex-wrap gap-2 rounded-2xl border border-white/10 bg-ink-900/70 p-3" role="group" aria-label="Filter Letterbox conversations"><button type="button" aria-pressed={feedMode === 'latest'} onClick={() => setFeedMode('latest')} className={`rounded-full px-4 py-2 text-xs font-bold transition ${feedMode === 'latest' ? 'bg-cinema-500 text-white shadow-lg shadow-cinema-900/30' : 'border border-white/10 bg-white/[.03] text-slate-300 hover:border-cinema-300/30'}`}>Latest</button><button type="button" aria-pressed={feedMode === 'talked'} onClick={() => setFeedMode('talked')} className={`rounded-full px-4 py-2 text-xs font-bold transition ${feedMode === 'talked' ? 'bg-cinema-500 text-white shadow-lg shadow-cinema-900/30' : 'border border-white/10 bg-white/[.03] text-slate-300 hover:border-cinema-300/30'}`}>Most Discussed</button><button type="button" aria-pressed={feedMode === 'with_titles'} onClick={() => setFeedMode('with_titles')} className={`rounded-full px-4 py-2 text-xs font-bold transition ${feedMode === 'with_titles' ? 'bg-cinema-500 text-white shadow-lg shadow-cinema-900/30' : 'border border-white/10 bg-white/[.03] text-slate-300 hover:border-cinema-300/30'}`}>Talking About Titles</button></div>}
       {feed && visibleFeed && visibleFeed.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The conversation starts here" description="When the Cinema community shares entertainment recommendations and discussions, they will appear here." />}
       {feed && visibleFeed && visibleFeed.length > 0 && <div className="mx-auto max-w-3xl space-y-5">{visibleFeed.map((post) => <PostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}
     </div>
