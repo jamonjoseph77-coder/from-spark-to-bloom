@@ -216,7 +216,7 @@ export function VideoPlayer({
       {layout === 'landscape' && <div className="flex items-center justify-between gap-3 px-2 pt-1">
         <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
         {isLive && <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-200"><Radio className="h-3 w-3" /> Live</span>}
-      </div>
+      </div>}
       <div className={`cinema-video-stage relative mx-auto overflow-hidden bg-black ${layout === 'portrait' ? 'aspect-[9/16] h-[min(82dvh,820px)] max-h-[82dvh] w-auto max-w-full rounded-[1.35rem] shadow-[0_28px_80px_rgba(0,0,0,.65)] ring-1 ring-white/15 sm:h-[min(86dvh,860px)]' : 'aspect-video w-full rounded-[1.25rem] shadow-2xl shadow-black/60 ring-1 ring-white/10'}`}>
         <video
           ref={videoRef}
