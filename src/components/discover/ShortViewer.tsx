@@ -99,7 +99,6 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     setSavingToLibrary(true);
     try {
       await toggleWatchlist(clip.title.id);
-      notify(inLibrary ? 'Removed From My Cinema.' : 'Added To My Cinema.');
     } finally {
       setSavingToLibrary(false);
     }
@@ -139,7 +138,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     <Modal label={clip.headline} onClose={onClose} immersive>
       <div className="cinema-short-viewer relative flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-[#030508] sm:min-h-[min(94dvh,920px)]">
         <div className="absolute inset-0 flex items-center justify-center bg-black">
-          {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted />}
+          {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted showControls={!clearScreen} />}
           {embed && <iframe src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
           {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This Video Link Is Not Supported Yet. Please Use A Cinema-Compatible Video Link.</div>}
         </div>
