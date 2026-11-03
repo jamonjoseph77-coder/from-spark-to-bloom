@@ -1,14 +1,19 @@
 import { useState } from 'react';
-import { ArrowUpRight, BadgeCheck, Share2 } from 'lucide-react';
+import { ArrowUpRight, BadgeCheck, ExternalLink, Share2 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useToast } from '@/hooks/useToast';
-import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
+import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import type { DiscoverClip } from '@/lib/clips';
 
 export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: () => void }) {
   const direct = isDirectVideoUrl(clip.video_url);
-  const embed = direct ? null : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
+  const youtubeId = getYouTubeVideoId(clip.video_url);
+  const embed = direct
+    ? null
+    : youtubeId
+      ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
+      : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const canWatchTitle = Boolean(clip.title?.playback_url?.trim()) && clip.title?.type !== 'series';
   const [sharing, setSharing] = useState(false);
   const { notify } = useToast();
@@ -29,7 +34,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     <Modal label={clip.headline} onClose={onClose} immersive>
       <div className="cinema-short-viewer relative flex h-full min-h-[100dvh] flex-col justify-center overflow-hidden bg-[#030508] sm:min-h-[min(94dvh,920px)]">
         <div className="absolute inset-0">
-          {direct && <VideoPlayer src={clip.video_url} title={clip.headline} layout="portrait" autoPlay muted />}
+          {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted />}
           {embed && <iframe src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
           {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This Video Link Is Not Supported Yet. Please Use A Cinema-Compatible Video Link.</div>}
         </div>
@@ -40,8 +45,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
               <h2 className="line-clamp-3 text-lg font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</h2>
               <p className="mt-1 text-xs text-slate-300">{clip.publisher_name || 'Cinema'}{clip.duration_seconds ? ` · ${clip.duration_seconds}s` : ''}</p>
               {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
-              {canWatchTitle && clip.title && <a href={`/watch/${clip.title.id}`} className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-extrabold text-ink-950 shadow-lg transition hover:bg-sky-100">Watch full title <ArrowUpRight className="h-3.5 w-3.5" /></a>}
-              {clip.title && !canWatchTitle && <a href={`/title/${clip.title.id}`} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-white/20">Explore title <ArrowUpRight className="h-3.5 w-3.5" /></a>}
+              {youtubeId && <a href={clip.video_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[11px] font-bold text-white transition hover:bg-white/20">Open Original Video <ExternalLink className="h-3.5 w-3.5" /></a>}
+              {canWatchTitle && clip.title && <a href={`/watch/${clip.title.id}`} className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-extrabold text-ink-950 shadow-lg transition hover:bg-sky-100">Watch Full Title <ArrowUpRight className="h-3.5 w-3.5" /></a>}
+              {clip.title && !canWatchTitle && <a href={`/title/${clip.title.id}`} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-white/20">Explore Title <ArrowUpRight className="h-3.5 w-3.5" /></a>}
             </div>
             <button type="button" disabled={sharing} onClick={() => void shareShort()} aria-label="Share this short" className="mb-1 grid h-12 w-12 shrink-0 place-items-center rounded-full border border-sky-200/25 bg-[#080d16]/75 text-white shadow-[0_0_28px_rgba(45,125,235,.18)] backdrop-blur-xl transition duration-200 hover:scale-105 hover:border-sky-200/50 hover:bg-sky-500/20 disabled:opacity-50"><Share2 className="h-5 w-5" /></button>
           </div>

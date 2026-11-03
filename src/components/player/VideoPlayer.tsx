@@ -167,6 +167,27 @@ export function VideoPlayer({
     setStatus('ready');
   }
 
+  function handleCanPlay(event: SyntheticEvent<HTMLVideoElement>) {
+    const video = event.currentTarget;
+    setStatus('ready');
+    if (autoPlay && video.paused) {
+      void video.play().catch(() => {
+        // Browser autoplay policies may require the viewer to press Play.
+      });
+    }
+  }
+
+  function handleVideoError(event: SyntheticEvent<HTMLVideoElement>) {
+    const mediaError = event.currentTarget.error;
+    const message = mediaError?.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED
+      ? 'This Video Format Or Source Is Not Supported By The Browser.'
+      : mediaError?.code === MediaError.MEDIA_ERR_NETWORK
+        ? 'The Video Could Not Be Reached. Check Your Connection And Try Again.'
+        : PLAYBACK_ERROR;
+    setErrorText(message);
+    setStatus('error');
+  }
+
   function handleTimeUpdate(event: SyntheticEvent<HTMLVideoElement>) {
     const video = event.currentTarget;
     if (Math.abs(video.currentTime - lastSavedRef.current) < SAVE_INTERVAL_SECONDS) return;
@@ -208,20 +229,25 @@ export function VideoPlayer({
           aria-label={title}
           crossOrigin={subtitleUrl ? 'anonymous' : undefined}
           onLoadedMetadata={handleLoadedMetadata}
-          onCanPlay={() => setStatus('ready')}
+          onCanPlay={handleCanPlay}
           onPlaying={() => setStatus('ready')}
-          onWaiting={() => setStatus('loading')}
+          onWaiting={(event) => {
+            if (!event.currentTarget.paused) setStatus('loading');
+          }}
+          onStalled={(event) => {
+            if (!event.currentTarget.paused) setStatus('loading');
+          }}
           onTimeUpdate={handleTimeUpdate}
           onVolumeChange={(event) => {
             const nextVolume = event.currentTarget.muted ? 0 : event.currentTarget.volume;
             setVolume((current) => Math.abs(current - nextVolume) > 0.03 ? nextVolume : current);
           }}
-          onPause={(event) => reportProgress(event.currentTarget, false)}
-          onEnded={(event) => reportProgress(event.currentTarget, true)}
-          onError={() => {
-            setErrorText(PLAYBACK_ERROR);
-            setStatus('error');
+          onPause={(event) => {
+            setStatus('ready');
+            reportProgress(event.currentTarget, false);
           }}
+          onEnded={(event) => reportProgress(event.currentTarget, true)}
+          onError={handleVideoError}
         >
           {subtitleUrl && <track kind="subtitles" src={subtitleUrl} srcLang="en" label="Subtitles" />}
         </video>
