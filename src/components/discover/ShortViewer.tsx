@@ -19,9 +19,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       setSharing(true);
       if (navigator.share) await navigator.share({ title: clip.headline, text: `Watch this official Cinema short from ${clip.publisher_name} on Cinema.`, url });
       else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url); notify('Short link copied.'); }
-      else notify('Sharing isn't available on this browser.', 'error');
+      else notify("Sharing isn't available on this browser.", 'error');
     } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') notify('Couldn't share this short. Try again.', 'error');
+      if (error instanceof Error && error.name !== 'AbortError') notify("Couldn't share this short. Try again.", 'error');
     } finally { setSharing(false); }
   }
 
