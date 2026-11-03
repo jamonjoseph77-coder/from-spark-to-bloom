@@ -64,7 +64,7 @@ export function toEmbedUrl(value: string, options: { autoplay?: boolean; muted?:
     }
     if (host === 'youtu.be') {
       const id = parsed.pathname.slice(1).split('/')[0];
-      return id && /^[\w-]{6,}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}` : null;
+      return id && /^[\w-]{6,}$/.test(id) ? `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}&controls=1&modestbranding=1` : null;
     }
     if (host === 'vimeo.com' || host === 'www.vimeo.com') {
       const id = parsed.pathname.split('/').filter(Boolean).pop();
