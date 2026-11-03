@@ -5,7 +5,7 @@ interface MobileNavProps { route: Route }
 const ITEMS = [
   { key: 'home', label: 'Home', href: '/', icon: Home },
   { key: 'discover', label: 'Explore', href: '/discover', icon: Compass },
-  { key: 'cinema', label: 'Movies', href: '/movies', icon: Film },
+  { key: 'cinema', label: 'Cinema', href: '/movies', icon: Film },
   { key: 'live-tv', label: 'Live TV', href: '/live-tv', icon: Tv },
   { key: 'my-cinema', label: 'My Cinema', href: '/my-cinema', icon: Clapperboard },
 ];
