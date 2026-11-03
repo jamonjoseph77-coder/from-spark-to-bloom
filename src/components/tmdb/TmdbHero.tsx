@@ -4,7 +4,7 @@ import { Artwork } from '@/components/ui/Artwork';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchDiscoverTrailers, fetchTmdbList, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
+import { fetchDiscoverTrailers, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
 
 const ROTATE_MS = 8500;
 type HeroEntry = { item: TmdbItem; videoKey?: string };
@@ -12,20 +12,17 @@ type HeroEntry = { item: TmdbItem; videoKey?: string };
 async function loadHero(): Promise<HeroEntry[]> {
   try {
     const trailers = await fetchDiscoverTrailers(4);
-    if (trailers.length) return trailers.map(({ videoKey, ...item }) => ({ item, videoKey }));
+    const seen = new Set<string>();
+    return trailers.filter((item) => {
+      const key = `${item.mediaType}:${item.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).map(({ videoKey, ...item }) => ({ item, videoKey }));
   } catch (error) {
     console.warn('Cinema featured trailers are temporarily unavailable', error);
+    return [];
   }
-  const [moviesResult, seriesResult] = await Promise.allSettled([
-    fetchTmdbList('movie', 'trending'),
-    fetchTmdbList('tv', 'trending'),
-  ]);
-  const movies = moviesResult.status === 'fulfilled' ? moviesResult.value : [];
-  const series = seriesResult.status === 'fulfilled' ? seriesResult.value : [];
-  return [
-    ...movies.slice(0, 4).map((item) => ({ item })),
-    ...series.slice(0, 4).map((item) => ({ item })),
-  ];
 }
 
 export function TmdbHero() {
