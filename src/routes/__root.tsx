@@ -118,6 +118,22 @@ function CinemaShell({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const isAccountRoute = route.name === "sign-in" || route.name === "sign-up" || route.name === "forgot-password" || route.name === "reset-password";
 
+  // Keep plain <a href="/..."> links inside the app instead of reloading the page.
+  useEffect(() => {
+    function handleClick(event: MouseEvent) {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as Element | null)?.closest?.("a");
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+      const href = anchor.getAttribute("href");
+      if (!href || !href.startsWith("/") || href.startsWith("//")) return;
+      event.preventDefault();
+      void router.navigate({ href });
+    }
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [router]);
+
   // Visitors can see the branded entry and account flows, but the Cinema
   // experience itself is available only after a successful sign-in.
   if (loading) {
@@ -134,22 +150,6 @@ function CinemaShell({ children }: { children: ReactNode }) {
 
   if (!user && !isAccountRoute) return <VisitorLandingPage />;
   if (isAccountRoute) return <main className="min-h-screen bg-[#07101b]">{children}</main>;
-
-  // Keep plain <a href="/..."> links inside the app instead of reloading the page.
-  useEffect(() => {
-    function handleClick(event: MouseEvent) {
-      if (event.defaultPrevented || event.button !== 0) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const anchor = (event.target as Element | null)?.closest?.("a");
-      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
-      const href = anchor.getAttribute("href");
-      if (!href || !href.startsWith("/") || href.startsWith("//")) return;
-      event.preventDefault();
-      void router.navigate({ href });
-    }
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, [router]);
 
   return <AppShell route={route}>{children}</AppShell>;
 }
