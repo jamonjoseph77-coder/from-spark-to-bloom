@@ -6,7 +6,8 @@ export interface CreatorShortSubmission {
   headline: string;
   description: string;
   publisher_name: string;
-  video_path: string;
+  video_path: string | null;
+  video_url: string | null;
   poster_path: string | null;
   title_id: string | null;
   duration_seconds: number | null;
@@ -26,6 +27,8 @@ export async function fetchPendingCreatorShorts(): Promise<CreatorShortSubmissio
   if (error) throw error;
   const submissions = (data ?? []) as CreatorShortSubmission[];
   return Promise.all(submissions.map(async (submission) => {
+    if (submission.video_url) return { ...submission, preview_url: submission.video_url };
+    if (!submission.video_path) return { ...submission, preview_url: undefined };
     const { data: signed } = await supabase.storage
       .from('cinema-creator-submissions')
       .createSignedUrl(submission.video_path, 60 * 30);
@@ -38,7 +41,8 @@ export async function submitCreatorShort(input: {
   headline: string;
   description: string;
   publisher_name: string;
-  video_path: string;
+  video_path: string | null;
+  video_url: string | null;
   poster_path: string | null;
   title_id: string | null;
   duration_seconds: number | null;
@@ -56,14 +60,21 @@ export async function reviewCreatorShort(
   reviewNote = '',
 ): Promise<void> {
   if (decision === 'approved') {
-    const { data: videoFile, error: videoDownloadError } = await supabase.storage
-      .from('cinema-creator-submissions')
-      .download(submission.video_path);
-    if (videoDownloadError || !videoFile) throw videoDownloadError ?? new Error('The submitted video could not be read.');
-    const { error: videoCopyError } = await supabase.storage
-      .from('cinema-shorts')
-      .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: false });
-    if (videoCopyError) throw videoCopyError;
+    let publishedVideoUrl = submission.video_url?.trim() ?? '';
+    let posterUrl = '';
+
+    if (submission.video_path) {
+      const { data: videoFile, error: videoDownloadError } = await supabase.storage
+        .from('cinema-creator-submissions')
+        .download(submission.video_path);
+      if (videoDownloadError || !videoFile) throw videoDownloadError ?? new Error('The submitted video could not be read.');
+      const { error: videoCopyError } = await supabase.storage
+        .from('cinema-shorts')
+        .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: false });
+      if (videoCopyError) throw videoCopyError;
+      publishedVideoUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path).data.publicUrl;
+    }
+
     if (submission.poster_path) {
       const { data: posterFile, error: posterDownloadError } = await supabase.storage
         .from('cinema-creator-submissions')
@@ -73,16 +84,15 @@ export async function reviewCreatorShort(
         .from('cinema-shorts')
         .upload(submission.poster_path, posterFile, { contentType: posterFile.type || 'image/jpeg', upsert: false });
       if (posterCopyError) throw posterCopyError;
+      posterUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.poster_path).data.publicUrl;
     }
-    const { data } = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path);
-    const posterUrl = submission.poster_path
-      ? supabase.storage.from('cinema-shorts').getPublicUrl(submission.poster_path).data.publicUrl
-      : '';
+
+    if (!publishedVideoUrl) throw new Error('The submission does not contain a video link or uploaded video.');
     const { error: clipError } = await supabase.from('discover_clips').insert({
       kind: 'short',
       headline: submission.headline,
       description: submission.description,
-      video_url: data.publicUrl,
+      video_url: publishedVideoUrl,
       poster_url: posterUrl,
       publisher_name: submission.publisher_name,
       title_id: submission.title_id,

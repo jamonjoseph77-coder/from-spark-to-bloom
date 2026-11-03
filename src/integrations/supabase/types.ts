@@ -85,6 +85,219 @@ export type Database = {
           },
         ]
       }
+      creator_short_submissions: {
+        Row: {
+          created_at: string
+          description: string
+          duration_seconds: number | null
+          headline: string
+          id: string
+          poster_path: string | null
+          publisher_name: string
+          review_note: string
+          reviewed_at: string | null
+          status: string
+          title_id: string | null
+          user_id: string
+          video_path: string | null
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          duration_seconds?: number | null
+          headline: string
+          id?: string
+          poster_path?: string | null
+          publisher_name: string
+          review_note?: string
+          reviewed_at?: string | null
+          status?: string
+          title_id?: string | null
+          user_id: string
+          video_path?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration_seconds?: number | null
+          headline?: string
+          id?: string
+          poster_path?: string | null
+          publisher_name?: string
+          review_note?: string
+          reviewed_at?: string | null
+          status?: string
+          title_id?: string | null
+          user_id?: string
+          video_path?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      letterbox_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          status: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          status?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      letterbox_posts: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          image_url: string | null
+          status: string
+          title_id: string | null
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          status?: string
+          title_id?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          status?: string
+          title_id?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
+      letterbox_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          reaction?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          body: string
+          created_at: string
+          href: string
+          id: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string
+          created_at?: string
+          href?: string
+          id?: string
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string
+          created_at?: string
+          href?: string
+          id?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      studio_accounts: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          logo_url: string | null
+          owner_id: string
+          studio_name: string
+          updated_at: string
+          verification_status: string
+          verified_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          logo_url?: string | null
+          owner_id: string
+          studio_name: string
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          logo_url?: string | null
+          owner_id?: string
+          studio_name?: string
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       episodes: {
         Row: {
           created_at: string
