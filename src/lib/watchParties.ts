@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { createRealtimeChannel } from '@/lib/realtime';
 import { fetchProfilesByIds } from '@/lib/profiles';
 import type {
   Profile,
@@ -155,7 +156,7 @@ export function subscribeToPartyChanges(
   onChange: () => void,
 ): () => void {
   const channel = supabase
-    .channel(channelName)
+    .channel(`${channelName}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`)
     .on('postgres_changes', { event: '*', schema: 'public', table, ...(filter ? { filter } : {}) }, onChange)
     .subscribe();
   return () => {
