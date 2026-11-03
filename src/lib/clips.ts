@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { TitleType } from '@/lib/types';
-import { getYouTubeThumbnailUrl, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
+import { getYouTubeThumbnailUrl, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
 
 export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured' | 'behind_the_scenes' | 'interview' | 'making_of' | 'deleted_scene' | 'cast_featurette' | 'production_diary';
 export interface ClipTitle { id: string; title: string; type: TitleType; playback_url?: string | null }
@@ -95,17 +95,18 @@ export async function addClipComment(clipId: string, authorId: string, body: str
 }
 
 export async function fetchDownloadableClips(): Promise<DiscoverClip[]> {
-  return (await fetchPublishedClips()).filter((clip) => clip.download_allowed && isDirectVideoUrl(clip.video_url));
+  return (await fetchPublishedClips()).filter((clip) => clip.download_allowed && isDirectVideoUrl(clip.video_url) && !isHlsUrl(clip.video_url));
 }
 
 export async function downloadPermittedClip(clip: DiscoverClip): Promise<void> {
-  if (!clip.download_allowed || !isDirectVideoUrl(clip.video_url)) throw new Error('This video is not approved for download.');
+  if (!clip.download_allowed || !isDirectVideoUrl(clip.video_url) || isHlsUrl(clip.video_url)) throw new Error('This video is not approved for download.');
   const response = await fetch(clip.video_url);
   if (!response.ok) throw new Error('The download could not be started.');
   const objectUrl = URL.createObjectURL(await response.blob());
   const anchor = document.createElement('a');
   anchor.href = objectUrl;
-  anchor.download = `${clip.headline.trim().replace(/[^a-z0-9-_]+/gi, '-').replace(/^-|-$/g, '') || 'cinema-video'}.mp4`;
+  const extension = new URL(clip.video_url).pathname.split('.').pop()?.toLowerCase() || 'mp4';
+  anchor.download = `${clip.headline.trim().replace(/[^a-z0-9-_]+/gi, '-').replace(/^-|-$/g, '') || 'cinema-video'}.${extension}`;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
