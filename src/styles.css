@@ -257,3 +257,20 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   .cinema-hero-light, .cinema-short-skeleton::after { animation: none !important; }
 }
+
+
+/* Premium Cinema Finish — Near-Black Surfaces, Restrained Blue Light, Responsive Motion */
+:root { color-scheme: dark; }
+.cinema-shorts-rail { scroll-padding-inline: 1rem; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+.cinema-short-card { contain: layout paint style; }
+.cinema-short-card button:active { transform: scale(.985); }
+.cinema-short-viewer { isolation: isolate; }
+.cinema-video-player { backdrop-filter: blur(18px); }
+.cinema-video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+.cinema-video-stage video::-webkit-media-controls-panel { background-image: linear-gradient(transparent, rgba(0,0,0,.72)); }
+@media (hover: hover) and (pointer: fine) {
+  .cinema-shorts-rail .cinema-short-card:hover { filter: brightness(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-short-card button:active { transform: none; }
+}
