@@ -310,3 +310,36 @@ body {
 @media (min-resolution: 2dppx) {
   .cinema-home { -webkit-font-smoothing: antialiased; }
 }
+
+
+/* Cinema Platform-Wide Finish: Clear Type, Brighter Surfaces And Title Case */
+main {
+  color: #eef4ff;
+  text-rendering: optimizeLegibility;
+}
+main :where(h1,h2,h3,h4,button,a,label,li,p,span) {
+  text-transform: capitalize;
+}
+main :where(input,textarea,select,option,code,pre,kbd) {
+  text-transform: none;
+}
+main .cinema-user-content,
+main .cinema-user-content * {
+  text-transform: none;
+}
+main :where(.text-slate-500,.text-slate-400) {
+  color: #b6c5d8;
+}
+main :where(.text-slate-300) {
+  color: #d5e0ef;
+}
+main :where(.text-cinema-300,.text-cinema-200) {
+  color: #b9d9ff;
+}
+main :where(button,a):focus-visible {
+  outline-color: #79baff;
+}
+.cinema-community-invite,
+.cinema-premium-panel {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 22px 64px rgba(0,0,0,.32);
+}
