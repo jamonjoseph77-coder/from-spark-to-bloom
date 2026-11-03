@@ -189,7 +189,7 @@ export function VideoPlayer({
   const hasQualityMenu = levels.length > 1;
 
   return (
-    <div className="mx-auto w-full space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[radial-gradient(ellipse_at_50%_0%,rgba(50,125,225,.13),transparent_48%),linear-gradient(145deg,rgba(9,14,23,.98),rgba(2,4,8,.99))] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3">
+    <div className="cinema-video-player mx-auto w-full space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[radial-gradient(ellipse_at_50%_0%,rgba(50,125,225,.13),transparent_48%),linear-gradient(145deg,rgba(9,14,23,.98),rgba(2,4,8,.99))] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3">
       <div className="flex items-center justify-between gap-3 px-2 pt-1">
         <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
         {isLive && <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-200"><Radio className="h-3 w-3" /> Live</span>}
@@ -199,7 +199,7 @@ export function VideoPlayer({
           ref={videoRef}
           className="h-full w-full bg-black object-contain"
           controls
-          controlsList="nodownload"
+          controlsList="nodownload noplaybackrate"
           playsInline
           autoPlay={autoPlay}
           muted={muted}
@@ -257,7 +257,7 @@ export function VideoPlayer({
           {hasQualityMenu && (
             <label className="flex items-center gap-2 text-sm text-slate-400">
               <span className="font-semibold">Quality</span>
-              <select value={quality} onChange={handleQualityChange} className="rounded-lg border border-white/10 bg-ink-850 px-3 py-1.5 text-sm text-slate-100 focus:border-sky-300/50 focus:outline-none">
+              <select value={quality} onChange={handleQualityChange} className="rounded-lg border border-sky-200/15 bg-[#080d16] px-3 py-1.5 text-sm text-slate-100 transition focus:border-sky-300/60 focus:outline-none focus:ring-2 focus:ring-sky-300/15">
                 <option value={-1}>Auto</option>
                 {levels.map((level) => <option key={level.index} value={level.index}>{level.label}</option>)}
               </select>
