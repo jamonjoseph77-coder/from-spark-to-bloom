@@ -11,6 +11,7 @@ export interface AuthContextValue {
   refreshAdmin: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<string | null>;
   signUp: (email: string, password: string) => Promise<{ error: string | null; needsConfirmation: boolean }>;
+  resendSignupConfirmation: (email: string) => Promise<string | null>;
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<string | null>;
   completePasswordReset: (password: string) => Promise<string | null>;
@@ -22,13 +23,11 @@ function describeAuthError(error: AuthError): string {
   const message = error.message.toLowerCase();
   if (message.includes('invalid login credentials')) return 'Email or password is incorrect.';
   if (message.includes('already registered')) return 'An account with this email already exists. Try signing in instead.';
-  if (message.includes('email not confirmed')) return 'Please confirm your email address first. Check your inbox.';
-  if (message.includes('rate limit')) return 'Too many attempts. Wait a moment and try again.';
+  if (message.includes('email not confirmed')) return 'Your email is not confirmed yet. Check your inbox or request a new confirmation email.';
+  if (message.includes('rate limit')) return 'Too many attempts. Wait a moment before trying again.';
   if (message.includes('password')) return error.message;
-  if (message.includes('fetch') || message.includes('network')) {
-    return 'We could not reach Cinema. Check your connection and try again.';
-  }
-  return 'Something went wrong. Please try again.';
+  if (message.includes('fetch') || message.includes('network')) return 'We could not reach Cinema. Check your connection and try again.';
+  return error.message || 'Something went wrong. Please try again.';
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -44,14 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session);
       setLoading(false);
     });
-
     const { data: subscription } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
       setLoading(false);
       if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
       if (event === 'SIGNED_OUT') setRecoveryMode(false);
     });
-
     return () => {
       active = false;
       subscription.subscription.unsubscribe();
@@ -59,22 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const userId = session?.user.id ?? null;
-
   const refreshAdmin = useCallback(async () => {
-    if (!userId) {
-      setIsAdmin(false);
-      return;
-    }
-    try {
-      setIsAdmin(await checkIsAdmin());
-    } catch {
-      setIsAdmin(false);
-    }
+    if (!userId) { setIsAdmin(false); return; }
+    try { setIsAdmin(await checkIsAdmin()); } catch { setIsAdmin(false); }
   }, [userId]);
 
-  useEffect(() => {
-    void refreshAdmin();
-  }, [refreshAdmin]);
+  useEffect(() => { void refreshAdmin(); }, [refreshAdmin]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -91,9 +78,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null, needsConfirmation: !data.session };
   }, []);
 
-  const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+  const resendSignupConfirmation = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    return error ? describeAuthError(error) : null;
   }, []);
+
+  const signOut = useCallback(async () => { await supabase.auth.signOut(); }, []);
 
   const requestPasswordReset = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -109,21 +103,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null;
   }, []);
 
-  const value = useMemo<AuthContextValue>(
-    () => ({
-      user: session?.user ?? null,
-      isAdmin,
-      loading,
-      recoveryMode,
-      refreshAdmin,
-      signIn,
-      signUp,
-      signOut,
-      requestPasswordReset,
-      completePasswordReset,
-    }),
-    [session, isAdmin, loading, recoveryMode, refreshAdmin, signIn, signUp, signOut, requestPasswordReset, completePasswordReset],
-  );
+  const value = useMemo<AuthContextValue>(() => ({
+    user: session?.user ?? null, isAdmin, loading, recoveryMode, refreshAdmin,
+    signIn, signUp, resendSignupConfirmation, signOut, requestPasswordReset, completePasswordReset,
+  }), [session, isAdmin, loading, recoveryMode, refreshAdmin, signIn, signUp, resendSignupConfirmation, signOut, requestPasswordReset, completePasswordReset]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
