@@ -13,7 +13,7 @@ export function ShortCard({ clip, onOpen }: ShortCardProps) {
       <button
         type="button"
         onClick={() => onOpen(clip)}
-        aria-label={`Watch Short: ${clip.headline}`}
+        aria-label={`Watch short: ${clip.headline}`}
         className="relative block aspect-[9/16] w-full overflow-hidden rounded-[1.5rem] bg-ink-800 text-left shadow-[0_18px_55px_rgba(0,0,0,.38)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_70px_rgba(22,100,190,.24)] hover:ring-sky-200/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
       >
         <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.07]" />
