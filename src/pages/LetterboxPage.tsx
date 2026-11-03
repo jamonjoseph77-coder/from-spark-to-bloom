@@ -46,13 +46,13 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
   return (
     <article id={`post-${post.id}`} className="scroll-mt-24 overflow-hidden rounded-3xl border border-white/10 bg-ink-900/85 shadow-xl shadow-black/10">
       <div className="flex items-center gap-3 p-5">
-        <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-cinema-400 to-indigo-700 text-sm font-black text-white">{author.slice(0,1).toUpperCase()}</div>
-        <div className="min-w-0 flex-1"><p className="truncate text-sm font-extrabold text-white">{author}</p><p className="text-xs text-slate-500">Cinema community · {new Date(post.created_at).toLocaleDateString()}</p></div>
+        <a href={post.author?.username ? `/profile?username=${encodeURIComponent(post.author.username)}` : '/friends'} aria-label={`View ${author}'s profile`} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-cinema-400 to-indigo-700 text-sm font-black text-white transition hover:ring-2 hover:ring-cinema-300/60">{author.slice(0,1).toUpperCase()}</a>
+        <div className="min-w-0 flex-1"><a href={post.author?.username ? `/profile?username=${encodeURIComponent(post.author.username)}` : '/friends'} className="truncate text-sm font-extrabold text-white hover:text-cinema-200">{author}</a><p className="text-xs text-slate-500">Cinema community · {new Date(post.created_at).toLocaleDateString()}</p></div>
         <span className="rounded-full border border-cinema-400/20 bg-cinema-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Message</span>
       </div>
       <div className="space-y-4 px-5 pb-4">
         <p className="whitespace-pre-wrap text-sm leading-7 text-slate-200">{post.body}</p>
-        {post.title && <a href={`/title/${post.title.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-cinema-400/30"><div className="grid h-14 w-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-ink-800"><Film className="h-5 w-5 text-cinema-300" /></div><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-cinema-300">About this title</p><p className="truncate font-bold text-white">{post.title.title}</p><p className="text-xs text-slate-500">{post.title.type}</p></div></a>}
+        {post.title && <a href={`/title/${post.title.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-cinema-400/30"><div className="grid h-14 w-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-ink-800">{post.title.poster_url ? <img src={post.title.poster_url} alt="" loading="lazy" className="h-full w-full object-cover" /> : <Film className="h-5 w-5 text-cinema-300" />}</div><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-cinema-300">About this title</p><p className="truncate font-bold text-white">{post.title.title}</p><p className="text-xs text-slate-500">{post.title.type}</p></div></a>}
       </div>
       <div className="flex items-center gap-2 border-t border-white/5 px-4 py-3">
         <button type="button" disabled={busy} onClick={() => void react()} aria-pressed={liked} className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold transition ${liked ? 'bg-cinema-500/15 text-cinema-200' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}><Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} /> {count} Likes</button>
@@ -73,10 +73,16 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
   const [body, setBody] = useState('');
   const [selectedTitleId, setSelectedTitleId] = useState('');
   const [posting, setPosting] = useState(false);
+  const [feedMode, setFeedMode] = useState<'latest' | 'discussed' | 'titles'>('latest');
   const { notify } = useToast();
   const activeTitleId = scopedTitleId || selectedTitleId;
   const linkedTitle = useMemo(() => (titles ?? []).find((title) => title.id === activeTitleId), [titles, activeTitleId]);
-  const visibleFeed = useMemo(() => scopedTitleId ? (feed ?? []).filter((post) => post.title_id === scopedTitleId) : feed, [feed, scopedTitleId]);
+  const visibleFeed = useMemo(() => {
+    const scoped = (feed ?? []).filter((post) => !scopedTitleId || post.title_id === scopedTitleId);
+    if (feedMode === 'titles') return scoped.filter((post) => Boolean(post.title_id)).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+    if (feedMode === 'discussed') return scoped.sort((a, b) => ((b.reactions?.length ?? 0) + (b.comments?.length ?? 0)) - ((a.reactions?.length ?? 0) + (a.comments?.length ?? 0)));
+    return scoped.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+  }, [feed, scopedTitleId, feedMode]);
 
   async function publish(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -98,6 +104,12 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
       </header>}
       {user && <form onSubmit={publish} className="space-y-3 rounded-3xl border border-white/10 bg-ink-900/80 p-5 shadow-xl"><label htmlFor="letterbox-post" className="block text-sm font-extrabold text-white">Write a Letterbox message</label><textarea id="letterbox-post" value={body} onChange={(event) => setBody(event.target.value)} maxLength={2000} rows={4} placeholder="Share a thought, review, recommendation or something you are looking forward to…" className={`${INPUT} resize-y py-3`} /><div className="flex flex-col gap-3 sm:flex-row sm:items-center">{!scopedTitleId && <select value={selectedTitleId} onChange={(event) => setSelectedTitleId(event.target.value)} className={`${INPUT} min-w-0 flex-1 py-2.5`}><option value="">No title attached</option>{(titles ?? []).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select>}<span className="text-xs text-slate-500">{body.length}/2000</span><button type="submit" disabled={posting || !body.trim()} className={BUTTON_PRIMARY}>{posting ? 'Publishing…' : 'Share message'}</button></div>{linkedTitle && <p className="text-xs text-sky-200">{scopedTitleId ? 'Message about' : 'Linked to'} {linkedTitle.title}</p>}<p className="text-xs text-slate-500">Keep posts about entertainment. Only approved media can be published; video uploads are not enabled.</p></form>}
       {!user && <div className="rounded-2xl border border-white/10 bg-ink-900 p-5 text-sm text-slate-300"><a href="/sign-in" className="font-bold text-cinema-200">Sign in</a> to share recommendations and join the conversation.</div>}
+      {!embedded && feed && <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-ink-900/65 p-3">
+        <div><p className="text-sm font-bold text-white">Community Conversations</p><p className="mt-1 text-xs text-slate-500">Follow the stories people are discussing.</p></div>
+        <div role="group" aria-label="Sort community conversations" className="flex flex-wrap gap-2">
+          {[{ id: 'latest', label: 'Latest' }, { id: 'discussed', label: 'Most Discussed' }, { id: 'titles', label: 'Talking About Titles' }].map((item) => <button key={item.id} type="button" aria-pressed={feedMode === item.id} onClick={() => setFeedMode(item.id as typeof feedMode)} className={`rounded-full border px-3 py-2 text-xs font-semibold transition ${feedMode === item.id ? 'border-cinema-300/40 bg-cinema-400/15 text-white' : 'border-white/10 bg-white/[.03] text-slate-400 hover:text-white'}`}>{item.label}</button>)}
+        </div>
+      </div>}
       {!feed && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {feed && visibleFeed && visibleFeed.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The conversation starts here" description="When the Cinema community shares entertainment recommendations and discussions, they will appear here." />}
       {feed && visibleFeed && visibleFeed.length > 0 && <div className="mx-auto max-w-3xl space-y-5">{visibleFeed.map((post) => <PostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}

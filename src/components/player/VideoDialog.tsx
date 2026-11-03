@@ -9,7 +9,7 @@ interface VideoDialogProps extends VideoSource {
 
 export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) {
   const direct = isDirectVideoUrl(url);
-  const embedUrl = direct ? null : toEmbedUrl(url);
+  const embedUrl = direct ? null : toEmbedUrl(url, { autoplay: true });
 
   return (
     <Modal label={label} onClose={onClose} wide>
@@ -20,6 +20,7 @@ export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) 
           <div className="aspect-video overflow-hidden rounded-2xl bg-black ring-1 ring-white/10">
             <iframe
               src={embedUrl}
+              loading="eager"
               title={label}
               className="h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
@@ -27,6 +28,9 @@ export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) 
               referrerPolicy="strict-origin-when-cross-origin"
             />
           </div>
+        )}
+        {!direct && embedUrl && (
+          <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.04] px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:border-sky-200/35 hover:bg-white/[.08]">If playback is blocked, open the original video</a>
         )}
         {!direct && !embedUrl && (
           <p className="rounded-xl border border-white/10 bg-ink-850 p-4 text-sm text-slate-400">
