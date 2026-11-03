@@ -38,11 +38,20 @@ function describeAuthError(error: AuthError): string {
   if (code === 'email_address_not_authorized' || message.includes('email address not authorized')) {
     return 'Cinema could not send the confirmation email. Supabase’s default email service only sends to project team members. Email delivery needs a configured email provider.';
   }
-  if (code === 'over_email_send_rate_limit' || message.includes('email rate limit') || message.includes('too many emails')) {
-    return 'Cinema has reached Supabase’s email sending limit. No confirmation email was sent. Please wait before requesting another email.';
+  if (
+    code === 'over_email_send_rate_limit' ||
+    message.includes('email rate limit exceeded') ||
+    message.includes('email sending limit') ||
+    message.includes('too many emails')
+  ) {
+    return 'Cinema has reached Supabase’s email sending limit. No email was sent. Please wait before requesting another email.';
   }
-  if (code === 'over_request_rate_limit' || error.status === 429 || message.includes('rate limit') || message.includes('too many requests')) {
-    return 'Too many sign-in or sign-up attempts were made from this connection. Please wait for the limit to reset before trying once more.';
+  if (
+    code === 'over_request_rate_limit' ||
+    message.includes('too many requests') ||
+    (error.status === 429 && !code)
+  ) {
+    return 'Cinema is temporarily limiting requests from this connection. Please wait a little before trying again.';
   }
   if (message.includes('invalid login credentials')) return 'Email or password is incorrect.';
   if (message.includes('already registered')) return 'An account with this email already exists. Try signing in instead.';
