@@ -7,6 +7,22 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchPublishedClips, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 
+function getShortsErrorDescription(error: unknown): string {
+  const details = typeof error === 'object' && error !== null
+    ? error as { code?: unknown; message?: unknown }
+    : {};
+  const code = typeof details.code === 'string' ? details.code : '';
+  const message = typeof details.message === 'string'
+    ? details.message.toLowerCase()
+    : error instanceof Error ? error.message.toLowerCase() : String(error ?? '').toLowerCase();
+
+  if (code === 'PGRST205' || code === '42P01' || message.includes('public.discover_clips') || message.includes('discover_clips')) {
+    return 'The Cinema Shorts database table is missing from the connected Supabase project or its schema cache. Apply the latest Cinema Shorts migration in Supabase, then refresh the schema cache.';
+  }
+
+  return "Cinema Shorts couldn't connect to the video library. We tried again automatically. Please try again shortly.";
+}
+
 function ShortsLoading() {
   return (
     <div role="status" aria-label="Loading Cinema Shorts" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
@@ -37,7 +53,7 @@ export function DiscoverShorts() {
         </div>
       </div>
       {!data && !error && <ShortsLoading />}
-      {!data && error && <ErrorState onRetry={reload} description="Cinema Shorts couldn't connect to the video library. We tried again automatically. Please try again shortly." />}
+      {!data && error && <ErrorState onRetry={reload} description={getShortsErrorDescription(error)} />}
       {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts are getting ready" description="Official publisher videos and approved creator uploads will appear here when they are published." />}
       {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
