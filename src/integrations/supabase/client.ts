@@ -12,13 +12,13 @@ function isNewSupabaseApiKey(value: string): boolean {
 
 function serverSupabaseUrl(publicUrl: string, supabaseKey: string): string | undefined {
   if (typeof window !== 'undefined' || typeof process === 'undefined') return undefined;
-  const serverUrl = process.env['SUPABASE_URL']?.replace(/\/+$/, '');
+  const serverUrl = process.env['SUPABASE_URL']?.replace(/\\/+$/, '');
   if (!serverUrl || serverUrl === publicUrl || process.env['SUPABASE_PUBLISHABLE_KEY'] !== supabaseKey) return undefined;
   return serverUrl;
 }
 
 function createSupabaseFetch(supabaseUrl: string, supabaseKey: string): typeof fetch {
-  const publicUrl = supabaseUrl.replace(/\/+$/, '');
+  const publicUrl = supabaseUrl.replace(/\\/+$/, '');
   const serverUrl = serverSupabaseUrl(publicUrl, supabaseKey);
   return (input, init) => {
     const headers = new Headers(
@@ -27,13 +27,13 @@ function createSupabaseFetch(supabaseUrl: string, supabaseKey: string): typeof f
     if (init?.headers) {
       new Headers(init.headers).forEach((value, key) => headers.set(key, value));
     }
-    if (isNewSupabaseApiKey(supabaseKey) && headers.get('Authorization') === \`Bearer \${supabaseKey}\`) {
+    if (isNewSupabaseApiKey(supabaseKey) && headers.get('Authorization') === 'Bearer ' + supabaseKey) {
       headers.delete('Authorization');
     }
     headers.set('apikey', supabaseKey);
     if (serverUrl) {
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-      if (url.startsWith(\`\${publicUrl}/\`)) {
+      if (url.startsWith(publicUrl + '/')) {
         const target = serverUrl + url.slice(publicUrl.length);
         const request = typeof input === 'string' || input instanceof URL ? target : new Request(target, input);
         return fetch(request, { ...init, headers });
@@ -48,7 +48,7 @@ function createSupabaseClient() {
     import.meta.env['VITE_SUPABASE_URL'] ||
     process.env['SUPABASE_URL'] ||
     CINEMA_SUPABASE_URL;
-  const normalizedConfiguredUrl = configuredUrl.replace(/\/+$/, '');
+  const normalizedConfiguredUrl = configuredUrl.replace(/\\/+$/, '');
   const isCinemaProject = normalizedConfiguredUrl === CINEMA_SUPABASE_URL;
   const SUPABASE_URL = isCinemaProject ? normalizedConfiguredUrl : CINEMA_SUPABASE_URL;
   const configuredKey =
