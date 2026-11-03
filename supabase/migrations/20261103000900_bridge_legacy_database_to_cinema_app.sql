@@ -113,6 +113,7 @@ create policy "delete_own_watchlist_items" on public.watchlist_items for delete 
 alter table public.favourites add column if not exists title_id uuid;
 alter table public.favourites add column if not exists created_at timestamptz not null default now();
 alter table public.favourites alter column user_id set default auth.uid();
+alter table public.favourites drop constraint if exists favourites_pkey;
 alter table public.favourites alter column content_id drop not null;
 alter table public.favourites alter column title_id set not null;
 do $$
@@ -126,7 +127,6 @@ begin
       foreign key (title_id) references public.titles(id) on delete cascade;
   end if;
 end $$;
-alter table public.favourites drop constraint if exists favourites_pkey;
 create unique index if not exists favourites_user_title_uidx on public.favourites(user_id, title_id);
 alter table public.favourites enable row level security;
 grant select, insert, update, delete on public.favourites to authenticated;
@@ -193,10 +193,10 @@ set publisher_name = coalesce(publisher_name, publisher_id::text),
     created_at = coalesce(created_at, followed_at, now());
 alter table public.publisher_follows alter column publisher_name set not null;
 alter table public.publisher_follows alter column created_at set default now();
+alter table public.publisher_follows drop constraint if exists publisher_follows_pkey;
 alter table public.publisher_follows alter column created_at set not null;
 alter table public.publisher_follows alter column user_id set default auth.uid();
 alter table public.publisher_follows alter column publisher_id drop not null;
-alter table public.publisher_follows drop constraint if exists publisher_follows_pkey;
 alter table public.publisher_follows add constraint publisher_follows_pkey primary key (user_id, publisher_name);
 create index if not exists publisher_follows_name_idx on public.publisher_follows(publisher_name);
 alter table public.publisher_follows enable row level security;
