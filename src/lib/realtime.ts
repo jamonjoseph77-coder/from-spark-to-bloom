@@ -12,5 +12,5 @@ let channelSequence = 0;
  */
 export function createRealtimeChannel(topic: string) {
   channelSequence += 1;
-  return supabase.channel(`${topic}:${channelSequence}`);
+  return supabase.channel(`${topic}:${Date.now()}:${channelSequence}`);
 }
