@@ -25,10 +25,10 @@ import { Route as SeriesRouteImport } from './routes/series'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SportsRouteImport } from './routes/sports'
-import { Route as CreatorShortsRouteImport } from './routes/creator.shorts'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminClipsRouteImport } from './routes/admin.clips'
 import { Route as AdminNewRouteImport } from './routes/admin.new'
+import { Route as CreatorShortsRouteImport } from './routes/creator.shorts'
 import { Route as PublishersIndexRouteImport } from './routes/publishers.index'
 import { Route as PublishersPublisherRouteImport } from './routes/publishers.$publisher'
 import { Route as TitleIdRouteImport } from './routes/title.$id'
@@ -118,11 +118,6 @@ const SportsRoute = SportsRouteImport.update({
   path: '/sports',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CreatorShortsRoute = CreatorShortsRouteImport.update({
-  id: '/creator/shorts',
-  path: '/creator/shorts',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -136,6 +131,11 @@ const AdminClipsRoute = AdminClipsRouteImport.update({
 const AdminNewRoute = AdminNewRouteImport.update({
   id: '/admin/new',
   path: '/admin/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreatorShortsRoute = CreatorShortsRouteImport.update({
+  id: '/creator/shorts',
+  path: '/creator/shorts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublishersIndexRoute = PublishersIndexRouteImport.update({
@@ -196,9 +196,9 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sports': typeof SportsRoute
-  '/creator/shorts': typeof CreatorShortsRoute
   '/admin/clips': typeof AdminClipsRoute
   '/admin/new': typeof AdminNewRoute
+  '/creator/shorts': typeof CreatorShortsRoute
   '/publishers/$publisher': typeof PublishersPublisherRoute
   '/title/$id': typeof TitleIdRoute
   '/watch-parties/$id': typeof WatchPartiesIdRoute
@@ -226,9 +226,9 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sports': typeof SportsRoute
-  '/creator/shorts': typeof CreatorShortsRoute
   '/admin/clips': typeof AdminClipsRoute
   '/admin/new': typeof AdminNewRoute
+  '/creator/shorts': typeof CreatorShortsRoute
   '/publishers/$publisher': typeof PublishersPublisherRoute
   '/title/$id': typeof TitleIdRoute
   '/watch-parties/$id': typeof WatchPartiesIdRoute
@@ -257,9 +257,9 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sports': typeof SportsRoute
-  '/creator/shorts': typeof CreatorShortsRoute
   '/admin/clips': typeof AdminClipsRoute
   '/admin/new': typeof AdminNewRoute
+  '/creator/shorts': typeof CreatorShortsRoute
   '/publishers/$publisher': typeof PublishersPublisherRoute
   '/title/$id': typeof TitleIdRoute
   '/watch-parties/$id': typeof WatchPartiesIdRoute
@@ -289,9 +289,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/sports'
-    | '/creator/shorts'
     | '/admin/clips'
     | '/admin/new'
+    | '/creator/shorts'
     | '/publishers/$publisher'
     | '/title/$id'
     | '/watch-parties/$id'
@@ -319,9 +319,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/sports'
-    | '/creator/shorts'
     | '/admin/clips'
     | '/admin/new'
+    | '/creator/shorts'
     | '/publishers/$publisher'
     | '/title/$id'
     | '/watch-parties/$id'
@@ -349,9 +349,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/sports'
-    | '/creator/shorts'
     | '/admin/clips'
     | '/admin/new'
+    | '/creator/shorts'
     | '/publishers/$publisher'
     | '/title/$id'
     | '/watch-parties/$id'
@@ -380,9 +380,9 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   SportsRoute: typeof SportsRoute
-  CreatorShortsRoute: typeof CreatorShortsRoute
   AdminClipsRoute: typeof AdminClipsRoute
   AdminNewRoute: typeof AdminNewRoute
+  CreatorShortsRoute: typeof CreatorShortsRoute
   PublishersPublisherRoute: typeof PublishersPublisherRoute
   TitleIdRoute: typeof TitleIdRoute
   WatchPartiesIdRoute: typeof WatchPartiesIdRoute
@@ -508,13 +508,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SportsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/creator/shorts': {
-      id: '/creator/shorts'
-      path: '/creator/shorts'
-      fullPath: '/creator/shorts'
-      preLoaderRoute: typeof CreatorShortsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/': {
       id: '/admin/'
       path: '/admin'
@@ -534,6 +527,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/new'
       fullPath: '/admin/new'
       preLoaderRoute: typeof AdminNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creator/shorts': {
+      id: '/creator/shorts'
+      path: '/creator/shorts'
+      fullPath: '/creator/shorts'
+      preLoaderRoute: typeof CreatorShortsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/publishers/': {
@@ -612,9 +612,9 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   SportsRoute: SportsRoute,
-  CreatorShortsRoute: CreatorShortsRoute,
   AdminClipsRoute: AdminClipsRoute,
   AdminNewRoute: AdminNewRoute,
+  CreatorShortsRoute: CreatorShortsRoute,
   PublishersPublisherRoute: PublishersPublisherRoute,
   TitleIdRoute: TitleIdRoute,
   WatchPartiesIdRoute: WatchPartiesIdRoute,
