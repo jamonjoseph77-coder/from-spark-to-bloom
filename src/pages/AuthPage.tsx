@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Clapperboard, KeyRound, LogIn, UserPlus, MailCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
@@ -8,6 +8,20 @@ import { LoadingState } from '@/components/ui/StatusViews';
 import { navigateTo } from '@/lib/router';
 
 type AuthMode = 'sign-in' | 'sign-up' | 'forgot-password';
+const PASSWORD_RESET_COOLDOWN_KEY = 'cinema:password-reset-next-request-at';
+const PASSWORD_RESET_COOLDOWN_SECONDS = 60;
+
+function readPasswordResetCooldown(): number {
+  try {
+    const nextRequestAt = Number(window.localStorage.getItem(PASSWORD_RESET_COOLDOWN_KEY));
+    return Number.isFinite(nextRequestAt)
+      ? Math.max(0, Math.ceil((nextRequestAt - Date.now()) / 1000))
+      : 0;
+  } catch {
+    return 0;
+  }
+}
+
 const COPY: Record<AuthMode, { title: string; subtitle: string; submit: string }> = {
   'sign-in': { title: 'Welcome Back', subtitle: 'Sign In To Your Cinema Account.', submit: 'Sign In' },
   'sign-up': { title: 'Create Your Account', subtitle: 'One Account For Your Cinema Experience.', submit: 'Create Account' },
@@ -24,7 +38,25 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
   const [notice, setNotice] = useState<string | null>(null);
   const [confirmationPending, setConfirmationPending] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [cooldownSeconds, setCooldownSeconds] = useState(readPasswordResetCooldown);
+  const submittingRef = useRef(false);
   const copy = COPY[mode];
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) {
+      try { window.localStorage.removeItem(PASSWORD_RESET_COOLDOWN_KEY); } catch { /* Storage may be unavailable. */ }
+      return;
+    }
+    const timer = window.setTimeout(() => setCooldownSeconds((seconds) => Math.max(0, seconds - 1)), 1000);
+    return () => window.clearTimeout(timer);
+  }, [cooldownSeconds]);
+
+  function startPasswordResetCooldown(seconds: number) {
+    const safeSeconds = Math.max(1, Math.min(3600, Math.ceil(seconds)));
+    const nextRequestAt = Date.now() + safeSeconds * 1000;
+    try { window.localStorage.setItem(PASSWORD_RESET_COOLDOWN_KEY, String(nextRequestAt)); } catch { /* Storage may be unavailable. */ }
+    setCooldownSeconds(safeSeconds);
+  }
 
   if (loading) return <div className="mx-auto max-w-md px-4 py-16"><LoadingState /></div>;
 
@@ -37,9 +69,14 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submittingRef.current) return;
     setError(null); setNotice(null);
+    if (mode === 'forgot-password' && cooldownSeconds > 0) {
+      setError(`Please wait ${cooldownSeconds} seconds before requesting another reset email.`);
+      return;
+    }
     const trimmedEmail = email.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(trimmedEmail)) {
       setError('Enter A Valid Email Address.');
       return;
     }
@@ -47,6 +84,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       if (password.length < 8) { setError('Your Password Must Be At Least 8 Characters.'); return; }
       if (password !== confirmPassword) { setError('Your Passwords Do Not Match.'); return; }
     }
+    submittingRef.current = true;
     setBusy(true);
     try {
       if (mode === 'sign-in') {
@@ -66,19 +104,40 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         }
       } else {
         const failure = await requestPasswordReset(trimmedEmail);
-        if (failure) setError(failure);
-        else setNotice('If An Account Exists For This Email, A Password Reset Link Is On Its Way.');
+        if (failure) {
+          setError(failure);
+          const waitMatch = failure.match(/wait\\s+(\\d+)\\s+seconds?/i);
+          if (waitMatch) startPasswordResetCooldown(Number(waitMatch[1]));
+        } else {
+          startPasswordResetCooldown(PASSWORD_RESET_COOLDOWN_SECONDS);
+          setNotice('If An Account Exists For This Email, A Password Reset Link Is On Its Way. Check Your Inbox And Spam Folder.');
+        }
       }
-    } finally { setBusy(false); }
+    } catch (unexpectedError) {
+      console.warn('Cinema authentication form failed unexpectedly.', unexpectedError);
+      setError('Cinema could not complete this request right now. Check your connection and try again later.');
+    } finally {
+      submittingRef.current = false;
+      setBusy(false);
+    }
   }
 
   async function handleResend() {
-    setError(null); setBusy(true);
+    if (submittingRef.current) return;
+    setError(null);
+    submittingRef.current = true;
+    setBusy(true);
     try {
       const failure = await resendSignupConfirmation(email.trim());
       if (failure) setError(failure);
       else { setNotice('A New Confirmation Email Has Been Requested. Check Your Inbox And Spam/Promotions.'); notify('Confirmation Email Requested.'); }
-    } finally { setBusy(false); }
+    } catch (unexpectedError) {
+      console.warn('Cinema confirmation resend failed unexpectedly.', unexpectedError);
+      setError('Cinema could not send the confirmation email right now. Check your connection and try again later.');
+    } finally {
+      submittingRef.current = false;
+      setBusy(false);
+    }
   }
 
   const Icon = mode === 'sign-in' ? LogIn : mode === 'sign-up' ? UserPlus : KeyRound;
@@ -105,7 +164,8 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         {mode === 'sign-up' && <div><label htmlFor="auth-confirm-password" className={LABEL}>Confirm Password</label><input id="auth-confirm-password" type="password" autoComplete="new-password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className={INPUT} placeholder="Enter Your Password Again" /></div>}
         {error && <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
         {notice && <p role="status" className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{notice}</p>}
-        <button type="submit" disabled={busy} className={`${BUTTON_PRIMARY} w-full`}>{busy ? 'Please Wait...' : copy.submit}</button>
+        {mode === 'forgot-password' && cooldownSeconds > 0 && <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">For Account Security, You Can Request Another Reset Email In {cooldownSeconds} Seconds.</p>}
+        <button type="submit" disabled={busy || (mode === 'forgot-password' && cooldownSeconds > 0)} className={`${BUTTON_PRIMARY} w-full`}>{busy ? 'Please Wait...' : mode === 'forgot-password' && cooldownSeconds > 0 ? `Try Again In ${cooldownSeconds}s` : copy.submit}</button>
       </form>}
 
       <div className="space-y-2 text-center text-sm text-slate-400">
