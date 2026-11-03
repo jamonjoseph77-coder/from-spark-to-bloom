@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, MessageCircle, Play, Sparkles } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
@@ -34,8 +34,18 @@ function ShortsLoading() {
 export function DiscoverShorts() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
   const { data, error, reload } = useAsyncData(fetchPublishedClips, []);
+  useEffect(() => {
+    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') reload(); };
+    window.addEventListener('focus', refreshWhenVisible);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      window.removeEventListener('focus', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
+  }, [reload]);
   const shorts = useMemo(
-    () => (data ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)).slice(0, 18),
+    () => (data ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)).sort((a, b) => Date.parse(b.created_at ?? '') - Date.parse(a.created_at ?? ''))
+      .slice(0, 18),
     [data],
   );
 
@@ -45,7 +55,7 @@ export function DiscoverShorts() {
         <div>
           <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300"><Play className="h-3.5 w-3.5 fill-current" /> Short-Form Video</p>
           <h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2>
-          <p className="mt-1 max-w-2xl text-sm text-slate-400">Quick moments from official publishers — highlights, previews and behind-the-scenes stories.</p>
+          <p className="mt-1 max-w-2xl text-sm text-slate-400">Short Films, Highlights, Previews And Behind-The-Scenes Stories From Cinema Publishers.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up to 90 seconds</span>
@@ -54,8 +64,8 @@ export function DiscoverShorts() {
       </div>
       {!data && !error && <ShortsLoading />}
       {!data && error && <ErrorState onRetry={reload} description={getShortsErrorDescription(error)} />}
-      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts are getting ready" description="Official publisher videos and approved creator uploads will appear here when they are published." />}
-      {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
+      {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Your Shorts Feed Is Ready For More" description="Newly Approved Publisher And Creator Shorts Will Appear Here. Return To This Page To Check For New Videos." />}
+      {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
       </div>}
       {active && <ShortViewer clip={active} onClose={() => setActive(null)} />}
