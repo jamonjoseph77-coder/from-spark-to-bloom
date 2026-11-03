@@ -155,8 +155,7 @@ export function subscribeToPartyChanges(
   filter: string | null,
   onChange: () => void,
 ): () => void {
-  const channel = supabase
-    createRealtimeChannel(channelName)
+  const channel = createRealtimeChannel(channelName)
     .on('postgres_changes', { event: '*', schema: 'public', table, ...(filter ? { filter } : {}) }, onChange)
     .subscribe();
   return () => {
