@@ -73,10 +73,16 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
   const [body, setBody] = useState('');
   const [selectedTitleId, setSelectedTitleId] = useState('');
   const [posting, setPosting] = useState(false);
+  const [feedMode, setFeedMode] = useState<'latest' | 'discussed' | 'titles'>('latest');
   const { notify } = useToast();
   const activeTitleId = scopedTitleId || selectedTitleId;
   const linkedTitle = useMemo(() => (titles ?? []).find((title) => title.id === activeTitleId), [titles, activeTitleId]);
-  const visibleFeed = useMemo(() => scopedTitleId ? (feed ?? []).filter((post) => post.title_id === scopedTitleId) : feed, [feed, scopedTitleId]);
+  const visibleFeed = useMemo(() => {
+    const scoped = (feed ?? []).filter((post) => !scopedTitleId || post.title_id === scopedTitleId);
+    if (feedMode === 'titles') return scoped.filter((post) => Boolean(post.title_id)).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+    if (feedMode === 'discussed') return scoped.sort((a, b) => ((b.reactions?.length ?? 0) + (b.comments?.length ?? 0)) - ((a.reactions?.length ?? 0) + (a.comments?.length ?? 0)));
+    return scoped.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+  }, [feed, scopedTitleId, feedMode]);
 
   async function publish(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -98,6 +104,12 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
       </header>}
       {user && <form onSubmit={publish} className="space-y-3 rounded-3xl border border-white/10 bg-ink-900/80 p-5 shadow-xl"><label htmlFor="letterbox-post" className="block text-sm font-extrabold text-white">Write a Letterbox message</label><textarea id="letterbox-post" value={body} onChange={(event) => setBody(event.target.value)} maxLength={2000} rows={4} placeholder="Share a thought, review, recommendation or something you are looking forward to…" className={`${INPUT} resize-y py-3`} /><div className="flex flex-col gap-3 sm:flex-row sm:items-center">{!scopedTitleId && <select value={selectedTitleId} onChange={(event) => setSelectedTitleId(event.target.value)} className={`${INPUT} min-w-0 flex-1 py-2.5`}><option value="">No title attached</option>{(titles ?? []).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select>}<span className="text-xs text-slate-500">{body.length}/2000</span><button type="submit" disabled={posting || !body.trim()} className={BUTTON_PRIMARY}>{posting ? 'Publishing…' : 'Share message'}</button></div>{linkedTitle && <p className="text-xs text-sky-200">{scopedTitleId ? 'Message about' : 'Linked to'} {linkedTitle.title}</p>}<p className="text-xs text-slate-500">Keep posts about entertainment. Only approved media can be published; video uploads are not enabled.</p></form>}
       {!user && <div className="rounded-2xl border border-white/10 bg-ink-900 p-5 text-sm text-slate-300"><a href="/sign-in" className="font-bold text-cinema-200">Sign in</a> to share recommendations and join the conversation.</div>}
+      {!embedded && feed && <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-ink-900/65 p-3">
+        <div><p className="text-sm font-bold text-white">Community Conversations</p><p className="mt-1 text-xs text-slate-500">Follow the stories people are discussing.</p></div>
+        <div role="group" aria-label="Sort community conversations" className="flex flex-wrap gap-2">
+          {[{ id: 'latest', label: 'Latest' }, { id: 'discussed', label: 'Most Discussed' }, { id: 'titles', label: 'Talking About Titles' }].map((item) => <button key={item.id} type="button" aria-pressed={feedMode === item.id} onClick={() => setFeedMode(item.id as typeof feedMode)} className={`rounded-full border px-3 py-2 text-xs font-semibold transition ${feedMode === item.id ? 'border-cinema-300/40 bg-cinema-400/15 text-white' : 'border-white/10 bg-white/[.03] text-slate-400 hover:text-white'}`}>{item.label}</button>)}
+        </div>
+      </div>}
       {!feed && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {feed && visibleFeed && visibleFeed.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title="The conversation starts here" description="When the Cinema community shares entertainment recommendations and discussions, they will appear here." />}
       {feed && visibleFeed && visibleFeed.length > 0 && <div className="mx-auto max-w-3xl space-y-5">{visibleFeed.map((post) => <PostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}
