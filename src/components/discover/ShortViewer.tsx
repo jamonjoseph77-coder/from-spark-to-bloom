@@ -4,8 +4,8 @@ import { Modal } from '@/components/ui/Modal';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
-import { addClipComment, fetchClipEngagement, isDirectVideoUrl, toggleClipReaction, type ClipComment, type DiscoverClip } from '@/lib/clips';
-import { getYouTubeVideoId, toEmbedUrl } from '@/lib/media';
+import { addClipComment, fetchClipEngagement, toggleClipReaction, type ClipComment, type DiscoverClip } from '@/lib/clips';
+import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { navigateTo } from '@/lib/router';
 
 export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: () => void }) {
@@ -16,6 +16,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const canWatchTitle = Boolean(clip.title?.playback_url?.trim()) && clip.title?.type !== 'series';
   const { user } = useAuth();
+  const userId = user?.id;
   const { notify } = useToast();
   const [sharing, setSharing] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -33,13 +34,13 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     fetchClipEngagement(clip.id).then((engagement) => {
       if (!active) return;
       setLikeCount(engagement.reactions.length);
-      setLiked(Boolean(user && engagement.reactions.some((reaction) => reaction.user_id === user.id)));
+      setLiked(Boolean(userId && engagement.reactions.some((reaction) => reaction.user_id === userId)));
       setComments(engagement.comments);
     }).catch((error) => {
       console.warn('Short engagement is temporarily unavailable', error);
     }).finally(() => { if (active) setLoadingEngagement(false); });
     return () => { active = false; };
-  }, [clip.id, user?.id]);
+  }, [clip.id, userId]);
 
   async function shareShort() {
     const url = `${window.location.origin}/discover#short-${clip.id}`;
