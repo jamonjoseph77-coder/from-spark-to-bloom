@@ -387,3 +387,30 @@ body {
   background-color: rgba(9, 11, 14, .94);
   border-color: rgba(190, 202, 216, .16);
 }
+
+
+/* Brightened Premium Cinema Finish — clearer silver, larger iconography, softer radii */
+:root {
+  --cinema-silver: #d7dde5;
+  --cinema-silver-bright: #f5f7fa;
+}
+body { color: #eef1f5; }
+.dark {
+  --foreground: oklch(0.975 0.004 255);
+  --card: oklch(0.175 0.006 255);
+  --card-foreground: oklch(0.975 0.004 255);
+  --popover: oklch(0.19 0.006 255);
+  --muted-foreground: oklch(0.75 0.012 255);
+  --border: oklch(0.34 0.008 255 / 78%);
+  --input: oklch(0.32 0.008 255 / 88%);
+}
+:focus-visible { outline-width: 2px; outline-offset: 3px; }
+.cinema-home section { scroll-margin-top: 5rem; }
+.cinema-home h2 { text-wrap: balance; }
+.cinema-home .text-slate-400 { color: #aeb8c4; }
+.cinema-home .text-slate-500 { color: #8793a1; }
+.cinema-home .border-white\/10 { border-color: rgba(205, 216, 228, .15); }
+.cinema-home .bg-white\/[.025] { background-color: rgba(196, 207, 220, .045); }
+.cinema-home a, .cinema-home button { -webkit-tap-highlight-color: transparent; }
+.cinema-home svg { flex-shrink: 0; }
+.cinema-home .group:hover > span:first-child { filter: brightness(1.16); }
