@@ -1,6 +1,6 @@
-export function CinemaLogo({ compact = false }: { compact?: boolean }) {
+export function CinemaLogo({ compact = false, className = '' }: { compact?: boolean; className?: string }) {
   if (compact) {
-    return <img src="/cinema-icon.png" alt="Cinema" className="h-10 w-10 shrink-0 drop-shadow-[0_6px_14px_rgba(140,165,195,0.28)]" />;
+    return <img src="/cinema-icon.png" alt="Cinema" className={`h-10 w-10 shrink-0 drop-shadow-[0_6px_14px_rgba(140,165,195,0.28)] ${className}`} />;
   }
 
   return (
