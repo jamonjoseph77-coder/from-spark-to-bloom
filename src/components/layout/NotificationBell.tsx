@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Bell, CheckCheck, LoaderCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { createRealtimeChannel } from '@/lib/realtime';
 import { navigateTo } from '@/lib/router';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -37,7 +38,7 @@ export function NotificationBell({ userId }: { userId: string }) {
   useEffect(() => {
     void load();
     const channel = supabase
-      .channel(`cinema-notifications-${userId}`)
+      .channel(`cinema-notifications-${userId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
