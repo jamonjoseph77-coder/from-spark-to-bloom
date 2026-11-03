@@ -89,6 +89,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          download_allowed: boolean
           duration_seconds: number | null
           headline: string
           id: string
@@ -104,6 +105,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string
+          download_allowed?: boolean
           duration_seconds?: number | null
           headline: string
           id?: string
@@ -119,6 +121,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          download_allowed?: boolean
           duration_seconds?: number | null
           headline?: string
           id?: string
@@ -140,6 +143,18 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      discover_clip_comments: {
+        Row: { id: string; clip_id: string; author_id: string; body: string; status: string; created_at: string }
+        Insert: { id?: string; clip_id: string; author_id: string; body: string; status?: string; created_at?: string }
+        Update: { id?: string; clip_id?: string; author_id?: string; body?: string; status?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: "discover_clip_comments_clip_id_fkey"; columns: ["clip_id"]; isOneToOne: false; referencedRelation: "discover_clips"; referencedColumns: ["id"] }]
+      }
+      discover_clip_reactions: {
+        Row: { id: string; clip_id: string; user_id: string; created_at: string }
+        Insert: { id?: string; clip_id: string; user_id: string; created_at?: string }
+        Update: { id?: string; clip_id?: string; user_id?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: "discover_clip_reactions_clip_id_fkey"; columns: ["clip_id"]; isOneToOne: false; referencedRelation: "discover_clips"; referencedColumns: ["id"] }]
       }
       episodes: {
         Row: {

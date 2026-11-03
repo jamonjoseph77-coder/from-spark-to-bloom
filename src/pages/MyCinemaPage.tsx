@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -11,9 +11,14 @@ import { useLibrary } from '@/hooks/useLibrary';
 import { resumeItems } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
+import { downloadPermittedClip, fetchDownloadableClips } from '@/lib/clips';
+import { useToast } from '@/hooks/useToast';
 
 export function MyCinemaPage() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { notify } = useToast();
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const { data: downloadableClips, error: downloadsError, reload: reloadDownloads } = useAsyncData(fetchDownloadableClips, []);
   const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
   const { data: followedPublishers = [] } = useAsyncData(
@@ -86,16 +91,32 @@ export function MyCinemaPage() {
         <a href="/discover" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Compass className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Explore More</span><span className="mt-1 block text-[11px] text-slate-500">Find something new</span></a>
         <a href="/letterbox" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><MessageSquareText className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Letterbox</span><span className="mt-1 block text-[11px] text-slate-500">Your conversations</span></a>
         <a href="/publishers" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Building2 className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Following</span><span className="mt-1 block text-[11px] text-slate-500">Studios & publishers</span></a>
+        <a href="#my-downloads" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Download className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Downloads</span><span className="mt-1 block text-[11px] text-slate-500">Permitted to save</span></a>
       </section>
       <section className="grid gap-4 md:grid-cols-2">
         <a href="/live-tv" className="group relative isolate overflow-hidden rounded-3xl border border-sky-200/15 bg-[linear-gradient(120deg,#102137,#080d17)] p-5 transition hover:border-sky-200/35"><span className="absolute -right-4 -top-8 -z-10 h-36 w-36 rounded-full bg-sky-300/10 blur-2xl" /><Radio className="h-6 w-6 text-sky-200" /><h3 className="mt-4 text-lg font-extrabold text-white">Your Live Television</h3><p className="mt-1 text-sm text-slate-400">Jump into live channels and programming.</p></a>
         <a href="/movies" className="group relative isolate overflow-hidden rounded-3xl border border-indigo-200/15 bg-[linear-gradient(120deg,#1a1830,#080d17)] p-5 transition hover:border-indigo-200/35"><span className="absolute -right-4 -top-8 -z-10 h-36 w-36 rounded-full bg-indigo-300/10 blur-2xl" /><Film className="h-6 w-6 text-indigo-200" /><h3 className="mt-4 text-lg font-extrabold text-white">Build Your Next Watchlist</h3><p className="mt-1 text-sm text-slate-400">Find films and series worth saving for later.</p></a>
       </section>
       {view && <nav aria-label="My Cinema sections" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
+        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
       </nav>}
       {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {view && <>
+        <section id="my-downloads" className="scroll-mt-24 space-y-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Available Offline</p><h2 className={SECTION_HEADING}>Downloads</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Only videos that their rights holders have explicitly approved for download appear here. Most films, series and third-party streams remain view-only.</p></div>
+            <button type="button" onClick={reloadDownloads} className={BUTTON_SECONDARY}><History className="h-4 w-4" /> Refresh</button>
+          </div>
+          {downloadsError && <ErrorState onRetry={reloadDownloads} description="Your permitted downloads could not be loaded right now." />}
+          {!downloadsError && !downloadableClips && <LoadingState label="Checking permitted downloads" />}
+          {!downloadsError && downloadableClips && downloadableClips.length === 0 && <div className={CARD + ' flex items-center gap-4'}><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-200/15 bg-sky-300/[.06] text-sky-100"><Download className="h-5 w-5" /></span><div><p className="font-semibold text-white">No downloads available yet</p><p className="mt-1 text-xs leading-5 text-slate-500">When a publisher permits a video to be saved, it will appear here. Cinema does not enable downloads for every title.</p></div></div>}
+          {downloadableClips && downloadableClips.length > 0 && <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {downloadableClips.map((clip) => <article key={clip.id} className={CARD + ' flex min-w-0 items-center gap-3 p-3'}>
+              <div className="h-20 w-14 shrink-0 overflow-hidden rounded-xl bg-ink-800">{clip.poster_url && <img src={clip.poster_url} alt="" loading="lazy" className="h-full w-full object-cover" />}</div>
+              <div className="min-w-0 flex-1"><p className="line-clamp-2 text-sm font-bold text-white">{clip.headline}</p><p className="mt-1 truncate text-xs text-slate-500">{clip.publisher_name || 'Cinema Publisher'} · Approved Download</p><button type="button" disabled={downloadingId === clip.id} onClick={async () => { setDownloadingId(clip.id); try { await downloadPermittedClip(clip); notify('Your download has started.'); } catch (error) { console.error('Cinema download failed', error); notify('This file could not be downloaded from its host. Please try again later.', 'error'); } finally { setDownloadingId(null); } }} className={BUTTON_PRIMARY + ' mt-2'}><Download className="h-4 w-4" /> {downloadingId === clip.id ? 'Preparing…' : 'Download'}</button></div>
+            </article>)}
+          </div>}
+        </section>
         <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
         <section id="my-watchlist" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>

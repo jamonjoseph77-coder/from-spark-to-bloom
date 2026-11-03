@@ -17,6 +17,7 @@ interface FormState {
   duration_seconds: string;
   sort_order: string;
   is_published: boolean;
+  download_allowed: boolean;
 }
 
 function toForm(clip: DiscoverClip | null): FormState {
@@ -31,6 +32,7 @@ function toForm(clip: DiscoverClip | null): FormState {
     duration_seconds: clip?.duration_seconds?.toString() ?? '',
     sort_order: clip?.sort_order?.toString() ?? '0',
     is_published: clip?.is_published ?? false,
+    download_allowed: clip?.download_allowed ?? false,
   };
 }
 
@@ -39,7 +41,7 @@ function buildInput(form: FormState): { input?: ClipInput; error?: string } {
   if (!form.video_url.trim() || !isHttpUrl(form.video_url)) {
     return { error: 'The video link must start with http:// or https://.' };
   }
-  if (!isHttpUrl(form.poster_url)) return { error: 'The poster link must start with http:// or https://.' };
+  if (form.poster_url.trim() && !isHttpUrl(form.poster_url)) return { error: 'The poster link must start with http:// or https://.' };
   const duration = form.duration_seconds.trim() === '' ? null : Number(form.duration_seconds);
   const order = Number(form.sort_order || '0');
   if (duration !== null && (!Number.isInteger(duration) || duration < 0)) {
@@ -59,6 +61,7 @@ function buildInput(form: FormState): { input?: ClipInput; error?: string } {
       duration_seconds: duration,
       sort_order: order,
       is_published: form.is_published,
+      download_allowed: form.download_allowed,
     },
   };
 }
@@ -80,6 +83,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (form.is_published && !window.confirm('Confirm that Cinema has permission from the rights holder to publish this video in the intended territories and placements.')) return;
+    if (form.download_allowed && !window.confirm('Allow viewers to save a copy of this video? Confirm the rights holder has explicitly permitted downloads, not just streaming.')) return;
     const result = buildInput(form);
     if (!result.input) {
       setError(result.error ?? 'Check the highlighted fields.');
@@ -131,7 +135,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
           <p className="mt-1.5 text-xs text-slate-500">Paste a direct MP4 or HLS link, or a public YouTube Shorts / YouTube video URL. YouTube thumbnails are filled in automatically when no poster is supplied. Only publish videos Cinema has permission to display.</p>
         </div>
         <div className="sm:col-span-2">
-          <label htmlFor="clip-poster" className={LABEL}>Poster image link</label>
+          <label htmlFor="clip-poster" className={LABEL}>Poster image link <span className="font-normal text-slate-500">(Optional)</span></label>
           <input id="clip-poster" type="url" className={INPUT} placeholder="https://" value={form.poster_url} onChange={(e) => update('poster_url', e.target.value)} />
         </div>
         <div>
@@ -157,10 +161,16 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
 
       <p className="rounded-xl border border-sky-200/10 bg-sky-300/[.05] p-3 text-xs leading-5 text-slate-400">Before publishing, confirm the publisher has authorised Cinema to display this video in the intended territories and placements. Trailer permission does not automatically cover other footage.</p>
 
-      <label className="flex items-center gap-3 text-sm font-semibold text-slate-200">
-        <input type="checkbox" className="h-4 w-4 accent-cinema-500" checked={form.is_published} onChange={(e) => update('is_published', e.target.checked)} />
-        Published on Discover
-      </label>
+      <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/[.025] p-4">
+        <label className="flex items-start gap-3 text-sm font-semibold text-slate-200">
+          <input type="checkbox" className="mt-0.5 h-4 w-4 accent-cinema-500" checked={form.is_published} onChange={(e) => update('is_published', e.target.checked)} />
+          <span>Publish on Explore <span className="mt-1 block text-xs font-normal leading-5 text-slate-500">Approved videos become visible in Cinema discovery sections.</span></span>
+        </label>
+        <label className="flex items-start gap-3 border-t border-white/[.07] pt-3 text-sm font-semibold text-slate-200">
+          <input type="checkbox" className="mt-0.5 h-4 w-4 accent-cinema-500" checked={form.download_allowed} onChange={(e) => update('download_allowed', e.target.checked)} />
+          <span>Allow Downloads <span className="mt-1 block text-xs font-normal leading-5 text-slate-500">Only enable this when the rights holder explicitly permits viewers to save the video. YouTube embeds and unsupported links will not appear in Downloads.</span></span>
+        </label>
+      </div>
 
       {error && <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-200">{error}</p>}
 

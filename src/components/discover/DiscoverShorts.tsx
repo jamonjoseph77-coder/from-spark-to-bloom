@@ -49,6 +49,19 @@ export function DiscoverShorts() {
     [data],
   );
 
+  useEffect(() => {
+    if (!data || !shorts.length) return;
+    const match = window.location.hash.match(/^#short-(.+)$/);
+    if (!match) return;
+    const linked = shorts.find((clip) => clip.id === match[1]);
+    if (linked) setActive(linked);
+  }, [data, shorts]);
+
+  function closeViewer() {
+    setActive(null);
+    if (window.location.hash.startsWith('#short-')) window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
   return (
     <section className="space-y-5" aria-label="Cinema Shorts">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -69,7 +82,7 @@ export function DiscoverShorts() {
       {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
       </div>}
-      {active && <ShortViewer clip={active} onClose={() => setActive(null)} />}
+      {active && <ShortViewer clip={active} onClose={closeViewer} />}
     </section>
   );
 }

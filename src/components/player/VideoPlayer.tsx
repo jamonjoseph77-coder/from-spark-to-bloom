@@ -212,12 +212,12 @@ export function VideoPlayer({
   const hasQualityMenu = levels.length > 1;
 
   return (
-    <div className="cinema-video-player mx-auto w-full space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[#080b11] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3">
-      <div className="flex items-center justify-between gap-3 px-2 pt-1">
+    <div className={`cinema-video-player mx-auto w-full ${layout === 'portrait' ? 'space-y-0 rounded-none border-0 bg-transparent p-0 shadow-none' : 'space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[#080b11] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3'}`}>
+      {layout === 'landscape' && <div className="flex items-center justify-between gap-3 px-2 pt-1">
         <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
         {isLive && <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-200"><Radio className="h-3 w-3" /> Live</span>}
       </div>
-      <div className={`cinema-video-stage relative mx-auto overflow-hidden rounded-[1.25rem] bg-black shadow-2xl shadow-black/60 ring-1 ring-white/10 ${layout === 'portrait' ? 'aspect-[9/16] h-[min(76dvh,760px)] max-h-[76dvh] w-auto max-w-full sm:h-[min(82dvh,820px)]' : 'aspect-video w-full'}`}>
+      <div className={`cinema-video-stage relative mx-auto overflow-hidden bg-black ${layout === 'portrait' ? 'aspect-[9/16] h-[min(82dvh,820px)] max-h-[82dvh] w-auto max-w-full rounded-[1.35rem] shadow-[0_28px_80px_rgba(0,0,0,.65)] ring-1 ring-white/15 sm:h-[min(86dvh,860px)]' : 'aspect-video w-full rounded-[1.25rem] shadow-2xl shadow-black/60 ring-1 ring-white/10'}`}>
         <video
           ref={videoRef}
           className="h-full w-full bg-black object-contain"

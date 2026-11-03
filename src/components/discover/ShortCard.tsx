@@ -1,4 +1,4 @@
-import { BadgeCheck, Play } from 'lucide-react';
+import { BadgeCheck, Play, Clock3 } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import type { DiscoverClip } from '@/lib/clips';
 
@@ -9,7 +9,7 @@ interface ShortCardProps {
 
 export function ShortCard({ clip, onOpen }: ShortCardProps) {
   return (
-    <article className="group cinema-short-card w-[min(46vw,232px)] shrink-0 snap-start sm:w-56">
+    <article className="group cinema-short-card w-[min(48vw,244px)] shrink-0 snap-start sm:w-60">
       <button
         type="button"
         onClick={() => onOpen(clip)}
@@ -18,7 +18,8 @@ export function ShortCard({ clip, onOpen }: ShortCardProps) {
       >
         <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.07]" />
         <span className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/0 via-40% to-black/95" aria-hidden="true" />
-        <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/55 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white backdrop-blur-md"><Play className="h-3 w-3 fill-current" /> Short</span>
+        <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/55 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white backdrop-blur-md"><Play className="h-3 w-3 fill-current" /> {clip.kind === 'short' ? 'Cinema Short' : 'Video Clip'}</span>
+        {clip.duration_seconds && <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-md"><Clock3 className="h-3 w-3" /> {clip.duration_seconds}s</span>}
         <span className="absolute inset-x-3 bottom-3 space-y-2">
           <span className="line-clamp-2 block text-[13px] font-extrabold leading-snug text-white drop-shadow">{clip.headline}</span>
           <span className="flex items-center gap-1.5 truncate text-[11px] font-medium text-slate-200"><BadgeCheck className="h-3.5 w-3.5 shrink-0 text-sky-300" /> {clip.publisher_name || 'Cinema Publisher'}</span>
