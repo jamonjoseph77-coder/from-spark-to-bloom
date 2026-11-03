@@ -31,12 +31,12 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
         <div className="absolute inset-0">
           {direct && <VideoPlayer src={clip.video_url} title={clip.headline} layout="portrait" autoPlay muted />}
           {embed && <iframe src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
-          {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This short needs a supported MP4, HLS, YouTube or Vimeo video link.</div>}
+          {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This Video Link Is Not Supported Yet. Please Use A Cinema-Compatible Video Link.</div>}
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black via-black/80 to-transparent px-5 pb-[max(32px,env(safe-area-inset-bottom))] pt-36">
           <div className="pointer-events-auto flex items-end gap-3">
             <div className="min-w-0 flex-1">
-              <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/35 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-200"><BadgeCheck className="h-3.5 w-3.5" /> Publisher short</p>
+              <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/35 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-200"><BadgeCheck className="h-3.5 w-3.5" /> Published On Cinema</p>
               <h2 className="line-clamp-3 text-lg font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</h2>
               <p className="mt-1 text-xs text-slate-300">{clip.publisher_name || 'Cinema'}{clip.duration_seconds ? ` · ${clip.duration_seconds}s` : ''}</p>
               {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
