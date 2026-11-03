@@ -80,7 +80,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       return;
     }
     const trimmedEmail = email.trim();
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(trimmedEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       setError('Enter A Valid Email Address.');
       return;
     }
@@ -110,7 +110,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         const failure = await requestPasswordReset(trimmedEmail);
         if (failure) {
           setError(failure);
-          const waitMatch = failure.match(/wait\\s+(\\d+)\\s+seconds?/i);
+          const waitMatch = failure.match(/wait\s+(\d+)\s+seconds?/i);
           if (waitMatch) startPasswordResetCooldown(Number(waitMatch[1]));
         } else {
           startPasswordResetCooldown(PASSWORD_RESET_COOLDOWN_SECONDS);
