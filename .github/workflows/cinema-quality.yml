@@ -69,6 +69,11 @@ jobs:
           src/components/discover/DiscoverShorts.tsx
           src/components/discover/ShortCard.tsx
           src/components/discover/ShortViewer.tsx
+          src/components/player/VideoPlayer.tsx
+          src/pages/MyCinemaPage.tsx
+          src/lib/error-capture.ts
+          src/lib/error-page.ts
+          src/server.ts
           src/components/discover/OfficialTrailers.tsx
           src/lib/clips.ts
           src/lib/media.ts
