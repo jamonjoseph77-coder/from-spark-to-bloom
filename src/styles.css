@@ -434,3 +434,39 @@ body {
 .cinema-short-viewer { background: #030404; }
 .cinema-short-viewer button { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) { .cinema-hero-light--one, .cinema-hero-light--two { animation: none !important; } }
+
+
+/* Cinema Interface Copy Rule: Display Interface Words In Title Case. */
+body { text-transform: capitalize; }
+input, textarea, code, pre, kbd, samp, [data-preserve-case], [translate="no"] { text-transform: none; }
+input::placeholder, textarea::placeholder { text-transform: none; }
+/* Preserve exact casing for account identifiers, technical strings and URLs. */
+.cinema-preserve-case { text-transform: none !important; }
+/* Neutral Obsidian Finish: Keep Blue To Small Interactive Accents. */
+:root {
+  --cinema-obsidian: #050606;
+  --cinema-carbon: #0a0d0d;
+  --cinema-surface: #111515;
+  --cinema-surface-raised: #171c1b;
+  --cinema-electric: #3979a8;
+  --cinema-electric-soft: #6b9cbd;
+}
+html, body, #root { background-color: #050606 !important; }
+body {
+  background-color: #050606 !important;
+  background-image:
+    radial-gradient(ellipse at 12% -14%, rgba(77, 119, 151, .065), transparent 40%),
+    radial-gradient(ellipse at 88% 2%, rgba(100, 151, 129, .055), transparent 36%),
+    radial-gradient(ellipse at 48% 110%, rgba(149, 159, 171, .035), transparent 44%),
+    linear-gradient(180deg, #070909 0%, #050606 60%, #080b0a 100%) !important;
+}
+.dark {
+  --background: oklch(0.105 0.002 155);
+  --card: oklch(0.15 0.003 155);
+  --popover: oklch(0.16 0.003 155);
+  --primary: oklch(0.62 0.075 235);
+  --ring: oklch(0.61 0.075 235);
+  --sidebar: oklch(0.12 0.003 155);
+}
+.cinema-hero-light--one { background: radial-gradient(ellipse, rgba(77, 132, 166, .075), rgba(83, 136, 116, .025) 45%, transparent 72%); opacity: .42; }
+.cinema-hero-light--two { background: radial-gradient(ellipse, rgba(174, 188, 194, .045), rgba(88, 140, 119, .025), transparent 70%); opacity: .4; }
