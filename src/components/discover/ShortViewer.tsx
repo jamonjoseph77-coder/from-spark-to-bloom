@@ -110,7 +110,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
           </div>
         </div>
 
-        <div className="absolute bottom-36 right-3 z-20 flex flex-col items-center gap-4 sm:right-4">
+        <div className={`absolute bottom-36 right-3 z-20 flex flex-col items-center gap-4 transition-opacity sm:right-4 ${commentOpen ? "pointer-events-none opacity-0" : "opacity-100"}`}>
           <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Unlike this short' : 'Like this short'} className="group flex w-12 flex-col items-center gap-1 rounded-full border border-white/15 bg-black/45 p-2 text-white shadow-lg backdrop-blur-xl transition hover:border-rose-200/40 hover:bg-rose-500/15 disabled:opacity-60">
             <Heart className={`h-5 w-5 transition ${liked ? 'fill-rose-400 text-rose-400' : 'text-white group-hover:text-rose-200'}`} />
             <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
