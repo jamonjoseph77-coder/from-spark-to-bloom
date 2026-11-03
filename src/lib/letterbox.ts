@@ -7,7 +7,7 @@ export interface LetterboxPost {
   title_id: string | null;
   image_url: string | null;
   visibility: string;
-  status: 'published' | 'hidden' | 'removed';
+  status: string;
   created_at: string;
   updated_at: string;
   author?: { username: string; display_name: string } | null;
