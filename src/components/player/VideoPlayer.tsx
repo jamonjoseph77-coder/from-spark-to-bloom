@@ -189,16 +189,17 @@ export function VideoPlayer({
   const hasQualityMenu = levels.length > 1;
 
   return (
-    <div className="mx-auto w-full space-y-3 rounded-3xl border border-sky-300/10 bg-[linear-gradient(145deg,rgba(12,24,42,.92),rgba(3,6,12,.98))] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3">
+    <div className="mx-auto w-full space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[radial-gradient(ellipse_at_50%_0%,rgba(50,125,225,.13),transparent_48%),linear-gradient(145deg,rgba(9,14,23,.98),rgba(2,4,8,.99))] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3">
       <div className="flex items-center justify-between gap-3 px-2 pt-1">
         <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
         {isLive && <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-200"><Radio className="h-3 w-3" /> Live</span>}
       </div>
-      <div className={`relative mx-auto overflow-hidden rounded-2xl bg-black shadow-2xl shadow-black/60 ring-1 ring-sky-200/10 ${layout === 'portrait' ? 'aspect-[9/16] h-[78vh] max-h-[78vh] w-auto max-w-full' : 'aspect-video w-full'}`}>
+      <div className={`cinema-video-stage relative mx-auto overflow-hidden rounded-[1.25rem] bg-black shadow-2xl shadow-black/60 ring-1 ring-sky-200/10 ${layout === 'portrait' ? 'aspect-[9/16] h-[min(76dvh,760px)] max-h-[76dvh] w-auto max-w-full sm:h-[min(82dvh,820px)]' : 'aspect-video w-full'}`}>
         <video
           ref={videoRef}
           className="h-full w-full bg-black object-contain"
           controls
+          controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
           muted={muted}
