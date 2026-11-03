@@ -6,10 +6,10 @@ import { SECTION_HEADING } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbList, type TmdbListKind, type TmdbMediaType } from '@/lib/tmdb';
 
-interface TmdbRowProps { heading: string; description?: string; mediaType: TmdbMediaType; list: TmdbListKind; genreId?: number; action?: ReactNode }
+interface TmdbRowProps { heading: string; description?: string; mediaType: TmdbMediaType; list: TmdbListKind; action?: ReactNode }
 
-export function TmdbRow({ heading, description, mediaType, list, genreId = 0, action }: TmdbRowProps) {
-  const { data: items, error, reload } = useAsyncData(() => fetchTmdbList(mediaType, list, genreId), [mediaType, list, genreId]);
+export function TmdbRow({ heading, description, mediaType, list, action }: TmdbRowProps) {
+  const { data: items, error, reload } = useAsyncData(() => fetchTmdbList(mediaType, list), [mediaType, list]);
   return (
     <section className="space-y-5">
       <div className="flex items-end justify-between gap-4">

@@ -4,11 +4,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { BUTTON_PRIMARY, CARD, INPUT, LABEL } from '@/components/ui/styles';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
-import { LoadingState } from '@/components/ui/StatusViews';
 import { navigateTo } from '@/lib/router';
 
 export function ResetPasswordPage() {
-  const { completePasswordReset, recoveryMode, loading } = useAuth();
+  const { completePasswordReset } = useAuth();
   const { notify } = useToast();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -35,23 +34,6 @@ export function ResetPasswordPage() {
     }
     notify('Your password has been updated.');
     navigateTo('/my-cinema');
-  }
-
-  if (loading) return <div className="mx-auto max-w-md px-4 py-16"><LoadingState label="Checking your password reset link" /></div>;
-
-  if (!recoveryMode) {
-    return (
-      <div className="mx-auto w-full max-w-md animate-rise-in px-4 py-12 sm:py-16">
-        <div className="mb-8 flex justify-center"><CinemaLogo /></div>
-        <div className={`${CARD} space-y-4 p-6 text-center sm:p-8`}>
-          <KeyRound className="mx-auto h-8 w-8 text-cinema-300" />
-          <h1 className="text-2xl font-extrabold text-white">This reset link is no longer active</h1>
-          <p className="text-sm leading-6 text-slate-400">Request a fresh password reset email, then open the newest link in the same browser.</p>
-          <a href="/forgot-password" className={`${BUTTON_PRIMARY} w-full`}>Request a new reset link</a>
-          <a href="/sign-in" className="inline-flex text-sm font-semibold text-cinema-300 hover:text-white">Back to sign in</a>
-        </div>
-      </div>
-    );
   }
 
   return (

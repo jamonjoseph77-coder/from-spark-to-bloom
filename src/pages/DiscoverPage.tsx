@@ -38,11 +38,6 @@ export function DiscoverPage() {
         <TmdbRow heading="Trending series" description="Series creating a buzz." mediaType="tv" list="trending" />
         <TmdbRow heading="Popular movies" description="More films to add to your watchlist." mediaType="movie" list="popular" />
         <TmdbRow heading="Popular series" description="Discover your next series." mediaType="tv" list="popular" />
-        <TmdbRow heading="Action And Adventure" description="Big Missions, Bold Characters And Cinematic Worlds." mediaType="movie" list="popular" genreId={28} />
-        <TmdbRow heading="Comedy Picks" description="Find Something To Make You Laugh." mediaType="movie" list="popular" genreId={35} />
-        <TmdbRow heading="Drama Worth Discussing" description="Stories That Give Everyone Something To Talk About." mediaType="movie" list="popular" genreId={18} />
-        <TmdbRow heading="Animation And Family Stories" description="A World Of Imagination For Every Age." mediaType="movie" list="popular" genreId={16} />
-        <TmdbRow heading="Crime And Mystery Series" description="Discover Your Next Mystery." mediaType="tv" list="popular" genreId={80} />
       </section>
     </div>
   );

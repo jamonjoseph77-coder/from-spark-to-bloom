@@ -22,9 +22,12 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 const CINEMA_PRODUCTION_URL = 'https://from-spark-to-bloom.lovable.app';
 
 function getAuthRedirectBaseUrl(): string {
-  // Auth links must always return to the published Cinema site, not a temporary
-  // Lovable preview URL that may not be present in Supabase's redirect allow-list.
-  return CINEMA_PRODUCTION_URL;
+  if (typeof window === 'undefined') return CINEMA_PRODUCTION_URL;
+  const { origin, hostname } = window.location;
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+    return CINEMA_PRODUCTION_URL;
+  }
+  return origin;
 }
 
 function describeAuthError(error: AuthError): string {

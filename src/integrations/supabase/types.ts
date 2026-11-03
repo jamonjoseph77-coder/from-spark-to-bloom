@@ -29,51 +29,6 @@ export type Database = {
         }
         Relationships: []
       }
-      content: {
-        Row: {
-          artwork_url: string | null
-          content_type: string
-          created_at: string
-          genre: string | null
-          id: string
-          is_published: boolean
-          publisher_name: string | null
-          release_year: number | null
-          synopsis: string | null
-          title: string
-          trailer_url: string | null
-          updated_at: string
-        }
-        Insert: {
-          artwork_url?: string | null
-          content_type: string
-          created_at?: string
-          genre?: string | null
-          id?: string
-          is_published?: boolean
-          publisher_name?: string | null
-          release_year?: number | null
-          synopsis?: string | null
-          title: string
-          trailer_url?: string | null
-          updated_at?: string
-        }
-        Update: {
-          artwork_url?: string | null
-          content_type?: string
-          created_at?: string
-          genre?: string | null
-          id?: string
-          is_published?: boolean
-          publisher_name?: string | null
-          release_year?: number | null
-          synopsis?: string | null
-          title?: string
-          trailer_url?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       creator_short_submissions: {
         Row: {
           created_at: string
@@ -88,8 +43,7 @@ export type Database = {
           status: string
           title_id: string | null
           user_id: string
-          video_path: string | null
-          video_url: string | null
+          video_path: string
         }
         Insert: {
           created_at?: string
@@ -104,8 +58,7 @@ export type Database = {
           status?: string
           title_id?: string | null
           user_id: string
-          video_path?: string | null
-          video_url?: string | null
+          video_path: string
         }
         Update: {
           created_at?: string
@@ -120,8 +73,7 @@ export type Database = {
           status?: string
           title_id?: string | null
           user_id?: string
-          video_path?: string | null
-          video_url?: string | null
+          video_path?: string
         }
         Relationships: [
           {
@@ -153,16 +105,16 @@ export type Database = {
           created_at?: string
           description?: string
           duration_seconds?: number | null
-          headline?: string
+          headline: string
           id?: string
           is_published?: boolean
-          kind?: string
+          kind: string
           poster_url?: string
           publisher_name?: string
           sort_order?: number
           title_id?: string | null
           updated_at?: string
-          video_url?: string
+          video_url: string
         }
         Update: {
           created_at?: string
@@ -235,34 +187,21 @@ export type Database = {
       }
       favourites: {
         Row: {
-          added_at: string
-          content_id: string | null
           created_at: string
           title_id: string
           user_id: string
         }
         Insert: {
-          added_at?: string
-          content_id?: string | null
           created_at?: string
           title_id: string
           user_id?: string
         }
         Update: {
-          added_at?: string
-          content_id?: string | null
           created_at?: string
           title_id?: string
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "favourites_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "content"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "favourites_title_id_fkey"
             columns: ["title_id"]
@@ -448,33 +387,27 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           bio: string
           created_at: string
           display_name: string
-          id: string
           is_discoverable: boolean
           updated_at: string
           user_id: string
           username: string
         }
         Insert: {
-          avatar_url?: string | null
           bio?: string
           created_at?: string
-          display_name?: string
-          id: string
+          display_name: string
           is_discoverable?: boolean
           updated_at?: string
-          user_id: string
-          username?: string
+          user_id?: string
+          username: string
         }
         Update: {
-          avatar_url?: string | null
           bio?: string
           created_at?: string
           display_name?: string
-          id?: string
           is_discoverable?: boolean
           updated_at?: string
           user_id?: string
@@ -485,65 +418,18 @@ export type Database = {
       publisher_follows: {
         Row: {
           created_at: string
-          followed_at: string
-          publisher_id: string | null
           publisher_name: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          followed_at?: string
-          publisher_id?: string | null
           publisher_name: string
           user_id?: string
         }
         Update: {
           created_at?: string
-          followed_at?: string
-          publisher_id?: string | null
           publisher_name?: string
           user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "publisher_follows_publisher_id_fkey"
-            columns: ["publisher_id"]
-            isOneToOne: false
-            referencedRelation: "publishers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      publishers: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          is_verified: boolean
-          logo_url: string | null
-          name: string
-          publisher_type: string
-          website_url: string | null
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_verified?: boolean
-          logo_url?: string | null
-          name: string
-          publisher_type: string
-          website_url?: string | null
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_verified?: boolean
-          logo_url?: string | null
-          name?: string
-          publisher_type?: string
-          website_url?: string | null
         }
         Relationships: []
       }
@@ -809,7 +695,7 @@ export type Database = {
           position_seconds?: number
           title_id: string
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           completed?: boolean
@@ -822,43 +708,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "watch_progress_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "content"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "watch_progress_title_id_fkey"
             columns: ["title_id"]
             isOneToOne: false
             referencedRelation: "titles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      watchlist: {
-        Row: {
-          added_at: string
-          content_id: string
-          user_id: string
-        }
-        Insert: {
-          added_at?: string
-          content_id: string
-          user_id: string
-        }
-        Update: {
-          added_at?: string
-          content_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "watchlist_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "content"
             referencedColumns: ["id"]
           },
         ]
@@ -905,6 +758,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      claim_first_admin: { Args: never; Returns: boolean }
       is_cinema_admin: { Args: never; Returns: boolean }
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }

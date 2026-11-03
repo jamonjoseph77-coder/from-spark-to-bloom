@@ -9,7 +9,7 @@ interface AppShellProps { route: Route; children: ReactNode }
 
 export function AppShell({ route, children }: AppShellProps) {
   return (
-    <div className="cinema-app min-h-screen text-slate-100">
+    <div className="min-h-screen text-slate-100">
       <SideNav route={route} />
       <div className="flex min-h-screen flex-col lg:pl-64">
         <TopBar />
