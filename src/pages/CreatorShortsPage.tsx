@@ -26,6 +26,7 @@ export function CreatorShortsPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     if (!user) return;
     const videoUrl = youtubeUrl.trim();
     const hasYouTubeUrl = videoUrl.length > 0;
@@ -101,7 +102,7 @@ export function CreatorShortsPage() {
       setYoutubeUrl('');
       setVideo(null);
       setPoster(null);
-      event.currentTarget.reset();
+      form.reset();
       notify('Your Short has been submitted for Cinema review.');
     } catch (submitError) {
       console.error('Creator Short submission failed', submitError);
