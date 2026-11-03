@@ -6,7 +6,6 @@ import { ShortViewer } from '@/components/discover/ShortViewer';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
-import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -112,8 +111,6 @@ export function HomePage() {
         <a href="/friends" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 transition hover:border-sky-300/25 hover:bg-sky-300/[.04]"><span className="grid h-12 w-12 place-items-center rounded-xl bg-sky-300/10 text-cinema-200"><Users className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Friends</span><span className="mt-1 block text-xs text-slate-400">Share What You Love</span></span><ArrowRight className="h-4 w-4 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-200" /></a>
       </div></section>
       <TmdbRow heading="Back in the spotlight" description="Popular Films Worth Discovering." mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />
-      <TmdbRow heading="Trending movies" description="Films audiences are exploring this week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-      <TmdbRow heading="Trending Series" description="Find Your Next Episode-Worthy Story." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />
       <TmdbRow heading="Popular series" mediaType="tv" list="popular" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
       {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Content published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
       {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
@@ -128,7 +125,6 @@ export function HomePage() {
         </a>
       </section>
       <section className="relative overflow-hidden rounded-[1.75rem] border border-sky-300/15 bg-[linear-gradient(115deg,rgba(96,165,250,.10),rgba(255,255,255,.025)_50%,rgba(255,255,255,.01))] p-6 sm:p-8"><div className="max-w-3xl"><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">The Cinema Experience</p><h2 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">Discover A Story. Experience It. Share It.</h2><p className="mt-3 text-sm leading-7 text-slate-300">Cinema Brings Entertainment And The People Who Love It Into One Connected Destination. Move From A Trailer To A Title, From A Title To A Conversation, And From A Conversation To Watching Together.</p><a href="/discover" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">Explore Discover <Compass className="h-4 w-4" /></a></div></section>
-      <TmdbAttribution />
       {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
     </div>
   );
