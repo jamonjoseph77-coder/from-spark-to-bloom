@@ -60,7 +60,7 @@ export function toEmbedUrl(value: string, options: { autoplay?: boolean; muted?:
     const muted = options.muted ? '1' : '0';
     if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) {
       const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
-      return id ? `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}&modestbranding=1` : null;
+      return id ? `https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}` : null;
     }
     if (host === 'youtu.be') {
       const id = parsed.pathname.slice(1).split('/')[0];
