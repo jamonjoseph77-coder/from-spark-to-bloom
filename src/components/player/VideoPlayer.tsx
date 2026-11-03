@@ -59,7 +59,7 @@ export function VideoPlayer({
     const timeoutId = window.setTimeout(() => {
       setErrorText('Playback Is Taking Too Long. Check The Video Link Or Your Connection, Then Try Again.');
       setStatus('error');
-    }, 25_000);
+    }, 18_000);
     return () => window.clearTimeout(timeoutId);
   }, [status, src, retryCount]);
 
@@ -101,8 +101,10 @@ export function VideoPlayer({
         hls = new HlsLib({
           enableWorker: true,
           capLevelToPlayerSize: true,
-          maxBufferLength: 30,
-          maxMaxBufferLength: 60,
+          maxBufferLength: 20,
+          maxMaxBufferLength: 40,
+          backBufferLength: 30,
+          lowLatencyMode: true,
           startLevel: -1,
         });
         hlsRef.current = hls;
@@ -230,6 +232,8 @@ export function VideoPlayer({
           crossOrigin={subtitleUrl ? 'anonymous' : undefined}
           onLoadedMetadata={handleLoadedMetadata}
           onCanPlay={handleCanPlay}
+          onCanPlayThrough={() => setStatus('ready')}
+          onSeeked={() => setStatus('ready')}
           onPlaying={() => setStatus('ready')}
           onWaiting={(event) => {
             if (!event.currentTarget.paused) setStatus('loading');
