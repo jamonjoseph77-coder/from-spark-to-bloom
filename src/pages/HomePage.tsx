@@ -3,6 +3,7 @@ import { ArrowRight, Clapperboard, Compass, MessageCircle, Play, Radio, Users } 
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
+import { OfficialTrailers } from '@/components/discover/OfficialTrailers';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
@@ -92,6 +93,7 @@ export function HomePage() {
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(35,105,220,.13),transparent_62%)]" aria-hidden="true" />
       <TmdbHero />
+      <section className="space-y-4"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">The Latest From Entertainment</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Trailers & Promotional Spotlights</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Official previews and promotional videos, presented in cinematic landscape cards.</p></div><a href="/discover" className="text-sm font-semibold text-cinema-200 hover:text-white">All Promotions <ArrowRight className="inline h-4 w-4" /></a></div><OfficialTrailers /></section>
       <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Quick Stories</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2><p className="mt-1 text-sm text-slate-400">Short Videos And Moments From Official Cinema Publishers.</p></div>
@@ -111,6 +113,7 @@ export function HomePage() {
         <a href="/series" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 transition hover:border-sky-300/25 hover:bg-sky-300/[.04]"><span className="grid h-12 w-12 place-items-center rounded-xl bg-sky-300/10 text-cinema-200"><Clapperboard className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Series</span><span className="mt-1 block text-xs text-slate-400">Stories Told Episode By Episode</span></span><ArrowRight className="h-4 w-4 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-200" /></a>
         <a href="/friends" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 transition hover:border-sky-300/25 hover:bg-sky-300/[.04]"><span className="grid h-12 w-12 place-items-center rounded-xl bg-sky-300/10 text-cinema-200"><Users className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Friends</span><span className="mt-1 block text-xs text-slate-400">Share What You Love</span></span><ArrowRight className="h-4 w-4 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-200" /></a>
       </div></section>
+      <TmdbRow heading="Trending right now" description="Popular stories getting attention across Cinema." mediaType="movie" list="trending" action={<a href="/discover" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore More</a>} />
       <TmdbRow heading="Back in the spotlight" description="Popular Films Worth Discovering." mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />
       <TmdbRow heading="Trending movies" description="Films audiences are exploring this week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
       <TmdbRow heading="Trending Series" description="Find Your Next Episode-Worthy Story." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />
