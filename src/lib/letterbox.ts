@@ -9,6 +9,7 @@ export interface LetterboxPost {
   visibility: 'public' | 'friends';
   status: 'published' | 'hidden' | 'removed';
   created_at: string;
+  updated_at: string;
   author?: { username: string; display_name: string } | null;
   title?: { id: string; title: string; poster_url: string; type: string } | null;
   reactions?: { user_id: string; reaction: string }[];
