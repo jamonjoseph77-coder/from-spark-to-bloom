@@ -275,10 +275,10 @@ html { scroll-behavior: smooth; }
 
 
 /* True-black Cinema palette: blue is an accent, never the page surface. */
-html, body, #root { min-height: 100%; background: #050505 !important; }
+html, body, #root { min-height: 100%; background: #080e17 !important; }
 body {
-  background-color: #050505 !important;
-  background-image: radial-gradient(ellipse at 50% -42%, rgba(255,255,255,.028), transparent 58%) !important;
+  background-color: #080e17 !important;
+  background-image: radial-gradient(ellipse at 14% -18%, rgba(82,145,218,.13), transparent 42%), radial-gradient(ellipse at 90% 8%, rgba(75,111,180,.09), transparent 38%), radial-gradient(ellipse at 50% 115%, rgba(42,100,160,.07), transparent 48%) !important;
 }
 .dark {
   --background: oklch(0.12 0 0);
@@ -312,10 +312,10 @@ body {
 /* Cinema Futuristic Palette — Obsidian Black, Brushed Silver, Controlled Electric Blue */
 :root {
   color-scheme: dark;
-  --cinema-obsidian: #050607;
-  --cinema-carbon: #0b0d10;
-  --cinema-surface: #12161b;
-  --cinema-surface-raised: #191e24;
+  --cinema-obsidian: #080e17;
+  --cinema-carbon: #0d1724;
+  --cinema-surface: #132033;
+  --cinema-surface-raised: #192a3e;
   --cinema-silver: #c4cbd3;
   --cinema-silver-bright: #edf1f5;
   --cinema-silver-muted: #89939e;
@@ -356,8 +356,9 @@ html, body, #root {
 body {
   color: var(--cinema-silver-bright);
   background-image:
-    radial-gradient(ellipse at 50% -42%, rgba(170, 190, 212, .045), transparent 58%),
-    radial-gradient(ellipse at 92% 8%, rgba(53, 119, 190, .035), transparent 36%) !important;
+    radial-gradient(ellipse at 14% -18%, rgba(82, 145, 218, .13), transparent 42%),
+    radial-gradient(ellipse at 90% 8%, rgba(75, 111, 180, .09), transparent 38%),
+    radial-gradient(ellipse at 50% 115%, rgba(42, 100, 160, .07), transparent 48%) !important;
 }
 :focus-visible {
   outline-color: rgba(91, 157, 224, .82);
