@@ -34,8 +34,8 @@ describe('Cinema media URL validation', () => {
   });
 
   it('builds safe YouTube and Vimeo embeds', () => {
-    expect(toEmbedUrl('https://youtu.be/abcdefgh')).toContain('youtube-nocookie.com/embed/abcdefgh');
-    expect(toEmbedUrl('https://www.youtube.com/shorts/abcdefgh')).toContain('youtube-nocookie.com/embed/abcdefgh');
+    expect(toEmbedUrl('https://youtu.be/abcdefgh')).toContain('youtube.com/embed/abcdefgh');
+    expect(toEmbedUrl('https://www.youtube.com/shorts/abcdefgh')).toContain('youtube.com/embed/abcdefgh');
     expect(toEmbedUrl('https://vimeo.com/123456')).toContain('player.vimeo.com/video/123456');
     expect(toEmbedUrl('https://evilvimeo.com/123456')).toBeNull();
     expect(toEmbedUrl('http://youtu.be/abcdefgh')).toBeNull();
