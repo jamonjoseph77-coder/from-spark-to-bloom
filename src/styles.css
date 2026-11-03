@@ -415,3 +415,22 @@ body { color: #eef1f5; }
 .cinema-home a, .cinema-home button { -webkit-tap-highlight-color: transparent; }
 .cinema-home svg { flex-shrink: 0; }
 .cinema-home .group:hover > span:first-child { filter: brightness(1.16); }
+
+
+/* Aurora Obsidian refinement — deep neutral black with restrained blue and soft aurora light. */
+:root { --cinema-obsidian: #050607; --cinema-carbon: #0b0e10; --cinema-surface: #111619; --cinema-surface-raised: #171d20; --cinema-electric: #397fba; --cinema-electric-soft: #75a9d0; }
+html, body, #root { background-color: #050607 !important; }
+body {
+  background-color: #050607 !important;
+  background-image:
+    radial-gradient(ellipse at 12% -12%, rgba(75, 128, 171, .075), transparent 38%),
+    radial-gradient(ellipse at 86% 4%, rgba(102, 164, 143, .075), transparent 34%),
+    radial-gradient(ellipse at 48% 112%, rgba(119, 130, 174, .055), transparent 43%),
+    linear-gradient(180deg, #07090a 0%, #050607 58%, #080b0b 100%) !important;
+}
+.dark { --background: oklch(0.105 0.003 155); --card: oklch(0.15 0.004 155); --popover: oklch(0.16 0.004 155); --primary: oklch(0.66 0.075 235); --ring: oklch(0.64 0.08 235); --sidebar: oklch(0.12 0.004 155); }
+.cinema-hero-light--one { background: radial-gradient(ellipse, rgba(93, 145, 184, .10), rgba(89, 148, 128, .035) 42%, transparent 72%); }
+.cinema-hero-light--two { background: radial-gradient(ellipse, rgba(145, 164, 179, .065), rgba(91, 151, 129, .035), transparent 70%); }
+.cinema-short-viewer { background: #030404; }
+.cinema-short-viewer button { -webkit-tap-highlight-color: transparent; }
+@media (prefers-reduced-motion: reduce) { .cinema-hero-light--one, .cinema-hero-light--two { animation: none !important; } }
