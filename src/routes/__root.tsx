@@ -13,6 +13,9 @@ import { LibraryProvider } from "@/contexts/LibraryContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { AppShell } from "@/components/layout/AppShell";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { VisitorLandingPage } from "@/pages/VisitorLandingPage";
+import { useAuth } from "@/hooks/useAuth";
+import { CinemaLogo } from "@/components/ui/CinemaLogo";
 import { useRoute } from "@/lib/router";
 
 import appCss from "../styles.css?url";
@@ -112,6 +115,25 @@ function RootShell({ children }: { children: ReactNode }) {
 function CinemaShell({ children }: { children: ReactNode }) {
   const route = useRoute();
   const router = useRouter();
+  const { user, loading } = useAuth();
+  const isAccountRoute = route.name === "sign-in" || route.name === "sign-up" || route.name === "forgot-password" || route.name === "reset-password";
+
+  // Visitors can see the branded entry and account flows, but the Cinema
+  // experience itself is available only after a successful sign-in.
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#07101b] px-6">
+        <div className="flex flex-col items-center gap-5">
+          <CinemaLogo compact />
+          <span className="h-7 w-7 animate-spin rounded-full border-2 border-sky-200/25 border-t-sky-200" />
+          <p className="text-xs font-semibold tracking-wide text-slate-400">Preparing Your Cinema</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!user && !isAccountRoute) return <VisitorLandingPage />;
+  if (isAccountRoute) return <main className="min-h-screen bg-[#07101b]">{children}</main>;
 
   // Keep plain <a href="/..."> links inside the app instead of reloading the page.
   useEffect(() => {
