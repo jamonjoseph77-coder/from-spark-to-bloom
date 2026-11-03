@@ -57,8 +57,14 @@ alter table public.seasons enable row level security;
 grant select on public.seasons to anon, authenticated;
 grant insert, update, delete on public.seasons to authenticated;
 drop policy if exists "select_visible_seasons" on public.seasons;
-create policy "select_visible_seasons" on public.seasons
-  for select to anon, authenticated using (
+drop policy if exists "public_select_published_seasons" on public.seasons;
+create policy "public_select_published_seasons" on public.seasons
+  for select to anon using (
+    exists (select 1 from public.titles t where t.id = seasons.title_id and t.is_published = true)
+  );
+drop policy if exists "member_select_visible_seasons" on public.seasons;
+create policy "member_select_visible_seasons" on public.seasons
+  for select to authenticated using (
     exists (select 1 from public.titles t where t.id = seasons.title_id and (t.is_published = true or public.is_cinema_admin()))
   );
 drop policy if exists "admin_insert_seasons" on public.seasons;
@@ -87,8 +93,18 @@ alter table public.episodes enable row level security;
 grant select on public.episodes to anon, authenticated;
 grant insert, update, delete on public.episodes to authenticated;
 drop policy if exists "select_visible_episodes" on public.episodes;
-create policy "select_visible_episodes" on public.episodes
-  for select to anon, authenticated using (
+drop policy if exists "public_select_published_episodes" on public.episodes;
+create policy "public_select_published_episodes" on public.episodes
+  for select to anon using (
+    exists (
+      select 1 from public.seasons s
+      join public.titles t on t.id = s.title_id
+      where s.id = episodes.season_id and t.is_published = true
+    )
+  );
+drop policy if exists "member_select_visible_episodes" on public.episodes;
+create policy "member_select_visible_episodes" on public.episodes
+  for select to authenticated using (
     exists (
       select 1 from public.seasons s
       join public.titles t on t.id = s.title_id
