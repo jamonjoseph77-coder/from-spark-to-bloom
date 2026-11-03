@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Clapperboard, MessageCircle, Play, Sparkles } from 'lucide-react';
+import { ArrowRight, Clapperboard, MessageCircle, Play, RefreshCw, Sparkles } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -58,6 +58,7 @@ export function DiscoverShorts() {
           <p className="mt-1 max-w-2xl text-sm text-slate-400">Short Films, Highlights, Previews And Behind-The-Scenes Stories From Cinema Publishers.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button type="button" onClick={reload} className="inline-flex items-center gap-1.5 rounded-full border border-sky-200/15 bg-sky-300/[.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sky-100 transition hover:border-sky-200/35 hover:bg-sky-300/[.12]"><RefreshCw className="h-3 w-3" /> Refresh</button>
           <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up to 90 seconds</span>
           <a href="/creator/shorts" className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-cinema-300/50 hover:text-cinema-200">Submit a short</a>
         </div>
