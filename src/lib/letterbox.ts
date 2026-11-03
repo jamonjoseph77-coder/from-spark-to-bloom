@@ -52,6 +52,7 @@ export async function fetchLetterboxFeed(limit = 40, authorId?: string): Promise
 
   return posts.map((post) => ({
     ...post,
+    visibility: post.visibility as LetterboxPost['visibility'],
     author: authors.find((author) => author.user_id === post.author_id) ?? null,
     title: titles.find((title) => title.id === post.title_id) ?? null,
     reactions: reactions.filter((reaction) => reaction.post_id === post.id),
