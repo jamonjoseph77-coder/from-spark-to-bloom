@@ -62,7 +62,7 @@ export async function fetchClipEngagement(clipId: string): Promise<ClipEngagemen
   const comments = commentsResult.data ?? [];
   const authorIds = [...new Set(comments.map((comment) => comment.author_id))];
   const profiles = authorIds.length
-    ? await supabase.from('profiles').select('user_id,display_name,username').in('user_id', authorIds)
+    ? await supabase.from('profiles').select('user_id,display_name,username,is_discoverable').in('user_id', authorIds)
     : { data: [], error: null };
   if (profiles.error) throw profiles.error;
   const byId = new Map((profiles.data ?? []).map((profile) => [profile.user_id, profile]));
@@ -70,7 +70,7 @@ export async function fetchClipEngagement(clipId: string): Promise<ClipEngagemen
     reactions: reactionsResult.data ?? [],
     comments: comments.map((comment) => {
       const profile = byId.get(comment.author_id);
-      return { ...comment, author_name: profile?.display_name || profile?.username || 'Cinema Member' };
+      return { ...comment, author_name: profile?.is_discoverable ? (profile.display_name || profile.username || 'Cinema Member') : 'Cinema Member' };
     }),
   };
 }
