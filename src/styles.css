@@ -278,3 +278,35 @@ body {
 .cinema-blue-scroll { scrollbar-color: rgba(54,132,245,.5) transparent; }
 .cinema-blue-scroll::-webkit-scrollbar { height: 5px; width: 5px; }
 .cinema-blue-scroll::-webkit-scrollbar-thumb { border-radius: 999px; background: linear-gradient(90deg,#175ac2,#65adff); }
+
+
+/* Final Cinema clarity pass: crisp contrast and high-density display support */
+.cinema-home {
+  width: 100%;
+  max-width: min(100%, 120rem);
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+.cinema-home .text-slate-400 { color: #c1ccda !important; }
+.cinema-home .text-slate-500 { color: #9eafc4 !important; }
+.cinema-home .text-slate-300 { color: #d5deea !important; }
+.cinema-home .text-slate-200 { color: #e5edf7 !important; }
+.cinema-home .text-cinema-300 { color: #a9d0ff !important; }
+.cinema-home .text-cinema-200 { color: #c2e0ff !important; }
+.cinema-home h1, .cinema-home h2, .cinema-home h3 {
+  text-shadow: 0 1px 0 rgba(255,255,255,.035);
+  text-wrap: balance;
+}
+.cinema-home p, .cinema-home a, .cinema-home button { text-rendering: optimizeLegibility; }
+.cinema-home .cinema-community-invite {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 24px 70px rgba(0,0,0,.28);
+}
+.cinema-home .cinema-shelf,
+.cinema-home section { scroll-margin-top: 6rem; }
+@media (min-width: 1920px) {
+  .cinema-home { max-width: min(100%, 128rem); }
+  .cinema-home > section { margin-inline: auto; }
+}
+@media (min-resolution: 2dppx) {
+  .cinema-home { -webkit-font-smoothing: antialiased; }
+}
