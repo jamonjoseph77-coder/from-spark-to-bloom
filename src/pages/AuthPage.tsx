@@ -38,9 +38,13 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
   const [notice, setNotice] = useState<string | null>(null);
   const [confirmationPending, setConfirmationPending] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [cooldownSeconds, setCooldownSeconds] = useState(readPasswordResetCooldown);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const submittingRef = useRef(false);
   const copy = COPY[mode];
+
+  useEffect(() => {
+    setCooldownSeconds(readPasswordResetCooldown());
+  }, []);
 
   useEffect(() => {
     if (cooldownSeconds <= 0) {
