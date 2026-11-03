@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, Compass, MessageCircle, Play, Radio, Users } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { ShortCard } from '@/components/discover/ShortCard';
@@ -67,6 +67,15 @@ export function HomePage() {
   const { progress } = useLibrary();
   const { data: titles, error: titlesError, reload: reloadTitles } = useAsyncData(fetchPublishedTitles, []);
   const { data: publishedClips, error: clipsError, reload: reloadClips } = useAsyncData(fetchPublishedClips, []);
+  useEffect(() => {
+    const refreshShorts = () => { if (document.visibilityState === 'visible') reloadClips(); };
+    window.addEventListener('focus', refreshShorts);
+    document.addEventListener('visibilitychange', refreshShorts);
+    return () => {
+      window.removeEventListener('focus', refreshShorts);
+      document.removeEventListener('visibilitychange', refreshShorts);
+    };
+  }, [reloadClips]);
   const shorts = useMemo(
     () => (publishedClips ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)),
     [publishedClips],
@@ -88,8 +97,8 @@ export function HomePage() {
           <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Quick Stories</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2><p className="mt-1 text-sm text-slate-400">Short Videos And Moments From Official Cinema Publishers.</p></div>
           <a href="/discover" className="text-sm font-semibold text-cinema-200 transition hover:text-white">Explore All Shorts</a>
         </div>
-        {!publishedClips && (clipsError ? <ErrorState onRetry={reloadClips} description={clipsError.message} /> : <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex snap-x gap-4 overflow-hidden px-4 pb-3 sm:mx-0 sm:px-0">{Array.from({ length: 5 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(43vw,208px)] shrink-0 rounded-[1.35rem] sm:w-52" />)}</div>)}
-        {publishedClips && shorts.length === 0 && <EmptyState icon={<Play className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Official Short Videos From Cinema Publishers Will Appear Here When Approved Playback Links Are Available." />}
+        {!publishedClips && (clipsError ? <ErrorState onRetry={reloadClips} description="Cinema Could Not Load The Shorts Feed. Check Your Connection And Try Again." /> : <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex snap-x gap-4 overflow-hidden px-4 pb-3 sm:mx-0 sm:px-0">{Array.from({ length: 5 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(43vw,208px)] shrink-0 rounded-[1.35rem] sm:w-52" />)}</div>)}
+        {publishedClips && shorts.length === 0 && <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-sky-200/15 bg-sky-300/[.025] px-5 py-7 text-center"><EmptyState icon={<Play className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Approved Short Videos Will Appear Here. Refresh To Check For Newly Published Videos." /><button type="button" onClick={reloadClips} className="rounded-full border border-sky-200/20 bg-sky-300/[.08] px-4 py-2 text-xs font-bold text-sky-100 transition hover:bg-sky-300/[.15]">Refresh Shorts</button></div>}
         {shorts.length > 0 && <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
           {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}
         </div>}
