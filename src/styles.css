@@ -19,13 +19,13 @@
  */
 
 @theme {
-  --color-ink-950: #050505;
-  --color-ink-900: #0b0b0c;
-  --color-ink-850: #111112;
-  --color-ink-800: #171719;
-  --color-ink-700: #242426;
-  --color-ink-600: #343438;
-  --color-ink-500: #55555b;
+  --color-ink-950: #080e17;
+  --color-ink-900: #0d1724;
+  --color-ink-850: #132033;
+  --color-ink-800: #192a3e;
+  --color-ink-700: #263a51;
+  --color-ink-600: #3a536d;
+  --color-ink-500: #5d7793;
   --color-cinema-50: #f4f8ff;
   --color-cinema-100: #e7f0fc;
   --color-cinema-200: #c9def6;
@@ -167,11 +167,11 @@
   }
 
   body {
-    background-color: #050505;
+    background-color: #080e17;
     color: #f5f5f5;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    background-image: radial-gradient(ellipse at 50% -35%, rgba(255,255,255,.035), transparent 55%);
+    background-image: radial-gradient(ellipse at 14% -20%, rgba(82,145,218,.14), transparent 42%), radial-gradient(ellipse at 88% 4%, rgba(75,111,180,.10), transparent 38%), radial-gradient(ellipse at 50% 115%, rgba(42,100,160,.08), transparent 48%);
     background-attachment: fixed;
   }
 
