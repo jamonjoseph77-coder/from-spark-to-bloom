@@ -113,9 +113,7 @@ export function HomePage() {
       </div></section>
       <TmdbRow heading="Back in the spotlight" description="Popular Films Worth Discovering." mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />
       <TmdbRow heading="Trending movies" description="Films audiences are exploring this week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-      <TmdbRow heading="Popular movies" mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-      <TmdbRow heading="Series everyone is talking about" description="Find Your Next Episode-Worthy Story." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />
-      <TmdbRow heading="Trending series" description="Series Creating Conversation Around The World." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
+      <TmdbRow heading="Trending Series" description="Find Your Next Episode-Worthy Story." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />
       <TmdbRow heading="Popular series" mediaType="tv" list="popular" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
       {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Content published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
       {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}

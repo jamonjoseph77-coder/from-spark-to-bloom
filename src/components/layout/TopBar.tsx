@@ -18,8 +18,8 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/5 bg-ink-950/90 px-3 backdrop-blur-xl sm:gap-4 sm:px-6 lg:px-10">
-      <a href="/" className="grid h-10 w-10 shrink-0 place-items-center lg:hidden" aria-label="Cinema home">
-        <img src="/cinema-icon.png" alt="Cinema" className="h-9 w-9 rounded-full object-cover" />
+      <a href="/" className="flex h-11 w-[116px] shrink-0 items-center lg:hidden" aria-label="Cinema home">
+        <img src="/cinema-wordmark.png" alt="Cinema" className="h-8 w-auto max-w-full object-contain object-left" />
       </a>
       <form role="search" onSubmit={handleSearch} className="min-w-0 w-full max-w-xl">
         <label htmlFor="global-cinema-search" className="sr-only">Search Cinema</label>
