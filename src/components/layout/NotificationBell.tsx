@@ -38,7 +38,7 @@ export function NotificationBell({ userId }: { userId: string }) {
   useEffect(() => {
     void load();
     const channel = supabase
-      .channel(`cinema-notifications-${userId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`)
+      createRealtimeChannel(`cinema-notifications-${userId}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
