@@ -3,7 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
-// Cinema's published catalogue and creator Shorts are stored in this project.
 const CINEMA_SUPABASE_URL = 'https://apswsxeaendntdtejrde.supabase.co';
 const CINEMA_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_EZezo_Bxl2szONBZIsru4Q_pM4pnHYk';
 
@@ -25,20 +24,16 @@ function createSupabaseFetch(supabaseUrl: string, supabaseKey: string): typeof f
     const headers = new Headers(
       typeof Request !== 'undefined' && input instanceof Request ? input.headers : undefined,
     );
-
     if (init?.headers) {
       new Headers(init.headers).forEach((value, key) => headers.set(key, value));
     }
-
-    // New Supabase API keys are opaque strings, not bearer JWTs.
-    if (isNewSupabaseApiKey(supabaseKey) && headers.get('Authorization') === `Bearer ${supabaseKey}`) {
+    if (isNewSupabaseApiKey(supabaseKey) && headers.get('Authorization') === \`Bearer \${supabaseKey}\`) {
       headers.delete('Authorization');
     }
-
     headers.set('apikey', supabaseKey);
     if (serverUrl) {
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-      if (url.startsWith(`${publicUrl}/`)) {
+      if (url.startsWith(\`\${publicUrl}/\`)) {
         const target = serverUrl + url.slice(publicUrl.length);
         const request = typeof input === 'string' || input instanceof URL ? target : new Request(target, input);
         return fetch(request, { ...init, headers });
@@ -55,9 +50,6 @@ function createSupabaseClient() {
     CINEMA_SUPABASE_URL;
   const normalizedConfiguredUrl = configuredUrl.replace(/\/+$/, '');
   const isCinemaProject = normalizedConfiguredUrl === CINEMA_SUPABASE_URL;
-
-  // Never pair a URL from another project with Cinema's key. This avoids a
-  // silent empty feed when Lovable still has an old VITE_SUPABASE_URL value.
   const SUPABASE_URL = isCinemaProject ? normalizedConfiguredUrl : CINEMA_SUPABASE_URL;
   const configuredKey =
     import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
@@ -72,9 +64,7 @@ function createSupabaseClient() {
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    global: {
-      fetch: createSupabaseFetch(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY),
-    },
+    global: { fetch: createSupabaseFetch(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) },
     auth: {
       storage: brokeredPreviewStorage(),
       persistSession: true,
@@ -84,7 +74,6 @@ function createSupabaseClient() {
 }
 
 let _supabase: ReturnType<typeof createSupabaseClient> | undefined;
-
 export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>, {
   get(_, prop, receiver) {
     if (!_supabase) _supabase = createSupabaseClient();
