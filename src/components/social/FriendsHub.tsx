@@ -8,6 +8,7 @@ import { CircleActivity } from '@/components/social/CircleActivity';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { loadFriendsSnapshot } from '@/lib/friends';
 import { supabase } from '@/lib/supabase';
+import { createRealtimeChannel } from '@/lib/realtime';
 
 type Tab = 'activity' | 'friends' | 'requests' | 'find';
 
@@ -23,7 +24,7 @@ export function FriendsHub({ userId }: { userId: string }) {
   const [tab, setTab] = useState<Tab>('activity');
 
   useEffect(() => {
-    const channel = supabase.channel(`cinema-friends-${userId}`)
+    const channel = createRealtimeChannel(`cinema-friends-${userId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships', filter: `requester_id=eq.${userId}` }, reload)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships', filter: `addressee_id=eq.${userId}` }, reload)
       .subscribe();
