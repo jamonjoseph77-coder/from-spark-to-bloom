@@ -39,21 +39,24 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
   const [confirmationPending, setConfirmationPending] = useState(false);
   const [busy, setBusy] = useState(false);
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [cooldownReady, setCooldownReady] = useState(false);
   const submittingRef = useRef(false);
   const copy = COPY[mode];
 
   useEffect(() => {
     setCooldownSeconds(readPasswordResetCooldown());
+    setCooldownReady(true);
   }, []);
 
   useEffect(() => {
+    if (!cooldownReady) return;
     if (cooldownSeconds <= 0) {
       try { window.localStorage.removeItem(PASSWORD_RESET_COOLDOWN_KEY); } catch { /* Storage may be unavailable. */ }
       return;
     }
     const timer = window.setTimeout(() => setCooldownSeconds((seconds) => Math.max(0, seconds - 1)), 1000);
     return () => window.clearTimeout(timer);
-  }, [cooldownSeconds]);
+  }, [cooldownSeconds, cooldownReady]);
 
   function startPasswordResetCooldown(seconds: number) {
     const safeSeconds = Math.max(1, Math.min(3600, Math.ceil(seconds)));
@@ -169,7 +172,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         {error && <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
         {notice && <p role="status" className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{notice}</p>}
         {mode === 'forgot-password' && cooldownSeconds > 0 && <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">For Account Security, You Can Request Another Reset Email In {cooldownSeconds} Seconds.</p>}
-        <button type="submit" disabled={busy || (mode === 'forgot-password' && cooldownSeconds > 0)} className={`${BUTTON_PRIMARY} w-full`}>{busy ? 'Please Wait...' : mode === 'forgot-password' && cooldownSeconds > 0 ? `Try Again In ${cooldownSeconds}s` : copy.submit}</button>
+        <button type="submit" disabled={busy || (mode === 'forgot-password' && (!cooldownReady || cooldownSeconds > 0))} className={`${BUTTON_PRIMARY} w-full`}>{busy ? 'Please Wait...' : mode === 'forgot-password' && !cooldownReady ? 'Checking...' : mode === 'forgot-password' && cooldownSeconds > 0 ? `Try Again In ${cooldownSeconds}s` : copy.submit}</button>
       </form>}
 
       <div className="space-y-2 text-center text-sm text-slate-400">
