@@ -59,25 +59,6 @@ end;
 $function$;
 revoke all on function public.handle_new_user() from public, anon, authenticated;
 
-drop policy if exists "Users can view own profile" on public.profiles;
-drop policy if exists "Users can update own profile" on public.profiles;
-drop policy if exists "select_visible_profiles" on public.profiles;
-drop policy if exists "insert_own_profile" on public.profiles;
-drop policy if exists "update_own_profile" on public.profiles;
-create policy "select_visible_profiles" on public.profiles
-  for select to authenticated using (
-    user_id = (select auth.uid())
-    or is_discoverable
-    or exists (
-      select 1 from public.friendships f
-      where f.status = 'accepted'
-        and (
-          (f.requester_id = (select auth.uid()) and f.addressee_id = profiles.user_id)
-          or (f.addressee_id = (select auth.uid()) and f.requester_id = profiles.user_id)
-        )
-    )
-  );
-
 -- Friendship graph.
 create table if not exists public.friendships (
   id uuid primary key default gen_random_uuid(),
@@ -133,6 +114,7 @@ alter table public.favourites add column if not exists title_id uuid;
 alter table public.favourites add column if not exists created_at timestamptz not null default now();
 alter table public.favourites alter column user_id set default auth.uid();
 alter table public.favourites alter column content_id drop not null;
+alter table public.favourites alter column title_id set not null;
 do $$
 begin
   if not exists (
@@ -168,6 +150,7 @@ alter table public.watch_progress add column if not exists title_id uuid;
 update public.watch_progress set duration_seconds = 0 where duration_seconds is null;
 alter table public.watch_progress alter column duration_seconds set default 0;
 alter table public.watch_progress alter column duration_seconds set not null;
+alter table public.watch_progress alter column title_id set not null;
 do $$
 begin
   if not exists (
@@ -372,6 +355,24 @@ create policy "insert_party_message" on public.watch_party_messages for insert t
 drop policy if exists "delete_party_message" on public.watch_party_messages;
 create policy "delete_party_message" on public.watch_party_messages for delete to authenticated
   using (user_id = (select auth.uid()) or public.is_party_host(party_id));
+
+-- Profile visibility can now safely reference the friendship graph.
+drop policy if exists "Users can view own profile" on public.profiles;
+drop policy if exists "Users can update own profile" on public.profiles;
+drop policy if exists "select_visible_profiles" on public.profiles;
+create policy "select_visible_profiles" on public.profiles
+  for select to authenticated using (
+    user_id = (select auth.uid())
+    or is_discoverable
+    or exists (
+      select 1 from public.friendships f
+      where f.status = 'accepted'
+        and (
+          (f.requester_id = (select auth.uid()) and f.addressee_id = profiles.user_id)
+          or (f.addressee_id = (select auth.uid()) and f.requester_id = profiles.user_id)
+        )
+    )
+  );
 
 -- Profile reads are intentionally limited to signed-in members; private profiles
 -- remain visible only to their owner and accepted friends.
