@@ -1043,3 +1043,23 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cinema-loading-spinner { animation: none !important; }
 }
+
+
+/* Cinema Typography Correction — interface copy stays white/silver, never blue. */
+.cinema-app-shell,
+.cinema-app-shell :where(p, span, label, h1, h2, h3, h4, h5, h6, a, button, li, small, strong, em) {
+  --cinema-copy-primary: #f1f4f8;
+  --cinema-copy-secondary: #b8c2cf;
+}
+.cinema-app-shell :where([class*="text-blue-"], [class*="text-sky-"], [class*="text-cyan-"], [class*="text-indigo-"], .text-primary) {
+  color: #f1f4f8 !important;
+}
+.cinema-app-shell :where(.text-slate-300, .text-slate-400, .text-slate-500, .text-gray-300, .text-gray-400, .text-gray-500, .text-muted-foreground) {
+  color: #b8c2cf !important;
+}
+.cinema-home :where([class*="text-blue-"], [class*="text-sky-"], [class*="text-cyan-"], [class*="text-indigo-"], .text-primary) {
+  color: #f1f4f8 !important;
+}
+.cinema-home :where(.text-slate-300, .text-slate-400, .text-slate-500, .text-gray-300, .text-gray-400, .text-gray-500, .text-muted-foreground) {
+  color: #b8c2cf !important;
+}
