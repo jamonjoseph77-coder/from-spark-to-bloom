@@ -123,7 +123,6 @@ export function MyCinemaPage() {
           </div>}
         </section>
         <SavedShortsShelf userId={user.id} />
-      <SavedShortsShelf userId={user.id} />
       {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {view && <>
         <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
