@@ -127,7 +127,7 @@ function AdminClipsManager() {
                   {clip.publisher_name ? ` · ${clip.publisher_name}` : ''}
                   {clip.title ? ` · ${clip.title.title}` : ''}
                 </p>
-                <span className={`mt-2 inline-block rounded-md px-2 py-0.5 text-xs font-semibold ${clip.is_published ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-400/15 text-amber-300'}`}>
+                <span className={`mt-2 inline-block rounded-md px-2 py-0.5 text-xs font-semibold ${clip.is_published ? 'bg-cinema-500/12 text-cinema-200' : 'bg-amber-400/15 text-amber-300'}`}>
                   {clip.is_published ? 'Published' : 'Draft'}
                 </span>
               </div>
