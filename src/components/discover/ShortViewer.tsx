@@ -46,7 +46,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
 
   useEffect(() => {
     setViewsCount(clip.views_count ?? 0);
-    if (!userId || viewRecordedRef.current) return;
+    if (viewRecordedRef.current) return;
     viewRecordedRef.current = true;
     recordDiscoverClipView(clip.id).then((count) => {
       if (typeof count === 'number' && count > 0) setViewsCount(count);
