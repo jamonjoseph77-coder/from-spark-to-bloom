@@ -37,7 +37,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      style={{ background: "#030407", color: "#f4f6fa", minHeight: "100svh" }}
+    >
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This Page Didn't Load
@@ -138,7 +141,12 @@ function CinemaShell({ children }: { children: ReactNode }) {
   // experience itself is available only after a successful sign-in.
   if (loading) {
     return (
-      <main className="cinema-loading-screen" role="status" aria-live="polite">
+      <main
+        className="cinema-loading-screen"
+        role="status"
+        aria-live="polite"
+        style={{ background: "#030407", color: "#f4f6fa", minHeight: "100svh" }}
+      >
         <img src="/cinema-icon.png" alt="" className="cinema-loading-watermark" aria-hidden="true" />
         <div className="cinema-loading-orbit cinema-loading-orbit--one" aria-hidden="true" />
         <div className="cinema-loading-orbit cinema-loading-orbit--two" aria-hidden="true" />
@@ -153,7 +161,7 @@ function CinemaShell({ children }: { children: ReactNode }) {
   }
 
   if (!user && !isAccountRoute) return <VisitorLandingPage />;
-  if (isAccountRoute) return <main className="min-h-screen bg-[#07101b]">{children}</main>;
+  if (isAccountRoute) return <main className="min-h-screen bg-[#030407] text-[#f4f6fa]">{children}</main>;
 
   return <AppShell route={route}>{children}</AppShell>;
 }
