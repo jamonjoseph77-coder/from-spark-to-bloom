@@ -19,6 +19,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '');
   const [bio, setBio] = useState(profile?.bio ?? '');
   const [discoverable, setDiscoverable] = useState(profile?.is_discoverable ?? true);
+  const [shareWatching, setShareWatching] = useState(profile?.share_watching_activity ?? false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -44,7 +45,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
     try {
       await saveProfile(
         userId,
-        { username: cleanUsername, display_name: cleanName, bio: bio.trim(), is_discoverable: discoverable },
+        { username: cleanUsername, display_name: cleanName, bio: bio.trim(), is_discoverable: discoverable, share_watching_activity: shareWatching },
         profile !== null,
       );
       notify(profile ? 'Profile saved.' : 'Welcome to Cinema. Your profile is ready.');
@@ -125,6 +126,18 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
             checked={discoverable}
             onChange={(event) => setDiscoverable(event.target.checked)}
           />
+          <span className="h-6 w-11 rounded-full bg-white/15 transition peer-checked:bg-cinema-600 peer-focus-visible:ring-2 peer-focus-visible:ring-cinema-400" />
+          <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5" />
+        </span>
+      </label>
+
+      <label className="flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-white/10 bg-ink-900/60 p-4">
+        <span>
+          <span className="block text-sm font-semibold text-white">Share What I’m Watching</span>
+          <span className="mt-1 block text-sm text-slate-400">When enabled, accepted friends can see titles you are actively watching. This is off by default, and activity disappears from their Home after 20 minutes.</span>
+        </span>
+        <span className="relative mt-1 inline-flex shrink-0">
+          <input type="checkbox" className="peer sr-only" checked={shareWatching} onChange={(event) => setShareWatching(event.target.checked)} />
           <span className="h-6 w-11 rounded-full bg-white/15 transition peer-checked:bg-cinema-600 peer-focus-visible:ring-2 peer-focus-visible:ring-cinema-400" />
           <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5" />
         </span>
