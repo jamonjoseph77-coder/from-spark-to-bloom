@@ -61,7 +61,7 @@ export function VideoPlayer({
   function toggleMute() {
     const video = videoRef.current;
     if (!video) return;
-    const nextMuted = !video.muted;
+    const nextMuted = !isMuted;
     video.muted = nextMuted;
     setIsMuted(nextMuted);
     if (!nextMuted && video.volume === 0) {
