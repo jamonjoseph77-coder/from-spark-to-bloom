@@ -35,7 +35,7 @@ export function DiscoverPage() {
         <a href="/friends" className="group relative isolate min-h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#0b1421] p-5 transition hover:-translate-y-1 hover:border-sky-200/35"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80" alt="" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-30 transition duration-500 group-hover:scale-105 group-hover:opacity-45" /><span className="absolute inset-0 -z-10 bg-gradient-to-r from-[#07101d]/95 via-[#07101d]/65 to-transparent" /><Users className="h-5 w-5 text-sky-200" /><h3 className="mt-5 text-lg font-extrabold text-white">Friends & Community</h3><p className="mt-1 text-xs text-slate-300">Discover What People Share</p></a>
       </section>
       <section className="grid gap-3 md:grid-cols-2">
-        <a href="/publishers" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-sky-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-200/20 bg-sky-300/10 text-sky-100"><BadgeCheck className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Verified Studios & Publishers</span><span className="mt-1 block text-xs text-slate-400">Follow official entertainment destinations.</span></span></a>
+        <a href="/publishers" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-sky-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-200/20 bg-sky-300/10 text-sky-100"><BadgeCheck className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Verified Studios & Publishers</span><span className="mt-1 block text-xs text-slate-400">Track official entertainment destinations.</span></span></a>
         <a href="/friends" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-indigo-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-indigo-200/20 bg-indigo-300/10 text-indigo-100"><Flame className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">What Your Circle Is Watching</span><span className="mt-1 block text-xs text-slate-400">Find conversations and shared favourites.</span></span></a>
       </section>
       <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -52,7 +52,7 @@ export function DiscoverPage() {
         <TmdbRow heading="Comedy Picks" description="Find something lighter to enjoy." mediaType="movie" list="popular" genreId={35} />
         <TmdbRow heading="Animation & Family Stories" description="Animated worlds and stories for every age." mediaType="movie" list="popular" genreId={16} />
         <TmdbRow heading="Documentaries" description="Explore real people, places and ideas." mediaType="movie" list="popular" genreId={99} />
-        <TmdbRow heading="Drama Series" description="Character-led stories worth following." mediaType="tv" list="popular" genreId={18} />
+        <TmdbRow heading="Drama Series" description="Character-led stories worth discovering." mediaType="tv" list="popular" genreId={18} />
       </section>
     </div>
   );
