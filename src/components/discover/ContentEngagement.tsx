@@ -15,10 +15,11 @@ interface ContentEngagementProps {
   imageUrl?: string;
   compact?: boolean;
   shareOnly?: boolean;
+  reviewOnly?: boolean;
   clipId?: string;
 }
 
-export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false, clipId }: ContentEngagementProps) {
+export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false, reviewOnly = false, clipId }: ContentEngagementProps) {
   const { user } = useAuth();
   const { notify } = useToast();
   const [liked, setLiked] = useState(false);
@@ -157,6 +158,12 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
             <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">{saved ? 'Saved' : 'Save'}</span>
           </button>}
         </>
+      ) : reviewOnly ? (
+        <div className="cinema-content-engagement mt-3 flex items-center gap-2 p-2">
+          <button type="button" onClick={() => setReviewOpen(true)} className="cinema-trailer-action" aria-label={`Write a review for ${title}`}>
+            <Star className="h-3.5 w-3.5" /> Review <span className="tabular-nums">{loading ? '…' : reviews.length}</span>
+          </button>
+        </div>
       ) : (
         <div className={`cinema-content-engagement flex flex-wrap items-center gap-2 p-2 ${compact ? 'mt-2' : 'mt-3'}`}>
           <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
@@ -176,7 +183,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
 
       {reviewOpen && <Modal label={`Reviews For ${title}`} onClose={() => setReviewOpen(false)}>
         <div className="space-y-4 pt-2">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">Cinema Reviews</p><h2 className="mt-1 pr-10 text-xl font-extrabold text-white">{title}</h2><p className="mt-1 text-xs text-slate-400">Share Your View Of This Short With The Cinema Community.</p></div>
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">Cinema Reviews</p><h2 className="mt-1 pr-10 text-xl font-extrabold text-white">{title}</h2><p className="mt-1 text-xs text-slate-400">Share Your View Of This Content With The Cinema Community.</p></div>
           <div className="max-h-[42dvh] space-y-3 overflow-y-auto pr-1">
             {loading && <p className="py-5 text-center text-xs text-slate-400">Loading Reviews…</p>}
             {!loading && reviews.length === 0 && <p className="rounded-xl border border-white/10 bg-white/[.03] p-5 text-center text-xs text-slate-400">No Reviews Yet. Be The First To Share One.</p>}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Film, Play } from 'lucide-react';
 import { VideoDialog } from '@/components/player/VideoDialog';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -33,7 +34,7 @@ export function OfficialTrailers() {
       {visible.length > 0 && (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((item) => (
-            <article key={`${item.mediaType}-${item.id}`} className="group min-w-0">
+            <article id={`official-trailer-${item.mediaType}-${item.id}`} key={`${item.mediaType}-${item.id}`} className="group min-w-0">
               <button type="button" onClick={() => setActive(item)} aria-label={`Play official trailer for ${item.title}`} className="relative block aspect-video w-full overflow-hidden rounded-2xl bg-ink-900 text-left ring-1 ring-white/10 transition hover:ring-cinema-300/50">
                 <Artwork src={tmdbImageUrl(item.backdropPath, 'w780') || tmdbImageUrl(item.posterPath, 'w500')} alt="" fallbackTitle={item.title} className="h-full w-full transition duration-500 group-hover:scale-[1.04]" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
@@ -44,6 +45,13 @@ export function OfficialTrailers() {
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-300/10 text-cinema-200"><Film className="h-4 w-4" /></span>
                 <div className="min-w-0"><h3 className="truncate text-sm font-bold text-white">{item.title}</h3><p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{item.videoName}</p><p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">{item.mediaType === 'movie' ? 'Movie' : 'Series'}{item.releaseDate ? ` · ${item.releaseDate.slice(0, 4)}` : ''}</p></div>
               </div>
+              <ContentEngagement
+                contentKey={`official-trailer:${item.mediaType}:${item.id}:${item.videoKey}`}
+                title={`${item.title} Official Trailer`}
+                href={`/discover#official-trailer-${item.mediaType}-${item.id}`}
+                imageUrl={tmdbImageUrl(item.backdropPath, 'w780') || tmdbImageUrl(item.posterPath, 'w500')}
+                compact
+              />
             </article>
           ))}
         </div>

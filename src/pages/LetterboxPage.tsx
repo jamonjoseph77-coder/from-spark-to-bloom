@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Clapperboard, Film, Heart, MessageCircle, Send, Share2, Users } from 'lucide-react';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { BUTTON_PRIMARY, INPUT, PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAuth } from '@/hooks/useAuth';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -58,6 +59,16 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
         <button type="button" disabled={busy} onClick={() => void react()} aria-pressed={liked} className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold transition ${liked ? 'bg-cinema-500/15 text-cinema-200' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}><Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} /> {count} Likes</button>
         <span className="inline-flex items-center gap-2 px-3 py-2 text-xs text-slate-400"><MessageCircle className="h-4 w-4" /> {post.comments?.length ?? 0} Replies</span>
         <button type="button" onClick={() => void sharePost()} className="ml-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.04] px-3.5 py-2 text-xs font-bold text-slate-300 transition hover:border-cinema-300/30 hover:bg-cinema-500/15 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"><Share2 className="h-4 w-4" /> Share</button>
+      </div>
+      <div className="px-4 pb-2">
+        <ContentEngagement
+          contentKey={`letterbox:${post.id}`}
+          title={`Letterbox: ${post.body.slice(0, 100)}`}
+          href={`/letterbox#post-${post.id}`}
+          imageUrl={post.title?.poster_url || ''}
+          compact
+          reviewOnly
+        />
       </div>
       {post.comments && post.comments.length > 0 && <div className="space-y-3 border-t border-white/5 px-5 py-4">{post.comments.slice(-3).map((item) => <p key={item.id} className="text-xs leading-5 text-slate-400"><span className="font-bold text-slate-200">Cinema member</span> {item.body}</p>)}</div>}
       <form onSubmit={reply} className="flex gap-2 border-t border-white/5 p-4"><input value={comment} onChange={(event) => setComment(event.target.value)} maxLength={1000} placeholder={userId ? 'Add an entertainment-related reply…' : 'Sign in to reply'} className={`${INPUT} min-w-0 flex-1 py-2.5`} /><button type="submit" disabled={busy || !comment.trim()} className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-cinema-600 text-white transition hover:bg-cinema-500 disabled:opacity-40" aria-label="Post reply"><Send className="h-4 w-4" /></button></form>
