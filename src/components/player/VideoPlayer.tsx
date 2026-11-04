@@ -225,7 +225,14 @@ export function VideoPlayer({
   function handleVolumeChange(event: ChangeEvent<HTMLInputElement>) {
     const next = Number(event.target.value);
     setVolume(next);
-    if (videoRef.current) videoRef.current.volume = next;
+    if (videoRef.current) {
+      videoRef.current.volume = next;
+      if (next > 0 && videoRef.current.muted) {
+        videoRef.current.muted = false;
+        setIsMuted(false);
+        onMutedChange?.(false);
+      }
+    }
   }
 
   const hasQualityMenu = levels.length > 1;
@@ -281,7 +288,7 @@ export function VideoPlayer({
             onClick={toggleMute}
             aria-label={isMuted ? 'Turn Sound On' : 'Mute Video'}
             aria-pressed={!isMuted}
-            className="absolute left-3 top-3 z-20 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.6)] backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 active:scale-95"
+            className="absolute left-3 top-16 z-30 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.6)] backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 active:scale-95"
           >
             {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5 text-sky-100" />}
             <span className="sr-only">{isMuted ? 'Sound Off' : 'Sound On'}</span>
