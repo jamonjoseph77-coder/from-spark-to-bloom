@@ -9,7 +9,7 @@ interface ShortCardProps {
 
 export function ShortCard({ clip, onOpen }: ShortCardProps) {
   return (
-    <article className="group cinema-short-card w-[min(62vw,232px)] shrink-0 snap-start sm:w-[232px]">
+    <article className="group cinema-short-card w-[min(42vw,168px)] shrink-0 snap-start sm:w-[168px]">
       <button
         type="button"
         onClick={() => onOpen(clip)}

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { BrowsePage } from '@/pages/BrowsePage';
+import { SportsPage } from '@/pages/SportsPage';
 
 export const Route = createFileRoute('/sports')({
   head: () => ({
@@ -7,14 +7,10 @@ export const Route = createFileRoute('/sports')({
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
       { title: 'Sports — Cinema' },
-      { name: 'description', content: 'Sports fixtures, highlights and replays.' },
+      { name: 'description', content: 'Live sports coverage, upcoming events, highlights and replays.' },
       { property: 'og:title', content: 'Sports — Cinema' },
-      { property: 'og:description', content: 'Sports fixtures, highlights and replays.' },
+      { property: 'og:description', content: 'Live sports coverage, upcoming events, highlights and replays.' },
     ],
   }),
-  component: Page,
+  component: SportsPage,
 });
-
-function Page() {
-  return <BrowsePage kind="sport" />;
-}

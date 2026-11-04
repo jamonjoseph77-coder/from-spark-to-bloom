@@ -48,7 +48,7 @@ export function getYouTubeVideoId(value: string): string | null {
 
 export function getYouTubeThumbnailUrl(value: string): string | null {
   const id = getYouTubeVideoId(value);
-  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
+  return id ? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg` : null;
 }
 
 export function toEmbedUrl(value: string, options: { autoplay?: boolean; muted?: boolean } = {}): string | null {

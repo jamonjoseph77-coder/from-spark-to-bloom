@@ -83,6 +83,10 @@ jobs:
           src/lib/clips.ts
           src/lib/media.ts
           src/pages/BrowsePage.tsx
+          src/pages/SportsPage.tsx
+          src/routes/sports.tsx
+          src/components/ui/Artwork.tsx
+          src/test/app-routing.test.tsx
           src/test/media.test.ts
           src/hooks/useAsyncData.ts
           src/lib/catalogue.ts

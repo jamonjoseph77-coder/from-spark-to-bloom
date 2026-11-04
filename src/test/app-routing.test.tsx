@@ -3,6 +3,8 @@ import { createRouter, rootRouteId } from "@tanstack/react-router";
 import { describe, expect, it } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
+import { navKeyOf } from "@/components/layout/navigation";
+import { parsePath } from "@/lib/router";
 
 // Match routes without running loaders or rendering: loaders may need a server or
 // network the test run lacks, and jsdom never loads the stylesheets React waits on.
@@ -29,9 +31,15 @@ describe("App routing", () => {
   it("matches the sign-in and password-recovery pages", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
 
-    for (const path of ["/sign-in", "/forgot-password", "/reset-password"]) {
+    for (const path of ["/sign-in", "/forgot-password", "/reset-password", "/sports"]) {
       const matches = router.matchRoutes(path);
       expect(matches.at(-1)?.routeId, `No route matched ${path}`).not.toBe(rootRouteId);
     }
+  });
+
+  it("keeps Sports discoverable and active in the navigation model", () => {
+    const route = parsePath("/sports");
+    expect(route).toEqual({ name: "browse", kind: "sport" });
+    expect(navKeyOf(route)).toBe("sports");
   });
 });
