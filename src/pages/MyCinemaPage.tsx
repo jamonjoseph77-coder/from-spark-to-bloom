@@ -12,6 +12,7 @@ import { resumeItems } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchDownloadableClips } from '@/lib/clips';
+import { SavedShortsShelf } from '@/components/discover/SavedShortsShelf';
 import { useToast } from '@/hooks/useToast';
 
 export function MyCinemaPage() {
@@ -90,6 +91,7 @@ export function MyCinemaPage() {
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8" aria-label="My Cinema shortcuts">
         <a href="#continue-watching" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><History className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Continue Watching</span><span className="mt-1 block text-[11px] text-slate-500">Pick up where you paused</span></a>
         <a href="#my-watchlist" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><BookmarkCheck className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watchlist</span><span className="mt-1 block text-[11px] text-slate-500">Saved for later</span></a>
+        <a href="#my-saved-shorts" className="group rounded-2xl border border-blue-300/25 bg-gradient-to-br from-blue-950/70 to-ink-950 p-4 transition hover:-translate-y-1 hover:border-blue-200/50"><BookmarkCheck className="h-5 w-5 text-blue-200" /><span className="mt-4 block text-sm font-bold text-white">Saved Shorts</span><span className="mt-1 block text-[11px] text-slate-400">Your Explore collection</span></a>
         <a href="#my-favourites" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Heart className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Favourites</span><span className="mt-1 block text-[11px] text-slate-500">Your top stories</span></a>
         <a href="/friends" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Users className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Friends</span><span className="mt-1 block text-[11px] text-slate-500">Your Cinema circle</span></a>
         <a href="/watch-parties" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><PartyPopper className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watch Parties</span><span className="mt-1 block text-[11px] text-slate-500">Experience together</span></a>
@@ -103,7 +105,7 @@ export function MyCinemaPage() {
         <a href="/movies" className="group relative isolate overflow-hidden rounded-3xl border border-indigo-200/15 bg-[linear-gradient(120deg,#1a1830,#080d17)] p-5 transition hover:border-indigo-200/35"><span className="absolute -right-4 -top-8 -z-10 h-36 w-36 rounded-full bg-indigo-300/10 blur-2xl" /><Film className="h-6 w-6 text-indigo-200" /><h3 className="mt-4 text-lg font-extrabold text-white">Build Your Next Watchlist</h3><p className="mt-1 text-sm text-slate-400">Find films and series worth saving for later.</p></a>
       </section>
       {view && <nav aria-label="My Cinema sections" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
+        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-saved-shorts', label: 'Saved Shorts' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
       </nav>}
         <section id="my-downloads" className="scroll-mt-24 space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
@@ -120,6 +122,7 @@ export function MyCinemaPage() {
             </article>)}
           </div>}
         </section>
+        <SavedShortsShelf userId={user.id} />
       {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {view && <>
         <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
