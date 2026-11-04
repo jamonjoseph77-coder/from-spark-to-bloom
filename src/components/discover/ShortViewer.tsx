@@ -9,13 +9,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { useToast } from '@/hooks/useToast';
 import {
-  addClipComment, fetchClipEngagement, toggleClipReaction,
-  type ClipComment, type DiscoverClip,
+  type DiscoverClip,
 } from '@/lib/clips';
+import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { navigateTo } from '@/lib/router';
 
 export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: () => void }) {
+  const engagementKey = `clip:${clip.id}`;
   const direct = isDirectVideoUrl(clip.video_url);
   const youtubeId = getYouTubeVideoId(clip.video_url);
   const embed = direct ? null : youtubeId
@@ -30,7 +31,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const [sharing, setSharing] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [comments, setComments] = useState<ClipComment[]>([]);
+  const [comments, setComments] = useState<DiscoverContentComment[]>([]);
   const [commentOpen, setCommentOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [clearScreen, setClearScreen] = useState(false);
@@ -43,7 +44,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   useEffect(() => {
     let active = true;
     setLoadingEngagement(true);
-    fetchClipEngagement(clip.id).then((engagement) => {
+    fetchDiscoverContentEngagement(engagementKey).then((engagement) => {
       if (!active) return;
       setLikeCount(engagement.reactions.length);
       setLiked(Boolean(userId && engagement.reactions.some((reaction) => reaction.user_id === userId)));
@@ -92,7 +93,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     setLikeCount((count) => Math.max(0, count + (wasLiked ? -1 : 1)));
     setSavingReaction(true);
     try {
-      await toggleClipReaction(clip.id, user.id, wasLiked);
+      await toggleDiscoverContentLike(engagementKey, user.id, wasLiked);
     } catch (error) {
       setLiked(wasLiked);
       setLikeCount((count) => Math.max(0, count + (wasLiked ? 1 : -1)));
@@ -136,7 +137,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     if (!body || savingComment) return;
     setSavingComment(true);
     try {
-      await addClipComment(clip.id, user.id, body);
+      await addDiscoverContentComment(engagementKey, user.id, body);
       setCommentText('');
       const refreshed = await fetchClipEngagement(clip.id);
       setComments(refreshed.comments);
