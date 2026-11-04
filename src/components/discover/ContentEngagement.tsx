@@ -151,11 +151,11 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
     <>
       {shareOnly ? (
         <>
-          {clipId && <div aria-label={`${viewsCount.toLocaleString()} views`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 text-slate-300"><Eye className="h-4 w-4" /><span className="text-[9px] font-semibold tabular-nums">{viewsCount.toLocaleString()}</span><span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Views</span></div>}
-          <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 text-slate-300">
+          {clipId && <div aria-label={`${viewsCount.toLocaleString()} views`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 !border-transparent !bg-transparent !text-slate-300 !shadow-none"><Eye className="h-4 w-4" /><span className="text-[9px] font-semibold tabular-nums">{viewsCount.toLocaleString()}</span><span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Views</span></div>}
+          <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 !border-transparent !bg-transparent !text-slate-300 !shadow-none">
             <Share2 className="h-4 w-4" /><span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Share</span>
           </button>
-          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} aria-label={saved ? `Remove ${title} from saved shorts` : `Save ${title} to My Cinema`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 text-slate-300 disabled:opacity-60">
+          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} aria-label={saved ? `Remove ${title} from saved shorts` : `Save ${title} to My Cinema`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 !border-transparent !bg-transparent !text-slate-300 !shadow-none disabled:opacity-60">
             {saved ? <BookmarkCheck className="h-4 w-4 text-slate-200" /> : <BookmarkPlus className="h-4 w-4" />}
             <span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">{saved ? 'Saved' : 'Save'}</span>
           </button>}
@@ -178,7 +178,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
             <Share2 className="h-3.5 w-3.5" /> Share
           </button>
           {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2.5 !py-1.5 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={saved ? 'Remove from saved shorts' : 'Save to My Cinema'}>
-            {saved ? <BookmarkCheck className="h-3.5 w-3.5 text-sky-200" /> : <BookmarkPlus className="h-3.5 w-3.5" />} {saved ? 'Saved' : 'Save'}
+            {saved ? <BookmarkCheck className="h-3.5 w-3.5 text-slate-200" /> : <BookmarkPlus className="h-3.5 w-3.5" />} {saved ? 'Saved' : 'Save'}
           </button>}
         </div>
       )}
