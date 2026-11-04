@@ -159,7 +159,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       </div>
 
       {confirmationPending ? <div className="space-y-4 text-center">
-        <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-left text-sm leading-relaxed text-emerald-100" role="status">
+        <div className="rounded-xl border border-white/12 bg-[#10151e] p-4 text-left text-sm leading-relaxed text-[#e5eaf0]" role="status">
           <MailCheck className="mb-2 h-6 w-6" />
           {notice}
         </div>
@@ -170,13 +170,13 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         {mode !== 'forgot-password' && <div><label htmlFor="auth-password" className={LABEL}>Password</label><input id="auth-password" type="password" autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} required value={password} onChange={e => setPassword(e.target.value)} className={INPUT} placeholder={mode === 'sign-up' ? 'At Least 8 Characters' : 'Your Password'} /></div>}
         {mode === 'sign-up' && <div><label htmlFor="auth-confirm-password" className={LABEL}>Confirm Password</label><input id="auth-confirm-password" type="password" autoComplete="new-password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className={INPUT} placeholder="Enter Your Password Again" /></div>}
         {error && <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
-        {notice && <p role="status" className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">{notice}</p>}
+        {notice && <p role="status" className="rounded-xl border border-white/12 bg-[#10151e] px-4 py-3 text-sm text-[#e5eaf0]">{notice}</p>}
         {mode === 'forgot-password' && cooldownSeconds > 0 && <p role="status" className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">For Account Security, You Can Request Another Reset Email In {cooldownSeconds} Seconds.</p>}
         <button type="submit" disabled={busy || (mode === 'forgot-password' && (!cooldownReady || cooldownSeconds > 0))} className={`${BUTTON_PRIMARY} w-full`}>{busy ? 'Please Wait...' : mode === 'forgot-password' && !cooldownReady ? 'Checking...' : mode === 'forgot-password' && cooldownSeconds > 0 ? `Try Again In ${cooldownSeconds}s` : copy.submit}</button>
       </form>}
 
       <div className="space-y-2 text-center text-sm text-slate-400">
-        {mode === 'sign-in' && <><p>New To Cinema? <a href="/sign-up" className="font-semibold text-cinema-300 hover:text-white">Create An Account</a></p><p><a href="/forgot-password" className="font-semibold text-cinema-300 hover:text-white">Forgot Your Password?</a></p></>}
+        {mode === 'sign-in' && <><p>New To Cinema? <a href="/sign-up" className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:decoration-white/70">Create An Account</a></p><p><a href="/forgot-password" className="font-semibold text-cinema-300 hover:text-white">Forgot Your Password?</a></p></>}
         {mode === 'sign-up' && !confirmationPending && <p>Already Have An Account? <a href="/sign-in" className="font-semibold text-cinema-300 hover:text-white">Sign In</a></p>}
         {mode === 'forgot-password' && <p>Remembered It? <a href="/sign-in" className="font-semibold text-cinema-300 hover:text-white">Back To Sign In</a></p>}
         {confirmationPending && <p><a href="/sign-in" className="font-semibold text-cinema-300 hover:text-white">Go To Sign In</a></p>}
