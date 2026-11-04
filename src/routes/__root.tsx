@@ -138,18 +138,22 @@ function CinemaShell({ children }: { children: ReactNode }) {
   // experience itself is available only after a successful sign-in.
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#07101b] px-6">
-        <div className="flex flex-col items-center gap-5">
-          <CinemaLogo compact />
-          <span className="h-7 w-7 animate-spin rounded-full border-2 border-sky-200/25 border-t-sky-200" />
-          <p className="text-xs font-semibold tracking-wide text-slate-400">Preparing Your Cinema</p>
+      <main className="cinema-loading-screen" role="status" aria-live="polite">
+        <div aria-hidden="true" className="cinema-loading-aura" />
+        <div className="cinema-loading-content">
+          <span className="cinema-loading-mark">
+            <img src="/cinema-icon.png" alt="" />
+          </span>
+          <CinemaLogo />
+          <span className="cinema-loading-spinner" aria-hidden="true" />
+          <p className="cinema-loading-label">Preparing Your Cinema</p>
         </div>
       </main>
     );
   }
 
   if (!user && !isAccountRoute) return <VisitorLandingPage />;
-  if (isAccountRoute) return <main className="min-h-screen bg-[#07101b]">{children}</main>;
+  if (isAccountRoute) return <main className="min-h-screen bg-[#050811]">{children}</main>;
 
   return <AppShell route={route}>{children}</AppShell>;
 }
