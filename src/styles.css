@@ -19,13 +19,13 @@
  */
 
 @theme {
-  --color-ink-950: #080e17;
-  --color-ink-900: #0d1724;
-  --color-ink-850: #132033;
-  --color-ink-800: #192a3e;
-  --color-ink-700: #263a51;
-  --color-ink-600: #3a536d;
-  --color-ink-500: #5d7793;
+  --color-ink-950: #050811;
+  --color-ink-900: #090d16;
+  --color-ink-850: #121620;
+  --color-ink-800: #1a1f2c;
+  --color-ink-700: #252c38;
+  --color-ink-600: #3a4656;
+  --color-ink-500: #657386;
   --color-cinema-50: #f4f8ff;
   --color-cinema-100: #e7f0fc;
   --color-cinema-200: #c9def6;
@@ -680,4 +680,73 @@ body {
 }
 .cinema-trailer-action:focus-visible {
   outline-color: #00e5ff !important;
+}
+
+
+/* Reference-led Cinema Finish: branded welcome, true-black TV canvas, clearer charcoal layers. */
+.cinema-loading-screen {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 2rem;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(0, 102, 255, .075), transparent 34%),
+    linear-gradient(145deg, #05070d 0%, #020306 58%, #050811 100%);
+  color: #eef1f5;
+}
+.cinema-loading-screen::before,
+.cinema-loading-screen::after {
+  position: absolute;
+  z-index: -1;
+  width: min(92vw, 880px);
+  height: min(38vw, 330px);
+  border: 1px solid transparent;
+  border-top-color: rgba(0, 102, 255, .58);
+  border-bottom-color: rgba(0, 229, 255, .2);
+  border-radius: 50%;
+  content: "";
+  filter: drop-shadow(0 0 12px rgba(0, 102, 255, .34));
+  transform: rotate(-17deg);
+  animation: cinema-loading-drift 9s ease-in-out infinite alternate;
+}
+.cinema-loading-screen::after {
+  width: min(110vw, 1080px);
+  height: min(48vw, 420px);
+  border-top-color: rgba(0, 229, 255, .18);
+  border-bottom-color: rgba(0, 102, 255, .42);
+  transform: rotate(16deg);
+  animation-delay: -4s;
+}
+.cinema-loading-orbit { position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
+.cinema-loading-orbit--one { width: 22rem; height: 22rem; background: rgba(0, 102, 255, .055); filter: blur(90px); }
+.cinema-loading-orbit--two { width: 18rem; height: 18rem; background: rgba(0, 229, 255, .035); filter: blur(100px); transform: translate(12rem, 8rem); }
+.cinema-loading-content { display: flex; width: min(100%, 390px); flex-direction: column; align-items: center; gap: 1.5rem; text-align: center; }
+.cinema-loading-wordmark { display: block; width: min(76vw, 310px); height: auto; object-fit: contain; filter: drop-shadow(0 0 18px rgba(0, 102, 255, .22)); }
+.cinema-loading-spinner { width: 34px; height: 34px; border: 3px solid rgba(0, 229, 255, .16); border-top-color: #1684ff; border-right-color: #00e5ff; border-radius: 50%; animation: cinema-loading-spin .9s linear infinite; }
+.cinema-loading-content p { margin: -.65rem 0 0; color: #aeb8c4; font-size: 12px; font-weight: 600; letter-spacing: .12em; }
+@keyframes cinema-loading-spin { to { transform: rotate(360deg); } }
+@keyframes cinema-loading-drift { from { transform: translate3d(-2%, -1%, 0) rotate(-17deg); opacity: .45; } to { transform: translate3d(2%, 2%, 0) rotate(-12deg); opacity: .9; } }
+
+/* The TV-inspired reference informs hierarchy and contrast, not a replacement layout. */
+.cinema-feature-board,
+.cinema-hero {
+  border-color: rgba(160, 178, 204, .18);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .52), inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+.cinema-feature-board { background-color: #080b12; }
+.cinema-feature-shade { background: linear-gradient(90deg, rgba(3, 5, 10, .96) 0%, rgba(3, 5, 10, .76) 42%, rgba(3, 5, 10, .08) 100%), linear-gradient(0deg, rgba(3, 5, 10, .78), transparent 55%); }
+.cinema-feature-copy h1 { color: #f4f6fa; text-shadow: 0 5px 28px rgba(0,0,0,.55); }
+.cinema-feature-description { color: #c5ced9; }
+.cinema-feature-controls { color: #d7e0eb; }
+.cinema-feature-dot.is-active { background: #00e5ff; box-shadow: 0 0 12px rgba(0,229,255,.5); }
+.cinema-feature-pause,
+.cinema-feature-all { color: #c4cfdd; }
+.cinema-feature-pause:hover,
+.cinema-feature-all:hover { color: #00e5ff; }
+.cinema-home section > [class*="text-"] { text-wrap: pretty; }
+@media (prefers-reduced-motion: reduce) {
+  .cinema-loading-spinner, .cinema-loading-screen::before, .cinema-loading-screen::after { animation: none !important; }
 }
