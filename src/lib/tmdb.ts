@@ -1,7 +1,7 @@
 import { callTmdbServer } from '@/lib/tmdb.functions';
 export type TmdbMediaType = 'movie' | 'tv';
 export type TmdbListKind = 'popular' | 'trending';
-export type TmdbErrorReason = 'not_configured' | 'unavailable';
+export type TmdbErrorReason = 'not_configured' | 'unavailable' | 'restricted';
 export type TmdbImageSize = 'w185' | 'w342' | 'w500' | 'w780' | 'w1280';
 export class TmdbError extends Error {
   readonly reason: TmdbErrorReason;
