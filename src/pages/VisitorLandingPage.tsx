@@ -95,7 +95,7 @@ export function VisitorLandingPage() {
 
       <footer className="relative z-[1] mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-3 border-t border-white/[.08] px-5 py-7 text-xs text-slate-500 sm:flex-row sm:items-center sm:px-8 lg:px-12">
         <span>© {new Date().getFullYear()} Cinema. Experience The World Of Stories.</span>
-        <div className="flex items-center gap-4"><a href="/forgot-password" className="transition hover:text-slate-200">Forgot Password?</a><a href="/sign-in" className="transition hover:text-slate-200">Sign In</a></div>
+        <div className="flex items-center gap-4"><a href="/about" className="transition hover:text-slate-200">About & Credits</a><a href="/forgot-password" className="transition hover:text-slate-200">Forgot Password?</a><a href="/sign-in" className="transition hover:text-slate-200">Sign In</a></div>
       </footer>
     </main>
   );
