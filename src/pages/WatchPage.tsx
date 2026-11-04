@@ -88,7 +88,7 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
             <VideoPlayer
               key={contentId}
               src={source}
-              title={episode ? \`${title.title}: ${episode.title}\` : title.title}
+              title={episode ? `${title.title}: ${episode.title}` : title.title}
               poster={title.backdrop_url || title.poster_url || undefined}
               subtitleUrl={subtitle}
               startAt={startAt}
@@ -108,7 +108,7 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
               <div className="aspect-video w-full">
                 <iframe
                   src={embedSource}
-                  title={episode ? \`${title.title}: ${episode.title}\` : title.title}
+                  title={episode ? `${title.title}: ${episode.title}` : title.title}
                   className="h-full w-full"
                   loading="eager"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
