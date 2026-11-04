@@ -44,8 +44,8 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
     setLoading(true);
     try {
       const result = await fetchDiscoverContentEngagement(contentKey);
-      setLikeCount(result.reactions.length);
-      setLiked(Boolean(user?.id && result.reactions.some((reaction) => reaction.user_id === user.id)));
+      setLikeCount(result.reactionCount);
+      setLiked(result.likedByCurrentUser);
       setReviews(result.comments);
     } catch (error) {
       console.warn('Explore content reviews could not be loaded', error);
@@ -57,8 +57,8 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
     setLoading(true);
     fetchDiscoverContentEngagement(contentKey).then((result) => {
       if (!active) return;
-      setLikeCount(result.reactions.length);
-      setLiked(Boolean(user?.id && result.reactions.some((reaction) => reaction.user_id === user.id)));
+      setLikeCount(result.reactionCount);
+      setLiked(result.likedByCurrentUser);
       setReviews(result.comments);
     }).catch((error) => console.warn('Explore content engagement could not be loaded', error))
       .finally(() => { if (active) setLoading(false); });
