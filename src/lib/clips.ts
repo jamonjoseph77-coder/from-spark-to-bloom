@@ -74,27 +74,13 @@ export function isPlayableShort(clip: DiscoverClip): boolean {
 }
 
 export async function fetchClipEngagement(clipId: string): Promise<ClipEngagement> {
-  const [engagementResult, commentsResult] = await Promise.all([
-    supabase.rpc('get_discover_clip_engagement', { p_clip_id: clipId }),
-    supabase.from('discover_clip_comments').select('id,author_id,body,created_at').eq('clip_id', clipId)
-      .eq('status', 'published').order('created_at', { ascending: false }).limit(30),
-  ]);
-  if (engagementResult.error) throw engagementResult.error;
-  if (commentsResult.error) throw commentsResult.error;
-  const comments = commentsResult.data ?? [];
-  const authorIds = [...new Set(comments.map((comment) => comment.author_id))];
-  const profiles = authorIds.length
-    ? await supabase.from('profiles').select('user_id,display_name,username,is_discoverable').in('user_id', authorIds)
-    : { data: [], error: null };
-  if (profiles.error) throw profiles.error;
-  const byId = new Map((profiles.data ?? []).map((profile) => [profile.user_id, profile]));
+  const { data, error } = await supabase.rpc('get_discover_clip_engagement', { p_clip_id: clipId });
+  if (error) throw error;
+  const summary = data?.[0];
   return {
-    reactionCount: engagementResult.data?.[0]?.reaction_count ?? 0,
-    likedByCurrentUser: engagementResult.data?.[0]?.liked_by_current_user ?? false,
-    comments: comments.map((comment) => {
-      const profile = byId.get(comment.author_id);
-      return { ...comment, author_name: profile?.is_discoverable ? (profile.display_name || profile.username || 'Cinema Member') : 'Cinema Member' };
-    }),
+    reactionCount: summary?.reaction_count ?? 0,
+    likedByCurrentUser: summary?.liked_by_current_user ?? false,
+    comments: [],
   };
 }
 
