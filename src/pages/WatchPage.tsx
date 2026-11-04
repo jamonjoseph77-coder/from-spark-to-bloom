@@ -8,6 +8,7 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { fetchTitleDetail } from '@/lib/library';
+import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import type { Episode, SeasonWithEpisodes, Title } from '@/lib/types';
 
@@ -65,6 +66,8 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
 
   const episode = current;
   const source = episode ? episode.playback_url : title.playback_url;
+  const directSource = isDirectVideoUrl(source);
+  const embedSource = directSource ? null : toEmbedUrl(source);
   const contentId = episode?.id ?? title.id;
   const saved = progress.find((entry) => entry.content_id === contentId);
   const startAt = saved && !saved.completed ? saved.position_seconds : 0;
@@ -81,11 +84,11 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-6">
-          {source.trim() ? (
+          {source.trim() && directSource ? (
             <VideoPlayer
               key={contentId}
               src={source}
-              title={episode ? `${title.title}: ${episode.title}` : title.title}
+              title={episode ? \`${title.title}: ${episode.title}\` : title.title}
               poster={title.backdrop_url || title.poster_url || undefined}
               subtitleUrl={subtitle}
               startAt={startAt}
@@ -100,6 +103,27 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
                 })
               }
             />
+          ) : source.trim() && embedSource ? (
+            <div className="overflow-hidden rounded-[1.25rem] bg-black shadow-2xl shadow-black/60 ring-1 ring-white/10">
+              <div className="aspect-video w-full">
+                <iframe
+                  src={embedSource}
+                  title={episode ? \`${title.title}: ${episode.title}\` : title.title}
+                  className="h-full w-full"
+                  loading="eager"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+                  allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
+              </div>
+              <p className="border-t border-white/10 px-4 py-2 text-xs text-slate-400">Video Hosted By Its Original Publisher.</p>
+            </div>
+          ) : source.trim() ? (
+            <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[.04] p-5">
+              <p className="text-sm font-semibold text-white">This Video Link Cannot Be Played Inside Cinema Yet.</p>
+              <p className="mt-1 text-xs leading-5 text-slate-400">Use A Direct MP4/HLS Link Or A Supported YouTube/Vimeo Link For Embedded Playback.</p>
+              <a href={source} target="_blank" rel="noreferrer" className="mt-3 inline-flex rounded-full border border-white/15 px-4 py-2 text-xs font-bold text-white transition hover:bg-white/10">Open Original Video</a>
+            </div>
           ) : (
             <EmptyState
               icon={<Clapperboard className="h-7 w-7 text-cinema-300" />}
