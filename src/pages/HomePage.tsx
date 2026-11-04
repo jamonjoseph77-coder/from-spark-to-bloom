@@ -19,17 +19,20 @@ import { fetchPublishedClips, isPlayableShort, type DiscoverClip } from '@/lib/c
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
+import { loadFriendsActivity, type FriendsActivity } from '@/lib/friendActivity';
+import { buildRecommendations } from '@/lib/recommendations';
 import { groupByPublisher } from '@/lib/publishers';
 import type { Title } from '@/lib/types';
 
-interface HomeSocial { friends: FriendsSnapshot['friends']; posts: LetterboxPost[]; follows: string[] }
+interface HomeSocial { friends: FriendsSnapshot['friends']; posts: LetterboxPost[]; follows: string[]; activity: FriendsActivity }
 async function loadHomeSocial(userId: string): Promise<HomeSocial> {
-  const [friendsResult, postsResult, followsResult] = await Promise.allSettled([loadFriendsSnapshot(userId), fetchLetterboxFeed(24), fetchFollowedPublishers(userId)]);
+  const [friendsResult, postsResult, followsResult, activityResult] = await Promise.allSettled([loadFriendsSnapshot(userId), fetchLetterboxFeed(24), fetchFollowedPublishers(userId), loadFriendsActivity(userId)]);
   const friends = friendsResult.status === 'fulfilled' ? friendsResult.value.friends : [];
   const friendIds = new Set(friends.map((friend) => friend.otherUserId));
   const posts = postsResult.status === 'fulfilled' ? postsResult.value.filter((post) => friendIds.has(post.author_id)).slice(0, 4) : [];
   const follows = followsResult.status === 'fulfilled' ? followsResult.value : [];
-  return { friends, posts, follows };
+  const activity = activityResult.status === 'fulfilled' ? activityResult.value : { watching: [], publishers: [] };
+  return { friends, posts, follows, activity };
 }
 
 function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loading: boolean }) {
@@ -49,8 +52,18 @@ function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loadin
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold text-white">Your Follows</p><p className="mt-1 text-xs text-slate-500">Studios And Publishers You Choose To Keep Up With.</p></div><a href="/publishers" className="text-xs font-bold text-cinema-200 hover:text-white">Discover Publishers</a></div>
-        {social?.follows.length ? <div className="mt-3 flex flex-wrap gap-2">{social.follows.map((name) => <a key={name} href={`/publishers/${encodeURIComponent(name)}`} className="rounded-full border border-sky-300/20 bg-sky-300/[.07] px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-sky-300/40 hover:bg-sky-300/[.12]">{name}</a>)}</div> : <p className="mt-3 text-xs text-slate-500">You Haven’t Followed A Publisher Yet. Explore Publisher Destinations To Find The Studios And Broadcasters You Want To Hear From.</p>}
+        <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold text-white">Your Keep Up List</p><p className="mt-1 text-xs text-slate-500">Studios, Publishers And Broadcasters You Choose To Keep Up With.</p></div><a href="/publishers" className="text-xs font-bold text-cinema-200 hover:text-white">Discover Publishers</a></div>
+        {social?.follows.length ? <div className="mt-3 flex flex-wrap gap-2">{social.follows.map((name) => <a key={name} href={`/publishers/${encodeURIComponent(name)}`} className="rounded-full border border-sky-300/20 bg-sky-300/[.07] px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-sky-300/40 hover:bg-sky-300/[.12]">{name}</a>)}</div> : <p className="mt-3 text-xs text-slate-500">Your Keep Up List Is Empty. Explore Publisher Destinations To Choose The Studios And Broadcasters You Want To Hear From.</p>}
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
+          <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Your Friends Are Watching</p><p className="mt-1 text-xs text-slate-500">Only friends who have enabled watch activity sharing appear here.</p></div><Users className="h-4 w-4 text-cinema-200" /></div>
+          {social?.activity.watching.length ? <div className="mt-4 space-y-3">{social.activity.watching.slice(0, 5).map((item) => <a key={item.friendId + item.titleId} href={`/title/${item.titleId}`} className="flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-cinema-300/25"><span className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-ink-800">{item.posterUrl && <img src={item.posterUrl} alt="" className="h-full w-full object-cover" />}</span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold text-white">{item.titleName}</span><span className="mt-1 block truncate text-[11px] text-slate-400">{item.friendName} Is Watching</span></span><Play className="h-4 w-4 shrink-0 text-cinema-200" /></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When friends choose to share what they are currently watching, their recent activity will appear here for up to 20 minutes.</p>}
+        </section>
+        <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
+          <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Publishers In Your Circle</p><p className="mt-1 text-xs text-slate-500">Studios And Broadcasters Your Friends Keep Up With.</p></div><Clapperboard className="h-4 w-4 text-cinema-200" /></div>
+          {social?.activity.publishers.length ? <div className="mt-4 flex flex-wrap gap-2">{social.activity.publishers.slice(0, 14).map((item) => <a key={item.friendId + item.publisherName} href={`/publishers/${encodeURIComponent(item.publisherName)}`} title={`${item.friendName} keeps up with ${item.publisherName}`} className="rounded-full border border-cinema-300/15 bg-cinema-400/[.07] px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-cinema-300/35 hover:bg-cinema-400/[.12]">{item.publisherName}<span className="ml-1.5 text-[10px] text-slate-500">· {item.friendName}</span></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When your friends keep up with studios, publishers or broadcasters, those connections will appear here.</p>}
+        </section>
       </div>
     </section>
   );
@@ -65,7 +78,7 @@ function PublisherDestinations({ titles }: { titles: Title[] }) {
 export function HomePage() {
   const { user } = useAuth();
   const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
-  const { progress } = useLibrary();
+  const { progress, watchlistIds, favouriteIds } = useLibrary();
   const { data: titles, error: titlesError, reload: reloadTitles } = useAsyncData(fetchPublishedTitles, []);
   const { data: publishedClips, error: clipsError, reload: reloadClips } = useAsyncData(fetchPublishedClips, []);
   useEffect(() => {
@@ -82,6 +95,7 @@ export function HomePage() {
     [publishedClips],
   );
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
+  const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
     const today = new Date().toISOString().slice(0, 10);
@@ -106,6 +120,7 @@ export function HomePage() {
         </div>}
       </section>
       <HomeCommunity social={social} loading={Boolean(user) && socialLoading} />
+      {recommendations.titles.length > 0 && <TitleRow heading="Recommended For You" description={recommendations.reason} titles={recommendations.titles} landscape />}
       {cinemaShelves?.resume.length ? <section className="cinema-shelf"><div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Pick Up Where You Left Off</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Back in Cinema</h2><p className="mt-1 text-sm text-slate-400">Your Stories Are Right Where You Left Them.</p></div><a href="/my-cinema" className="text-sm font-semibold text-cinema-200 hover:text-white">My Cinema <ArrowRight className="inline h-4 w-4" /></a></div><ContinueWatchingRow items={cinemaShelves.resume} /></section> : null}
       <PublisherDestinations titles={titles ?? []} />
       <section className="space-y-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">A World Of Stories</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Find Your Next Favourite.</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Explore Real Movie And Series Information, Official Trailers And Stories From Across The World.</p></div><a href="/discover" className="inline-flex items-center gap-2 text-sm font-semibold text-cinema-200 transition hover:text-white">Go To Discover <ArrowRight className="h-4 w-4" /></a></div><div className="grid gap-3 sm:grid-cols-3">
