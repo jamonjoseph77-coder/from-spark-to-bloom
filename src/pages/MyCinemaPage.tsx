@@ -85,6 +85,7 @@ export function MyCinemaPage() {
           {isAdmin && <a href="/admin" className={BUTTON_SECONDARY}><ShieldCheck className="h-4 w-4" /> Content manager</a>}
           <a href="/profile" className={BUTTON_SECONDARY}><Settings2 className="h-4 w-4" /> Profile & settings</a>
           <a href="/about" className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> About & Credits</a>
+          <a href="/about" className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> About & Credits</a>
           <button type="button" onClick={() => void signOut()} className={BUTTON_SECONDARY}><LogOut className="h-4 w-4" /> Sign out</button>
         </div>
       </div>
