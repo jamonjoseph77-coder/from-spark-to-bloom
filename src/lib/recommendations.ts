@@ -53,7 +53,8 @@ export function buildRecommendations(
       const followedScore = followed.has(title.publisher.toLowerCase()) ? 8 : 0;
       const typeScore = typeWeights.get(title.type) ?? 0;
       const featuredScore = title.is_featured ? 1.5 : 0;
-      const freshnessScore = Math.max(0, Math.min(1, (Date.now() - new Date(title.created_at).getTime()) / -86400000 + 1));
+      const ageInDays = Math.max(0, (Date.now() - new Date(title.created_at).getTime()) / 86400000);
+      const freshnessScore = Math.max(0, 1 - ageInDays / 365);
       const score = genreScore + publisherScore + followedScore + typeScore + featuredScore + freshnessScore;
       return { title, score };
     })
