@@ -66,9 +66,11 @@ export function toEmbedUrl(value: string, options: { autoplay?: boolean; muted?:
       const id = parsed.pathname.slice(1).split('/')[0];
       return id && /^[\w-]{6,}$/.test(id) ? `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}&controls=1&modestbranding=1` : null;
     }
-    if (host === 'vimeo.com' || host === 'www.vimeo.com') {
+    if (host === 'vimeo.com' || host === 'www.vimeo.com' || host === 'player.vimeo.com') {
       const id = parsed.pathname.split('/').filter(Boolean).pop();
-      return id && /^\d+$/.test(id) ? `https://player.vimeo.com/video/${id}?autoplay=${autoplay}&muted=${muted}` : null;
+      const privacyHash = parsed.searchParams.get('h');
+      const privacyParam = privacyHash ? `&h=${encodeURIComponent(privacyHash)}` : '';
+      return id && /^\d+$/.test(id) ? `https://player.vimeo.com/video/${id}?autoplay=${autoplay}&muted=${muted}${privacyParam}` : null;
     }
     return null;
   } catch {
