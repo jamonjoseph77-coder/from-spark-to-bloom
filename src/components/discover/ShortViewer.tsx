@@ -128,7 +128,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   async function submitComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) {
-      notify('Create A Cinema Account To Join Comments.');
+      notify('Create A Cinema Account To Join The Discussion.');
       navigateTo('/sign-up');
       return;
     }
@@ -229,7 +229,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
         {commentOpen && !clearScreen && (
           <section aria-label="Cinema Short Comments" className="absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] border border-sky-100/20 bg-[#080e18]/[.98] p-4 shadow-[0_24px_80px_rgba(0,0,0,.8)] backdrop-blur-2xl sm:inset-x-4">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <div><p className="text-sm font-extrabold text-white">The Conversation <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Thoughts About The Story, From The Cinema Community.</p></div>
+              <div><p className="text-sm font-extrabold text-white">Comments <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Thoughts About The Story, From The Cinema Community.</p></div>
               <button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">Close</button>
             </div>
             <div className="max-h-[25dvh] space-y-3 overflow-y-auto pr-1">
