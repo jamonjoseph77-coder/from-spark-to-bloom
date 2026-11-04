@@ -59,7 +59,7 @@ function StudioVerificationQueue() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
               <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-500/10 text-cinema-200"><Building2 className="h-5 w-5" /></span>
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-white">{studio.studio_name}</h3><span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${studio.verification_status === 'verified' ? 'bg-emerald-400/10 text-emerald-300' : studio.verification_status === 'pending' ? 'bg-amber-300/10 text-amber-200' : 'bg-slate-700/60 text-slate-300'}`}>{studio.verification_status}</span></div>
+                <div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-white">{studio.studio_name}</h3><span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${studio.verification_status === 'verified' ? 'bg-sky-400/10 text-slate-200' : studio.verification_status === 'pending' ? 'bg-amber-300/10 text-amber-200' : 'bg-slate-700/60 text-slate-300'}`}>{studio.verification_status}</span></div>
                 {studio.description && <p className="mt-2 text-sm leading-6 text-slate-300">{studio.description}</p>}
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500"><span>Owner: {studio.owner_id}</span>{studio.website_url && <a href={studio.website_url} target="_blank" rel="noreferrer" className="text-cinema-300 hover:text-white">Official website</a>}{studio.created_at && <span>Applied {new Date(studio.created_at).toLocaleDateString()}</span>}</div>
               </div>
@@ -135,7 +135,7 @@ export function AdminTitleList() {
                 <p className="truncate font-semibold text-white">{title.title}</p>
                 <p className="text-xs text-slate-400">{TITLE_TYPE_LABELS[title.type]}{title.release_year ? ` · ${title.release_year}` : ''}</p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <span className={`rounded-md px-2 py-0.5 text-xs font-semibold ${title.is_published ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-400/15 text-amber-300'}`}>
+                  <span className={`rounded-md px-2 py-0.5 text-xs font-semibold ${title.is_published ? 'bg-sky-500/15 text-slate-200' : 'bg-amber-400/15 text-amber-300'}`}>
                     {title.is_published ? 'Published' : 'Draft'}
                   </span>
                   {title.is_featured && <span className="rounded-md bg-cinema-600/20 px-2 py-0.5 text-xs font-semibold text-cinema-200">Featured</span>}

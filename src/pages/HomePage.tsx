@@ -7,7 +7,6 @@ import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
-import { TmdbAttribution } from '@/components/tmdb/TmdbAttribution';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -150,7 +149,6 @@ export function HomePage() {
         </a>
       </section>
       <section className="relative overflow-hidden rounded-[1.75rem] border border-sky-300/15 bg-[linear-gradient(115deg,rgba(96,165,250,.10),rgba(255,255,255,.025)_50%,rgba(255,255,255,.01))] p-6 sm:p-8"><div className="max-w-3xl"><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">The Cinema Experience</p><h2 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">Discover A Story. Experience It. Share It.</h2><p className="mt-3 text-sm leading-7 text-slate-300">Cinema Brings Entertainment And The People Who Love It Into One Connected Destination. Move From A Story Feature To A Title, From A Title To A Conversation, And From A Conversation To Watching Together.</p><a href="/discover" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">Explore Discover <Compass className="h-4 w-4" /></a></div></section>
-      <TmdbAttribution />
       {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
     </div>
   );

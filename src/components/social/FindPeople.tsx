@@ -73,7 +73,7 @@ export function FindPeople({ userId, relations, onChanged }: FindPeopleProps) {
                   </button>
                 )}
                 {relation?.state === 'friends' && (
-                  <span className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+                  <span className="rounded-full border border-sky-300/25 bg-sky-300/10 px-3 py-1 text-xs font-semibold text-slate-200">
                     Friends
                   </span>
                 )}
