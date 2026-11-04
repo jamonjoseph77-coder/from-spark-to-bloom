@@ -19,6 +19,8 @@ interface VideoPlayerProps {
   autoPlay?: boolean;
   muted?: boolean;
   showControls?: boolean;
+  showMuteToggle?: boolean;
+  onMutedChange?: (muted: boolean) => void;
   layout?: 'landscape' | 'portrait';
   onProgress?: (progress: PlaybackProgress) => void;
 }
@@ -37,7 +39,7 @@ const PLAYBACK_ERROR = 'This Video Could Not Be Played. The Link May Be Offline,
 
 export function VideoPlayer({
   src, title, subtitleUrl, startAt = 0, poster, isLive = false,
-  autoPlay = false, muted = false, showControls = true, layout = 'landscape', onProgress,
+  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -49,10 +51,26 @@ export function VideoPlayer({
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [quality, setQuality] = useState(-1);
   const [volume, setVolume] = useState(0.85);
+  const [isMuted, setIsMuted] = useState(muted);
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
   useEffect(() => { startAtRef.current = startAt; }, [startAt]);
+  useEffect(() => { setIsMuted(muted); }, [muted, src]);
+
+  function toggleMute() {
+    const video = videoRef.current;
+    if (!video) return;
+    const nextMuted = !video.muted;
+    video.muted = nextMuted;
+    setIsMuted(nextMuted);
+    if (!nextMuted && video.volume === 0) {
+      video.volume = 0.85;
+      setVolume(0.85);
+    }
+    onMutedChange?.(nextMuted);
+    if (!nextMuted && video.paused) void video.play().catch(() => undefined);
+  }
 
   // Never leave a player spinning indefinitely when a provider stalls or blocks playback.
   useEffect(() => {
@@ -226,7 +244,7 @@ export function VideoPlayer({
           controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
-          muted={muted}
+          muted={isMuted}
           preload={autoPlay ? 'auto' : 'metadata'}
           poster={poster || undefined}
           aria-label={title}
@@ -257,6 +275,18 @@ export function VideoPlayer({
           {subtitleUrl && <track kind="subtitles" src={subtitleUrl} srcLang="en" label="Subtitles" />}
         </video>
 
+        {showMuteToggle && status !== 'error' && (
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={isMuted ? 'Turn Sound On' : 'Mute Video'}
+            aria-pressed={!isMuted}
+            className="absolute left-3 top-3 z-20 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.6)] backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 active:scale-95"
+          >
+            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5 text-sky-100" />}
+            <span className="sr-only">{isMuted ? 'Sound Off' : 'Sound On'}</span>
+          </button>
+        )}
         {status === 'loading' && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35">
             <Loader2 className="h-10 w-10 animate-spin text-cinema-300" aria-label="Loading video" />
@@ -274,7 +304,7 @@ export function VideoPlayer({
         )}
       </div>
 
-      {(hasQualityMenu || isLive || status === 'ready') && (
+      {(layout !== 'portrait' && (hasQualityMenu || isLive || status === 'ready')) && (
         <div className="flex flex-wrap items-center gap-3">
           {isLive && <span className="inline-flex items-center gap-2 rounded-full bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300"><Radio className="h-3.5 w-3.5" /> Live</span>}
           {status === 'ready' && (
