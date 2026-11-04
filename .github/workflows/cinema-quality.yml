@@ -30,7 +30,8 @@ jobs:
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
       - name: Lint entire repository
-        run: bunx eslint . --rule 'prettier/prettier: off'
+        run: >-
+          bunx eslint . --rule 'prettier/prettier: off'
       - name: Type-check application
         run: bunx tsc --noEmit
       - name: Run tests
