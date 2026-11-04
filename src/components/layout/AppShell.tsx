@@ -17,7 +17,7 @@ export function AppShell({ route, children }: AppShellProps) {
         <footer className="hidden border-t border-white/5 px-10 py-6 lg:block">
           <div className="flex items-center justify-between gap-6 text-xs text-slate-500">
             <CinemaLogo compact />
-            <p>Experience the World of Stories.</p>
+            <div className="flex items-center gap-5"><p>Experience the World of Stories.</p><a href="/about" className="font-semibold text-slate-400 transition hover:text-white">About & Credits</a></div>
           </div>
         </footer>
       </div>
