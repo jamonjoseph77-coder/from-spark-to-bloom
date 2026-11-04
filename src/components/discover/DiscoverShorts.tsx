@@ -5,7 +5,7 @@ import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchPublishedClips, isPlayableShort, type DiscoverClip } from '@/lib/clips';
+import { fetchPublishedShorts, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 
 function getShortsErrorDescription(error: unknown): string {
@@ -34,7 +34,7 @@ function ShortsLoading() {
 
 export function DiscoverShorts() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
-  const { data, error, reload } = useAsyncData(fetchPublishedClips, []);
+  const { data, error, reload } = useAsyncData(fetchPublishedShorts, []);
   useEffect(() => {
     const refreshWhenVisible = () => { if (document.visibilityState === 'visible') reload(); };
     window.addEventListener('focus', refreshWhenVisible);
@@ -67,20 +67,20 @@ export function DiscoverShorts() {
     <section className="space-y-5" aria-label="Cinema Shorts">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300"><Play className="h-3.5 w-3.5 fill-current" /> Short-Form Video</p>
+          <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.2em] text-slate-200"><Play className="h-3.5 w-3.5 fill-current text-sky-200" /> Short-Form Video</p>
           <h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2>
           <p className="mt-1 max-w-2xl text-sm text-slate-400">Short Films, Highlights, Previews And Behind-The-Scenes Stories From Cinema Publishers.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" onClick={reload} className="inline-flex items-center gap-1.5 rounded-full border border-sky-200/15 bg-sky-300/[.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sky-100 transition hover:border-sky-200/35 hover:bg-sky-300/[.12]"><RefreshCw className="h-3 w-3" /> Refresh</button>
-          <span className="rounded-full border border-cinema-300/20 bg-cinema-300/[.07] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Up to 90 seconds</span>
-          <a href="/creator/shorts" className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-cinema-300/50 hover:text-cinema-200">Submit a short</a>
+          <span className="rounded-full border border-white/15 bg-white/[.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Up To 90 Seconds</span>
+          <a href="/creator/shorts" className="rounded-full border border-white/20 bg-white/[.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-sky-200/45 hover:bg-white/[.08]">Submit A Short</a>
         </div>
       </div>
       {!data && !error && <ShortsLoading />}
       {!data && error && <ErrorState onRetry={reload} description={getShortsErrorDescription(error)} />}
       {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Your Shorts Feed Is Ready For More" description="Newly Approved Publisher And Creator Shorts Will Appear Here. Return To This Page To Check For New Videos." />}
-      {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
+      {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
       </div>}
       {active && <ShortViewer clip={active} onClose={closeViewer} />}

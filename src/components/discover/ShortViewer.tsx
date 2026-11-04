@@ -193,7 +193,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                   {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
                   {clip.title ? (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <button type="button" onClick={openTitle} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-100 to-slate-200 px-4 py-2.5 text-xs font-extrabold text-[#07101b] shadow-[0_8px_28px_rgba(140,180,220,.22)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                      <button type="button" onClick={openTitle} className="cinema-short-viewer__watch focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
                         <ArrowUpRight className="h-3.5 w-3.5" /> Watch Now
                       </button>
                       <button type="button" onClick={() => void saveToLibrary()} disabled={!libraryReady || savingToLibrary} aria-pressed={inLibrary} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-[#0b1726]/80 px-3.5 py-2.5 text-xs font-bold text-white shadow-lg backdrop-blur-xl transition hover:border-sky-200/50 hover:bg-sky-200/10 disabled:opacity-55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">

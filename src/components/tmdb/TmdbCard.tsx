@@ -19,7 +19,7 @@ export function TmdbCard({ item, landscape = false }: { item: TmdbItem; landscap
         <span className="absolute bottom-3 left-3 right-3 flex translate-y-2 items-center justify-between text-xs font-bold text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100"><span>Explore title</span><ArrowUpRight className="h-4 w-4" /></span>
       </div>
       <div className="mt-3 px-0.5">
-        <p className="truncate text-sm font-bold text-slate-100 transition group-hover:text-sky-100">{item.title}</p>
+        <p className="truncate text-sm font-bold text-slate-100">{item.title}</p>
         <p className="mt-1 truncate text-xs text-slate-400">{typeLabel}{year ? ` · ${year}` : ''}</p>
       </div>
     </a>

@@ -44,6 +44,28 @@ export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
   return attachTitles((data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[]);
 }
 
+/**
+ * Fetch only the published short-form feed. Keeping this query scoped avoids
+ * downloading trailers and other long-form promotional assets into Shorts.
+ */
+export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
+  const { data, error } = await supabase.from('discover_clips').select('*')
+    .eq('is_published', true)
+    .in('kind', ['short', 'clip'])
+    .order('created_at', { ascending: false })
+    .order('sort_order', { ascending: true })
+    .limit(60);
+  if (error) throw error;
+  const normalized = (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[];
+  const playable = normalized.filter((clip) => {
+    const url = typeof clip.video_url === 'string' ? clip.video_url.trim() : '';
+    const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(toEmbedUrl(url)));
+    const duration = clip.duration_seconds;
+    return supported && (duration === null || (duration > 0 && duration <= 90));
+  });
+  return attachTitles(playable);
+}
+
 export function isPlayableShort(clip: DiscoverClip): boolean {
   const url = clip.video_url?.trim() ?? '';
   const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(toEmbedUrl(url)));
