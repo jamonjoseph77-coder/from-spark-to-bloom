@@ -1,4 +1,4 @@
-import { Play } from 'lucide-react';
+import { Play, Eye } from 'lucide-react';
 import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { CLIP_KIND_LABEL, formatClipDuration, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { Artwork } from '@/components/ui/Artwork';
@@ -44,7 +44,7 @@ export function ClipCard({ clip, onOpen }: ClipCardProps) {
 
       <div className="min-w-0 space-y-1">
         <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-slate-100">{clip.headline}</h3>
-        <p className="truncate text-xs text-slate-400">
+        <p className="truncate text-xs text-slate-400">{(clip.views_count ?? 0).toLocaleString()} Views <span className="mx-1 text-slate-600">·</span>
           {clip.publisher_name ? (
             <a href={publisherHref(clip.publisher_name)} className="transition hover:text-cinema-300">
               {clip.publisher_name}
