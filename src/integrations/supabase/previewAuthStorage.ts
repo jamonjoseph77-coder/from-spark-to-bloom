@@ -143,7 +143,7 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
       let res = await request('lovable-preview-auth:get', key, localValue ?? undefined);
       if (!res && firstGet) {
         await new Promise<void>((resolve) => setTimeout(resolve, RETRY_DELAY));
-        res = await request('lovable-preview-auth:get', key, local ?? undefined);
+        res = await request('lovable-preview-auth:get', key, localValue ?? undefined);
       }
       firstGet = false;
       // '' is the logout tombstone: clear the local copy too so it can't resurrect if
