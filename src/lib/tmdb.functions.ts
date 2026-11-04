@@ -12,6 +12,26 @@ const MAX_CACHED_RESPONSES = 200;
 type RequestBody = { action?: unknown; type?: unknown; list?: unknown; genre?: unknown; page?: unknown; query?: unknown; id?: unknown };
 type Upstream = { path: string; params: Record<string, string> };
 
+function sanitizeTmdbResponse(body: RequestBody, json: string): { json: string; restricted: boolean } {
+  try {
+    const parsed: unknown = JSON.parse(json);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { json, restricted: false };
+    const record = parsed as Record<string, unknown>;
+    if (body.action === "details") {
+      return { json, restricted: record.adult === true };
+    }
+    if ((body.action === "list" || body.action === "search") && Array.isArray(record.results)) {
+      const results = record.results.filter((item) =>
+        !item || typeof item !== "object" || Array.isArray(item) || (item as Record<string, unknown>).adult !== true
+      );
+      return { json: JSON.stringify({ ...record, results }), restricted: false };
+    }
+    return { json, restricted: false };
+  } catch {
+    return { json, restricted: false };
+  }
+}
+
 function asInteger(value: unknown, min: number, max: number, fallback?: number): number | null {
   if (value === undefined && fallback !== undefined) return fallback;
   if (typeof value !== "number" || !Number.isInteger(value) || value < min || value > max) return null;
@@ -60,7 +80,7 @@ function buildRequest(body: RequestBody): Upstream | { error: string } {
 
 export type TmdbCallResult =
   | { ok: true; json: string }
-  | { ok: false; reason: "not_configured" | "unavailable"; message: string };
+  | { ok: false; reason: "not_configured" | "unavailable" | "restricted"; message: string };
 
 export const callTmdbServer = createServerFn({ method: "POST" })
   .validator((input: RequestBody) => input)
@@ -76,7 +96,11 @@ export const callTmdbServer = createServerFn({ method: "POST" })
     Object.entries(built.params).forEach(([key, value]) => url.searchParams.set(key, value));
     const cacheKey = url.toString();
     const cached = responseCache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) return { ok: true, json: cached.json };
+    if (cached && cached.expiresAt > Date.now()) {
+      const safe = sanitizeTmdbResponse(body, cached.json);
+      if (safe.restricted) return { ok: false, reason: "restricted", message: "This title is not available in Cinema." };
+      return { ok: true, json: safe.json };
+    }
     if (cached) responseCache.delete(cacheKey);
 
     const headers: Record<string, string> = { Accept: "application/json" };
@@ -86,12 +110,14 @@ export const callTmdbServer = createServerFn({ method: "POST" })
       const upstream = await fetch(url, { headers, signal: AbortSignal.timeout(12_000) });
       if (!upstream.ok) return { ok: false, reason: "unavailable", message: `TMDB returned ${upstream.status}` };
       const json = await upstream.text();
+      const safe = sanitizeTmdbResponse(body, json);
       responseCache.set(cacheKey, { json, expiresAt: Date.now() + RESPONSE_CACHE_TTL_MS });
+      if (safe.restricted) return { ok: false, reason: "restricted", message: "This title is not available in Cinema." };
       if (responseCache.size > MAX_CACHED_RESPONSES) {
         const oldestKey = responseCache.keys().next().value;
         if (oldestKey) responseCache.delete(oldestKey);
       }
-      return { ok: true, json };
+      return { ok: true, json: safe.json };
     } catch (error) {
       console.error("tmdb request failed", error);
       return { ok: false, reason: "unavailable", message: "TMDB request timed out or is temporarily unavailable." };
