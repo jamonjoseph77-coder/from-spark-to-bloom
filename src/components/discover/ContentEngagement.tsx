@@ -151,7 +151,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
     <>
       {shareOnly ? (
         <>
-          {clipId && <div aria-label={`${viewsCount.toLocaleString()} views`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 text-slate-300"><Eye className="h-4 w-4" /><span className="text-[9px] font-semibold tabular-nums">{viewsCount.toLocaleString()}</span><span className="text-[7px] font-bold uppercase tracking-wider text-slate-400">Views</span></div>}
+          {clipId && <div aria-label={`${viewsCount.toLocaleString()} views`} className="cinema-social-action flex min-w-[52px] flex-col items-center justify-center gap-1 p-2 text-white"><Eye className="h-5 w-5 text-slate-100" /><span className="text-[10px] font-bold tabular-nums">{viewsCount.toLocaleString()}</span><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Views</span></div>}
           <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 text-slate-300">
             <Share2 className="h-4 w-4" /><span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Share</span>
           </button>
@@ -168,7 +168,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
         </div>
       ) : (
         <div className={`cinema-content-engagement flex flex-wrap items-center gap-1 p-1 ${compact ? 'mt-1' : 'mt-1.5'}`}>
-          {clipId && <span className="inline-flex min-h-7 items-center gap-1 rounded-full border border-white/10 bg-white/[.035] px-2 text-[10px] font-semibold tabular-nums text-slate-400" aria-label={`${viewsCount.toLocaleString()} views`}><Eye className="h-3 w-3" /> {viewsCount.toLocaleString()} Views</span>}
+          {clipId && <span className="cinema-trailer-action !min-h-7 !rounded-full !border !border-white/10 !bg-white/[.035] !px-2 !py-1 !text-[10px] !text-slate-300" aria-label={`${viewsCount.toLocaleString()} views`}><Eye className="h-3.5 w-3.5" /> {viewsCount.toLocaleString()} Views</span>}
           <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2 !py-1 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
             <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current text-sky-200' : ''}`} /> Like <span className="tabular-nums">{loading ? '…' : likeCount}</span>
           </button>
