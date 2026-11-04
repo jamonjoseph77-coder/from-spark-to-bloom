@@ -632,6 +632,7 @@ export type Database = {
           display_name?: string
           id?: string
           is_discoverable?: boolean
+          share_watching_activity?: boolean
           updated_at?: string
           user_id?: string
           username?: string
