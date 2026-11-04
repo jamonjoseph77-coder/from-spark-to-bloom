@@ -25,6 +25,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
     : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const viewRecordedRef = useRef(false);
   const [isMuted, setIsMuted] = useState(true);
   const { user } = useAuth();
   const userId = user?.id;
@@ -43,7 +44,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const inLibrary = Boolean(clip.title && watchlistIds.has(clip.title.id));
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || viewRecordedRef.current) return;
+    viewRecordedRef.current = true;
     recordDiscoverClipView(clip.id).catch((error) => {
       console.warn('Cinema Short View Could Not Be Recorded', error);
     });
