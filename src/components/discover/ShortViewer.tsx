@@ -125,7 +125,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     try {
       await addDiscoverContentComment(engagementKey, user.id, body);
       setCommentText('');
-      const refreshed = await fetchClipEngagement(clip.id);
+      const refreshed = await fetchDiscoverContentEngagement(engagementKey);
       setComments(refreshed.comments);
       notify('Your Comment Has Been Added.');
     } catch (error) {
