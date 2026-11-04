@@ -1,0 +1,1 @@
+create index if not exists favourites_title_id_idx on public.favourites (title_id); notify pgrst, 'reload schema';
