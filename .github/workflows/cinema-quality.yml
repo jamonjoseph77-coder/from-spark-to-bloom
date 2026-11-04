@@ -35,6 +35,8 @@ jobs:
           src/lib/tmdb.ts
           src/lib/tmdb.functions.ts
           src/lib/letterbox.ts
+          src/lib/discoverEngagement.ts
+          src/lib/profiles.ts
           src/lib/router.ts
           src/integrations/supabase/types.ts
           src/pages/DiscoverPage.tsx
@@ -45,6 +47,9 @@ jobs:
           src/pages/LetterboxPage.tsx
           src/components/tmdb/TmdbHero.tsx
           src/components/tmdb/TmdbCard.tsx
+          src/components/discover/ContentEngagement.tsx
+          src/components/discover/ClipCard.tsx
+          src/components/social/SharedWithYou.tsx
           src/components/player/VideoPlayer.tsx
           src/components/ui/styles.ts
           src/contexts/AuthContext.tsx

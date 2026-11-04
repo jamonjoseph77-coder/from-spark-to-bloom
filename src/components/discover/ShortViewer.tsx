@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   ArrowUpRight, BadgeCheck, BookmarkPlus, Check, Eye, EyeOff,
-  Heart, MessageCircle, Send, Share2, Volume2, VolumeX, X,
+  Heart, MessageCircle, Send, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { useToast } from '@/hooks/useToast';
 import {
-  addClipComment, fetchClipEngagement, toggleClipReaction,
-  type ClipComment, type DiscoverClip,
+  type DiscoverClip,
 } from '@/lib/clips';
+import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { navigateTo } from '@/lib/router';
 
 export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: () => void }) {
+  const engagementKey = `clip:${clip.id}`;
   const direct = isDirectVideoUrl(clip.video_url);
   const youtubeId = getYouTubeVideoId(clip.video_url);
   const embed = direct ? null : youtubeId
@@ -27,10 +29,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const userId = user?.id;
   const { watchlistIds, toggleWatchlist, ready: libraryReady } = useLibrary();
   const { notify } = useToast();
-  const [sharing, setSharing] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [comments, setComments] = useState<ClipComment[]>([]);
+  const [comments, setComments] = useState<DiscoverContentComment[]>([]);
   const [commentOpen, setCommentOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [clearScreen, setClearScreen] = useState(false);
@@ -43,7 +44,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   useEffect(() => {
     let active = true;
     setLoadingEngagement(true);
-    fetchClipEngagement(clip.id).then((engagement) => {
+    fetchDiscoverContentEngagement(engagementKey).then((engagement) => {
       if (!active) return;
       setLikeCount(engagement.reactions.length);
       setLiked(Boolean(userId && engagement.reactions.some((reaction) => reaction.user_id === userId)));
@@ -53,7 +54,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       if (active) notify('Engagement Is Temporarily Unavailable. The Video Can Still Be Enjoyed.', 'error');
     }).finally(() => { if (active) setLoadingEngagement(false); });
     return () => { active = false; };
-  }, [clip.id, userId, notify]);
+  }, [clip.id, engagementKey, userId, notify]);
 
   function toggleEmbeddedSound() {
     if (!youtubeId) return;
@@ -64,20 +65,6 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       args: [],
     }), 'https://www.youtube.com');
     setIsMuted(nextMuted);
-  }
-
-  async function shareShort() {
-    const url = `${window.location.origin}/discover#short-${clip.id}`;
-    try {
-      setSharing(true);
-      if (navigator.share) await navigator.share({ title: clip.headline, text: `Discover ${clip.headline} On Cinema.`, url });
-      else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        notify('Cinema Short Link Copied.');
-      } else notify('Sharing Is Not Available On This Browser.', 'error');
-    } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') notify('Could Not Share This Cinema Short. Please Try Again.', 'error');
-    } finally { setSharing(false); }
   }
 
   async function toggleLike() {
@@ -92,7 +79,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     setLikeCount((count) => Math.max(0, count + (wasLiked ? -1 : 1)));
     setSavingReaction(true);
     try {
-      await toggleClipReaction(clip.id, user.id, wasLiked);
+      await toggleDiscoverContentLike(engagementKey, user.id, wasLiked);
     } catch (error) {
       setLiked(wasLiked);
       setLikeCount((count) => Math.max(0, count + (wasLiked ? 1 : -1)));
@@ -136,9 +123,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     if (!body || savingComment) return;
     setSavingComment(true);
     try {
-      await addClipComment(clip.id, user.id, body);
+      await addDiscoverContentComment(engagementKey, user.id, body);
       setCommentText('');
-      const refreshed = await fetchClipEngagement(clip.id);
+      const refreshed = await fetchDiscoverContentEngagement(engagementKey);
       setComments(refreshed.comments);
       notify('Your Comment Has Been Added.');
     } catch (error) {
@@ -219,9 +206,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Comments</span>
               </button>
-              <button type="button" disabled={sharing} onClick={() => void shareShort()} aria-label="Share This Cinema Short" className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
-                <Share2 className="h-5 w-5" /><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Share</span>
-              </button>
+              <ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly />
             </div>
           </>
         )}
