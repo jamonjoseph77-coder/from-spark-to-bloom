@@ -1,11 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Heart, MessageCircle, Share2, Send, Users, Copy, Check, LoaderCircle } from 'lucide-react';
+import { Heart, Star, Share2, Send, Users, Copy, Check, LoaderCircle, BookmarkPlus, BookmarkCheck } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { loadFriendsSnapshot, type FriendEntry } from '@/lib/friends';
-import { addDiscoverContentComment, fetchDiscoverContentEngagement, shareDiscoverContent, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
+import { addDiscoverContentReview, fetchDiscoverContentEngagement, shareDiscoverContent, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { navigateTo } from '@/lib/router';
+import { fetchSavedDiscoverClipIds, setDiscoverClipSaved } from '@/lib/clips';
 
 interface ContentEngagementProps {
   contentKey: string;
@@ -14,14 +15,15 @@ interface ContentEngagementProps {
   imageUrl?: string;
   compact?: boolean;
   shareOnly?: boolean;
+  clipId?: string;
 }
 
-export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false }: ContentEngagementProps) {
+export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false, clipId }: ContentEngagementProps) {
   const { user } = useAuth();
   const { notify } = useToast();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [comments, setComments] = useState<DiscoverContentComment[]>([]);
+  const [reviews, setReviews] = useState<DiscoverContentComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentOpen, setCommentOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -33,6 +35,28 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
   const [selectedFriend, setSelectedFriend] = useState('');
   const [shareMessage, setShareMessage] = useState('');
   const [sharing, setSharing] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savingClip, setSavingClip] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!user?.id || !clipId) { setSaved(false); return () => { active = false; }; }
+    fetchSavedDiscoverClipIds(user.id).then((ids) => { if (active) setSaved(ids.includes(clipId)); })
+      .catch((error) => console.warn('Saved Cinema Shorts Could Not Be Loaded', error));
+    return () => { active = false; };
+  }, [clipId, user?.id]);
+
+  async function toggleSave() {
+    if (!clipId) return;
+    if (!user) { notify('Sign In To Save This Short To My Cinema.'); navigateTo('/sign-in'); return; }
+    if (savingClip) return;
+    const next = !saved;
+    setSaved(next);
+    setSavingClip(true);
+    try { await setDiscoverClipSaved(clipId, user.id, next); notify(next ? 'Short Saved To My Cinema.' : 'Short Removed From My Cinema.'); }
+    catch (error) { setSaved(!next); console.warn('Cinema Short Save Could Not Be Updated', error); notify('This Short Could Not Be Saved. Please Try Again.', 'error'); }
+    finally { setSavingClip(false); }
+  }
 
   async function refresh() {
     setLoading(true);
@@ -40,7 +64,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
       const result = await fetchDiscoverContentEngagement(contentKey);
       setLikeCount(result.reactions.length);
       setLiked(Boolean(user?.id && result.reactions.some((reaction) => reaction.user_id === user.id)));
-      setComments(result.comments);
+      setComments(result.reviews);
     } catch (error) {
       console.warn('Explore content engagement could not be loaded', error);
     } finally { setLoading(false); }
@@ -58,7 +82,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
   }, [contentKey, user?.id]);
 
   async function toggleLike() {
-    if (!user) { notify('Create A Cinema Account To Like This Content.'); navigateTo('/sign-up'); return; }
+    if (!user) { notify('Sign In To Like This Content.'); navigateTo('/sign-up'); return; }
     if (savingLike) return;
     const previous = liked;
     setLiked(!previous);
@@ -69,19 +93,19 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
     finally { setSavingLike(false); }
   }
 
-  async function submitComment(event: FormEvent<HTMLFormElement>) {
+  async function submitReview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!user) { notify('Create A Cinema Account To Comment.'); navigateTo('/sign-up'); return; }
+    if (!user) { notify('Sign In To Write A Review.'); navigateTo('/sign-up'); return; }
     const body = commentText.trim();
     if (!body || savingComment) return;
     setSavingComment(true);
-    try { await addDiscoverContentComment(contentKey, user.id, body); setCommentText(''); await refresh(); notify('Your Comment Has Been Added.'); }
-    catch { notify('Your Comment Could Not Be Added. Please Try Again.', 'error'); }
+    try { await addDiscoverContentComment(contentKey, user.id, body); setCommentText(''); await refresh(); notify('Your Review Has Been Added.'); }
+    catch { notify('Your Review Could Not Be Added. Please Try Again.', 'error'); }
     finally { setSavingComment(false); }
   }
 
   async function openShare() {
-    if (!user) { notify('Create A Cinema Account To Share With Friends.'); navigateTo('/sign-up'); return; }
+    if (!user) { notify('Sign In To Share With Friends.'); navigateTo('/sign-up'); return; }
     setShareOpen(true); setFriendsLoading(true);
     try { const snapshot = await loadFriendsSnapshot(user.id); setFriends(snapshot.friends); }
     catch { notify('Your Friends Could Not Be Loaded. Please Try Again.', 'error'); }
@@ -111,9 +135,15 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
   return (
     <>
       {shareOnly ? (
-        <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white">
-          <Share2 className="h-5 w-5" /><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Share</span>
-        </button>
+        <>
+          <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white">
+            <Share2 className="h-5 w-5" /><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Share</span>
+          </button>
+          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} aria-label={saved ? `Remove ${title} from saved shorts` : `Save ${title} to My Cinema`} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60">
+            {saved ? <BookmarkCheck className="h-5 w-5 text-sky-200" /> : <BookmarkPlus className="h-5 w-5" />}
+            <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">{saved ? 'Saved' : 'Save'}</span>
+          </button>}
+        </>
       ) : (
         <div className={`cinema-content-engagement flex flex-wrap items-center gap-2 p-2 ${compact ? 'mt-2' : 'mt-3'}`}>
           <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
@@ -125,6 +155,9 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
           <button type="button" onClick={() => void openShare()} className="cinema-trailer-action" aria-label={`Share ${title} with friends`}>
             <Share2 className="h-3.5 w-3.5" /> Share
           </button>
+          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} className="cinema-trailer-action" aria-label={saved ? 'Remove from saved shorts' : 'Save to My Cinema'}>
+            {saved ? <BookmarkCheck className="h-3.5 w-3.5 text-sky-200" /> : <BookmarkPlus className="h-3.5 w-3.5" />} {saved ? 'Saved' : 'Save'}
+          </button>}
         </div>
       )}
 
@@ -136,7 +169,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
             {!loading && comments.length === 0 && <p className="rounded-xl border border-white/10 bg-white/[.03] p-5 text-center text-xs text-slate-400">No Comments Yet. Start The Conversation.</p>}
             {comments.map((comment) => <article key={comment.id} className="rounded-xl border border-white/10 bg-white/[.035] p-3"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-slate-300">{comment.body}</p><p className="mt-2 text-[10px] text-slate-500">{new Date(comment.created_at).toLocaleString()}</p></article>)}
           </div>
-          <form onSubmit={(event) => void submitComment(event)} className="flex gap-2 border-t border-white/10 pt-3">
+          <form onSubmit={(event) => void submitReview(event)} className="flex gap-2 border-t border-white/10 pt-3">
             <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Add A Thought…' : 'Sign In To Comment'} className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/30 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50" />
             <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post comment" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-sky-200 text-[#07101b] disabled:opacity-50"><Send className="h-4 w-4" /></button>
           </form>
