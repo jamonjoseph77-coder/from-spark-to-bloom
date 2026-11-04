@@ -75,12 +75,7 @@ revoke select on public.discover_clip_reactions from anon;
 grant select on public.discover_clip_reactions to authenticated;
 
 drop policy if exists "Public can read comments on published clips" on public.discover_clip_comments;
-create policy "Viewers read their own clip comments"
-  on public.discover_clip_comments
-  for select to authenticated
-  using (author_id = (select auth.uid()));
-revoke select on public.discover_clip_comments from anon;
-grant select on public.discover_clip_comments to authenticated;
+revoke select on public.discover_clip_comments from public, anon, authenticated;
 
 drop policy if exists "People can read reactions on visible Letterbox posts" on public.letterbox_reactions;
 create policy "Users read their own Letterbox reactions"
