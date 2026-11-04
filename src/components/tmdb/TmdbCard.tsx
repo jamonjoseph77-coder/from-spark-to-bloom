@@ -1,5 +1,4 @@
 import { ArrowUpRight, Star } from 'lucide-react';
-import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { Artwork } from '@/components/ui/Artwork';
 import { tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
 
@@ -24,7 +23,6 @@ export function TmdbCard({ item, landscape = false }: { item: TmdbItem; landscap
         <p className="mt-1 truncate text-xs text-slate-400">{typeLabel}{year ? ` · ${year}` : ''}</p>
       </div>
     </a>
-    <ContentEngagement contentKey={`tmdb:${item.mediaType}:${item.id}`} title={item.title} href={tmdbHref(item)} imageUrl={image} compact />
     </div>
   );
 }

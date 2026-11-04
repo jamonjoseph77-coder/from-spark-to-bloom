@@ -66,7 +66,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
       }
       follows.reload();
     } catch {
-      notify('We could not update your follow. Please try again.', 'error');
+      notify('We could not update your Keep Up setting. Please try again.', 'error');
     } finally {
       setFollowBusy(false);
     }
@@ -99,7 +99,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
               {verifiedStudio?.website_url && <a href={verifiedStudio.website_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold text-cinema-200 transition hover:text-white">Official website</a>}
               {!user && (
                 <a href="/sign-in" className={BUTTON_SECONDARY}>
-                  <BellPlus className="h-4 w-4" /> Sign in to follow
+                  <BellPlus className="h-4 w-4" /> Sign in to keep up
                 </a>
               )}
               {user && (
@@ -111,7 +111,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
                   className={isFollowing ? BUTTON_SECONDARY : BUTTON_PRIMARY}
                 >
                   {isFollowing ? <BellRing className="h-4 w-4" /> : <BellPlus className="h-4 w-4" />}
-                  {isFollowing ? 'Following' : 'Follow'}
+                  {isFollowing ? 'Keeping Up' : 'Keep Up'}
                 </button>
               )}
             </div>

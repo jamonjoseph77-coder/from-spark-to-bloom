@@ -98,6 +98,7 @@ export interface Profile {
   display_name: string;
   bio: string;
   is_discoverable: boolean;
+  share_watching_activity: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -107,6 +108,7 @@ export interface ProfileInput {
   display_name: string;
   bio: string;
   is_discoverable: boolean;
+  share_watching_activity: boolean;
 }
 
 export type FriendshipStatus = 'pending' | 'accepted';

@@ -7,7 +7,7 @@ export interface ClipTitle { id: string; title: string; type: TitleType; playbac
 export interface DiscoverClip {
   id: string; kind: ClipKind; headline: string; description: string; video_url: string;
   poster_url: string; publisher_name: string; title_id: string | null; duration_seconds: number | null;
-  sort_order: number; created_at?: string; is_published: boolean; download_allowed: boolean; title: ClipTitle | null;
+  sort_order: number; created_at?: string; is_published: boolean; download_allowed: boolean; views_count?: number; title: ClipTitle | null;
 }
 export interface ClipComment { id: string; author_id: string; body: string; created_at: string; author_name: string }
 export interface ClipEngagement { reactions: { user_id: string }[]; comments: ClipComment[] }
@@ -92,6 +92,12 @@ export async function addClipComment(clipId: string, authorId: string, body: str
     clip_id: clipId, author_id: authorId, body: body.trim(), status: 'published',
   });
   if (error) throw error;
+}
+
+export async function recordDiscoverClipView(clipId: string): Promise<number> {
+  const { data, error } = await supabase.rpc('record_discover_clip_view', { p_clip_id: clipId });
+  if (error) throw error;
+  return typeof data === 'number' ? data : 0;
 }
 
 export async function fetchDownloadableClips(): Promise<DiscoverClip[]> {
