@@ -11,6 +11,7 @@ import { useLibrary } from '@/hooks/useLibrary';
 import { useToast } from '@/hooks/useToast';
 import {
   type DiscoverClip,
+  recordDiscoverClipView,
 } from '@/lib/clips';
 import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
@@ -40,6 +41,15 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const [savingComment, setSavingComment] = useState(false);
   const [savingToLibrary, setSavingToLibrary] = useState(false);
   const inLibrary = Boolean(clip.title && watchlistIds.has(clip.title.id));
+
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    recordDiscoverClipView(clip.id).catch((error) => {
+      console.warn('Cinema Short View Could Not Be Recorded', error);
+    });
+    return () => { active = false; };
+  }, [clip.id, userId]);
 
   useEffect(() => {
     let active = true;
