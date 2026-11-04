@@ -1209,3 +1209,80 @@ body {
   .cinema-short-card__watch { transition: none; }
 }
 
+/* Final Cinema finish: deep neutral obsidian, with electric blue reserved for active states. */
+:root {
+  color-scheme: dark;
+  --cinema-obsidian: #030407;
+  --cinema-carbon: #080b11;
+  --cinema-surface: #10151e;
+  --cinema-surface-raised: #171e29;
+  --cinema-electric: #087cff;
+  --cinema-electric-soft: #45a7ff;
+  --cinema-electric-bright: #00e5ff;
+  --cinema-text-primary: #f1f4f8;
+  --cinema-text-muted: #aeb9c8;
+}
+html, body, #root {
+  min-height: 100%;
+  background: #030407 !important;
+}
+body {
+  color: #f1f4f8 !important;
+  background: #030407 !important;
+  background-image:
+    radial-gradient(ellipse at 50% -28%, rgba(0, 91, 210, .075), transparent 42%),
+    linear-gradient(180deg, #030407 0%, #030407 72%, #05070b 100%) !important;
+}
+.dark {
+  --background: #030407;
+  --foreground: #f1f4f8;
+  --card: #10151e;
+  --card-foreground: #f1f4f8;
+  --popover: #111722;
+  --popover-foreground: #f1f4f8;
+  --primary: #087cff;
+  --primary-foreground: #ffffff;
+  --secondary: #171e29;
+  --secondary-foreground: #eaf0f7;
+  --muted: #111722;
+  --muted-foreground: #aeb9c8;
+  --accent: #182233;
+  --accent-foreground: #f1f4f8;
+  --border: rgba(176, 193, 216, .16);
+  --input: rgba(176, 193, 216, .2);
+  --ring: #168cff;
+  --sidebar: #080b11;
+  --sidebar-foreground: #f1f4f8;
+  --sidebar-primary: #168cff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #131c29;
+  --sidebar-accent-foreground: #f1f4f8;
+  --sidebar-border: rgba(176, 193, 216, .14);
+  --sidebar-ring: #168cff;
+}
+.cinema-app-shell {
+  color: #f1f4f8 !important;
+  background: #030407 !important;
+}
+.cinema-app-shell aside {
+  background: #070a10 !important;
+  border-color: rgba(170, 190, 218, .14) !important;
+}
+.cinema-app-shell header {
+  background: rgba(4, 6, 10, .97) !important;
+  border-color: rgba(170, 190, 218, .13) !important;
+}
+.cinema-home {
+  color: #f1f4f8 !important;
+  background: transparent !important;
+}
+.cinema-home::before {
+  background: radial-gradient(ellipse at 72% 5%, rgba(0, 102, 255, .09), transparent 43%) !important;
+}
+.cinema-home h1, .cinema-home h2, .cinema-home h3 {
+  color: #f1f4f8 !important;
+}
+.cinema-app-shell [class*="bg-ink-"] {
+  background-color: #10151e;
+}
+
