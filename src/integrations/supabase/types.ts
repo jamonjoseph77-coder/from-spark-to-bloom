@@ -197,6 +197,32 @@ export type Database = {
           },
         ]
       }
+      discover_clip_saves: {
+        Row: {
+          clip_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          clip_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          clip_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discover_clip_saves_clip_id_fkey"
+            columns: ["clip_id"]
+            isOneToOne: false
+            referencedRelation: "discover_clips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       discover_clips: {
         Row: {
           created_at: string
@@ -212,8 +238,8 @@ export type Database = {
           sort_order: number
           title_id: string | null
           updated_at: string
-          views_count: number
           video_url: string
+          views_count: number
         }
         Insert: {
           created_at?: string
@@ -229,8 +255,8 @@ export type Database = {
           sort_order?: number
           title_id?: string | null
           updated_at?: string
-          views_count?: number
           video_url?: string
+          views_count?: number
         }
         Update: {
           created_at?: string
@@ -246,8 +272,8 @@ export type Database = {
           sort_order?: number
           title_id?: string | null
           updated_at?: string
-          views_count?: number
           video_url?: string
+          views_count?: number
         }
         Relationships: [
           {
@@ -1066,7 +1092,10 @@ export type Database = {
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
       join_watch_party: { Args: { p_invite_code: string }; Returns: string }
-      record_discover_clip_view: { Args: { p_clip_id: string }; Returns: number }
+      record_discover_clip_view: {
+        Args: { p_clip_id: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
