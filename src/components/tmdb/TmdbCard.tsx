@@ -1,4 +1,5 @@
 import { ArrowUpRight, Star } from 'lucide-react';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { Artwork } from '@/components/ui/Artwork';
 import { tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
 
@@ -10,6 +11,7 @@ export function TmdbCard({ item, landscape = false }: { item: TmdbItem; landscap
     : tmdbImageUrl(item.posterPath, 'w342');
 
   return (
+    <div className="min-w-0">
     <a href={tmdbHref(item)} className="group block w-full" aria-label={`${item.title}, ${typeLabel}${year ? `, ${year}` : ''}`}>
       <div className={`relative ${landscape ? 'aspect-[16/10]' : 'aspect-[3/4]'} overflow-hidden rounded-[1.15rem] bg-ink-800 ring-1 ring-white/10 transition duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl group-hover:shadow-black/50 group-hover:ring-sky-200/45`}>
         <Artwork src={image} alt="" fallbackTitle={item.title} className="h-full w-full transition duration-700 group-hover:scale-[1.06]" />
@@ -22,5 +24,7 @@ export function TmdbCard({ item, landscape = false }: { item: TmdbItem; landscap
         <p className="mt-1 truncate text-xs text-slate-400">{typeLabel}{year ? ` · ${year}` : ''}</p>
       </div>
     </a>
+    <ContentEngagement contentKey={`tmdb:${item.mediaType}:${item.id}`} title={item.title} href={tmdbHref(item)} imageUrl={image} compact />
+    </div>
   );
 }
