@@ -1063,3 +1063,33 @@ body {
 .cinema-home :where(.text-slate-300, .text-slate-400, .text-slate-500, .text-gray-300, .text-gray-400, .text-gray-500, .text-muted-foreground) {
   color: #b8c2cf !important;
 }
+
+
+/* Cinema Copy & Green Removal — white/silver typography; keep blue as an accent only. */
+.cinema-app-shell :where(
+  [class*="text-blue-"], [class*="text-sky-"], [class*="text-cyan-"],
+  [class*="text-indigo-"], [class*="text-cinema-"], [class*="text-primary"],
+  [class*="text-emerald-"], [class*="text-green-"], [class*="text-lime-"],
+  [class*="text-teal-"]
+) {
+  color: #f1f4f8 !important;
+}
+.cinema-app-shell :where(
+  [class*="emerald-"], [class*="green-"], [class*="lime-"], [class*="teal-"]
+) {
+  color: #f1f4f8 !important;
+  background-color: #10151e !important;
+  background-image: none !important;
+  border-color: rgba(176, 193, 216, .18) !important;
+  --tw-gradient-from: #10151e var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: #10151e var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.cinema-app-shell :where(
+  [class*="text-slate-300"], [class*="text-slate-400"],
+  [class*="text-slate-500"], [class*="text-gray-300"],
+  [class*="text-gray-400"], [class*="text-gray-500"],
+  [class*="text-muted-foreground"]
+) {
+  color: #b8c2cf !important;
+}
