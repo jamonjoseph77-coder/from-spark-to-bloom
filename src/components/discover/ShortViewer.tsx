@@ -32,6 +32,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const { watchlistIds, toggleWatchlist, ready: libraryReady } = useLibrary();
   const { notify } = useToast();
   const [liked, setLiked] = useState(false);
+  const [viewsCount, setViewsCount] = useState(clip.views_count ?? 0);
   const [likeCount, setLikeCount] = useState(0);
   const [comments, setComments] = useState<DiscoverContentComment[]>([]);
   const [commentOpen, setCommentOpen] = useState(false);
@@ -44,12 +45,15 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const inLibrary = Boolean(clip.title && watchlistIds.has(clip.title.id));
 
   useEffect(() => {
+    setViewsCount(clip.views_count ?? 0);
     if (!userId || viewRecordedRef.current) return;
     viewRecordedRef.current = true;
-    recordDiscoverClipView(clip.id).catch((error) => {
+    recordDiscoverClipView(clip.id).then((count) => {
+      if (typeof count === 'number' && count > 0) setViewsCount(count);
+    }).catch((error) => {
       console.warn('Cinema Short View Could Not Be Recorded', error);
     });
-  }, [clip.id, userId]);
+  }, [clip.id, clip.views_count, userId]);
 
   useEffect(() => {
     let active = true;
@@ -185,7 +189,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <div className="min-w-0 flex-1">
                   <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-sky-200/20 bg-[#0b1726]/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-100"><BadgeCheck className="h-3.5 w-3.5" /> {clip.publisher_name || 'Cinema Publisher'}</p>
                   <h2 className="line-clamp-3 text-lg font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</h2>
-                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds` : 'A Story From Cinema'} · {(clip.views_count ?? 0).toLocaleString()} Views</p>
+                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds` : 'A Story From Cinema'}</p>
                   {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
                   {clip.title ? (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -216,7 +220,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Reviews</span>
               </button>
-              <ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly clipId={clip.id} />
+              <ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly clipId={clip.id} viewsCount={viewsCount} />
             </div>
           </>
         )}

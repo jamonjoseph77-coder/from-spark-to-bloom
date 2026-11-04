@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Heart, Star, Share2, Send, Users, Copy, Check, LoaderCircle, BookmarkPlus, BookmarkCheck } from 'lucide-react';
+import { Heart, Star, Share2, Send, Users, Copy, Check, LoaderCircle, BookmarkPlus, BookmarkCheck, Eye } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
@@ -17,9 +17,10 @@ interface ContentEngagementProps {
   shareOnly?: boolean;
   reviewOnly?: boolean;
   clipId?: string;
+  viewsCount?: number;
 }
 
-export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false, reviewOnly = false, clipId }: ContentEngagementProps) {
+export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false, reviewOnly = false, clipId, viewsCount = 0 }: ContentEngagementProps) {
   const { user } = useAuth();
   const { notify } = useToast();
   const [liked, setLiked] = useState(false);
@@ -150,33 +151,34 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
     <>
       {shareOnly ? (
         <>
-          <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white">
-            <Share2 className="h-5 w-5" /><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Share</span>
+          {clipId && <div aria-label={`${viewsCount.toLocaleString()} views`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 !border-transparent !bg-transparent !text-slate-300 !shadow-none"><Eye className="h-4 w-4" /><span className="text-[9px] font-semibold tabular-nums">{viewsCount.toLocaleString()}</span><span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Views</span></div>}
+          <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 !border-transparent !bg-transparent !text-slate-300 !shadow-none">
+            <Share2 className="h-4 w-4" /><span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">Share</span>
           </button>
-          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} aria-label={saved ? `Remove ${title} from saved shorts` : `Save ${title} to My Cinema`} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60">
-            {saved ? <BookmarkCheck className="h-5 w-5 text-sky-200" /> : <BookmarkPlus className="h-5 w-5" />}
-            <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">{saved ? 'Saved' : 'Save'}</span>
+          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} aria-label={saved ? `Remove ${title} from saved shorts` : `Save ${title} to My Cinema`} className="cinema-social-action flex flex-col items-center justify-center gap-0.5 px-1.5 py-1 !border-transparent !bg-transparent !text-slate-300 !shadow-none disabled:opacity-60">
+            {saved ? <BookmarkCheck className="h-4 w-4 text-slate-200" /> : <BookmarkPlus className="h-4 w-4" />}
+            <span className="text-[7px] font-bold uppercase tracking-wider text-slate-500">{saved ? 'Saved' : 'Save'}</span>
           </button>}
         </>
       ) : reviewOnly ? (
-        <div className="cinema-content-engagement mt-3 flex items-center gap-2 p-2">
-          <button type="button" onClick={() => setReviewOpen(true)} className="cinema-trailer-action" aria-label={`Write a review for ${title}`}>
+        <div className="cinema-content-engagement mt-2 flex items-center gap-1 p-1.5">
+          <button type="button" onClick={() => setReviewOpen(true)} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2.5 !py-1.5 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={`Write a review for ${title}`}>
             <Star className="h-3.5 w-3.5" /> Review <span className="tabular-nums">{loading ? '…' : reviews.length}</span>
           </button>
         </div>
       ) : (
-        <div className={`cinema-content-engagement flex flex-wrap items-center gap-2 p-2 ${compact ? 'mt-2' : 'mt-3'}`}>
-          <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
+        <div className={`cinema-content-engagement flex flex-wrap items-center gap-1 border border-white/[.07] bg-white/[.015] p-1.5 ${compact ? 'mt-1.5' : 'mt-2'}`}>
+          <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2.5 !py-1.5 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
             <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current text-sky-200' : ''}`} /> Like <span className="tabular-nums">{loading ? '…' : likeCount}</span>
           </button>
-          <button type="button" onClick={() => setReviewOpen(true)} className="cinema-trailer-action" aria-label={`Write a review for ${title}`}>
+          <button type="button" onClick={() => setReviewOpen(true)} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2.5 !py-1.5 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={`Write a review for ${title}`}>
             <Star className="h-3.5 w-3.5" /> Review <span className="tabular-nums">{loading ? '…' : reviews.length}</span>
           </button>
-          <button type="button" onClick={() => void openShare()} className="cinema-trailer-action" aria-label={`Share ${title} with friends`}>
+          <button type="button" onClick={() => void openShare()} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2.5 !py-1.5 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={`Share ${title} with friends`}>
             <Share2 className="h-3.5 w-3.5" /> Share
           </button>
-          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} className="cinema-trailer-action" aria-label={saved ? 'Remove from saved shorts' : 'Save to My Cinema'}>
-            {saved ? <BookmarkCheck className="h-3.5 w-3.5 text-sky-200" /> : <BookmarkPlus className="h-3.5 w-3.5" />} {saved ? 'Saved' : 'Save'}
+          {clipId && <button type="button" onClick={() => void toggleSave()} disabled={savingClip} aria-pressed={saved} className="cinema-trailer-action !rounded-full !border !border-white/10 !bg-white/[.025] !px-2.5 !py-1.5 !text-[10px] !text-slate-300 hover:!bg-white/[.06]" aria-label={saved ? 'Remove from saved shorts' : 'Save to My Cinema'}>
+            {saved ? <BookmarkCheck className="h-3.5 w-3.5 text-slate-200" /> : <BookmarkPlus className="h-3.5 w-3.5" />} {saved ? 'Saved' : 'Save'}
           </button>}
         </div>
       )}
