@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sanitizeTmdbResponse } from "@/lib/tmdb-safety";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const MEDIA_TYPES = ["movie", "tv"];
@@ -60,7 +61,7 @@ function buildRequest(body: RequestBody): Upstream | { error: string } {
 
 export type TmdbCallResult =
   | { ok: true; json: string }
-  | { ok: false; reason: "not_configured" | "unavailable"; message: string };
+  | { ok: false; reason: "not_configured" | "unavailable" | "restricted"; message: string };
 
 export const callTmdbServer = createServerFn({ method: "POST" })
   .validator((input: RequestBody) => input)
@@ -76,7 +77,11 @@ export const callTmdbServer = createServerFn({ method: "POST" })
     Object.entries(built.params).forEach(([key, value]) => url.searchParams.set(key, value));
     const cacheKey = url.toString();
     const cached = responseCache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) return { ok: true, json: cached.json };
+    if (cached && cached.expiresAt > Date.now()) {
+      const safe = sanitizeTmdbResponse(body.action, cached.json);
+      if (safe.restricted) return { ok: false, reason: "restricted", message: "This title is not available in Cinema." };
+      return { ok: true, json: safe.json };
+    }
     if (cached) responseCache.delete(cacheKey);
 
     const headers: Record<string, string> = { Accept: "application/json" };
@@ -86,12 +91,14 @@ export const callTmdbServer = createServerFn({ method: "POST" })
       const upstream = await fetch(url, { headers, signal: AbortSignal.timeout(12_000) });
       if (!upstream.ok) return { ok: false, reason: "unavailable", message: `TMDB returned ${upstream.status}` };
       const json = await upstream.text();
+      const safe = sanitizeTmdbResponse(body.action, json);
       responseCache.set(cacheKey, { json, expiresAt: Date.now() + RESPONSE_CACHE_TTL_MS });
+      if (safe.restricted) return { ok: false, reason: "restricted", message: "This title is not available in Cinema." };
       if (responseCache.size > MAX_CACHED_RESPONSES) {
         const oldestKey = responseCache.keys().next().value;
         if (oldestKey) responseCache.delete(oldestKey);
       }
-      return { ok: true, json };
+      return { ok: true, json: safe.json };
     } catch (error) {
       console.error("tmdb request failed", error);
       return { ok: false, reason: "unavailable", message: "TMDB request timed out or is temporarily unavailable." };
