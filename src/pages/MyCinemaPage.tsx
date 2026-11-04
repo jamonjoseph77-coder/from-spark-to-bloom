@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download } from 'lucide-react';
+import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -74,16 +74,17 @@ export function MyCinemaPage() {
         </div>}
       </header>
 
-      <a href="#my-downloads" className="group relative isolate flex flex-col gap-4 overflow-hidden rounded-3xl border border-cyan-100/15 bg-[radial-gradient(ellipse_at_88%_10%,rgba(105,205,190,.13),transparent_38%),linear-gradient(115deg,#101713,#090b0c_62%,#111820)] p-5 shadow-[0_18px_55px_rgba(0,0,0,.24)] transition hover:-translate-y-0.5 hover:border-cyan-100/30 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-        <span className="pointer-events-none absolute -right-8 -top-12 -z-10 h-48 w-48 rounded-full bg-emerald-200/[.07] blur-3xl" />
-        <span className="flex items-center gap-4"><span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-cyan-100/20 bg-black/45 text-cyan-100 shadow-[0_0_35px_rgba(100,190,170,.10)]"><Download className="h-7 w-7" /></span><span><span className="block text-[10px] font-black uppercase tracking-[.2em] text-cyan-100/75">Your Saved Videos</span><span className="mt-1 block text-xl font-extrabold text-white">Downloads</span><span className="mt-1 block text-xs text-slate-400">Open videos that publishers have approved for saving offline.</span></span></span>
-        <span className="inline-flex items-center gap-2 self-start rounded-full border border-cyan-100/20 bg-cyan-100/[.08] px-4 py-2.5 text-xs font-extrabold text-cyan-50 transition group-hover:bg-cyan-100/[.14] sm:self-center">View Downloads <ArrowRight className="h-4 w-4" /></span>
+      <a href="#my-downloads" className="group relative isolate flex flex-col gap-4 overflow-hidden rounded-3xl border border-sky-200/15 bg-[radial-gradient(ellipse_at_88%_10%,rgba(70,140,255,.13),transparent_38%),linear-gradient(115deg,#101a2a,#090b0c_62%,#111820)] p-5 shadow-[0_18px_55px_rgba(0,0,0,.24)] transition hover:-translate-y-0.5 hover:border-sky-200/30 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <span className="pointer-events-none absolute -right-8 -top-12 -z-10 h-48 w-48 rounded-full bg-sky-200/[.07] blur-3xl" />
+        <span className="flex items-center gap-4"><span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-sky-100/20 bg-black/45 text-sky-200 shadow-[0_0_35px_rgba(40,120,220,.10)]"><Download className="h-7 w-7" /></span><span><span className="block text-[10px] font-black uppercase tracking-[.2em] text-slate-300">Your Saved Videos</span><span className="mt-1 block text-xl font-extrabold text-white">Downloads</span><span className="mt-1 block text-xs text-slate-400">Open videos that publishers have approved for saving offline.</span></span></span>
+        <span className="inline-flex items-center gap-2 self-start rounded-full border border-sky-100/20 bg-sky-100/[.08] px-4 py-2.5 text-xs font-extrabold text-white transition group-hover:bg-sky-100/[.14] sm:self-center">View Downloads <ArrowRight className="h-4 w-4" /></span>
       </a>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-400">Signed in as {user.email}</p>
         <div className="flex flex-wrap gap-2">
           {isAdmin && <a href="/admin" className={BUTTON_SECONDARY}><ShieldCheck className="h-4 w-4" /> Content manager</a>}
           <a href="/profile" className={BUTTON_SECONDARY}><Settings2 className="h-4 w-4" /> Profile & settings</a>
+          <a href="/about" className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> About & Credits</a>
           <button type="button" onClick={() => void signOut()} className={BUTTON_SECONDARY}><LogOut className="h-4 w-4" /> Sign out</button>
         </div>
       </div>
