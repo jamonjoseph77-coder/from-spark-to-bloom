@@ -681,3 +681,140 @@ body {
 .cinema-trailer-action:focus-visible {
   outline-color: #00e5ff !important;
 }
+
+
+/* Cinema Visual Upgrade — branded obsidian welcome screen and clearer TV-home surfaces. */
+.cinema-loading-screen {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 2rem 1.5rem;
+  background: #03050a;
+  color: #eef1f5;
+}
+.cinema-loading-screen::before,
+.cinema-loading-screen::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  border: 1px solid rgba(0, 102, 255, .22);
+  border-radius: 50%;
+  transform: rotate(-17deg);
+}
+.cinema-loading-screen::before {
+  width: min(112vw, 980px);
+  height: min(40vw, 350px);
+  left: -24%;
+  top: 18%;
+  box-shadow: 0 0 24px rgba(0, 102, 255, .09), inset 0 0 24px rgba(0, 102, 255, .035);
+}
+.cinema-loading-screen::after {
+  width: min(100vw, 850px);
+  height: min(34vw, 290px);
+  right: -30%;
+  bottom: 9%;
+  border-color: rgba(0, 229, 255, .15);
+  box-shadow: 0 0 34px rgba(0, 102, 255, .08);
+}
+.cinema-loading-aura {
+  position: absolute;
+  z-index: -1;
+  width: min(78vw, 680px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 102, 255, .075), rgba(0, 229, 255, .018) 42%, transparent 70%);
+  filter: blur(10px);
+  animation: cinema-aura-breathe 5s ease-in-out infinite alternate;
+}
+.cinema-loading-content {
+  display: flex;
+  width: min(100%, 360px);
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  animation: cinema-loading-arrive .8s ease-out both;
+}
+.cinema-loading-mark {
+  display: grid;
+  width: 88px;
+  height: 88px;
+  place-items: center;
+  border: 1px solid rgba(0, 229, 255, .38);
+  border-radius: 25px;
+  background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(0,0,0,.7));
+  box-shadow: 0 0 32px rgba(0, 102, 255, .17), inset 0 1px 0 rgba(255,255,255,.09);
+}
+.cinema-loading-mark img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(0, 145, 255, .32));
+}
+.cinema-loading-content > span:not(.cinema-loading-mark) { display: block; }
+.cinema-loading-content > span + span { margin-top: -.4rem; }
+.cinema-loading-content > span:nth-child(2) { align-items: center; }
+.cinema-loading-content > span:nth-child(2) img {
+  width: min(76vw, 300px);
+  height: auto;
+}
+.cinema-loading-spinner {
+  width: 34px;
+  height: 34px;
+  margin-top: 2.25rem;
+  border: 2px solid rgba(0, 229, 255, .16);
+  border-right-color: #0066ff;
+  border-top-color: #00e5ff;
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(0, 102, 255, .18);
+  animation: cinema-loading-spin .9s linear infinite;
+}
+.cinema-loading-label {
+  margin-top: -.7rem;
+  color: #c2cbd6;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+@keyframes cinema-loading-spin { to { transform: rotate(360deg); } }
+@keyframes cinema-aura-breathe { from { opacity: .48; transform: scale(.94); } to { opacity: .9; transform: scale(1.06); } }
+@keyframes cinema-loading-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* The television interface stays neutral-black; silver text and electric blue carry hierarchy. */
+aside.fixed.inset-y-0 {
+  background: rgba(7, 10, 16, .96) !important;
+  border-color: rgba(190, 205, 224, .13) !important;
+  box-shadow: 14px 0 48px rgba(0, 0, 0, .2);
+}
+header.sticky {
+  background: rgba(5, 8, 17, .94) !important;
+  border-color: rgba(190, 205, 224, .14) !important;
+}
+aside.fixed a[aria-current="page"] {
+  color: #f5f8fc !important;
+  background: linear-gradient(100deg, rgba(0, 102, 255, .23), rgba(0, 229, 255, .075)) !important;
+  border: 1px solid rgba(0, 229, 255, .3);
+  box-shadow: 0 0 22px rgba(0, 102, 255, .1), inset 0 1px 0 rgba(255,255,255,.045);
+}
+aside.fixed a[aria-current="page"] svg { color: #55efff !important; filter: drop-shadow(0 0 7px rgba(0,229,255,.32)); }
+.cinema-home .text-slate-400 { color: #bac5d1 !important; }
+.cinema-home .text-slate-500 { color: #8f9cab !important; }
+.cinema-home .border-white\/10 { border-color: rgba(195, 210, 228, .17) !important; }
+.cinema-home .bg-white\/\[.025\] { background-color: rgba(255,255,255,.035) !important; }
+.cinema-home h2 { color: #f3f6fa; text-shadow: 0 1px 16px rgba(255,255,255,.035); }
+.cinema-home .cinema-hero,
+.cinema-home [class*="rounded-3xl"][class*="border"] {
+  box-shadow: 0 14px 38px rgba(0,0,0,.2);
+}
+.cinema-home a:focus-visible,
+aside.fixed a:focus-visible { outline-color: #00e5ff !important; }
+@media (max-width: 1023px) {
+  header.sticky { background: rgba(5, 8, 17, .97) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-loading-aura, .cinema-loading-content, .cinema-loading-spinner { animation: none !important; }
+}
