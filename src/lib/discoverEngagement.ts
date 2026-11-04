@@ -9,7 +9,8 @@ export interface DiscoverContentComment {
   author_name: string;
 }
 export interface DiscoverContentEngagement {
-  reactions: { user_id: string }[];
+  reactionCount: number;
+  likedByCurrentUser: boolean;
   comments: DiscoverContentComment[];
 }
 export interface SharedDiscoverContent {
@@ -27,17 +28,19 @@ export interface SharedDiscoverContent {
 
 export async function fetchDiscoverContentEngagement(contentKey: string): Promise<DiscoverContentEngagement> {
   const [reactionsResult, commentsResult] = await Promise.all([
-    supabase.from('discover_content_reactions').select('user_id').eq('content_key', contentKey),
+    supabase.rpc('get_discover_content_engagement', { p_content_key: contentKey }),
     supabase.from('discover_content_comments').select('id,author_id,body,created_at').eq('content_key', contentKey)
       .eq('status', 'published').order('created_at', { ascending: false }).limit(40),
   ]);
   if (reactionsResult.error) throw reactionsResult.error;
   if (commentsResult.error) throw commentsResult.error;
+  const reactionSummary = reactionsResult.data?.[0];
   const comments = commentsResult.data ?? [];
   const profiles = await fetchProfilesByIds([...new Set(comments.map((comment) => comment.author_id))]);
   const byId = new Map(profiles.map((profile) => [profile.user_id, profile]));
   return {
-    reactions: reactionsResult.data ?? [],
+    reactionCount: Number(reactionSummary?.reaction_count ?? 0),
+    likedByCurrentUser: Boolean(reactionSummary?.liked_by_current_user),
     comments: comments.map((comment) => {
       const profile = byId.get(comment.author_id);
       return { ...comment, author_name: profile?.is_discoverable ? (profile.display_name || profile.username || 'Cinema Member') : 'Cinema Member' };
@@ -52,8 +55,8 @@ export async function toggleDiscoverContentLike(contentKey: string, userId: stri
     return;
   }
   const { error } = await supabase.from('discover_content_reactions')
-    .upsert({ content_key: contentKey, user_id: userId }, { onConflict: 'content_key,user_id' });
-  if (error) throw error;
+    .insert({ content_key: contentKey, user_id: userId });
+  if (error && error.code !== '23505') throw error;
 }
 
 export async function addDiscoverContentComment(contentKey: string, authorId: string, body: string): Promise<void> {
