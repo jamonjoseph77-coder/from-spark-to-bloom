@@ -43,7 +43,7 @@ export async function saveProfile(userId: string, input: ProfileInput, exists: b
         .eq('user_id', userId)
         .select()
         .single()
-    : await supabase.from('profiles').insert({ user_id: userId, ...input }).select().single();
+    : await supabase.from('profiles').insert({ id: userId, user_id: userId, ...input }).select().single();
   if (error) throw error;
   return data as Profile;
 }
