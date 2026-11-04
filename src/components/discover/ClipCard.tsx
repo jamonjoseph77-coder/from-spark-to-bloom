@@ -1,4 +1,4 @@
-import { Play, Eye } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { CLIP_KIND_LABEL, formatClipDuration, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { Artwork } from '@/components/ui/Artwork';
