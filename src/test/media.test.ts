@@ -29,7 +29,7 @@ describe('Cinema media URL validation', () => {
   it('extracts YouTube video IDs and thumbnails from supported URL forms', () => {
     expect(getYouTubeVideoId('https://www.youtube.com/shorts/abcdefgh')).toBe('abcdefgh');
     expect(getYouTubeVideoId('https://youtu.be/abcdefgh')).toBe('abcdefgh');
-    expect(getYouTubeThumbnailUrl('https://www.youtube.com/watch?v=abcdefgh')).toContain('/vi/abcdefgh/hqdefault.jpg');
+    expect(getYouTubeThumbnailUrl('https://www.youtube.com/watch?v=abcdefgh')).toContain('/vi/abcdefgh/maxresdefault.jpg');
     expect(getYouTubeVideoId('https://youtube.evil.com/shorts/abcdefgh')).toBeNull();
   });
 
