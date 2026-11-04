@@ -1,4 +1,6 @@
 import { Play } from 'lucide-react';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
+import { isPlayableShort } from '@/lib/clips';
 import { Artwork } from '@/components/ui/Artwork';
 import { CLIP_KIND_LABEL, formatClipDuration, type DiscoverClip } from '@/lib/clips';
 import { publisherHref } from '@/lib/publishers';
@@ -58,6 +60,13 @@ export function ClipCard({ clip, onOpen }: ClipCardProps) {
           </a>
         )}
       </div>
+      <ContentEngagement
+        contentKey={`clip:${clip.id}`}
+        title={clip.headline}
+        href={isPlayableShort(clip) ? `/discover#short-${clip.id}` : '/discover'}
+        imageUrl={clip.poster_url}
+        compact
+      />
     </article>
   );
 }
