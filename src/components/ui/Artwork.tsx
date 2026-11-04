@@ -12,7 +12,7 @@ interface ArtworkProps {
 export function Artwork({ src, alt, className = '', fallbackTitle, priority = false }: ArtworkProps) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
-  if (!src || failedSrc === src) {
+  const maxResolutionFallback = src.includes('/maxresdefault.jpg') ? src.replace('/maxresdefault.jpg', '/hqdefault.jpg') : null;\n  const usingFallback = failedSrc === src && Boolean(maxResolutionFallback);\n\n  if (!src || failedSrc === `fallback:${src}` || (failedSrc === src && !maxResolutionFallback)) {
     return (
       <div
         role={alt ? 'img' : undefined}
@@ -32,7 +32,7 @@ export function Artwork({ src, alt, className = '', fallbackTitle, priority = fa
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : "auto"}
       decoding="async"
-      onError={() => setFailedSrc(src)}
+      onError={() => setFailedSrc(usingFallback ? `fallback:${src}` : src)}
       className={`object-cover ${className}`}
     />
   );
