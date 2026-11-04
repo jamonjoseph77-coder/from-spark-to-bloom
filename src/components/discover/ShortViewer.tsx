@@ -135,9 +135,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       setCommentText('');
       const refreshed = await fetchDiscoverContentEngagement(engagementKey);
       setComments(refreshed.comments);
-      notify('Your Comment Has Been Added.');
+      notify('Your Review Has Been Added.');
     } catch (error) {
-      console.error('Cinema Short Comment Could Not Be Added', error);
+      console.error('Cinema Short Review Could Not Be Added', error);
       notify('Your Comment Could Not Be Added. Please Try Again.', 'error');
     } finally { setSavingComment(false); }
   }
