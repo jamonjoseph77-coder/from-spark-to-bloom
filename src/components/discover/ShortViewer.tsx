@@ -209,17 +209,17 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
             </div>
 
             <div className={`absolute right-3 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-3 transition-opacity sm:right-4 ${commentOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
-              <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Remove Like' : 'Like This Cinema Short'} aria-pressed={liked} className="group flex min-h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl border border-sky-100/20 bg-[#07101b]/80 p-2 text-white shadow-[0_8px_28px_rgba(0,0,0,.55)] backdrop-blur-xl transition hover:border-sky-100/50 hover:bg-sky-200/10 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+              <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Remove Like' : 'Like This Cinema Short'} aria-pressed={liked} className="cinema-social-action group flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                 <Heart className={`h-5 w-5 transition ${liked ? 'fill-sky-200 text-sky-100' : 'text-white group-hover:text-sky-100'}`} />
                 <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Like</span>
               </button>
-              <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="flex min-h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl border border-white/20 bg-[#07101b]/80 p-2 text-white shadow-[0_8px_28px_rgba(0,0,0,.55)] backdrop-blur-xl transition hover:border-sky-100/50 hover:bg-sky-200/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+              <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                 <MessageCircle className="h-5 w-5" />
                 <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Comments</span>
               </button>
-              <button type="button" disabled={sharing} onClick={() => void shareShort()} aria-label="Share This Cinema Short" className="flex min-h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl border border-white/20 bg-[#07101b]/80 p-2 text-white shadow-[0_8px_28px_rgba(0,0,0,.55)] backdrop-blur-xl transition hover:border-sky-100/50 hover:bg-sky-200/10 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+              <button type="button" disabled={sharing} onClick={() => void shareShort()} aria-label="Share This Cinema Short" className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                 <Share2 className="h-5 w-5" /><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Share</span>
               </button>
             </div>
@@ -227,7 +227,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
         )}
 
         {commentOpen && !clearScreen && (
-          <section aria-label="Cinema Short Comments" className="absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] border border-sky-100/20 bg-[#080e18]/[.98] p-4 shadow-[0_24px_80px_rgba(0,0,0,.8)] backdrop-blur-2xl sm:inset-x-4">
+          <section aria-label="Cinema Short Comments" className="cinema-social-panel absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] p-4 backdrop-blur-2xl sm:inset-x-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div><p className="text-sm font-extrabold text-white">Comments <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Thoughts About The Story, From The Cinema Community.</p></div>
               <button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">Close</button>
