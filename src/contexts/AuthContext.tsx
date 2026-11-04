@@ -87,22 +87,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    // A transient auth/network failure must not leave the entire app stuck in
-    // its loading state. Keep the visitor signed out and allow the UI to render.
+    let sessionRestoreSettled = false;
+
+    // Never hold the entire Cinema interface behind an auth request that
+    // stalls indefinitely on a weak or interrupted connection.
+    const sessionRestoreTimeout = window.setTimeout(() => {
+      if (!active || sessionRestoreSettled) return;
+      sessionRestoreSettled = true;
+      console.warn("Cinema session restore timed out. Continuing in signed-out mode.");
+      setSession(null);
+      setLoading(false);
+    }, 10000);
+
     void supabase.auth.getSession()
       .then(({ data, error }) => {
-        if (!active) return;
+        if (!active || sessionRestoreSettled) return;
+        sessionRestoreSettled = true;
         if (error) console.warn("Cinema could not restore the saved session.", error.message);
         setSession(data.session ?? null);
       })
       .catch((error: unknown) => {
-        if (!active) return;
+        if (!active || sessionRestoreSettled) return;
+        sessionRestoreSettled = true;
         console.warn("Cinema could not restore the saved session.", error);
         setSession(null);
       })
       .finally(() => {
-        if (active) setLoading(false);
+        window.clearTimeout(sessionRestoreTimeout);
+        if (active && !sessionRestoreSettled) {
+          sessionRestoreSettled = true;
+          setLoading(false);
+        } else if (active) {
+          setLoading(false);
+        }
       });
+
     const { data: subscription } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
       setLoading(false);
@@ -111,6 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     return () => {
       active = false;
+      window.clearTimeout(sessionRestoreTimeout);
       subscription.subscription.unsubscribe();
     };
   }, []);
