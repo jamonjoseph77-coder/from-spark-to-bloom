@@ -10,7 +10,7 @@ export interface DiscoverClip {
   sort_order: number; created_at?: string; is_published: boolean; download_allowed: boolean; views_count?: number; title: ClipTitle | null;
 }
 export interface ClipComment { id: string; author_id: string; body: string; created_at: string; author_name: string }
-export interface ClipEngagement { reactions: { user_id: string }[]; comments: ClipComment[] }
+export interface ClipEngagement { reactionCount: number; likedByCurrentUser: boolean; comments: ClipComment[] }
 
 export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
   trailer: 'Trailer', short: 'Short', clip: 'Clip', featured: 'Featured',
@@ -74,26 +74,13 @@ export function isPlayableShort(clip: DiscoverClip): boolean {
 }
 
 export async function fetchClipEngagement(clipId: string): Promise<ClipEngagement> {
-  const [reactionsResult, commentsResult] = await Promise.all([
-    supabase.from('discover_clip_reactions').select('user_id').eq('clip_id', clipId),
-    supabase.from('discover_clip_comments').select('id,author_id,body,created_at').eq('clip_id', clipId)
-      .eq('status', 'published').order('created_at', { ascending: false }).limit(30),
-  ]);
-  if (reactionsResult.error) throw reactionsResult.error;
-  if (commentsResult.error) throw commentsResult.error;
-  const comments = commentsResult.data ?? [];
-  const authorIds = [...new Set(comments.map((comment) => comment.author_id))];
-  const profiles = authorIds.length
-    ? await supabase.from('profiles').select('user_id,display_name,username,is_discoverable').in('user_id', authorIds)
-    : { data: [], error: null };
-  if (profiles.error) throw profiles.error;
-  const byId = new Map((profiles.data ?? []).map((profile) => [profile.user_id, profile]));
+  const { data, error } = await supabase.rpc('get_discover_clip_engagement', { p_clip_id: clipId });
+  if (error) throw error;
+  const summary = data?.[0];
   return {
-    reactions: reactionsResult.data ?? [],
-    comments: comments.map((comment) => {
-      const profile = byId.get(comment.author_id);
-      return { ...comment, author_name: profile?.is_discoverable ? (profile.display_name || profile.username || 'Cinema Member') : 'Cinema Member' };
-    }),
+    reactionCount: summary?.reaction_count ?? 0,
+    likedByCurrentUser: summary?.liked_by_current_user ?? false,
+    comments: [],
   };
 }
 

@@ -89,7 +89,7 @@ export function DiscoverShorts() {
 }
 
 function PulseCard({ post }: { post: LetterboxPost }) {
-  const reactions = post.reactions?.length ?? 0;
+  const reactions = post.reactionCount;
   const comments = post.comments?.length ?? 0;
   return (
     <article className="min-w-0 rounded-2xl border border-white/10 bg-[#0a1220]/90 p-4 transition hover:border-cinema-300/25 hover:bg-white/[.035]">

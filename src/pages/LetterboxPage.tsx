@@ -13,9 +13,9 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
   const [comment, setComment] = useState('');
   const [busy, setBusy] = useState(false);
   const { notify } = useToast();
-  const liked = Boolean(userId && post.reactions?.some((reaction) => reaction.user_id === userId));
+  const liked = Boolean(userId && post.likedByCurrentUser);
   const author = post.author?.display_name || post.author?.username || 'Cinema member';
-  const count = post.reactions?.length ?? 0;
+  const count = post.reactionCount;
 
   async function sharePost() {
     const url = `${window.location.origin}/letterbox#post-${post.id}`;
@@ -91,7 +91,7 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
   const visibleFeed = useMemo(() => {
     const scoped = (feed ?? []).filter((post) => !scopedTitleId || post.title_id === scopedTitleId);
     if (feedMode === 'titles') return scoped.filter((post) => Boolean(post.title_id)).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
-    if (feedMode === 'discussed') return scoped.sort((a, b) => ((b.reactions?.length ?? 0) + (b.comments?.length ?? 0)) - ((a.reactions?.length ?? 0) + (a.comments?.length ?? 0)));
+    if (feedMode === 'discussed') return scoped.sort((a, b) => (b.reactionCount + (b.comments?.length ?? 0)) - (a.reactionCount + (a.comments?.length ?? 0)));
     return scoped.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
   }, [feed, scopedTitleId, feedMode]);
 
