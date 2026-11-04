@@ -66,6 +66,7 @@ export function ClipCard({ clip, onOpen }: ClipCardProps) {
         imageUrl={clip.poster_url}
         compact
         clipId={clip.id}
+        viewsCount={clip.views_count ?? 0}
       />
     </article>
   );

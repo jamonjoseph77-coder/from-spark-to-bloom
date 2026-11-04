@@ -209,7 +209,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
               </div>
             </div>
 
-            <div className={`absolute right-3 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-3 transition-opacity sm:right-4 ${commentOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
+            <div className={`absolute right-3 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-2 transition-opacity sm:right-4 ${commentOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
               <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Remove Like' : 'Like This Cinema Short'} aria-pressed={liked} className="cinema-social-action group flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                 <Heart className={`h-5 w-5 transition ${liked ? 'fill-sky-200 text-sky-100' : 'text-white group-hover:text-sky-100'}`} />
                 <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
