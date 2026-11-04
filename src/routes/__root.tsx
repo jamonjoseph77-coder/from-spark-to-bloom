@@ -139,12 +139,14 @@ function CinemaShell({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <main className="cinema-loading-screen" role="status" aria-live="polite">
+        <img src="/cinema-icon.png" alt="" className="cinema-loading-watermark" aria-hidden="true" />
         <div className="cinema-loading-orbit cinema-loading-orbit--one" aria-hidden="true" />
         <div className="cinema-loading-orbit cinema-loading-orbit--two" aria-hidden="true" />
         <div className="cinema-loading-content">
+          <img src="/cinema-icon.png" alt="" className="cinema-loading-brand-icon" aria-hidden="true" />
           <img src="/cinema-wordmark.png" alt="Cinema — Experience the World of Stories" className="cinema-loading-wordmark" />
           <span className="cinema-loading-spinner" aria-hidden="true" />
-          <p>Preparing Your Cinema</p>
+          <p>Loading Your Cinema...</p>
         </div>
       </main>
     );
