@@ -34,7 +34,7 @@ export function CinemaSpotlights() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
   const { data: clips, error, reload } = useAsyncData(fetchPublishedClips, []);
   const features = useMemo(
-    () => (clips ?? []).filter((clip) => STORY_FEATURE_KINDS.includes(clip.kind)).slice(0, 6),
+    () => (clips ?? []).filter((clip) => STORY_FEATURE_KINDS.includes(clip.kind)).slice(0, 12),
     [clips],
   );
 
