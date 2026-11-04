@@ -183,7 +183,7 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
 
       {reviewOpen && <Modal label={`Reviews For ${title}`} onClose={() => setReviewOpen(false)}>
         <div className="space-y-4 pt-2">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">Cinema Reviews</p><h2 className="mt-1 pr-10 text-xl font-extrabold text-white">{title}</h2><p className="mt-1 text-xs text-slate-400">Share Your View Of This Short With The Cinema Community.</p></div>
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">Cinema Reviews</p><h2 className="mt-1 pr-10 text-xl font-extrabold text-white">{title}</h2><p className="mt-1 text-xs text-slate-400">Share Your View Of This Content With The Cinema Community.</p></div>
           <div className="max-h-[42dvh] space-y-3 overflow-y-auto pr-1">
             {loading && <p className="py-5 text-center text-xs text-slate-400">Loading Reviews…</p>}
             {!loading && reviews.length === 0 && <p className="rounded-xl border border-white/10 bg-white/[.03] p-5 text-center text-xs text-slate-400">No Reviews Yet. Be The First To Share One.</p>}
