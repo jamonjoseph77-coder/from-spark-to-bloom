@@ -54,7 +54,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       if (active) notify('Engagement Is Temporarily Unavailable. The Video Can Still Be Enjoyed.', 'error');
     }).finally(() => { if (active) setLoadingEngagement(false); });
     return () => { active = false; };
-  }, [clip.id, userId, notify]);
+  }, [clip.id, engagementKey, userId, notify]);
 
   function toggleEmbeddedSound() {
     if (!youtubeId) return;
