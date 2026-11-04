@@ -65,6 +65,7 @@ export function ClipCard({ clip, onOpen }: ClipCardProps) {
         href={isPlayableShort(clip) ? `/discover#short-${clip.id}` : '/discover'}
         imageUrl={clip.poster_url}
         compact
+        clipId={clip.id}
       />
     </article>
   );
