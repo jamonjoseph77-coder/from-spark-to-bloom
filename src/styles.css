@@ -522,3 +522,106 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cinema-live-tv *, .cinema-live-tv *::before, .cinema-live-tv *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Approved Cinema Palette: Obsidian Black With Blue Slightly Leading Red. Green Is Not Used. */
+:root {
+  --cinema-obsidian: #050608;
+  --cinema-carbon: #0b0d12;
+  --cinema-surface: #121620;
+  --cinema-surface-raised: #191f2c;
+  --cinema-silver: #d8dce5;
+  --cinema-silver-bright: #f5f7fc;
+  --cinema-electric: #438fe0;
+  --cinema-electric-soft: #76b2f1;
+  --cinema-red: #e34b5e;
+  --cinema-red-soft: #f07886;
+}
+html, body, #root { background-color: #050608 !important; }
+body {
+  background-color: #050608 !important;
+  background-image:
+    radial-gradient(ellipse at 13% -12%, rgba(61, 137, 220, .105), transparent 40%),
+    radial-gradient(ellipse at 88% 3%, rgba(222, 61, 83, .075), transparent 37%),
+    radial-gradient(ellipse at 48% 112%, rgba(116, 132, 164, .045), transparent 45%),
+    linear-gradient(180deg, #090b10 0%, #050608 60%, #080a0f 100%) !important;
+}
+.dark {
+  --background: oklch(0.105 0.004 255);
+  --card: oklch(0.16 0.008 255);
+  --popover: oklch(0.175 0.008 255);
+  --primary: oklch(0.68 0.12 250);
+  --primary-foreground: oklch(0.99 0.002 255);
+  --ring: oklch(0.68 0.12 250);
+  --sidebar: oklch(0.125 0.006 255);
+  --border: oklch(0.31 0.012 255 / 78%);
+}
+.cinema-hero-light--one {
+  background: radial-gradient(ellipse, rgba(66, 143, 224, .14), rgba(66, 143, 224, .025) 46%, transparent 72%) !important;
+  opacity: .62;
+}
+.cinema-hero-light--two {
+  background: radial-gradient(ellipse, rgba(226, 69, 91, .095), rgba(226, 69, 91, .018) 46%, transparent 72%) !important;
+  opacity: .52;
+}
+.cinema-short-viewer {
+  background: #03050a !important;
+  background-image: radial-gradient(ellipse at 85% 80%, rgba(57, 119, 190, .12), transparent 42%), radial-gradient(ellipse at 8% 88%, rgba(210, 54, 78, .09), transparent 38%) !important;
+}
+.cinema-social-action {
+  min-width: 62px;
+  min-height: 62px;
+  border: 1px solid rgba(180, 199, 225, .2);
+  border-radius: 19px;
+  background: linear-gradient(155deg, rgba(24, 34, 51, .94), rgba(7, 10, 17, .92));
+  box-shadow: 0 12px 34px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter: blur(22px);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.cinema-social-action:hover {
+  transform: translateY(-2px);
+  border-color: rgba(91, 157, 231, .58);
+  background: linear-gradient(155deg, rgba(34, 54, 82, .96), rgba(12, 17, 28, .96));
+  box-shadow: 0 14px 38px rgba(18, 68, 122, .2), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.cinema-social-action[aria-pressed="true"] {
+  border-color: rgba(231, 76, 98, .58);
+  background: linear-gradient(155deg, rgba(100, 34, 49, .75), rgba(20, 13, 20, .96));
+}
+.cinema-social-panel {
+  border: 1px solid rgba(105, 157, 220, .24);
+  background: linear-gradient(145deg, rgba(12, 18, 30, .98), rgba(8, 9, 15, .98));
+  box-shadow: 0 28px 90px rgba(0,0,0,.76), 0 0 40px rgba(55, 123, 199, .08);
+}
+.cinema-trailer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .55rem;
+  margin-top: .85rem;
+}
+.cinema-trailer-action {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  border: 1px solid rgba(178, 195, 218, .17);
+  border-radius: 999px;
+  padding: .5rem .8rem;
+  background: linear-gradient(135deg, rgba(45, 83, 128, .19), rgba(130, 42, 57, .10));
+  color: #dce8f8;
+  font-size: 11px;
+  font-weight: 750;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+.cinema-trailer-action:hover {
+  transform: translateY(-1px);
+  border-color: rgba(91, 157, 231, .52);
+  background: linear-gradient(135deg, rgba(45, 108, 177, .3), rgba(154, 47, 67, .16));
+}
+.cinema-trailer-action:focus-visible { outline: 2px solid #78b6f5; outline-offset: 3px; }
+@media (max-width: 639px) {
+  .cinema-social-action { min-width: 58px; min-height: 58px; border-radius: 17px; }
+  .cinema-trailer-action { min-height: 42px; }
+}
