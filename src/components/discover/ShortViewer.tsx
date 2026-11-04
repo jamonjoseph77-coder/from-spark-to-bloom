@@ -44,11 +44,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
 
   useEffect(() => {
     if (!userId) return;
-    let active = true;
     recordDiscoverClipView(clip.id).catch((error) => {
       console.warn('Cinema Short View Could Not Be Recorded', error);
     });
-    return () => { active = false; };
   }, [clip.id, userId]);
 
   useEffect(() => {
