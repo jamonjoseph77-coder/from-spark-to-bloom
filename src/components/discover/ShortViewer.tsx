@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   ArrowUpRight, BadgeCheck, BookmarkPlus, Check, Eye, EyeOff,
-  Heart, Star, Send, Volume2, VolumeX, X,
+  Heart, MessageCircle, Send, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { ContentEngagement } from '@/components/discover/ContentEngagement';
@@ -21,9 +21,11 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const engagementKey = `clip:${clip.id}`;
   const direct = isDirectVideoUrl(clip.video_url);
   const youtubeId = getYouTubeVideoId(clip.video_url);
+  const isVimeo = /vimeo\.com/i.test(clip.video_url);
+  const fallbackEmbed = toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const embed = direct ? null : youtubeId
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
-    : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
+    : fallbackEmbed && isVimeo ? `${fallbackEmbed}&playsinline=1&api=1&player_id=cinema-short-player` : fallbackEmbed;
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const viewedClipIdRef = useRef<string | null>(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -71,13 +73,16 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   }, [clip.id, engagementKey, userId, notify]);
 
   function toggleEmbeddedSound() {
-    if (!youtubeId) return;
     const nextMuted = !isMuted;
-    iframeRef.current?.contentWindow?.postMessage(JSON.stringify({
-      event: 'command',
-      func: nextMuted ? 'mute' : 'unMute',
-      args: [],
-    }), 'https://www.youtube.com');
+    if (youtubeId) {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({
+        event: 'command', func: nextMuted ? 'mute' : 'unMute', args: [],
+      }), 'https://www.youtube.com');
+    } else if (isVimeo) {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({
+        method: 'setVolume', value: nextMuted ? 0 : 1,
+      }), 'https://player.vimeo.com');
+    }
     setIsMuted(nextMuted);
   }
 
@@ -141,23 +146,23 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       setCommentText('');
       const refreshed = await fetchDiscoverContentEngagement(engagementKey);
       setComments(refreshed.comments);
-      notify('Your Review Has Been Added.');
+      notify('Your Comment Has Been Added.');
     } catch (error) {
       console.error('Cinema Short Review Could Not Be Added', error);
-      notify('Your Review Could Not Be Added. Please Try Again.', 'error');
+      notify('Your Comment Could Not Be Added. Please Try Again.', 'error');
     } finally { setSavingComment(false); }
   }
 
   return (
-    <Modal label={clip.headline} onClose={onClose} immersive>
-      <div className="cinema-short-viewer relative flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-[#030508] sm:min-h-[min(94dvh,920px)]">
+    <Modal label={clip.headline} onClose={onClose} immersive showCloseButton={false}>
+      <div className="cinema-short-viewer relative flex h-full min-h-0 flex-col justify-center overflow-hidden bg-[#030508]">
         <div className="absolute inset-0 flex items-center justify-center bg-black">
           {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={isMuted} onMutedChange={setIsMuted} showMuteToggle showControls={!clearScreen} />}
           {embed && <iframe ref={iframeRef} src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
           {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This Video Link Is Not Supported Yet. Please Use A Cinema-Compatible Video Link.</div>}
         </div>
 
-        {youtubeId && !clearScreen && (
+        {(youtubeId || isVimeo) && !direct && !clearScreen && (
           <button
             type="button"
             onClick={toggleEmbeddedSound}
@@ -215,10 +220,10 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Like</span>
               </button>
-              <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Reviews" aria-expanded={commentOpen} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
-                <Star className="h-5 w-5" />
+              <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+                <MessageCircle className="h-5 w-5" />
                 <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Reviews</span>
+                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Comments</span>
               </button>
               <ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly clipId={clip.id} viewsCount={viewsCount} />
             </div>
@@ -226,18 +231,18 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
         )}
 
         {commentOpen && !clearScreen && (
-          <section aria-label="Cinema Short Reviews" className="cinema-social-panel absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] p-4 backdrop-blur-2xl sm:inset-x-4">
+          <section aria-label="Cinema Short Comments" className="cinema-social-panel absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] p-4 backdrop-blur-2xl sm:inset-x-4">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <div><p className="text-sm font-extrabold text-white">Reviews <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Reviews From The Cinema Community.</p></div>
+              <div><p className="text-sm font-extrabold text-white">Comments <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Join The Conversation Around This Short.</p></div>
               <button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">Close</button>
             </div>
             <div className="max-h-[25dvh] space-y-3 overflow-y-auto pr-1">
-              {loadingEngagement ? <p className="py-4 text-center text-xs text-slate-400">Loading Reviews…</p> : comments.length === 0 && <p className="py-4 text-center text-xs text-slate-400">No Reviews Yet. Be The First To Review.</p>}
+              {loadingEngagement ? <p className="py-4 text-center text-xs text-slate-400">Loading Comments…</p> : comments.length === 0 && <p className="py-4 text-center text-xs text-slate-400">No Comments Yet. Start The Conversation.</p>}
               {comments.map((comment) => <article key={comment.id} className="border-b border-white/[.07] pb-2"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 whitespace-pre-wrap break-words text-xs leading-5 text-slate-300">{comment.body}</p></article>)}
             </div>
             <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2">
-              <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Write A Review About This Story…' : 'Sign In To Write A Review'} aria-label="Your Review" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-xs text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50 focus:ring-2 focus:ring-sky-200/10" />
-              <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post Review" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sky-100 to-slate-200 text-[#07101b] transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><Send className="h-4 w-4" /></button>
+              <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Write A Comment…' : 'Sign In To Comment'} aria-label="Your Comment" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-xs text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50 focus:ring-2 focus:ring-sky-200/10" />
+              <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post Comment" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sky-100 to-slate-200 text-[#07101b] transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><Send className="h-4 w-4" /></button>
             </form>
           </section>
         )}
