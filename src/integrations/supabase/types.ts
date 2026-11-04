@@ -1096,6 +1096,14 @@ export type Database = {
         Args: { p_content_key: string }
         Returns: { reaction_count: number; liked_by_current_user: boolean }[]
       }
+      get_discover_clip_engagement: {
+        Args: { p_clip_id: string }
+        Returns: { reaction_count: number; liked_by_current_user: boolean }[]
+      }
+      get_letterbox_post_engagement: {
+        Args: { p_post_ids: string[] }
+        Returns: { post_id: string; reaction_count: number; liked_by_current_user: boolean }[]
+      }
       record_discover_clip_view: {
         Args: { p_clip_id: string }
         Returns: number
