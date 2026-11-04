@@ -100,6 +100,40 @@ export async function recordDiscoverClipView(clipId: string): Promise<number> {
   return typeof data === 'number' ? data : 0;
 }
 
+export async function fetchSavedDiscoverClipIds(userId: string): Promise<string[]> {
+  if (!userId) return [];
+  const { data, error } = await supabase.from('discover_clip_saves').select('clip_id').eq('user_id', userId);
+  if (error) throw error;
+  return (data ?? []).map((row) => row.clip_id);
+}
+
+export async function setDiscoverClipSaved(clipId: string, userId: string, saved: boolean): Promise<void> {
+  if (saved) {
+    const { error } = await supabase.from('discover_clip_saves').upsert(
+      { clip_id: clipId, user_id: userId }, { onConflict: 'clip_id,user_id' },
+    );
+    if (error) throw error;
+    return;
+  }
+  const { error } = await supabase.from('discover_clip_saves').delete().eq('clip_id', clipId).eq('user_id', userId);
+  if (error) throw error;
+}
+
+export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverClip[]> {
+  if (!userId) return [];
+  const { data, error } = await supabase.from('discover_clip_saves').select('clip_id')
+    .eq('user_id', userId).order('created_at', { ascending: false });
+  if (error) throw error;
+  const savedIds = (data ?? []).map((row) => row.clip_id);
+  if (!savedIds.length) return [];
+  const clips = await fetchPublishedClips();
+  const byId = new Map(clips.map((clip) => [clip.id, clip]));
+  return savedIds.flatMap((id) => {
+    const clip = byId.get(id);
+    return clip ? [clip] : [];
+  });
+}
+
 export async function fetchDownloadableClips(): Promise<DiscoverClip[]> {
   return (await fetchPublishedClips()).filter((clip) => clip.download_allowed && isDirectVideoUrl(clip.video_url) && !isHlsUrl(clip.video_url));
 }
