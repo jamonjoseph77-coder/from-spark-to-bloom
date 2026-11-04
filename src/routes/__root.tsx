@@ -120,6 +120,7 @@ function CinemaShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, loading } = useAuth();
   const isAccountRoute = route.name === "sign-in" || route.name === "sign-up" || route.name === "forgot-password" || route.name === "reset-password";
+  const isPublicInfoRoute = route.name === "about";
 
   // Keep plain <a href="/..."> links inside the app instead of reloading the page.
   useEffect(() => {
@@ -160,8 +161,8 @@ function CinemaShell({ children }: { children: ReactNode }) {
     );
   }
 
-  if (!user && !isAccountRoute) return <VisitorLandingPage />;
-  if (isAccountRoute) return <main className="min-h-screen bg-[#030407] text-[#f4f6fa]">{children}</main>;
+  if (!user && !isAccountRoute && !isPublicInfoRoute) return <VisitorLandingPage />;
+  if (isAccountRoute || (!user && isPublicInfoRoute)) return <main className="min-h-screen bg-[#030407] text-[#f4f6fa]">{children}</main>;
 
   return <AppShell route={route}>{children}</AppShell>;
 }
