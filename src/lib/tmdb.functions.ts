@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { sanitizeTmdbResponse } from "@/lib/tmdb-safety";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const MEDIA_TYPES = ["movie", "tv"];
@@ -12,25 +13,6 @@ const MAX_CACHED_RESPONSES = 200;
 type RequestBody = { action?: unknown; type?: unknown; list?: unknown; genre?: unknown; page?: unknown; query?: unknown; id?: unknown };
 type Upstream = { path: string; params: Record<string, string> };
 
-function sanitizeTmdbResponse(body: RequestBody, json: string): { json: string; restricted: boolean } {
-  try {
-    const parsed: unknown = JSON.parse(json);
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { json, restricted: false };
-    const record = parsed as Record<string, unknown>;
-    if (body.action === "details") {
-      return { json, restricted: record.adult === true };
-    }
-    if ((body.action === "list" || body.action === "search") && Array.isArray(record.results)) {
-      const results = record.results.filter((item) =>
-        !item || typeof item !== "object" || Array.isArray(item) || (item as Record<string, unknown>).adult !== true
-      );
-      return { json: JSON.stringify({ ...record, results }), restricted: false };
-    }
-    return { json, restricted: false };
-  } catch {
-    return { json, restricted: false };
-  }
-}
 
 function asInteger(value: unknown, min: number, max: number, fallback?: number): number | null {
   if (value === undefined && fallback !== undefined) return fallback;
