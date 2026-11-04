@@ -76,7 +76,7 @@ export function LiveTVPage() {
       {titles && channels.length > 0 && (
         <section className="space-y-4" aria-label="Live television player">
           {selected ? (
-            <div className="overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0b0f0e] p-3 shadow-[0_24px_70px_rgba(0,0,0,.34)] sm:p-4">
+            <div className="overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0b0f16] p-3 shadow-[0_24px_70px_rgba(0,0,0,.34)] sm:p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
                 <div className="min-w-0">
                   <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-sky-100"><span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_12px_rgba(125,180,255,.7)]" /> Now Selected</p>
@@ -116,13 +116,13 @@ export function LiveTVPage() {
                 const active = selected?.id === channel.id;
                 return (
                   <button key={channel.id} type="button" onClick={() => chooseChannel(channel)} disabled={!ready} aria-pressed={active} className={`group min-w-0 overflow-hidden rounded-[1.35rem] border text-left transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 disabled:cursor-not-allowed disabled:opacity-75 ${active ? 'border-sky-200/55 bg-sky-100/[.08] shadow-[0_12px_36px_rgba(50,130,230,.12)]' : 'border-white/10 bg-white/[.025] hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[.05]'}`}>
-                    <div className="relative aspect-video overflow-hidden bg-[#101514]">
+                    <div className="relative aspect-video overflow-hidden bg-[#10151e]">
                       <Artwork src={channel.backdrop_url || channel.poster_url} alt="" fallbackTitle={channel.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
                       <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
                       <span className={`absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[9px] font-extrabold uppercase tracking-wider backdrop-blur-md ${ready ? 'border-sky-100/25 bg-black/65 text-sky-100' : 'border-white/15 bg-black/65 text-slate-300'}`}>
                         {ready ? <><Radio className="h-3 w-3" /> Stream Linked</> : 'Coming Soon'}
                       </span>
-                      {active && <span className="absolute bottom-2 right-2 rounded-full bg-sky-200 px-2 py-1 text-[9px] font-black uppercase text-[#07100d]">Selected</span>}
+                      {active && <span className="absolute bottom-2 right-2 rounded-full bg-sky-200 px-2 py-1 text-[9px] font-black uppercase text-[#07101b]">Selected</span>}
                     </div>
                     <div className="space-y-1 p-3">
                       <p className="line-clamp-1 text-sm font-extrabold text-white">{channel.title}</p>
