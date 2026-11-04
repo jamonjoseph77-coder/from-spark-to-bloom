@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import { Film, Play } from 'lucide-react';
+import { Film, Play, Share2, MessageCircle } from 'lucide-react';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
+import { useToast } from '@/hooks/useToast';
 import { fetchDiscoverTrailers, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 
 type Filter = 'all' | 'movie' | 'tv';
@@ -11,6 +12,20 @@ type Filter = 'all' | 'movie' | 'tv';
 export function OfficialTrailers() {
   const [filter, setFilter] = useState<Filter>('all');
   const [active, setActive] = useState<TmdbTrailer | null>(null);
+  const [sharingId, setSharingId] = useState<number | null>(null);
+  const { notify } = useToast();
+
+  async function shareTrailer(item: TmdbTrailer) {
+    const url = `https://www.youtube.com/watch?v=${item.videoKey}`;
+    try {
+      setSharingId(item.id);
+      if (navigator.share) await navigator.share({ title: `${item.title} Official Trailer`, text: `Watch ${item.title} on Cinema.`, url });
+      else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url); notify('Trailer Link Copied. Share It With Your Friends.'); }
+      else notify('Sharing Is Not Available On This Browser.', 'error');
+    } catch (error) {
+      if (error instanceof Error && error.name !== 'AbortError') notify('Could Not Share This Trailer. Please Try Again.', 'error');
+    } finally { setSharingId(null); }
+  }
   const { data: trailers, error, reload } = useAsyncData(() => fetchDiscoverTrailers(6), []);
 
   const visible = useMemo(
@@ -43,6 +58,14 @@ export function OfficialTrailers() {
               <div className="mt-3 flex items-start gap-3">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-300/10 text-cinema-200"><Film className="h-4 w-4" /></span>
                 <div className="min-w-0"><h3 className="truncate text-sm font-bold text-white">{item.title}</h3><p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{item.videoName}</p><p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">{item.mediaType === 'movie' ? 'Movie' : 'Series'}{item.releaseDate ? ` · ${item.releaseDate.slice(0, 4)}` : ''}</p></div>
+              </div>
+              <div className="cinema-trailer-actions">
+                <button type="button" onClick={() => void shareTrailer(item)} disabled={sharingId === item.id} className="cinema-trailer-action disabled:opacity-50" aria-label={`Share ${item.title} trailer with friends`}>
+                  <Share2 className="h-3.5 w-3.5" /> Share With Friends
+                </button>
+                <button type="button" onClick={() => setActive(item)} className="cinema-trailer-action" aria-label={`Open ${item.title} trailer conversation`}>
+                  <MessageCircle className="h-3.5 w-3.5" /> Watch & Discuss
+                </button>
               </div>
             </article>
           ))}
