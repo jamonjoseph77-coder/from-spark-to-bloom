@@ -1088,6 +1088,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_discover_content_engagement: {
+        Args: { p_content_key: string }
+        Returns: {
+          liked_by_current_user: boolean
+          reaction_count: number
+        }[]
+      }
       is_cinema_admin: { Args: never; Returns: boolean }
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
