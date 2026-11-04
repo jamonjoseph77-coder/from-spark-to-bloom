@@ -38,8 +38,38 @@ function readBrokerReply(data: unknown, requestId: string): BrokerReply | null {
  * On a Lovable preview surface, broker the auth session to the editor over
  * postMessage so the project's preview surfaces share one login; else localStorage.
  */
+function createSafeLocalStorage(): PreviewAuthStorage {
+  const memory = new Map<string, string>();
+  return {
+    getItem: (key) => {
+      try {
+        return window.localStorage.getItem(key);
+      } catch {
+        return memory.get(key) ?? null;
+      }
+    },
+    setItem: (key, value) => {
+      try {
+        window.localStorage.setItem(key, value);
+        memory.delete(key);
+      } catch {
+        memory.set(key, value);
+      }
+    },
+    removeItem: (key) => {
+      memory.delete(key);
+      try {
+        window.localStorage.removeItem(key);
+      } catch {
+        // The in-memory fallback is already cleared.
+      }
+    },
+  };
+}
+
 export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   if (typeof window === 'undefined') return undefined;
+  const local = createSafeLocalStorage();
   const host = location.hostname;
   const PREVIEW_ZONES = ['lovableproject.com', 'lovableproject-dev.com', 'lovable.app', 'gpt-eng.com', 'gptengineer.run'];
   const onPreviewZone = PREVIEW_ZONES.some((z) => host === z || host.endsWith('.' + z));
@@ -54,7 +84,7 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   // detached frame has no parent and not every browser implements ancestorOrigins.
   const parentWindow = window.parent as Window | null;
   const framed = parentWindow !== null && parentWindow !== window;
-  if (!projectId || !framed) return localStorage;
+  if (!projectId || !framed) return local;
 
   // Post only to the real editor ancestor, validated as a Lovable origin, so the
   // session token can never reach an untrusted embedder.
@@ -98,7 +128,7 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   let firstGet = true;
   const RETRY_DELAY = 250;
   // Blocked third-party storage throws here; seeding must not break broker reads.
-  const readLocal = (key: string): string | null | undefined => { try { return localStorage.getItem(key); } catch { return undefined; } };
+  const readLocal = (key: string): string | null => local.getItem(key);
 
   return {
     getItem: async (key) => {
@@ -114,29 +144,27 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
       // the broker later goes silent. A null value means never-synced -> keep local.
       if (res?.ok && res.value !== null) {
         if (res.value === '') {
-          if (local !== undefined && readLocal(key) === local) localStorage.removeItem(key);
+          if (readLocal(key) === local) local.removeItem(key);
           return null;
         }
         // Seed this origin so a new tab, whose editor holds no session, stays signed in.
-        if (local === null && readLocal(key) === null) {
-          try { localStorage.setItem(key, res.value); } catch { /* storage full: still return the editor's session */ }
-        }
+        if (local === null && readLocal(key) === null) local.setItem(key, res.value);
         return res.value;
       }
-      return localStorage.getItem(key);
+      return readLocal(key);
     },
     setItem: (key, value) => {
-      localStorage.setItem(key, value);
+      local.setItem(key, value);
       return request('lovable-preview-auth:set', key, value).then((res) => {
         if (res?.ok && res.value !== null && localStorage.getItem(key) === value) {
-          if (res.value === '') localStorage.removeItem(key);
-          else localStorage.setItem(key, res.value);
+          if (res.value === '') local.removeItem(key);
+          else local.setItem(key, res.value);
         }
       });
     },
     removeItem: (key) => {
       const local = readLocal(key);
-      localStorage.removeItem(key);
+      local.removeItem(key);
       return request('lovable-preview-auth:remove', key, local ?? undefined).then(() => {});
     },
   };
