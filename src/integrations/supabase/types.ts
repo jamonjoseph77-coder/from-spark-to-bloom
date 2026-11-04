@@ -1092,6 +1092,10 @@ export type Database = {
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
       join_watch_party: { Args: { p_invite_code: string }; Returns: string }
+      get_discover_content_engagement: {
+        Args: { p_content_key: string }
+        Returns: { reaction_count: number; liked_by_current_user: boolean }[]
+      }
       record_discover_clip_view: {
         Args: { p_clip_id: string }
         Returns: number
