@@ -51,9 +51,9 @@ export function MobileNav({ route }: MobileNavProps) {
         href="/movies"
         aria-label="Cinema"
         aria-current={cinemaActive ? 'page' : undefined}
-        className={`absolute left-1/2 top-[-10px] flex h-[60px] w-[60px] -translate-x-1/2 items-center justify-center rounded-[21px] border border-white/[.14] bg-[#080c14] shadow-[0_6px_22px_rgba(0,0,0,.48)] transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${cinemaActive ? 'ring-1 ring-[#168cff]/55' : 'hover:border-white/25'}`}
+        className={`absolute left-1/2 top-[-8px] flex h-[60px] w-[60px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${cinemaActive ? 'ring-2 ring-[#168cff]/65' : 'hover:scale-[1.04]'}`}
       >
-        <CinemaLogo compact className="!h-[48px] !w-[48px] rounded-[16px] object-cover" />
+        <CinemaLogo compact className="!h-[52px] !w-[52px] rounded-full border border-white/[.16] bg-[#080c14] object-cover shadow-[0_5px_18px_rgba(0,0,0,.42)]" />
         <span className="sr-only">Cinema</span>
       </a>
     </nav>
