@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, MessageCircle, Play, RefreshCw, Sparkles } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -100,6 +101,7 @@ function PulseCard({ post }: { post: LetterboxPost }) {
       <p className="mt-3 line-clamp-4 whitespace-pre-wrap text-sm leading-6 text-slate-300">{post.body}</p>
       {post.title && <a href={`/title/${post.title.id}`} className="mt-3 flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-2.5 transition hover:border-cinema-300/30"><span className="h-12 w-9 shrink-0 overflow-hidden rounded-lg bg-ink-800">{post.title.poster_url && <img src={post.title.poster_url} alt="" className="h-full w-full object-cover" />}</span><span className="min-w-0 flex-1"><span className="block text-[10px] font-bold uppercase tracking-wider text-cinema-300">About this title</span><span className="block truncate text-xs font-bold text-white">{post.title.title}</span></span><ArrowRight className="h-4 w-4 text-slate-500" /></a>}
       <div className="mt-3 flex items-center gap-4 text-[11px] text-slate-500"><span>{reactions} {reactions === 1 ? 'Reaction' : 'Reactions'}</span><span>{comments} {comments === 1 ? 'Comment' : 'Comments'}</span><a href="/friends" className="ml-auto font-semibold text-cinema-200 hover:text-white">Open community <ArrowRight className="inline h-3 w-3" /></a></div>
+      <ContentEngagement contentKey={`letterbox:${post.id}`} title={`Letterbox: ${post.body.slice(0, 100)}`} href={`/letterbox#post-${post.id}`} imageUrl={post.title?.poster_url || ''} compact />
     </article>
   );
 }
