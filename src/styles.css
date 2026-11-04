@@ -411,7 +411,7 @@ body { color: #eef1f5; }
 .cinema-home .text-slate-400 { color: #aeb8c4; }
 .cinema-home .text-slate-500 { color: #8793a1; }
 .cinema-home .border-white\/10 { border-color: rgba(205, 216, 228, .15); }
-.cinema-home .bg-white\/[.025] { background-color: rgba(196, 207, 220, .045); }
+.cinema-home [class~="bg-white/[.025]"] { background-color: rgba(196, 207, 220, .045); }
 .cinema-home a, .cinema-home button { -webkit-tap-highlight-color: transparent; }
 .cinema-home svg { flex-shrink: 0; }
 .cinema-home .group:hover > span:first-child { filter: brightness(1.16); }
