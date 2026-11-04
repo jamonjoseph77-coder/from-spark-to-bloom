@@ -51,6 +51,7 @@ export function VideoPlayer({
   const [levels, setLevels] = useState<QualityLevel[]>([]);
   const [quality, setQuality] = useState(-1);
   const [volume, setVolume] = useState(0.85);
+  const lastAudibleVolumeRef = useRef(0.85);
   const [isMuted, setIsMuted] = useState(muted);
   const [retryCount, setRetryCount] = useState(0);
 
@@ -65,8 +66,9 @@ export function VideoPlayer({
     video.muted = nextMuted;
     setIsMuted(nextMuted);
     if (!nextMuted && video.volume === 0) {
-      video.volume = 0.85;
-      setVolume(0.85);
+      const restoreVolume = Math.min(1, Math.max(0.01, lastAudibleVolumeRef.current));
+      video.volume = restoreVolume;
+      setVolume(restoreVolume);
     }
     onMutedChange?.(nextMuted);
     if (!nextMuted && video.paused) void video.play().catch(() => undefined);
@@ -223,15 +225,16 @@ export function VideoPlayer({
   }
 
   function handleVolumeChange(event: ChangeEvent<HTMLInputElement>) {
-    const next = Number(event.target.value);
+    const next = Math.min(1, Math.max(0, Number(event.target.value)));
     setVolume(next);
-    if (videoRef.current) {
-      videoRef.current.volume = next;
-      if (next > 0 && videoRef.current.muted) {
-        videoRef.current.muted = false;
-        setIsMuted(false);
-        onMutedChange?.(false);
-      }
+    if (next > 0) lastAudibleVolumeRef.current = next;
+    const video = videoRef.current;
+    if (video) {
+      video.volume = next;
+      if (next > 0 && video.muted) video.muted = false;
+      const nextMuted = video.muted || next === 0;
+      setIsMuted(nextMuted);
+      if (isMuted !== nextMuted) onMutedChange?.(nextMuted);
     }
   }
 
@@ -269,8 +272,13 @@ export function VideoPlayer({
           }}
           onTimeUpdate={handleTimeUpdate}
           onVolumeChange={(event) => {
-            const nextVolume = event.currentTarget.muted ? 0 : event.currentTarget.volume;
+            const video = event.currentTarget;
+            const nextVolume = video.volume;
+            const nextMuted = video.muted || nextVolume === 0;
+            if (nextVolume > 0) lastAudibleVolumeRef.current = nextVolume;
             setVolume((current) => Math.abs(current - nextVolume) > 0.03 ? nextVolume : current);
+            setIsMuted(nextMuted);
+            if (isMuted !== nextMuted) onMutedChange?.(nextMuted);
           }}
           onPause={(event) => {
             setStatus('ready');
