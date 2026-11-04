@@ -26,7 +26,7 @@ export function TitleCard({ title, progress, landscape = false }: TitleCardProps
         {progress !== undefined && <div className="absolute inset-x-0 bottom-0 h-1.5 bg-white/20" role="progressbar" aria-label={`Viewing progress for ${title.title}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}><div className="h-full rounded-r-full bg-cinema-300 shadow-[0_0_12px_rgba(56,189,248,.7)]" style={{ width: `${Math.max(0, Math.min(100, progress * 100))}%` }} /></div>}
       </div>
       <div className="mt-3 space-y-1 px-0.5">
-        <p className="truncate text-sm font-bold text-slate-100 transition group-hover:text-cinema-100">{title.title}</p>
+        <p className="truncate text-sm font-bold text-slate-100">{title.title}</p>
         <p className="truncate text-xs font-medium text-slate-400">{TITLE_TYPE_LABELS[title.type]}{title.release_year ? ` · ${title.release_year}` : ''}</p>
       </div>
     </a>
