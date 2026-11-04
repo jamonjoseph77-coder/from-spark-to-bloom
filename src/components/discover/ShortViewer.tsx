@@ -25,7 +25,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
     : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const viewRecordedRef = useRef(false);
+  const viewedClipIdRef = useRef<string | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const { user } = useAuth();
   const userId = user?.id;
@@ -46,8 +46,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
 
   useEffect(() => {
     setViewsCount(clip.views_count ?? 0);
-    if (!userId || viewRecordedRef.current) return;
-    viewRecordedRef.current = true;
+    if (viewedClipIdRef.current === clip.id) return;
+    viewedClipIdRef.current = clip.id;
     recordDiscoverClipView(clip.id).then((count) => {
       if (typeof count === 'number' && count > 0) setViewsCount(count);
     }).catch((error) => {
