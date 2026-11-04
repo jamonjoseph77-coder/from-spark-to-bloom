@@ -62,8 +62,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     setLoadingEngagement(true);
     fetchDiscoverContentEngagement(engagementKey).then((engagement) => {
       if (!active) return;
-      setLikeCount(engagement.reactions.length);
-      setLiked(Boolean(userId && engagement.reactions.some((reaction) => reaction.user_id === userId)));
+      setLikeCount(engagement.reactionCount);
+      setLiked(Boolean(userId && engagement.likedByCurrentUser));
       setComments(engagement.comments);
     }).catch((error) => {
       console.warn('Cinema Short Engagement Is Temporarily Unavailable', error);
