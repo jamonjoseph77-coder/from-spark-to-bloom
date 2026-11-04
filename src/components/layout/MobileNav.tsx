@@ -1,4 +1,4 @@
-import { Compass, Home, Clapperboard, Film, Trophy } from 'lucide-react';
+import { Compass, Home, Clapperboard, Film, Trophy, TvMinimalPlay } from 'lucide-react';
 import { navKeyOf } from '@/components/layout/navigation';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import type { Route } from '@/lib/router';
@@ -9,6 +9,7 @@ const ITEMS = [
   { key: 'home', label: 'Home', href: '/', icon: Home },
   { key: 'discover', label: 'Explore', href: '/discover', icon: Compass },
   { key: 'cinema', label: 'Cinema', href: '/movies', icon: Film },
+  { key: 'live-tv', label: 'Live TV', href: '/live-tv', icon: TvMinimalPlay },
   { key: 'sports', label: 'Sports', href: '/sports', icon: Trophy },
   { key: 'my-cinema', label: 'My Cinema', href: '/my-cinema', icon: Clapperboard },
 ];
@@ -17,7 +18,7 @@ export function MobileNav({ route }: MobileNavProps) {
   const activeKey = route.name === 'browse' && route.kind === 'movie' ? 'cinema' : navKeyOf(route);
   return (
     <nav aria-label="Primary" className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[.08] bg-[#030407]/[.98] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_32px_rgba(0,0,0,.38)] backdrop-blur-2xl lg:hidden">
-      <ul className="mx-auto grid h-[76px] max-w-xl grid-cols-5 items-center gap-0 px-1">
+      <ul className="mx-auto grid h-[76px] max-w-xl grid-cols-6 items-center gap-0 px-1">
         {ITEMS.map((item) => {
           const active = item.key === activeKey;
           const Icon = item.icon;
