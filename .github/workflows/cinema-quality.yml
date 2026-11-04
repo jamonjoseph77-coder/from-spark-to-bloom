@@ -97,3 +97,27 @@ jobs:
         run: bun run test
       - name: Build production bundle
         run: bun run build
+      - name: Smoke-test Vite dev server and Cinema stylesheet
+        run: |
+          bun run dev -- --host 127.0.0.1 --port 4173 --strictPort > /tmp/cinema-vite-dev.log 2>&1 &
+          DEV_PID=$!
+          trap 'kill "$DEV_PID" 2>/dev/null || true' EXIT
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /tmp/cinema-dev-home.html; then
+              break
+            fi
+            sleep 1
+          done
+
+          if [ ! -s /tmp/cinema-dev-home.html ]; then
+            cat /tmp/cinema-vite-dev.log
+            exit 1
+          fi
+
+          if ! curl --fail --silent 'http://127.0.0.1:4173/src/styles.css?direct' > /tmp/cinema-dev-styles.css; then
+            cat /tmp/cinema-vite-dev.log
+            exit 1
+          fi
+
+          grep -q 'cinema-app-shell' /tmp/cinema-dev-styles.css
