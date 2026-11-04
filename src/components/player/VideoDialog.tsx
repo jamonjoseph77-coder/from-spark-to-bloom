@@ -17,13 +17,13 @@ export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) 
         <div className="rounded-2xl border border-sky-300/15 bg-gradient-to-r from-sky-400/[.08] to-white/[.02] px-4 py-3"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200">Cinema · Official video</p><p className="mt-1 text-sm font-semibold text-white">{heading}</p></div>
         {direct && <VideoPlayer src={url} title={label} />}
         {embedUrl && (
-          <div className="aspect-video overflow-hidden rounded-2xl bg-black ring-1 ring-white/10">
+          <div className="relative aspect-video min-h-[220px] overflow-hidden rounded-2xl bg-black ring-1 ring-white/10">
             <iframe
               src={embedUrl}
               loading="eager"
               title={label}
-              className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+              className="absolute inset-0 h-full w-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share"
               allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin"
             />

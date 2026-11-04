@@ -1,4 +1,4 @@
-import { Compass, Home, Clapperboard, Trophy, TvMinimalPlay, type LucideIcon } from 'lucide-react';
+import { Compass, Home, Clapperboard, Trophy, TvMinimalPlay, Users, type LucideIcon } from 'lucide-react';
 import { navKeyOf } from '@/components/layout/navigation';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import type { Route } from '@/lib/router';
@@ -9,6 +9,7 @@ type NavItem = { key: string; label: string; href: string; icon: LucideIcon };
 const LEFT_ITEMS = [
   { key: 'home', label: 'Home', href: '/', icon: Home },
   { key: 'discover', label: 'Explore', href: '/discover', icon: Compass },
+  { key: 'friends', label: 'Friends', href: '/friends', icon: Users },
 ];
 
 const RIGHT_ITEMS = [
