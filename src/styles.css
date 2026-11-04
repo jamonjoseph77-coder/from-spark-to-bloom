@@ -1287,3 +1287,5 @@ body {
   background-color: #10151e;
 }
 
+
+/* Vite stylesheet smoke test regression guard: keep this file parseable in dev mode. */
