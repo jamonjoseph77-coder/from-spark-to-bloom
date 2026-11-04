@@ -13,9 +13,10 @@ interface ContentEngagementProps {
   href: string;
   imageUrl?: string;
   compact?: boolean;
+  shareOnly?: boolean;
 }
 
-export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false }: ContentEngagementProps) {
+export function ContentEngagement({ contentKey, title, href, imageUrl = '', compact = false, shareOnly = false }: ContentEngagementProps) {
   const { user } = useAuth();
   const { notify } = useToast();
   const [liked, setLiked] = useState(false);
@@ -109,17 +110,23 @@ export function ContentEngagement({ contentKey, title, href, imageUrl = '', comp
 
   return (
     <>
-      <div className={`cinema-content-engagement flex flex-wrap items-center gap-2 p-2 ${compact ? 'mt-2' : 'mt-3'}`}>
-        <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
-          <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current text-sky-200' : ''}`} /> Like <span className="tabular-nums">{loading ? '…' : likeCount}</span>
+      {shareOnly ? (
+        <button type="button" onClick={() => void openShare()} aria-label={`Share ${title} with friends`} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white">
+          <Share2 className="h-5 w-5" /><span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Share</span>
         </button>
-        <button type="button" onClick={() => setCommentOpen(true)} className="cinema-trailer-action" aria-label={`Comment on ${title}`}>
-          <MessageCircle className="h-3.5 w-3.5" /> Comment <span className="tabular-nums">{loading ? '…' : comments.length}</span>
-        </button>
-        <button type="button" onClick={() => void openShare()} className="cinema-trailer-action" aria-label={`Share ${title} with friends`}>
-          <Share2 className="h-3.5 w-3.5" /> Share
-        </button>
-      </div>
+      ) : (
+        <div className={`cinema-content-engagement flex flex-wrap items-center gap-2 p-2 ${compact ? 'mt-2' : 'mt-3'}`}>
+          <button type="button" onClick={() => void toggleLike()} disabled={savingLike} aria-pressed={liked} className="cinema-trailer-action" aria-label={liked ? 'Unlike this content' : 'Like this content'}>
+            <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current text-sky-200' : ''}`} /> Like <span className="tabular-nums">{loading ? '…' : likeCount}</span>
+          </button>
+          <button type="button" onClick={() => setCommentOpen(true)} className="cinema-trailer-action" aria-label={`Comment on ${title}`}>
+            <MessageCircle className="h-3.5 w-3.5" /> Comment <span className="tabular-nums">{loading ? '…' : comments.length}</span>
+          </button>
+          <button type="button" onClick={() => void openShare()} className="cinema-trailer-action" aria-label={`Share ${title} with friends`}>
+            <Share2 className="h-3.5 w-3.5" /> Share
+          </button>
+        </div>
+      )}
 
       {commentOpen && <Modal label={`Comments On ${title}`} onClose={() => setCommentOpen(false)}>
         <div className="space-y-4 pt-2">
