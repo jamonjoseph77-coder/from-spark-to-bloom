@@ -183,7 +183,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <div className="min-w-0 flex-1">
                   <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-sky-200/20 bg-[#0b1726]/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-100"><BadgeCheck className="h-3.5 w-3.5" /> {clip.publisher_name || 'Cinema Publisher'}</p>
                   <h2 className="line-clamp-3 text-lg font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</h2>
-                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds · ${(clip.views_count ?? 0).toLocaleString()} Views` : 'A Story From Cinema'}</p>
+                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds` : 'A Story From Cinema'} · {(clip.views_count ?? 0).toLocaleString()} Views</p>
                   {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
                   {clip.title ? (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
