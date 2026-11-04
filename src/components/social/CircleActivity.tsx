@@ -74,7 +74,7 @@ export function CircleActivity({ friendIds }: CircleActivityProps) {
                 </a>
               )}
               <div className="mt-4 flex items-center gap-4 border-t border-white/5 pt-3 text-xs text-slate-400">
-                <span className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-cinema-300" /> {post.reactions?.length ?? 0}</span>
+                <span className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-cinema-300" /> {post.reactionCount}</span>
                 <span className="inline-flex items-center gap-1.5"><MessageCircle className="h-3.5 w-3.5 text-cinema-300" /> {post.comments?.length ?? 0}</span>
                 <a href={`/friends#post-${post.id}`} className="ml-auto font-semibold text-cinema-200 hover:text-white">Open conversation</a>
               </div>
