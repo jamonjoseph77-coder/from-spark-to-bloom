@@ -599,3 +599,85 @@ body {
 }
 
 /* Intentionally unchanged: page background, cards, panels, player and neutral surfaces. */
+
+
+/* Cinema Obsidian Black + Electric Cyan — final palette override.
+   Keep the canvas genuinely neutral-black; reserve neon colour for interaction. */
+:root {
+  color-scheme: dark;
+  --cinema-obsidian: #050811;
+  --cinema-carbon: #0b0f18;
+  --cinema-surface: #121620;
+  --cinema-surface-raised: #1a1f2c;
+  --cinema-electric: #00e5ff;
+  --cinema-electric-soft: #42efff;
+  --cinema-electric-bright: #8af7ff;
+  --cinema-cobalt: #0066ff;
+  --cinema-text-primary: #eaeff8;
+  --cinema-text-muted: #8f9fb6;
+}
+html, body, #root {
+  min-height: 100%;
+  background: #050811 !important;
+}
+body {
+  background: #050811 !important;
+  background-image: none !important;
+  color: #eaeff8 !important;
+}
+.dark {
+  --background: oklch(0.105 0.006 260);
+  --foreground: oklch(0.95 0.012 260);
+  --card: oklch(0.16 0.009 260);
+  --card-foreground: oklch(0.95 0.012 260);
+  --popover: oklch(0.17 0.01 260);
+  --popover-foreground: oklch(0.95 0.012 260);
+  --primary: #00e5ff;
+  --primary-foreground: #001018;
+  --secondary: #1a1f2c;
+  --secondary-foreground: #eaeff8;
+  --muted: #121620;
+  --muted-foreground: #8f9fb6;
+  --accent: #151c2a;
+  --accent-foreground: #eaeff8;
+  --border: oklch(0.29 0.012 260 / 72%);
+  --input: oklch(0.27 0.012 260 / 82%);
+  --ring: #0066ff;
+  --sidebar: #090d16;
+  --sidebar-foreground: #eaeff8;
+  --sidebar-primary: #00e5ff;
+  --sidebar-primary-foreground: #001018;
+  --sidebar-accent: #121a28;
+  --sidebar-accent-foreground: #eaeff8;
+  --sidebar-border: rgba(143, 159, 182, .16);
+  --sidebar-ring: #0066ff;
+}
+.text-cinema-200,
+.text-cinema-300,
+.text-cinema-400,
+.text-cinema-500,
+.text-sky-200 {
+  color: #00e5ff !important;
+}
+.border-cinema-300,
+.border-cinema-400 {
+  border-color: rgba(0, 229, 255, .52) !important;
+}
+:focus-visible {
+  outline: 2px solid #00e5ff !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, .22) !important;
+}
+.cinema-social-action[aria-pressed="true"] {
+  color: #8af7ff;
+  border-color: rgba(0, 229, 255, .82);
+  background: rgba(0, 229, 255, .12);
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, .12), 0 0 18px rgba(0, 102, 255, .16);
+}
+.cinema-social-action:hover,
+.cinema-trailer-action:hover {
+  border-color: rgba(0, 229, 255, .62);
+}
+.cinema-trailer-action:focus-visible {
+  outline-color: #00e5ff !important;
+}
