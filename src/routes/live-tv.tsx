@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { BrowsePage } from '@/pages/BrowsePage';
+import { LiveTVPage } from '@/pages/LiveTVPage';
 
 export const Route = createFileRoute('/live-tv')({
   head: () => ({
@@ -16,5 +16,5 @@ export const Route = createFileRoute('/live-tv')({
 });
 
 function Page() {
-  return <BrowsePage kind="live" />;
+  return <LiveTVPage />;
 }
