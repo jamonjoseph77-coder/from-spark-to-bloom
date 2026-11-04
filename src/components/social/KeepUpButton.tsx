@@ -19,7 +19,7 @@ export function KeepUpButton({ publisherName }: { publisherName: string }) {
     if (!user || busy) return;
     setBusy(true);
     try {
-      if (isKeepingUp) await unfollowPublisher(user.id, publisherName);
+      if (isFollowing) await unfollowPublisher(user.id, publisherName);
       else await followPublisher(user.id, publisherName);
       await follows.reload();
     } catch {
@@ -33,9 +33,9 @@ export function KeepUpButton({ publisherName }: { publisherName: string }) {
   if (!user) return <a href="/sign-in" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.05] px-3.5 py-2 text-xs font-bold text-slate-200 transition hover:bg-white/10"><BellPlus className="h-4 w-4" /> Follow</a>;
 
   return (
-    <button type="button" onClick={() => void toggle()} disabled={busy || follows.loading} aria-pressed={isKeepingUp} className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.05] px-3.5 py-2 text-xs font-bold text-slate-200 transition hover:border-cinema-300/35 hover:bg-cinema-300/[.08] disabled:opacity-60">
-      {isKeepingUp ? <BellRing className="h-4 w-4 text-cinema-200" /> : <BellPlus className="h-4 w-4" />}
-      {isKeepingUp ? 'Following' : 'Follow'}
+    <button type="button" onClick={() => void toggle()} disabled={busy || follows.loading} aria-pressed={isFollowing} className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.05] px-3.5 py-2 text-xs font-bold text-slate-200 transition hover:border-cinema-300/35 hover:bg-cinema-300/[.08] disabled:opacity-60">
+      {isFollowing ? <BellRing className="h-4 w-4 text-cinema-200" /> : <BellPlus className="h-4 w-4" />}
+      {isFollowing ? 'Following' : 'Follow'}
     </button>
   );
 }
