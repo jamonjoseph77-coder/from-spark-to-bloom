@@ -29,9 +29,14 @@ export function SportsPage() {
   const sections = useMemo(() => {
     const sports = (titles ?? []).filter((title) => title.type === 'sport');
     const today = new Date().toISOString().slice(0, 10);
-    const liveNow = sports.filter(isLiveChannel);
+    const liveChannels = (titles ?? []).filter((title) =>
+      title.type === 'live' &&
+      /sport/i.test(`${title.title} ${title.genre ?? ''} ${title.availability ?? ''} ${title.publisher ?? ''}`) &&
+      Boolean(title.playback_url?.trim()),
+    );
+    const liveNow = [...sports.filter(isLiveChannel), ...liveChannels];
     const startingSoon = sports.filter((title) => Boolean(title.release_date && title.release_date > today));
-    const channels = sports.filter(isSportsChannel);
+    const channels = [...sports.filter(isSportsChannel), ...liveChannels];
     const highlights = sports.filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url?.trim() || title.trailer_url?.trim()));
     const yourSports = sports.filter((title) => watchlistIds.has(title.id) || favouriteIds.has(title.id));
     return { sports, liveNow, startingSoon, channels, highlights, yourSports, genres: genresOf(sports) };
