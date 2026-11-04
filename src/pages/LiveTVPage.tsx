@@ -55,7 +55,7 @@ export function LiveTVPage() {
                 <p className="mt-1 text-sm text-slate-300">Your Channels. One Cinema Experience.</p>
               </div>
             </div>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">Explore television channels and start watching directly in Cinema. Channel access depends on the stream and viewing rights available to Cinema.</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">Explore television channels and open linked streams directly in Cinema. Channel access depends on the stream and viewing rights available to Cinema.</p>
           </div>
           <div className="flex gap-3">
             <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
@@ -64,7 +64,7 @@ export function LiveTVPage() {
             </div>
             <div className="rounded-2xl border border-emerald-100/15 bg-emerald-100/[.06] px-4 py-3">
               <p className="text-2xl font-black tabular-nums text-emerald-100">{playable.length}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Ready To Watch</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Linked Streams</p>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function LiveTVPage() {
                       <Artwork src={channel.backdrop_url || channel.poster_url} alt="" fallbackTitle={channel.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
                       <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
                       <span className={`absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[9px] font-extrabold uppercase tracking-wider backdrop-blur-md ${ready ? 'border-emerald-100/25 bg-black/65 text-emerald-100' : 'border-white/15 bg-black/65 text-slate-300'}`}>
-                        {ready ? <><Radio className="h-3 w-3" /> Stream Ready</> : 'Coming Soon'}
+                        {ready ? <><Radio className="h-3 w-3" /> Stream Linked</> : 'Coming Soon'}
                       </span>
                       {active && <span className="absolute bottom-2 right-2 rounded-full bg-emerald-200 px-2 py-1 text-[9px] font-black uppercase text-[#07100d]">Selected</span>}
                     </div>
