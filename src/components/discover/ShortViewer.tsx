@@ -25,7 +25,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const fallbackEmbed = toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const embed = direct ? null : youtubeId
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
-    : fallbackEmbed && isVimeo ? `${fallbackEmbed}&api=1&player_id=cinema-short-player` : fallbackEmbed;
+    : fallbackEmbed && isVimeo ? `${fallbackEmbed}&playsinline=1&api=1&player_id=cinema-short-player` : fallbackEmbed;
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const viewedClipIdRef = useRef<string | null>(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -241,8 +241,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
               {comments.map((comment) => <article key={comment.id} className="border-b border-white/[.07] pb-2"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 whitespace-pre-wrap break-words text-xs leading-5 text-slate-300">{comment.body}</p></article>)}
             </div>
             <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2">
-              <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Write A Comment…' : 'Sign In To Comment'} aria-label="Your Review" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-xs text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50 focus:ring-2 focus:ring-sky-200/10" />
-              <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post Review" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sky-100 to-slate-200 text-[#07101b] transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><Send className="h-4 w-4" /></button>
+              <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Write A Comment…' : 'Sign In To Comment'} aria-label="Your Comment" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-xs text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50 focus:ring-2 focus:ring-sky-200/10" />
+              <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post Comment" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sky-100 to-slate-200 text-[#07101b] transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><Send className="h-4 w-4" /></button>
             </form>
           </section>
         )}
