@@ -138,11 +138,13 @@ function CinemaShell({ children }: { children: ReactNode }) {
   // experience itself is available only after a successful sign-in.
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#07101b] px-6">
-        <div className="flex flex-col items-center gap-5">
-          <CinemaLogo compact />
-          <span className="h-7 w-7 animate-spin rounded-full border-2 border-sky-200/25 border-t-sky-200" />
-          <p className="text-xs font-semibold tracking-wide text-slate-400">Preparing Your Cinema</p>
+      <main className="cinema-loading-screen" role="status" aria-live="polite">
+        <div className="cinema-loading-orbit cinema-loading-orbit--one" aria-hidden="true" />
+        <div className="cinema-loading-orbit cinema-loading-orbit--two" aria-hidden="true" />
+        <div className="cinema-loading-content">
+          <img src="/cinema-wordmark.png" alt="Cinema — Experience the World of Stories" className="cinema-loading-wordmark" />
+          <span className="cinema-loading-spinner" aria-hidden="true" />
+          <p>Preparing Your Cinema</p>
         </div>
       </main>
     );
