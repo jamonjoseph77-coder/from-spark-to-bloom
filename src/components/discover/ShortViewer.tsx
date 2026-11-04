@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   ArrowUpRight, BadgeCheck, BookmarkPlus, Check, Eye, EyeOff,
-  Heart, MessageCircle, Send, Share2, X,
+  Heart, MessageCircle, Send, Share2, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
@@ -21,6 +21,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const embed = direct ? null : youtubeId
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
     : toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
   const { user } = useAuth();
   const userId = user?.id;
   const { watchlistIds, toggleWatchlist, ready: libraryReady } = useLibrary();
@@ -52,6 +54,17 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     }).finally(() => { if (active) setLoadingEngagement(false); });
     return () => { active = false; };
   }, [clip.id, userId, notify]);
+
+  function toggleEmbeddedSound() {
+    if (!youtubeId) return;
+    const nextMuted = !isMuted;
+    iframeRef.current?.contentWindow?.postMessage(JSON.stringify({
+      event: 'command',
+      func: nextMuted ? 'mute' : 'unMute',
+      args: [],
+    }), 'https://www.youtube.com');
+    setIsMuted(nextMuted);
+  }
 
   async function shareShort() {
     const url = `${window.location.origin}/discover#short-${clip.id}`;
@@ -138,11 +151,23 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
     <Modal label={clip.headline} onClose={onClose} immersive>
       <div className="cinema-short-viewer relative flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-[#030508] sm:min-h-[min(94dvh,920px)]">
         <div className="absolute inset-0 flex items-center justify-center bg-black">
-          {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted showControls={!clearScreen} />}
-          {embed && <iframe src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
+          {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={isMuted} onMutedChange={setIsMuted} showMuteToggle showControls={!clearScreen} />}
+          {embed && <iframe ref={iframeRef} src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
           {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This Video Link Is Not Supported Yet. Please Use A Cinema-Compatible Video Link.</div>}
         </div>
 
+        {youtubeId && !clearScreen && (
+          <button
+            type="button"
+            onClick={toggleEmbeddedSound}
+            aria-label={isMuted ? 'Turn Sound On' : 'Mute Video'}
+            aria-pressed={!isMuted}
+            className="absolute left-3 top-16 z-40 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/80 text-white shadow-[0_8px_28px_rgba(0,0,0,.65)] backdrop-blur-xl transition hover:border-sky-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 active:scale-95"
+          >
+            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5 text-sky-100" />}
+            <span className="sr-only">{isMuted ? 'Sound Off' : 'Sound On'}</span>
+          </button>
+        )}
         <div className="absolute inset-x-3 top-3 z-40 flex items-center justify-between gap-3 sm:inset-x-5 sm:top-5">
           <div className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#07101b]/75 px-3 py-2 text-[10px] font-extrabold uppercase tracking-[.16em] text-slate-100 shadow-lg backdrop-blur-xl transition-opacity ${clearScreen ? 'opacity-0' : 'opacity-100'}`}>
             <span className="grid h-6 w-6 place-items-center rounded-full bg-sky-200/10 text-sky-100"><BadgeCheck className="h-3.5 w-3.5" /></span>
