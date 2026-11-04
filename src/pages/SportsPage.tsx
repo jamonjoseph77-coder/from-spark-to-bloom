@@ -13,11 +13,11 @@ import type { Title } from '@/lib/types';
 const ALL_SPORTS = 'All Sports';
 
 function isLiveChannel(title: Title): boolean {
-  return Boolean(title.playback_url.trim()) && /live|on air|live now/i.test(title.availability);
+  return Boolean(title.playback_url?.trim()) && /live|on air|live now/i.test(title.availability ?? '');
 }
 
 function isSportsChannel(title: Title): boolean {
-  return /channel|broadcaster|sports tv/i.test(title.availability) || /sports channel/i.test(title.genre);
+  return /channel|broadcaster|sports tv/i.test(title.availability ?? '') || /sports channel/i.test(title.genre ?? '');
 }
 
 export function SportsPage() {
@@ -32,13 +32,13 @@ export function SportsPage() {
     const liveNow = sports.filter(isLiveChannel);
     const startingSoon = sports.filter((title) => Boolean(title.release_date && title.release_date > today));
     const channels = sports.filter(isSportsChannel);
-    const highlights = sports.filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url.trim() || title.trailer_url.trim()));
+    const highlights = sports.filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url?.trim() || title.trailer_url?.trim()));
     const yourSports = sports.filter((title) => watchlistIds.has(title.id) || favouriteIds.has(title.id));
     return { sports, liveNow, startingSoon, channels, highlights, yourSports, genres: genresOf(sports) };
   }, [titles, watchlistIds, favouriteIds]);
 
   const visible = useMemo(
-    () => sections.sports.filter((title) => (category === ALL_SPORTS || title.genre.split(',').map((item) => item.trim()).includes(category)) && matchesQuery(title, query)),
+    () => sections.sports.filter((title) => (category === ALL_SPORTS || (title.genre ?? '').split(',').map((item) => item.trim()).includes(category)) && matchesQuery(title, query)),
     [sections.sports, category, query],
   );
 
@@ -70,7 +70,7 @@ export function SportsPage() {
         <>
           <section id="sports-live" className="space-y-4 scroll-mt-24">
             <div className="flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">Live Now</p><h2 className="mt-1 text-2xl font-extrabold text-white">Live Sports Coverage</h2><p className="mt-1 text-sm text-slate-400">Playable sports streams published by Cinema.</p></div><span className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-[10px] font-bold text-slate-300">{sections.liveNow.length} Available</span></div>
-            {sections.liveNow.length ? <TitleRow heading="" titles={sections.liveNow} /> : <p className="rounded-2xl border border-white/10 bg-white/[.02] px-4 py-5 text-sm text-slate-400">No verified live sports streams are published right now. Connected broadcaster streams will appear here when available.</p>}
+            {sections.liveNow.length ? <TitleGrid titles={sections.liveNow} /> : <p className="rounded-2xl border border-white/10 bg-white/[.02] px-4 py-5 text-sm text-slate-400">No verified live sports streams are published right now. Connected broadcaster streams will appear here when available.</p>}
           </section>
 
           <section className="grid gap-3 lg:grid-cols-[1.2fr_.8fr]">
@@ -88,7 +88,7 @@ export function SportsPage() {
 
           {sections.yourSports.length > 0 && <TitleRow heading="Your Sports" description="Sports titles saved to your Cinema watchlist or favourites." titles={sections.yourSports} />}
           {sections.startingSoon.length > 0 && <TitleRow heading="Starting Soon" description="Upcoming sports content with a published future date." titles={sections.startingSoon} />}
-          {sections.channels.length > 0 && <section><div className="mb-3 flex items-end gap-3"><Tv className="h-5 w-5 text-sky-300" /><div><h2 className="text-xl font-extrabold text-white">Sports Channels</h2><p className="text-xs text-slate-400">Sports broadcasters and channels available in Cinema.</p></div></div><TitleRow heading="" titles={sections.channels} /></section>}
+          {sections.channels.length > 0 && <section><div className="mb-3 flex items-end gap-3"><Tv className="h-5 w-5 text-sky-300" /><div><h2 className="text-xl font-extrabold text-white">Sports Channels</h2><p className="text-xs text-slate-400">Sports broadcasters and channels available in Cinema.</p></div></div><TitleGrid titles={sections.channels} /></section>}
           <section id="sports-highlights" className="scroll-mt-24">
             {sections.highlights.length > 0 ? <TitleRow heading="Highlights & Replays" description="Sports programmes and playable replays published in Cinema." titles={sections.highlights} /> : <div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h2 className="text-xl font-extrabold text-white">Highlights & Replays</h2><p className="mt-2 text-sm text-slate-400">Official highlights, match replays and sports features will appear here as publishers add them to Cinema.</p></div>}
           </section>
