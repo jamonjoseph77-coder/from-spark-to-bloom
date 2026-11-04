@@ -1093,3 +1093,25 @@ body {
 ) {
   color: #b8c2cf !important;
 }
+
+/*
+ * FINAL TITLE COLOR GUARANTEE
+ * Titles are always white/silver. Electric blue remains available only to
+ * interactive states, focus indicators, and decorative accents.
+ */
+.cinema-app-shell :is(h1, h2, h3, h4, h5, h6),
+.cinema-app-shell :is(h1, h2, h3, h4, h5, h6) *,
+.cinema-home :is(h1, h2, h3, h4, h5, h6),
+.cinema-home :is(h1, h2, h3, h4, h5, h6) *,
+.cinema-app-shell [data-slot="card-title"],
+.cinema-app-shell [data-slot="card-title"] *,
+.cinema-app-shell .cinema-title,
+.cinema-app-shell .cinema-title *,
+.cinema-home .cinema-title,
+.cinema-home .cinema-title * {
+  color: #f1f4f8 !important;
+  -webkit-text-fill-color: #f1f4f8 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
