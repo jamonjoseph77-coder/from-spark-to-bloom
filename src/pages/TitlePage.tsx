@@ -6,7 +6,6 @@ import {
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
-import { LetterboxPage } from '@/pages/LetterboxPage';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { titleTrailerSource } from '@/lib/videoSource';
@@ -166,10 +165,6 @@ export function TitlePage({ titleId }: { titleId: string }) {
                 {titleShorts.length > 0 && <div className="space-y-3"><h3 className="text-sm font-bold text-slate-200">Short videos</h3><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}</div></div>}
               </section>
             )}
-            <section className="space-y-5 border-t border-white/10 pt-9">
-              <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Your circle and the story</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">The conversation</h2><p className="mt-1 text-sm text-slate-400">Share a Letterbox message, recommendation or thought about this title.</p></div>
-              <LetterboxPage embedded titleId={title.id} />
-            </section>
           </div>
 
           <aside className="space-y-5">
