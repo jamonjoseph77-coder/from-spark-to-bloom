@@ -212,6 +212,7 @@ export type Database = {
           sort_order: number
           title_id: string | null
           updated_at: string
+          views_count: number
           video_url: string
         }
         Insert: {
@@ -228,6 +229,7 @@ export type Database = {
           sort_order?: number
           title_id?: string | null
           updated_at?: string
+          views_count?: number
           video_url?: string
         }
         Update: {
@@ -244,6 +246,7 @@ export type Database = {
           sort_order?: number
           title_id?: string | null
           updated_at?: string
+          views_count?: number
           video_url?: string
         }
         Relationships: [
@@ -605,6 +608,7 @@ export type Database = {
           display_name: string
           id: string
           is_discoverable: boolean
+          share_watching_activity: boolean
           updated_at: string
           user_id: string
           username: string
@@ -616,6 +620,7 @@ export type Database = {
           display_name?: string
           id: string
           is_discoverable?: boolean
+          share_watching_activity?: boolean
           updated_at?: string
           user_id: string
           username?: string
@@ -1060,6 +1065,7 @@ export type Database = {
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
       join_watch_party: { Args: { p_invite_code: string }; Returns: string }
+      record_discover_clip_view: { Args: { p_clip_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
