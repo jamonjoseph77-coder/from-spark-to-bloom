@@ -32,12 +32,14 @@ jobs:
       - name: Lint entire repository
         run: >-
           bunx eslint . --rule 'prettier/prettier: off'
+      # TanStack Router generates src/routeTree.gen.ts during the Vite build.
+      # Build before tsc so new file-based routes are present in the generated route types.
+      - name: Build production bundle
+        run: bun run build
       - name: Type-check application
         run: bunx tsc --noEmit
       - name: Run tests
         run: bun run test
-      - name: Build production bundle
-        run: bun run build
       - name: Smoke-test Vite dev server and Cinema stylesheet
         run: |
           bun run dev -- --host 127.0.0.1 --port 4173 --strictPort > /tmp/cinema-vite-dev.log 2>&1 &
