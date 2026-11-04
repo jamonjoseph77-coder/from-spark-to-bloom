@@ -5,18 +5,20 @@ import { chipClass } from '@/components/ui/styles';
 import { FindPeople } from '@/components/social/FindPeople';
 import { FriendRequests, FriendsList } from '@/components/social/FriendsList';
 import { CircleActivity } from '@/components/social/CircleActivity';
+import { SharedWithYou } from '@/components/social/SharedWithYou';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { loadFriendsSnapshot } from '@/lib/friends';
 import { supabase } from '@/lib/supabase';
 import { createRealtimeChannel } from '@/lib/realtime';
 
-type Tab = 'activity' | 'friends' | 'requests' | 'find';
+type Tab = 'activity' | 'friends' | 'requests' | 'find' | 'shared';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'activity', label: 'Activity' },
   { key: 'friends', label: 'Friends' },
   { key: 'requests', label: 'Requests' },
   { key: 'find', label: 'Find people' },
+  { key: 'shared', label: 'Shared With You' },
 ];
 
 export function FriendsHub({ userId }: { userId: string }) {
@@ -74,6 +76,7 @@ export function FriendsHub({ userId }: { userId: string }) {
         <FriendRequests incoming={snapshot.incoming} outgoing={snapshot.outgoing} onChanged={reload} />
       )}
       {tab === 'find' && <FindPeople userId={userId} relations={snapshot.relations} onChanged={reload} />}
+      {tab === 'shared' && <SharedWithYou />}
     </div>
   );
 }
