@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   ArrowUpRight, BadgeCheck, BookmarkPlus, Check, Eye, EyeOff,
-  Heart, MessageCircle, Send, Volume2, VolumeX, X,
+  Heart, Star, Send, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { ContentEngagement } from '@/components/discover/ContentEngagement';
@@ -13,7 +13,7 @@ import {
   type DiscoverClip,
   recordDiscoverClipView,
 } from '@/lib/clips';
-import { addDiscoverContentReview, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
+import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { navigateTo } from '@/lib/router';
 
@@ -32,8 +32,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const { notify } = useToast();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [reviews, setReviews] = useState<DiscoverContentComment[]>([]);
-  const [reviewOpen, setCommentOpen] = useState(false);
+  const [comments, setComments] = useState<DiscoverContentComment[]>([]);
+  const [commentOpen, setCommentOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [clearScreen, setClearScreen] = useState(false);
   const [loadingEngagement, setLoadingEngagement] = useState(true);
@@ -183,7 +183,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <div className="min-w-0 flex-1">
                   <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-sky-200/20 bg-[#0b1726]/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-100"><BadgeCheck className="h-3.5 w-3.5" /> {clip.publisher_name || 'Cinema Publisher'}</p>
                   <h2 className="line-clamp-3 text-lg font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</h2>
-                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds` : 'A Story From Cinema'}</p>
+                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds · ${(clip.views_count ?? 0).toLocaleString()} Views` : 'A Story From Cinema'}</p>
                   {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
                   {clip.title ? (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -210,9 +210,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Like</span>
               </button>
               <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Reviews" aria-expanded={commentOpen} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
-                <MessageCircle className="h-5 w-5" />
+                <Star className="h-5 w-5" />
                 <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Comments</span>
+                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Reviews</span>
               </button>
               <ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly clipId={clip.id} />
             </div>
@@ -220,18 +220,18 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
         )}
 
         {commentOpen && !clearScreen && (
-          <section aria-label="Cinema Short Comments" className="cinema-social-panel absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] p-4 backdrop-blur-2xl sm:inset-x-4">
+          <section aria-label="Cinema Short Reviews" className="cinema-social-panel absolute inset-x-2 bottom-2 z-40 max-h-[54dvh] overflow-hidden rounded-[1.4rem] p-4 backdrop-blur-2xl sm:inset-x-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div><p className="text-sm font-extrabold text-white">Reviews <span className="ml-1 text-xs font-semibold text-slate-400">({comments.length})</span></p><p className="text-[11px] text-slate-400">Thoughts About The Story, From The Cinema Community.</p></div>
               <button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">Close</button>
             </div>
             <div className="max-h-[25dvh] space-y-3 overflow-y-auto pr-1">
-              {loadingEngagement ? <p className="py-4 text-center text-xs text-slate-400">Loading Comments…</p> : comments.length === 0 && <p className="py-4 text-center text-xs text-slate-400">No Comments Yet. Be The First To Comment.</p>}
+              {loadingEngagement ? <p className="py-4 text-center text-xs text-slate-400">Loading Reviews…</p> : comments.length === 0 && <p className="py-4 text-center text-xs text-slate-400">No Reviews Yet. Be The First To Review.</p>}
               {comments.map((comment) => <article key={comment.id} className="border-b border-white/[.07] pb-2"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 whitespace-pre-wrap break-words text-xs leading-5 text-slate-300">{comment.body}</p></article>)}
             </div>
             <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2">
-              <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Write A Review About This Story…' : 'Create An Account To Join The Discussion'} aria-label="Your Comment" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-xs text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50 focus:ring-2 focus:ring-sky-200/10" />
-              <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post Comment" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sky-100 to-slate-200 text-[#07101b] transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><Send className="h-4 w-4" /></button>
+              <input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={user ? 'Write A Review About This Story…' : 'Create An Account To Join The Discussion'} aria-label="Your Review" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/35 px-3 py-2.5 text-xs text-white outline-none placeholder:text-slate-500 focus:border-sky-200/50 focus:ring-2 focus:ring-sky-200/10" />
+              <button type="submit" disabled={!commentText.trim() || savingComment} aria-label="Post Review" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sky-100 to-slate-200 text-[#07101b] transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><Send className="h-4 w-4" /></button>
             </form>
           </section>
         )}
