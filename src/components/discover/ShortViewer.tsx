@@ -21,7 +21,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const engagementKey = `clip:${clip.id}`;
   const direct = isDirectVideoUrl(clip.video_url);
   const youtubeId = getYouTubeVideoId(clip.video_url);
-  const isVimeo = /vimeo\\.com/i.test(clip.video_url);
+  const isVimeo = /vimeo\.com/i.test(clip.video_url);
   const fallbackEmbed = toEmbedUrl(clip.video_url, { autoplay: true, muted: true });
   const embed = direct ? null : youtubeId
     ? `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`
