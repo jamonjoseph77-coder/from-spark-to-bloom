@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Radio, Search, Signal, TvMinimalPlay } from 'lucide-react';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
+import { KeepUpButton } from '@/components/social/KeepUpButton';
 import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components/ui/styles';
@@ -82,7 +83,10 @@ export function LiveTVPage() {
                   <h2 className="mt-1 truncate text-lg font-extrabold text-white">{selected.title}</h2>
                   <p className="text-xs text-slate-400">{selected.publisher || 'Cinema Channel'}{selected.genre ? ` · ${selected.genre}` : ''}</p>
                 </div>
-                <button type="button" onClick={() => setSelectedId(null)} className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-slate-300 transition hover:border-white/30 hover:bg-white/[.06]">Close Player</button>
+                <div className="flex flex-wrap items-center gap-2">
+                  {selected.publisher && <KeepUpButton publisherName={selected.publisher} />}
+                  <button type="button" onClick={() => setSelectedId(null)} className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-slate-300 transition hover:border-white/30 hover:bg-white/[.06]">Close Player</button>
+                </div>
               </div>
               <VideoPlayer key={selected.id} src={selected.playback_url} title={selected.title} poster={selected.backdrop_url || selected.poster_url || undefined} isLive autoPlay layout="landscape" />
             </div>
