@@ -470,3 +470,55 @@ body {
 }
 .cinema-hero-light--one { background: radial-gradient(ellipse, rgba(77, 132, 166, .075), rgba(83, 136, 116, .025) 45%, transparent 72%); opacity: .42; }
 .cinema-hero-light--two { background: radial-gradient(ellipse, rgba(174, 188, 194, .045), rgba(88, 140, 119, .025), transparent 70%); opacity: .4; }
+
+
+/* Aurora Obsidian — brighter silver detail and living sea-glass light, without blue-heavy surfaces. */
+:root {
+  --cinema-obsidian: #070a09;
+  --cinema-carbon: #0d1210;
+  --cinema-surface: #151c19;
+  --cinema-surface-raised: #1b2420;
+  --cinema-silver: #d8e0dc;
+  --cinema-silver-bright: #f4f7f5;
+  --cinema-electric: #548d82;
+  --cinema-electric-soft: #8ab9a9;
+}
+html, body, #root { background-color: #070a09 !important; }
+body {
+  background-color: #070a09 !important;
+  background-image:
+    radial-gradient(ellipse at 12% -12%, rgba(126, 157, 177, .095), transparent 39%),
+    radial-gradient(ellipse at 88% 2%, rgba(102, 174, 142, .095), transparent 36%),
+    radial-gradient(ellipse at 48% 112%, rgba(169, 183, 174, .055), transparent 45%),
+    linear-gradient(180deg, #0a0e0c 0%, #070a09 58%, #0a100d 100%) !important;
+}
+.dark {
+  --background: oklch(0.115 0.004 160);
+  --card: oklch(0.165 0.006 160);
+  --popover: oklch(0.18 0.006 160);
+  --primary: oklch(0.72 0.075 165);
+  --primary-foreground: oklch(0.12 0.006 160);
+  --ring: oklch(0.68 0.075 165);
+  --sidebar: oklch(0.13 0.004 160);
+  --border: oklch(0.34 0.009 160 / 76%);
+}
+.cinema-hero-light--one {
+  background: radial-gradient(ellipse, rgba(126, 165, 188, .12), rgba(91, 161, 127, .055) 44%, transparent 72%);
+  opacity: .58;
+}
+.cinema-hero-light--two {
+  background: radial-gradient(ellipse, rgba(191, 205, 197, .075), rgba(87, 153, 124, .045), transparent 70%);
+  opacity: .52;
+}
+.cinema-live-tv { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+.cinema-live-tv button { -webkit-tap-highlight-color: transparent; }
+.cinema-live-tv input { min-height: 44px; }
+.cinema-live-tv .cinema-video-player { width: 100%; }
+@media (max-width: 639px) {
+  .cinema-live-tv { gap: 1.25rem; }
+  .cinema-live-tv header { border-radius: 1.45rem; }
+  .cinema-live-tv .cinema-video-stage { border-radius: .95rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-live-tv *, .cinema-live-tv *::before, .cinema-live-tv *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

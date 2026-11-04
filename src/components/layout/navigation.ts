@@ -1,4 +1,4 @@
-import { Compass, Film, Clapperboard, Home, MonitorPlay, Newspaper, PartyPopper, Search, Megaphone, Ticket, Trophy, Tv, UserRound, Users, type LucideIcon } from 'lucide-react';
+import { Compass, Film, Clapperboard, Home, MonitorPlay, Newspaper, PartyPopper, Search, Megaphone, Ticket, Trophy, TvMinimalPlay, UserRound, Users, type LucideIcon } from 'lucide-react';
 import type { Route } from '@/lib/router';
 
 export interface NavItem { key: string; label: string; href: string; icon: LucideIcon }
@@ -8,7 +8,7 @@ const HOME: NavItem = { key: 'home', label: 'Home', href: '/', icon: Home };
 const MOVIES: NavItem = { key: 'movies', label: 'Movies', href: '/movies', icon: Film };
 const SERIES: NavItem = { key: 'series', label: 'Series', href: '/series', icon: MonitorPlay };
 const SPORTS: NavItem = { key: 'sports', label: 'Sports', href: '/sports', icon: Trophy };
-const LIVE: NavItem = { key: 'live-tv', label: 'Live TV', href: '/live-tv', icon: Tv };
+const LIVE: NavItem = { key: 'live-tv', label: 'Live TV', href: '/live-tv', icon: TvMinimalPlay };
 const NEWS: NavItem = { key: 'news', label: 'News', href: '/news', icon: Newspaper };
 const DISCOVER: NavItem = { key: 'discover', label: 'Explore', href: '/discover', icon: Compass };
 const SEARCH: NavItem = { key: 'search', label: 'Search', href: '/search', icon: Search };
