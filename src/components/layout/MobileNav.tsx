@@ -1,9 +1,10 @@
-import { Compass, Home, Clapperboard, Trophy, TvMinimalPlay } from 'lucide-react';
+import { Compass, Home, Clapperboard, Trophy, TvMinimalPlay, type LucideIcon } from 'lucide-react';
 import { navKeyOf } from '@/components/layout/navigation';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import type { Route } from '@/lib/router';
 
 interface MobileNavProps { route: Route }
+type NavItem = { key: string; label: string; href: string; icon: LucideIcon };
 
 const LEFT_ITEMS = [
   { key: 'home', label: 'Home', href: '/', icon: Home },
@@ -20,7 +21,7 @@ export function MobileNav({ route }: MobileNavProps) {
   const activeKey = route.name === 'browse' && route.kind === 'movie' ? 'cinema' : navKeyOf(route);
   const cinemaActive = activeKey === 'cinema';
 
-  const renderItems = (items: typeof LEFT_ITEMS[number][]) => items.map((item) => {
+  const renderItems = (items: NavItem[]) => items.map((item) => {
     const active = item.key === activeKey;
     const Icon = item.icon;
     return (
