@@ -64,7 +64,7 @@ export function LetterboxPostCard({ post, userId, onChanged }: { post: Letterbox
       <div className="px-3 pb-2 sm:px-4">
         <ContentEngagement
           contentKey={`letterbox:${post.id}`}
-          title={`Letterbox: ${post.body.slice(0, 100)}`}
+          title={`Cinema Post: ${post.body.slice(0, 100)}`}
           href={`/discover#post-${post.id}`}
           imageUrl={post.title?.poster_url || ''}
           compact
@@ -104,7 +104,7 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
 
   return (
     <div className={embedded ? "mx-auto w-full max-w-3xl space-y-5" : `${PAGE_CONTAINER} space-y-8 pb-12`}>
-      {embedded && <header className="border-b border-white/10 pb-4"><p className="text-[10px] font-black uppercase tracking-[.22em] text-cinema-300">The Cinema Conversation</p><div className="mt-2 flex items-end justify-between gap-3"><div><h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Letterbox</h2><p className="mt-1 text-sm text-slate-400">What people across Cinema are sharing about stories, sport and television.</p></div><a href="/letterbox" className="shrink-0 text-xs font-bold text-cinema-200 hover:text-white">Open Feed →</a></div></header>}
+      {embedded && <header className="border-b border-white/10 pb-4"><p className="text-[10px] font-black uppercase tracking-[.22em] text-cinema-300">The Cinema Conversation</p><div className="mt-2 flex items-end justify-between gap-3"><div><h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Cinema Explore</h2><p className="mt-1 text-sm text-slate-400">What people across Cinema are sharing about stories, sport and television.</p></div><a href="/discover" className="shrink-0 text-xs font-bold text-cinema-200 hover:text-white">Open Explore →</a></div></header>}
       {!embedded && <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-cinema-700/20 via-ink-900 to-ink-950 p-6 sm:p-9">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Friends & conversations</p>
         <h1 className="mt-4 text-4xl font-black tracking-tight text-white sm:text-5xl">The conversation around entertainment.</h1>
