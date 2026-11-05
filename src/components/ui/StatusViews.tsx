@@ -33,7 +33,7 @@ interface EmptyStateProps { icon: ReactNode; title: string; description: string;
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="mx-auto flex max-w-lg flex-col items-center gap-4 rounded-2xl border border-dashed border-white/15 bg-ink-900/60 px-6 py-12 text-center">
+    <div className="cinema-empty-board mx-auto flex max-w-lg flex-col items-center gap-4 rounded-2xl border border-white/15 bg-ink-900/60 px-6 py-12 text-center">
       <span className="grid h-14 w-14 place-items-center rounded-2xl bg-cinema-600/15 ring-1 ring-cinema-400/30">{icon}</span>
       <h2 className="text-lg font-extrabold text-white">{title}</h2>
       <p className="text-sm leading-relaxed text-slate-400">{description}</p>
