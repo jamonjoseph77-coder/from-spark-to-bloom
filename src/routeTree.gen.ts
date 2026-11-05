@@ -189,8 +189,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/box-office': typeof BoxOfficeRoute
   '/category/$slug': typeof CategorySlugRoute
-  '/category/$slug': typeof CategorySlugRoute
-  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/friends': typeof FriendsRoute
@@ -221,6 +219,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/box-office': typeof BoxOfficeRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/friends': typeof FriendsRoute
@@ -252,6 +251,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/box-office': typeof BoxOfficeRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/friends': typeof FriendsRoute
@@ -315,6 +315,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/box-office'
+    | '/category/$slug'
     | '/discover'
     | '/forgot-password'
     | '/friends'
