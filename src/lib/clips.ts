@@ -128,41 +128,6 @@ export function rankPublishedShorts(
   return selected;
 }
 
-/**
- * Home Shorts ranking balances freshness, modest popularity, followed publishers,
- * and publisher variety so older viral clips cannot dominate the shelf.
- */
-export function rankPublishedShorts(clips: DiscoverClip[], followedPublishers: string[] = [], limit = 12, now = Date.now()): DiscoverClip[] {
-  if (limit <= 0) return [];
-  const followed = new Set(followedPublishers.map((name) => name.trim().toLocaleLowerCase()).filter(Boolean));
-  const remaining = clips.filter(isPlayableShort).map((clip, index) => {
-    const publisher = clip.publisher_name.trim().toLocaleLowerCase();
-    const createdAt = clip.created_at ? new Date(clip.created_at).getTime() : Number.NaN;
-    const ageDays = Number.isFinite(createdAt) ? Math.max(0, (now - createdAt) / 86_400_000) : 365;
-    const freshness = Math.exp(-ageDays / 21);
-    const popularity = Math.log1p(Math.max(0, clip.views_count ?? 0)) / 4;
-    const editorial = 1 / (1 + Math.max(0, clip.sort_order || 0) * 0.12);
-    const followBoost = publisher && followed.has(publisher) ? 2.5 : 0;
-    return { clip, publisher, index, score: freshness * 3.2 + popularity * 0.65 + editorial * 0.8 + followBoost };
-  }).sort((a, b) => b.score - a.score || a.index - b.index);
-  const selected: DiscoverClip[] = [];
-  const counts = new Map<string, number>();
-  while (selected.length < limit && remaining.length) {
-    let bestIndex = 0;
-    let bestScore = Number.NEGATIVE_INFINITY;
-    remaining.forEach((entry, index) => {
-      const count = counts.get(entry.publisher) ?? 0;
-      const diversity = count === 0 ? 0.75 : count === 1 ? 0 : -2.5 * count;
-      const score = entry.score + diversity;
-      if (score > bestScore) { bestScore = score; bestIndex = index; }
-    });
-    const [chosen] = remaining.splice(bestIndex, 1);
-    selected.push(chosen.clip);
-    counts.set(chosen.publisher, (counts.get(chosen.publisher) ?? 0) + 1);
-  }
-  return selected;
-}
-
 export async function fetchClipEngagement(clipId: string): Promise<ClipEngagement> {
   const { data, error } = await supabase.rpc('get_discover_clip_engagement', { p_clip_id: clipId });
   if (error) throw error;
