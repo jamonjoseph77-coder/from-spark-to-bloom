@@ -78,6 +78,21 @@ export function SportsPage() {
             {sections.liveNow.length ? <TitleGrid titles={sections.liveNow} /> : <p className="rounded-2xl border border-white/10 bg-white/[.02] px-4 py-5 text-sm text-slate-400">No verified live sports streams are published right now. Connected broadcaster streams will appear here when available.</p>}
           </section>
 
+
+          <section className="grid gap-3 md:grid-cols-2" aria-label="Official Ghana sports sources">
+            <a href="https://gpl.com.gh/fixtures" target="_blank" rel="noreferrer" className="group rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-sky-200/30 hover:bg-white/[.04]">
+              <p className="text-[10px] font-bold uppercase tracking-[.18em] text-sky-200">Official Ghana Competition</p>
+              <h2 className="mt-2 text-lg font-extrabold text-white">Ghana Premier League Fixtures</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-400">Open the league’s official fixture list for matchweeks, dates, kick-off times and venues.</p>
+              <span className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-sky-200">View Official Fixtures <ArrowRight className="h-3.5 w-3.5" /></span>
+            </a>
+            <a href="https://gpl.com.gh/" target="_blank" rel="noreferrer" className="group rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-sky-200/30 hover:bg-white/[.04]">
+              <p className="text-[10px] font-bold uppercase tracking-[.18em] text-sky-200">League News & Media</p>
+              <h2 className="mt-2 text-lg font-extrabold text-white">Ghana Premier League</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-400">Follow official league announcements, clubs, videos and competition updates.</p>
+              <span className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-sky-200">Open League Website <ArrowRight className="h-3.5 w-3.5" /></span>
+            </a>
+          </section>
           <section className="grid gap-3 lg:grid-cols-[1.2fr_.8fr]">
             <div className="rounded-2xl border border-white/10 bg-white/[.025] p-5">
               <div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl border border-sky-300/20 bg-sky-300/[.08] text-sky-200"><Activity className="h-5 w-5" /></span><div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-slate-400">Scores & Fixtures</p><h2 className="text-lg font-extrabold text-white">Live Scores</h2></div></div>
