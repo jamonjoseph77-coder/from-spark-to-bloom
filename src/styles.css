@@ -1722,3 +1722,92 @@ body {
     transition: none !important;
   }
 }
+
+
+/* General Experience Refinements — Accessibility, Motion, And Responsive Surfaces */
+@keyframes cinema-loading {
+  0% { transform: translateX(-130%); }
+  100% { transform: translateX(280%); }
+}
+.cinema-app-shell,
+.cinema-page-container {
+  min-width: 0;
+}
+.cinema-page-container :is(h1, h2, h3) {
+  text-wrap: balance;
+}
+.cinema-home,
+.cinema-live-tv,
+.cinema-my-cinema,
+.cinema-title-page {
+  min-width: 0;
+}
+.cinema-home :is(img, video),
+.cinema-live-tv :is(img, video),
+.cinema-my-cinema :is(img, video),
+.cinema-title-page :is(img, video) {
+  max-width: 100%;
+}
+.cinema-loading-mark {
+  box-shadow: 0 0 30px rgba(190, 205, 196, .08);
+}
+.cinema-loading-orbit {
+  animation: cinema-loading-orbit 2.8s linear infinite;
+}
+.cinema-loading-progress {
+  animation: cinema-loading 1.5s ease-in-out infinite;
+}
+@keyframes cinema-loading-orbit {
+  to { transform: rotate(360deg); }
+}
+.cinema-title-card-overlay {
+  transition: opacity 220ms ease, background-color 220ms ease;
+}
+.cinema-title-card-overlay-label {
+  transition: opacity 220ms ease;
+}
+.cinema-page-container :is(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid rgba(224, 232, 225, .88);
+  outline-offset: 3px;
+}
+.cinema-page-container :is(a, button) {
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: none) {
+  .cinema-title-card-overlay {
+    opacity: .2;
+  }
+  .cinema-title-card-overlay-label {
+    opacity: 0;
+  }
+}
+@media (max-width: 639px) {
+  .cinema-page-container {
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+  }
+  .cinema-home,
+  .cinema-live-tv,
+  .cinema-my-cinema {
+    overflow-wrap: anywhere;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+  .cinema-loading-orbit,
+  .cinema-loading-progress,
+  .animate-fade-in,
+  .animate-rise-in {
+    animation: none !important;
+  }
+  .cinema-title-card-overlay,
+  .cinema-title-card-overlay-label,
+  .cinema-app-shell *,
+  .cinema-page-container * {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

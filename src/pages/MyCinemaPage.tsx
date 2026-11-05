@@ -52,9 +52,9 @@ export function MyCinemaPage() {
   }
 
   return (
-    <div className={`${PAGE_CONTAINER} space-y-12 pb-12`}>
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/20 bg-gradient-to-br from-cinema-700/30 via-ink-900 to-indigo-950 p-6 shadow-2xl shadow-black/20 sm:p-8">
-        <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-cinema-400/15 blur-3xl" />
+    <div className={`${PAGE_CONTAINER} cinema-my-cinema space-y-12 pb-12`}>
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(135deg,#121715,#090c0b_68%,#080a09)] p-6 shadow-2xl shadow-black/20 sm:p-8">
+        <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
           <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[1.65rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20"><CinemaLogo compact /></span>
           <div className="min-w-0 flex-1">
@@ -74,10 +74,10 @@ export function MyCinemaPage() {
         </div>}
       </header>
 
-      <a href="#my-downloads" className="group relative isolate flex flex-col gap-4 overflow-hidden rounded-3xl border border-sky-200/15 bg-[radial-gradient(ellipse_at_88%_10%,rgba(70,140,255,.13),transparent_38%),linear-gradient(115deg,#101a2a,#090b0c_62%,#111820)] p-5 shadow-[0_18px_55px_rgba(0,0,0,.24)] transition hover:-translate-y-0.5 hover:border-sky-200/30 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-        <span className="pointer-events-none absolute -right-8 -top-12 -z-10 h-48 w-48 rounded-full bg-sky-200/[.07] blur-3xl" />
-        <span className="flex items-center gap-4"><span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-sky-100/20 bg-black/45 text-sky-200 shadow-[0_0_35px_rgba(40,120,220,.10)]"><Download className="h-7 w-7" /></span><span><span className="block text-[10px] font-black uppercase tracking-[.2em] text-slate-300">Your Saved Videos</span><span className="mt-1 block text-xl font-extrabold text-white">Downloads</span><span className="mt-1 block text-xs text-slate-400">Open videos that publishers have approved for saving offline.</span></span></span>
-        <span className="inline-flex items-center gap-2 self-start rounded-full border border-sky-100/20 bg-sky-100/[.08] px-4 py-2.5 text-xs font-extrabold text-white transition group-hover:bg-sky-100/[.14] sm:self-center">View Downloads <ArrowRight className="h-4 w-4" /></span>
+      <a href="#my-downloads" className="group relative isolate flex flex-col gap-4 overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(ellipse_at_88%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(115deg,#121715,#090c0b_62%,#111513)] p-5 shadow-[0_18px_55px_rgba(0,0,0,.24)] transition hover:-translate-y-0.5 hover:border-white/20 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <span className="pointer-events-none absolute -right-8 -top-12 -z-10 h-48 w-48 rounded-full bg-white/[.035] blur-3xl" />
+        <span className="flex items-center gap-4"><span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/15 bg-black/45 text-slate-200 shadow-[0_0_35px_rgba(40,120,220,.10)]"><Download className="h-7 w-7" /></span><span><span className="block text-[10px] font-black uppercase tracking-[.2em] text-slate-300">Your Saved Videos</span><span className="mt-1 block text-xl font-extrabold text-white">Downloads</span><span className="mt-1 block text-xs text-slate-400">Open videos that publishers have approved for saving offline.</span></span></span>
+        <span className="inline-flex items-center gap-2 self-start rounded-full border border-white/15 bg-white/[.07] px-4 py-2.5 text-xs font-extrabold text-white transition group-hover:bg-sky-100/[.14] sm:self-center">View Downloads <ArrowRight className="h-4 w-4" /></span>
       </a>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-400">Signed in as {user.email}</p>
@@ -89,7 +89,7 @@ export function MyCinemaPage() {
         </div>
       </div>
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8" aria-label="My Cinema shortcuts">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" aria-label="My Cinema shortcuts">
         <a href="#continue-watching" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><History className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Continue Watching</span><span className="mt-1 block text-[11px] text-slate-500">Pick up where you paused</span></a>
         <a href="#my-watchlist" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><BookmarkCheck className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watchlist</span><span className="mt-1 block text-[11px] text-slate-500">Saved for later</span></a>
         <a href="#my-saved-shorts" className="group rounded-2xl border border-blue-300/25 bg-gradient-to-br from-blue-950/70 to-ink-950 p-4 transition hover:-translate-y-1 hover:border-blue-200/50"><BookmarkCheck className="h-5 w-5 text-blue-200" /><span className="mt-4 block text-sm font-bold text-white">Saved Shorts</span><span className="mt-1 block text-[11px] text-slate-400">Your Explore collection</span></a>
@@ -97,7 +97,6 @@ export function MyCinemaPage() {
         <a href="/friends" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Users className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Friends</span><span className="mt-1 block text-[11px] text-slate-500">Your Cinema circle</span></a>
         <a href="/watch-parties" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><PartyPopper className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watch Parties</span><span className="mt-1 block text-[11px] text-slate-500">Experience together</span></a>
         <a href="/discover" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Compass className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Explore More</span><span className="mt-1 block text-[11px] text-slate-500">Find something new</span></a>
-        <a href="/discover" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Compass className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Explore</span><span className="mt-1 block text-[11px] text-slate-500">Videos & conversations</span></a>
         <a href="/publishers" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Building2 className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white" >Track</span><span className="mt-1 block text-[11px] text-slate-500">Studios & publishers</span></a>
         <a href="#my-downloads" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Download className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Downloads</span><span className="mt-1 block text-[11px] text-slate-500">Permitted to save</span></a>
       </section>

@@ -50,9 +50,9 @@ function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loadin
         </div>
       </div>
 
-      <div className="rounded-2xl border border-blue-400/30 bg-[linear-gradient(120deg,#123d78,#0b2446_55%,#080d17)] p-4 shadow-[0_16px_48px_rgba(20,90,200,.18)]">
+      <div className="rounded-2xl border border-white/10 bg-[linear-gradient(120deg,#151b18,#0d1110_55%,#080b0a)] p-4 shadow-[0_16px_48px_rgba(20,90,200,.18)]">
         <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-bold text-white">Your Tracked Publishers</p><p className="mt-1 text-xs text-slate-500">Studios, Publishers And Broadcasters You Choose To Track.</p></div><a href="/publishers" className="text-xs font-bold text-cinema-200 hover:text-white">Discover Publishers</a></div>
-        {social?.follows.length ? <div className="mt-3 flex flex-wrap gap-2">{social.follows.map((name) => <a key={name} href={`/publishers/${encodeURIComponent(name)}`} className="rounded-full border border-blue-300/40 bg-blue-500/20 px-3 py-2 text-xs font-semibold text-blue-50 shadow-[0_4px_18px_rgba(30,110,230,.12)] transition hover:border-blue-200/60 hover:bg-blue-500/30">{name}</a>)}</div> : <p className="mt-3 text-xs text-slate-500">You Are Not Tracking Any Publishers Yet. Explore Publisher Destinations To Choose The Studios And Broadcasters You Want To Hear From.</p>}
+        {social?.follows.length ? <div className="mt-3 flex flex-wrap gap-2">{social.follows.map((name) => <a key={name} href={`/publishers/${encodeURIComponent(name)}`} className="rounded-full border border-white/15 bg-white/[.06] px-3 py-2 text-xs font-semibold text-slate-200 shadow-[0_4px_18px_rgba(0,0,0,.12)] transition hover:border-white/25 hover:bg-white/[.10]">{name}</a>)}</div> : <p className="mt-3 text-xs text-slate-500">You Are Not Tracking Any Publishers Yet. Explore Publisher Destinations To Choose The Studios And Broadcasters You Want To Hear From.</p>}
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
@@ -61,7 +61,7 @@ function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loadin
         </section>
         <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
           <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Publishers In Your Circle</p><p className="mt-1 text-xs text-slate-500">Studios And Broadcasters Your Friends Track.</p></div><Clapperboard className="h-4 w-4 text-cinema-200" /></div>
-          {social?.activity.publishers.length ? <div className="mt-4 flex flex-wrap gap-2">{social.activity.publishers.slice(0, 14).map((item) => <a key={item.friendId + item.publisherName} href={`/publishers/${encodeURIComponent(item.publisherName)}`} title={`${item.friendName} tracks ${item.publisherName}`} className="rounded-full border border-blue-300/35 bg-blue-500/15 px-3 py-2 text-xs font-semibold text-blue-50 transition hover:border-blue-200/60 hover:bg-blue-500/25">{item.publisherName}<span className="ml-1.5 text-[10px] text-slate-500">· {item.friendName}</span></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When your friends track studios, publishers or broadcasters, those connections will appear here.</p>}
+          {social?.activity.publishers.length ? <div className="mt-4 flex flex-wrap gap-2">{social.activity.publishers.slice(0, 14).map((item) => <a key={item.friendId + item.publisherName} href={`/publishers/${encodeURIComponent(item.publisherName)}`} title={`${item.friendName} tracks ${item.publisherName}`} className="rounded-full border border-white/15 bg-white/[.05] px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-white/25 hover:bg-white/[.09]">{item.publisherName}<span className="ml-1.5 text-[10px] text-slate-500">· {item.friendName}</span></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When your friends track studios, publishers or broadcasters, those connections will appear here.</p>}
         </section>
       </div>
     </section>
@@ -106,7 +106,7 @@ export function HomePage() {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
-      <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(35,105,220,.13),transparent_62%)]" aria-hidden="true" />
+      <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(190,205,196,.07),transparent_62%)]" aria-hidden="true" />
       <TmdbHero />
       <section className="cinema-home-shorts space-y-5" aria-label="Cinema Shorts">
         <div className="flex flex-wrap items-end justify-between gap-4">

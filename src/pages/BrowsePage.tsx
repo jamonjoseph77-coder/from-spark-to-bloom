@@ -27,7 +27,7 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
   const visible = useMemo(() => sortTitles(ofType.filter((title) => (genre === ALL_GENRES || hasGenre(title, genre)) && matchesQuery(title, query)), sort), [ofType, genre, query, sort]);
 
   return (
-    <div className={`${PAGE_CONTAINER} space-y-8`}>
+    <div className={`${PAGE_CONTAINER} cinema-browse-page space-y-8`}>
       <header className="space-y-3"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Cinema</p><h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{copy.heading}</h1><p className="max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">{copy.intro}</p></header>
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {titles && ofType.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title={`${copy.heading} Is Getting Ready`} description={copy.empty} />}

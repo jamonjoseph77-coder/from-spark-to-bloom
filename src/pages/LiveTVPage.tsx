@@ -39,12 +39,12 @@ export function LiveTVPage() {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-live-tv space-y-7`}>
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#111827] via-[#0b1220] to-[#080d16] p-5 shadow-[0_24px_70px_rgba(0,0,0,.28)] sm:p-8">
-        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-sky-300/[.08] blur-3xl" />
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#141a17] via-[#0b0f0d] to-[#080b09] p-5 shadow-[0_24px_70px_rgba(0,0,0,.28)] sm:p-8">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-72 rounded-full bg-slate-200/[.07] blur-3xl" />
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-100/15 bg-sky-100/[.07] px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.2em] text-sky-100">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.05] px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-200">
               <Signal className="h-3.5 w-3.5" /> Television, Together
             </div>
             <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ export function LiveTVPage() {
               <p className="text-2xl font-black tabular-nums text-white">{channels.length}</p>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Channels</p>
             </div>
-            <div className="rounded-2xl border border-sky-100/15 bg-sky-100/[.06] px-4 py-3">
+            <div className="rounded-2xl border border-white/10 bg-white/[.04] px-4 py-3">
               <p className="text-2xl font-black tabular-nums text-sky-100">{playable.length}</p>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Linked Streams</p>
             </div>
@@ -92,7 +92,7 @@ export function LiveTVPage() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center rounded-[1.7rem] border border-dashed border-white/15 bg-white/[.025] px-5 py-9 text-center">
-              <span className="grid h-14 w-14 place-items-center rounded-2xl border border-sky-100/15 bg-sky-100/[.06] text-sky-100"><TvMinimalPlay className="h-7 w-7" /></span>
+              <span className="grid h-14 w-14 place-items-center rounded-2xl border border-white/10 bg-white/[.04] text-slate-200"><TvMinimalPlay className="h-7 w-7" /></span>
               <h2 className="mt-4 text-lg font-extrabold text-white">Choose A Channel</h2>
               <p className="mt-1 max-w-sm text-sm text-slate-400">Select a channel below to open the Cinema player. Playback controls adapt to your screen.</p>
             </div>
