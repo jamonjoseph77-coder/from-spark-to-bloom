@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Radio, Search, Signal, TvMinimalPlay } from 'lucide-react';
+import { ArrowRight, Radio, Search, Signal, TvMinimalPlay } from 'lucide-react';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { KeepUpButton } from '@/components/social/KeepUpButton';
 import { Artwork } from '@/components/ui/Artwork';
