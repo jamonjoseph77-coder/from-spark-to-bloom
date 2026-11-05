@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, Radio, Search, Signal, TvMinimalPlay } from 'lucide-react';
+import { Radio, Search, Signal, TvMinimalPlay } from 'lucide-react';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { KeepUpButton } from '@/components/social/KeepUpButton';
 import { Artwork } from '@/components/ui/Artwork';
@@ -72,28 +72,6 @@ export function LiveTVPage() {
       </header>
 
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
-
-      <section className="space-y-3" aria-label="Official broadcaster live pages">
-        <div>
-          <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-400">Official Broadcaster Destinations</p>
-          <h2 className="mt-1 text-xl font-extrabold text-white">Watch From The Broadcasters</h2>
-          <p className="mt-1 text-sm text-slate-400">These open the broadcasters’ own live pages. They are not re-hosted Cinema streams.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <a href="https://3news.com/live" target="_blank" rel="noreferrer" className="group rounded-2xl border border-white/10 bg-white/[.025] p-4 transition hover:border-sky-200/30 hover:bg-white/[.04]">
-            <span className="text-[10px] font-bold uppercase tracking-[.16em] text-sky-200">Media General</span>
-            <h3 className="mt-2 text-base font-extrabold text-white">TV3 & 3News Live</h3>
-            <p className="mt-1 text-xs leading-5 text-slate-400">Open TV3 and 3News’ official live television page.</p>
-            <span className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-sky-200">Open Official Live Page <ArrowRight className="h-3.5 w-3.5" /></span>
-          </a>
-          <a href="https://www.myjoyonline.com/media/joy-news-live/" target="_blank" rel="noreferrer" className="group rounded-2xl border border-white/10 bg-white/[.025] p-4 transition hover:border-sky-200/30 hover:bg-white/[.04]">
-            <span className="text-[10px] font-bold uppercase tracking-[.16em] text-sky-200">The Multimedia Group</span>
-            <h3 className="mt-2 text-base font-extrabold text-white">JoyNews Live</h3>
-            <p className="mt-1 text-xs leading-5 text-slate-400">Open JoyNews’ official live television page.</p>
-            <span className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-sky-200">Open Official Live Page <ArrowRight className="h-3.5 w-3.5" /></span>
-          </a>
-        </div>
-      </section>
 
       {titles && channels.length > 0 && (
         <section className="space-y-4" aria-label="Live television player">
