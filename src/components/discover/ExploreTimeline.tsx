@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { ArrowRight, Compass, MessageCircle, Play, Send, Sparkles } from 'lucide-react';
+import { ArrowRight, Compass, MessageCircle, Play, Send } from 'lucide-react';
 import { ClipCard } from '@/components/discover/ClipCard';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
@@ -40,8 +40,9 @@ async function loadExploreData(): Promise<ExploreData> {
   const posts = postsResult.status === 'fulfilled' ? postsResult.value : [];
   const clips = clipsResult.status === 'fulfilled'
     ? clipsResult.value.filter((clip) => {
-      if (clip.kind === 'short' || clip.kind === 'clip') return isPlayableShort(clip);
-      return Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url)));
+      const playable = Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url)));
+      if (clip.kind === 'short') return isPlayableShort(clip);
+      return playable;
     })
     : [];
   const trailers = trailersResult.status === 'fulfilled' ? trailersResult.value : [];
@@ -59,7 +60,7 @@ function PublisherVideoPost({ clip, onOpenShort, onOpenVideo }: {
   onOpenShort: (clip: DiscoverClip) => void;
   onOpenVideo: (clip: DiscoverClip) => void;
 }) {
-  const isShort = (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip);
+  const isShort = clip.kind === 'short' && isPlayableShort(clip);
   const publisher = clip.publisher_name?.trim() || 'Cinema Publisher';
   return (
     <article id={isShort ? `short-${clip.id}` : undefined} className="border-b border-white/10 bg-[#07090d] px-4 py-4 transition-colors hover:bg-white/[.018] sm:px-5">
@@ -67,7 +68,7 @@ function PublisherVideoPost({ clip, onOpenShort, onOpenVideo }: {
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-[#111821] text-sm font-black text-white">{publisher.slice(0, 1).toUpperCase()}</span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-extrabold text-white">{publisher}</p>
-          <p className="text-xs text-slate-500">{clip.kind.replaceAll('_', ' ')} · {clip.created_at ? new Date(clip.created_at).toLocaleDateString() : 'Cinema Video'}</p>
+          <p className="text-xs text-slate-500">{clip.kind.replace(/_/g, ' ')} · {clip.created_at ? new Date(clip.created_at).toLocaleDateString() : 'Cinema Video'}</p>
         </div>
         <span className="rounded-full border border-white/10 bg-white/[.035] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-300">Video</span>
       </div>
