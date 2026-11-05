@@ -1,8 +1,6 @@
 import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy } from 'lucide-react';
-import { OfficialTrailers } from '@/components/discover/OfficialTrailers';
-import { DiscoverShorts, CinemaPulse } from '@/components/discover/DiscoverShorts';
+import { ExploreTimeline } from '@/components/discover/ExploreTimeline';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
-import { LetterboxPage } from '@/pages/LetterboxPage';
 
 export function DiscoverPage() {
   return (
@@ -21,13 +19,7 @@ export function DiscoverPage() {
         </div>
       </header>
 
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">From Studios And Publishers</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Official Trailers</h2><p className="mt-1 text-sm text-slate-400">Trailers and teasers from official studio and publisher sources.</p></div>
-          <span className="rounded-full border border-sky-300/15 bg-sky-300/[.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sky-200">Verified sources</span>
-        </div>
-        <OfficialTrailers />
-      </section>
+      <ExploreTimeline />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Explore Cinema categories">
         <a href="/movies" className="group relative isolate min-h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#0b1421] p-5 transition hover:-translate-y-1 hover:border-sky-200/35"><img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" alt="" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-35 transition duration-500 group-hover:scale-105 group-hover:opacity-50" /><span className="absolute inset-0 -z-10 bg-gradient-to-r from-[#07101d]/95 via-[#07101d]/65 to-transparent" /><Film className="h-5 w-5 text-sky-200" /><h3 className="mt-5 text-lg font-extrabold text-white">Movies</h3><p className="mt-1 text-xs text-slate-300">Films From Every Corner</p></a>
@@ -40,11 +32,6 @@ export function DiscoverPage() {
         <a href="/publishers" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-sky-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-200/20 bg-sky-300/10 text-sky-100"><BadgeCheck className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Verified Studios & Publishers</span><span className="mt-1 block text-xs text-slate-400">Track official entertainment destinations.</span></span></a>
         <a href="/friends" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-indigo-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-indigo-200/20 bg-indigo-300/10 text-indigo-100"><Flame className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">What Your Circle Is Watching</span><span className="mt-1 block text-xs text-slate-400">Find conversations and shared favourites.</span></span></a>
       </section>
-      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <LetterboxPage embedded />
-      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <DiscoverShorts />
-      <CinemaPulse />
 
       <section className="space-y-4">
         <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Explore The Catalogue</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Stories worth your time</h2><p className="mt-1 text-sm text-slate-400">Useful recommendations with a direct path to each movie or series.</p></div>
