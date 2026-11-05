@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
-  ArrowUpRight, BadgeCheck, BookmarkPlus, Check, Eye, EyeOff,
+  ArrowUpRight, BookmarkPlus, Check, Eye, EyeOff,
   Heart, MessageCircle, Send, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
