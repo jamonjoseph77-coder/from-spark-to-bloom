@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { BUTTON_PRIMARY, INPUT, LABEL } from '@/components/ui/styles';
 import { saveClip, CLIP_KIND_LABEL, type ClipInput, type ClipKind, type DiscoverClip } from '@/lib/clips';
-import { isHttpUrl } from '@/lib/media';
+import { isDirectVideoUrl, isHttpUrl, toEmbedUrl } from '@/lib/media';
 import type { Title } from '@/lib/types';
 
 const KINDS = Object.keys(CLIP_KIND_LABEL) as ClipKind[];
@@ -41,11 +41,17 @@ function buildInput(form: FormState): { input?: ClipInput; error?: string } {
   if (!form.video_url.trim() || !isHttpUrl(form.video_url)) {
     return { error: 'The video link must start with http:// or https://.' };
   }
+  if (!isDirectVideoUrl(form.video_url.trim()) && !toEmbedUrl(form.video_url.trim())) {
+    return { error: 'Use a direct MP4/HLS video link or a supported public YouTube video link.' };
+  }
   if (form.poster_url.trim() && !isHttpUrl(form.poster_url)) return { error: 'The poster link must start with http:// or https://.' };
   const duration = form.duration_seconds.trim() === '' ? null : Number(form.duration_seconds);
   const order = Number(form.sort_order || '0');
-  if (duration !== null && (!Number.isInteger(duration) || duration < 0)) {
-    return { error: 'Duration must be a whole number of seconds.' };
+  if (duration !== null && (!Number.isInteger(duration) || duration < 1)) {
+    return { error: 'Duration must be a positive whole number of seconds.' };
+  }
+  if ((form.kind === 'short' || form.kind === 'clip') && duration !== null && duration > 90) {
+    return { error: 'Short-form videos must be 90 seconds or shorter.' };
   }
   if (!Number.isInteger(order)) return { error: 'Sort order must be a whole number.' };
 
