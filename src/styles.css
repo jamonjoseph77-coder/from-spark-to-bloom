@@ -1530,3 +1530,61 @@ body {
 .cinema-short-viewer .cinema-short-viewer__watch:hover {
   box-shadow: 0 12px 34px rgba(0,102,255,.42), inset 0 1px 0 rgba(255,255,255,.2);
 }
+
+
+/* Cinema Shorts: keep the player frame at a true vertical-short proportion.
+   The surrounding modal remains full-screen, while the video and its controls
+   stay together in a compact 9:16 stage on phones and desktop. */
+.cinema-short-viewer {
+  width: min(100%, 430px, 51.75dvh);
+  height: auto;
+  max-height: 92dvh;
+  aspect-ratio: 9 / 16;
+  flex: 0 1 auto;
+  border: 1px solid rgba(125, 180, 245, .2);
+  border-radius: 1.15rem;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .58), 0 0 38px rgba(8, 92, 210, .12);
+  isolation: isolate;
+}
+.cinema-short-viewer .cinema-short-video-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cinema-short-viewer .cinema-short-video-stage > video,
+.cinema-short-viewer .cinema-short-video-stage > div,
+.cinema-short-viewer .cinema-short-video-stage > iframe {
+  max-width: 100%;
+  max-height: 100%;
+}
+.cinema-short-viewer .cinema-short-video-stage iframe.cinema-short-embed {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 9 / 16;
+}
+.cinema-short-viewer .cinema-short-action-rail {
+  right: .55rem;
+  gap: .35rem;
+}
+.cinema-short-viewer .cinema-short-action {
+  min-width: 2.65rem;
+  min-height: 2.7rem;
+}
+@media (max-width: 640px) {
+  .cinema-short-viewer {
+    width: min(100%, 51.75dvh);
+    border-radius: .9rem;
+  }
+  .cinema-short-viewer .cinema-short-action-rail {
+    right: .35rem;
+    gap: .2rem;
+  }
+  .cinema-short-viewer .cinema-short-action {
+    min-width: 2.45rem;
+    min-height: 2.5rem;
+  }
+}
