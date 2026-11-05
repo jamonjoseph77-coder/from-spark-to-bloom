@@ -121,7 +121,7 @@ export function HomePage() {
         </div>
         {!publishedClips && (clipsError
           ? <ErrorState onRetry={reloadClips} description="Cinema Shorts could not load just now. Your other Cinema features are still available; try the feed again." />
-          : <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex snap-x gap-3 overflow-hidden px-4 pb-3 sm:mx-0 sm:gap-4 sm:px-0">{Array.from({ length: 4 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(38vw,148px)] shrink-0 rounded-[1.2rem] sm:w-[148px]" />)}</div>
+          : <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex snap-x gap-3 overflow-hidden px-4 pb-3 sm:mx-0 sm:gap-4 sm:px-0">{Array.from({ length: 4 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(34vw,124px)] shrink-0 rounded-[1.2rem] sm:w-[132px]" />)}</div>
         )}
         {publishedClips && shorts.length === 0 && (
           <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-[linear-gradient(115deg,#10151e,#080b11_62%,#05070b)] p-6 sm:p-8">
