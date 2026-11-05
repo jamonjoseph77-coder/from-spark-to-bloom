@@ -156,9 +156,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   return (
     <Modal label={clip.headline} onClose={onClose} immersive showCloseButton={false}>
       <div className="cinema-short-viewer relative flex h-full min-h-0 flex-col justify-center overflow-hidden bg-[#030508]">
-        <div className="absolute inset-0 flex items-center justify-center bg-black">
+        <div className="cinema-short-video-stage absolute inset-0 flex items-center justify-center bg-black">
           {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={isMuted} onMutedChange={setIsMuted} showMuteToggle showControls={!clearScreen} />}
-          {embed && <iframe ref={iframeRef} src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
+          {embed && <iframe ref={iframeRef} src={embed} title={clip.headline} className="cinema-short-embed h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
           {!direct && !embed && <div className="grid h-full place-items-center p-8 text-center text-sm text-slate-400">This Video Link Is Not Supported Yet. Please Use A Cinema-Compatible Video Link.</div>}
         </div>
 
@@ -176,7 +176,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
         )}
         <div className="absolute inset-x-3 top-3 z-40 flex items-center justify-between gap-3 sm:inset-x-5 sm:top-5">
           <div className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#07101b]/75 px-3 py-2 text-[10px] font-extrabold uppercase tracking-[.16em] text-slate-100 shadow-lg backdrop-blur-xl transition-opacity ${clearScreen ? 'opacity-0' : 'opacity-100'}`}>
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-sky-200/10 text-sky-100"><BadgeCheck className="h-3.5 w-3.5" /></span>
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-[#087cff]/20 text-[#8dc4ff]"><Play className="h-3.5 w-3.5 fill-current" /></span>
             Cinema Shorts
           </div>
           <div className="flex items-center gap-2">
@@ -192,9 +192,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black via-black/85 to-transparent px-5 pb-[max(28px,env(safe-area-inset-bottom))] pt-44">
               <div className="pointer-events-auto flex items-end gap-3 pr-16">
                 <div className="min-w-0 flex-1">
-                  <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-sky-200/20 bg-[#0b1726]/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-100"><BadgeCheck className="h-3.5 w-3.5" /> {clip.publisher_name || 'Cinema Publisher'}</p>
                   <h2 className="line-clamp-3 text-lg font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</h2>
-                  <p className="mt-1 text-xs text-slate-300">{clip.duration_seconds ? `Cinema Short · ${clip.duration_seconds} Seconds` : 'A Story From Cinema'}</p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[.16em] text-[#8dbfff]">{clip.duration_seconds ? `Short Video · ${clip.duration_seconds} Seconds` : 'A Story From Cinema'}</p>
                   {clip.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-300">{clip.description}</p>}
                   {clip.title ? (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -214,18 +213,16 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
               </div>
             </div>
 
-            <div className={`absolute right-3 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-2 transition-opacity sm:right-4 ${commentOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
-              <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Remove Like' : 'Like This Cinema Short'} aria-pressed={liked} className="cinema-social-action group flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
-                <Heart className={`h-5 w-5 transition ${liked ? 'fill-sky-200 text-sky-100' : 'text-white group-hover:text-sky-100'}`} />
+            <div className={`cinema-short-action-rail absolute right-2 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-3 transition-opacity sm:right-4 ${commentOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
+              <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Remove Like' : 'Like This Cinema Short'} aria-pressed={liked} className="cinema-social-action cinema-short-action group flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+                <Heart className={`h-6 w-6 transition ${liked ? 'fill-[#58a9ff] text-[#8bc5ff]' : 'text-white group-hover:text-[#8bc5ff]'}`} />
                 <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Like</span>
               </button>
-              <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-social-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
-                <MessageCircle className="h-5 w-5" />
+              <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-social-action cinema-short-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+                <MessageCircle className="h-6 w-6" />
                 <span className="text-[10px] font-bold tabular-nums">{loadingEngagement ? '…' : comments.length}</span>
-                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400">Comments</span>
               </button>
-              <ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly clipId={clip.id} viewsCount={viewsCount} />
+              <div className="cinema-short-share-actions"><ContentEngagement contentKey={engagementKey} title={clip.headline} href={`/discover#short-${clip.id}`} imageUrl={clip.poster_url} shareOnly clipId={clip.id} viewsCount={viewsCount} /></div>
             </div>
           </>
         )}
