@@ -1811,3 +1811,112 @@ body {
     animation-iteration-count: 1 !important;
   }
 }
+
+
+/* CINEMA SIGNATURE HIGHLIGHTS — unified electric-blue glass selection language. */
+:root {
+  --cinema-highlight-blue: #087cff;
+  --cinema-highlight-ice: #9bd3ff;
+  --cinema-highlight-glow: rgba(8, 124, 255, .34);
+}
+.cinema-app-shell :is(a, button, [role="button"], [role="tab"], [role="menuitem"]):focus-visible {
+  outline: 2px solid var(--cinema-highlight-ice) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(8,124,255,.16), 0 0 24px rgba(8,124,255,.2) !important;
+}
+.cinema-app-shell :is(a, button, [role="button"], [role="tab"], [role="menuitem"])[aria-current="page"],
+.cinema-app-shell :is(button, [role="button"], [role="tab"], [role="menuitem"])[aria-pressed="true"],
+.cinema-app-shell :is([role="tab"], [role="menuitem"], [role="option"])[aria-selected="true"],
+.cinema-app-shell :is([data-state="active"], [data-selected="true"]) {
+  color: #f4f9ff !important;
+  border-color: rgba(65, 157, 255, .76) !important;
+  background: linear-gradient(135deg, rgba(8,124,255,.25), rgba(8,124,255,.09) 58%, rgba(0,229,255,.08)) !important;
+  box-shadow: inset 0 1px 0 rgba(210,238,255,.18), inset 0 0 0 1px rgba(8,124,255,.12), 0 0 20px rgba(8,124,255,.18) !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.cinema-app-shell :is(a, button, [role="button"], [role="tab"], [role="menuitem"]):active {
+  border-color: rgba(85,168,255,.72);
+  background-color: rgba(8,124,255,.18);
+  box-shadow: inset 0 1px 0 rgba(220,242,255,.15), 0 0 18px rgba(8,124,255,.18);
+}
+.cinema-nav-link[aria-current="page"] {
+  border: 1px solid rgba(65,157,255,.46) !important;
+  background: linear-gradient(110deg, rgba(8,124,255,.22), rgba(8,124,255,.07)) !important;
+  box-shadow: inset 3px 0 0 #168cff, inset 0 1px 0 rgba(210,238,255,.12), 0 0 24px rgba(8,124,255,.12) !important;
+}
+.cinema-nav-link[aria-current="page"] svg,
+.cinema-mobile-nav-item[aria-current="page"] svg {
+  color: #8bc8ff !important;
+  filter: drop-shadow(0 0 8px rgba(8,124,255,.68));
+}
+.cinema-mobile-nav-item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset: 5px -5px 0;
+  z-index: -1;
+  border: 1px solid rgba(65,157,255,.28);
+  border-radius: 1rem;
+  background: linear-gradient(145deg, rgba(8,124,255,.17), rgba(8,124,255,.035));
+  box-shadow: 0 0 18px rgba(8,124,255,.14);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.cinema-home-category {
+  border-color: rgba(160,190,225,.16);
+  color: #c4d0df;
+  background: rgba(255,255,255,.035);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.cinema-home-category:hover,
+.cinema-home-category:focus-visible {
+  color: #f4f9ff;
+  border-color: rgba(65,157,255,.58);
+  background: linear-gradient(135deg, rgba(8,124,255,.2), rgba(8,124,255,.06));
+  box-shadow: 0 0 18px rgba(8,124,255,.16), inset 0 1px 0 rgba(220,242,255,.14);
+}
+.cinema-recommendations-sector {
+  scroll-margin-top: 7rem;
+}
+.cinema-home .cinema-hero {
+  border-color: rgba(65,157,255,.2);
+  box-shadow: 0 38px 110px rgba(0,0,0,.58), 0 0 34px rgba(8,124,255,.075);
+}
+.cinema-home .cinema-hero :is(button, a):focus-visible {
+  outline-color: #9bd3ff !important;
+}
+.cinema-empty-board {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-style: solid !important;
+  border-color: rgba(85,168,255,.2) !important;
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(8,124,255,.11), transparent 42%),
+    linear-gradient(135deg, rgba(15,22,34,.96), rgba(5,8,14,.98)) !important;
+  box-shadow: inset 0 1px 0 rgba(210,238,255,.045), 0 18px 46px rgba(0,0,0,.18);
+}
+.cinema-empty-board::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: clamp(8rem, 24vw, 13rem);
+  aspect-ratio: 1;
+  right: -1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url('/cinema-icon.png') center / contain no-repeat;
+  opacity: .075;
+  filter: grayscale(1) brightness(1.65) contrast(.8);
+  pointer-events: none;
+}
+.cinema-empty-board > * {
+  position: relative;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-app-shell :is(a, button, [role="button"], [role="tab"], [role="menuitem"]) {
+    transition: none !important;
+  }
+}
