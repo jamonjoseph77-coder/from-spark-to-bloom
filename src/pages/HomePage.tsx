@@ -184,8 +184,6 @@ export function HomePage() {
         <TmdbRow heading="Drama Series" description="Series led by memorable characters and stories." mediaType="tv" list="popular" genreId={18} />
         {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
       </section>
-      {cinemaShelves && cinemaShelves.movies.length > 0 && <section id="home-movies" className="scroll-mt-28"><TitleRow heading="Available On Cinema" description="Movies published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} /></section>}
-      {cinemaShelves && cinemaShelves.series.length > 0 && <section id="home-series" className="scroll-mt-28"><TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} /></section>}
       {cinemaShelves && <section id="home-coming-soon" className="scroll-mt-28"><TitleRow heading="Coming Soon" description="Upcoming titles already announced in Cinema." titles={cinemaShelves.comingSoon} />{cinemaShelves.comingSoon.length === 0 && <p className="rounded-2xl border border-white/10 bg-white/[.02] p-5 text-sm text-slate-400">New announcements will appear here as upcoming titles are added to Cinema.</p>}</section>}
       {!titles && (titlesError ? <ErrorState onRetry={reloadTitles} /> : <LoadingState label="Loading Your Cinema Catalogue" />)}
       <section className="grid gap-4 md:grid-cols-2">
