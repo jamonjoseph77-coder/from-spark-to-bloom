@@ -88,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     let sessionRestoreSettled = false;
+    let authEventReceived = false;
 
     // Never hold the entire Cinema interface behind an auth request that
     // stalls indefinitely on a weak or interrupted connection.
@@ -104,25 +105,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!active || sessionRestoreSettled) return;
         sessionRestoreSettled = true;
         if (error) console.warn("Cinema could not restore the saved session.", error.message);
-        setSession(data.session ?? null);
+        // An auth event is newer than the initial storage read. Never let a
+        // delayed getSession response overwrite a sign-in/sign-out event.
+        if (!authEventReceived) setSession(data.session ?? null);
       })
       .catch((error: unknown) => {
         if (!active || sessionRestoreSettled) return;
         sessionRestoreSettled = true;
         console.warn("Cinema could not restore the saved session.", error);
-        setSession(null);
+        if (!authEventReceived) setSession(null);
       })
       .finally(() => {
         window.clearTimeout(sessionRestoreTimeout);
-        if (active && !sessionRestoreSettled) {
-          sessionRestoreSettled = true;
-          setLoading(false);
-        } else if (active) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       });
 
     const { data: subscription } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      authEventReceived = true;
+      sessionRestoreSettled = true;
+      window.clearTimeout(sessionRestoreTimeout);
       setSession(nextSession);
       setLoading(false);
       if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
