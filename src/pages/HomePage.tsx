@@ -91,6 +91,7 @@ export function HomePage() {
       document.removeEventListener('visibilitychange', refreshShorts);
     };
   }, [reloadClips]);
+  const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
   const shorts = useMemo(
     () => rankPublishedShorts(
       (publishedClips ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)),
@@ -99,7 +100,6 @@ export function HomePage() {
     ),
     [publishedClips, social?.follows],
   );
-  const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
   const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
   const categoryOrder = useMemo(() => buildPersonalizedSectionOrder(titles ?? [], progress, watchlistIds, favouriteIds, social?.follows ?? []), [titles, progress, watchlistIds, favouriteIds, social?.follows]);
   const categoryDestinations: Record<PersonalizedSection, { label: string; target: string }> = {
