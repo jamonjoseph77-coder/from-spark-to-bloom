@@ -1588,3 +1588,76 @@ body {
     min-height: 2.5rem;
   }
 }
+
+
+/* Cinema Shorts Shelf — compact title-sized cards, without a decorative frame band. */
+.cinema-home .cinema-home-shorts::before {
+  content: none !important;
+  display: none !important;
+}
+.cinema-home .cinema-shorts-rail {
+  gap: .75rem;
+  padding-bottom: .35rem;
+}
+.cinema-home .cinema-short-card--vertical {
+  width: min(38vw, 148px);
+  padding: 0;
+  border: 0;
+  border-radius: 1rem;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+.cinema-home .cinema-short-card--vertical:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+.cinema-home .cinema-short-card__poster--vertical {
+  width: 100%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 1rem;
+  box-shadow: 0 7px 22px rgba(0,0,0,.28);
+}
+.cinema-home .cinema-short-card__poster--vertical::after {
+  content: none;
+  display: none;
+}
+.cinema-home .cinema-short-card__poster--vertical > span:first-of-type {
+  opacity: .78;
+}
+.cinema-home .cinema-short-card__poster--vertical .rounded-full {
+  backdrop-filter: blur(8px);
+}
+.cinema-short-viewer .cinema-short-action-rail {
+  padding: .15rem;
+  border: 0;
+  background: rgba(0,0,0,.12);
+  box-shadow: none;
+  backdrop-filter: blur(5px);
+}
+.cinema-short-viewer .cinema-short-action {
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  box-shadow: none;
+  backdrop-filter: blur(5px);
+}
+.cinema-short-viewer .cinema-short-action:hover,
+.cinema-short-viewer .cinema-short-action[aria-pressed="true"] {
+  border-color: rgba(255,255,255,.2);
+  background: rgba(8,124,255,.12);
+}
+.cinema-short-viewer .cinema-short-share-actions .cinema-social-action {
+  border-color: rgba(255,255,255,.10);
+  background: rgba(0,0,0,.10);
+  box-shadow: none;
+  backdrop-filter: blur(5px);
+}
+@media (min-width: 640px) {
+  .cinema-home .cinema-short-card--vertical { width: 148px; }
+}
+@media (max-width: 380px) {
+  .cinema-home .cinema-short-card--vertical { width: 132px; }
+}
