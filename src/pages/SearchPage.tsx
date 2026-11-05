@@ -65,7 +65,7 @@ export function SearchPage({ query }: { query: string }) {
   }
 
   return (
-    <div className={`${PAGE_CONTAINER} space-y-9 pb-12`}>
+    <div className={`${PAGE_CONTAINER} cinema-search-page space-y-9 pb-12`}>
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_42%),linear-gradient(135deg,#121715,#090c0b_72%)] p-6 shadow-xl shadow-black/20 sm:p-9">
         <div className="absolute -right-12 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Sparkles aria-hidden="true" className="h-4 w-4" /> Find Your Next Experience</p>
