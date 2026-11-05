@@ -27,7 +27,7 @@ function getShortsErrorDescription(error: unknown): string {
 function ShortsLoading() {
   return (
     <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex snap-x gap-3 overflow-hidden px-4 pb-3 sm:mx-0 sm:gap-4 sm:px-0">
-      {Array.from({ length: 5 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(38vw,148px)] shrink-0 rounded-[1.2rem] sm:w-[148px]" />)}
+      {Array.from({ length: 5 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(34vw,124px)] shrink-0 rounded-[1.2rem] sm:w-[132px]" />)}
     </div>
   );
 }
