@@ -13,7 +13,7 @@ export function SideNav({ route }: SideNavProps) {
   const activeKey = navKeyOf(route);
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/5 bg-ink-900/90 backdrop-blur-xl lg:flex">
+    <aside className="cinema-sidenav fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/[.08] bg-[#090c0b]/90 backdrop-blur-2xl lg:flex">
       <a href="/" className="px-6 pb-8 pt-7" aria-label="Cinema home">
         <CinemaLogo />
       </a>
@@ -33,10 +33,10 @@ export function SideNav({ route }: SideNavProps) {
                     <a
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
-                      className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition ${
+                      className={`cinema-nav-link group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition ${
                         active
-                          ? 'bg-cinema-600/20 text-white ring-1 ring-cinema-400/30'
-                          : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                          ? 'bg-white/[.075] text-white ring-1 ring-white/[.12]'
+                          : 'text-slate-400 hover:bg-white/[.045] hover:text-slate-100'
                       }`}
                     >
                       <Icon className={`h-5 w-5 ${active ? 'text-cinema-300' : 'text-slate-500 group-hover:text-cinema-300'}`} />
