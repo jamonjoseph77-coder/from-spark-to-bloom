@@ -101,13 +101,28 @@ export function HomePage() {
     if (!titles) return null;
     const today = new Date().toISOString().slice(0, 10);
     const comingSoon = titles.filter((title) => title.release_date != null && title.release_date > today).sort((a, b) => (a.release_date ?? '').localeCompare(b.release_date ?? ''));
-    return { movies: titlesOfType(titles, 'movie'), series: titlesOfType(titles, 'series'), sports: titlesOfType(titles, 'sport'), comingSoon, resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
+    const news = titlesOfType(titles, 'news');
+    const live = titlesOfType(titles, 'live');
+    const genreMatches = (terms: string[]) => titles.filter((title) => terms.some((term) => title.genre.toLocaleLowerCase().includes(term)));
+    return { movies: titlesOfType(titles, 'movie'), series: titlesOfType(titles, 'series'), sports: titlesOfType(titles, 'sport'), news, live, reality: genreMatches(['reality']), documentaries: genreMatches(['documentary', 'documentaries']), comingSoon, resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
   }, [titles, progress]);
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(190,205,196,.07),transparent_62%)]" aria-hidden="true" />
       <TmdbHero />
+      <nav className="cinema-home-categories -mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
+        {[
+          ['Movies', 'home-movies'],
+          ['Series', 'home-series'],
+          ['News', 'home-news'],
+          ['Reality', 'home-reality'],
+          ['Documentaries', 'home-documentaries'],
+          ['Coming Soon', 'home-coming-soon'],
+        ].map(([label, target], index) => (
+          <a key={target} href={'#' + target} className={'shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4 ' + (index === 0 ? 'border-white/25 bg-white/[.10] text-white' : 'border-white/10 bg-white/[.025] text-slate-300 hover:border-white/25 hover:bg-white/[.07] hover:text-white')}>{label}</a>
+        ))}
+      </nav>
       <section className="cinema-home-shorts space-y-5" aria-label="Cinema Shorts">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="max-w-2xl">
@@ -146,8 +161,8 @@ export function HomePage() {
       {activeShort && <ShortViewer clip={activeShort} onClose={closeShort} />}
       <HomeCommunity social={social} loading={Boolean(user) && socialLoading} />
       <section className="space-y-4"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Beyond The Screen</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Inside The Story</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Go closer with cast conversations, behind-the-scenes moments and the craft behind the stories.</p></div><a href="/discover" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Features <ArrowRight className="inline h-4 w-4" /></a></div><CinemaSpotlights /></section>
-      {recommendations.titles.length > 0 && <TitleRow heading="Recommended For You" description={recommendations.reason} titles={recommendations.titles} landscape />}
-      {cinemaShelves?.sports.length ? <TitleRow heading="Sports On Cinema" description="Live coverage, sports programmes and highlights from Cinema publishers." titles={cinemaShelves.sports} /> : null}
+      <section id="home-recommendations" className="scroll-mt-28">{recommendations.titles.length > 0 ? <TitleRow heading="Recommendations" description={recommendations.reason} titles={recommendations.titles} landscape /> : <div className="rounded-2xl border border-white/10 bg-white/[.025] p-5"><h2 className="text-xl font-extrabold text-white">Recommendations</h2><p className="mt-1 text-sm text-slate-400">As you explore Cinema, your recommendations will become more relevant to the movies and series you enjoy.</p></div>}</section>
+      <>{cinemaShelves?.live.length ? <TitleRow heading="Live TV On Cinema" description="Live channels and programmes published by Cinema broadcasters." titles={cinemaShelves.live} /> : null}{cinemaShelves?.news.length ? <section id="home-news" className="scroll-mt-28"><TitleRow heading="News & Current Affairs" description="News programmes and current-affairs content available in Cinema." titles={cinemaShelves.news} /></section> : <section id="home-news" className="scroll-mt-28"><div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h2 className="text-xl font-extrabold text-white">News & Current Affairs</h2><p className="mt-1 text-sm text-slate-400">Verified news channels and programmes will appear here when they are published in Cinema.</p></div></section>}{cinemaShelves?.sports.length ? <TitleRow heading="Sports On Cinema" description="Live coverage, sports programmes and highlights from Cinema publishers." titles={cinemaShelves.sports} /> : null}{cinemaShelves?.reality.length ? <section id="home-reality" className="scroll-mt-28"><TitleRow heading="Reality & Entertainment" description="Reality programmes and unscripted entertainment across Cinema." titles={cinemaShelves.reality} /></section> : <section id="home-reality" className="scroll-mt-28"><div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h2 className="text-xl font-extrabold text-white">Reality & Entertainment</h2><p className="mt-1 text-sm text-slate-400">Reality programmes will appear here as publishers add them to Cinema.</p></div></section>}{cinemaShelves?.documentaries.length ? <section id="home-documentaries" className="scroll-mt-28"><TitleRow heading="Documentaries" description="Factual stories, real people and worlds worth exploring." titles={cinemaShelves.documentaries} /></section> : <section id="home-documentaries" className="scroll-mt-28"><div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h2 className="text-xl font-extrabold text-white">Documentaries</h2><p className="mt-1 text-sm text-slate-400">Documentary titles will appear here when they are available in Cinema.</p></div></section>}</>
       {cinemaShelves?.resume.length ? <section className="cinema-shelf"><div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Pick Up Where You Left Off</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Back in Cinema</h2><p className="mt-1 text-sm text-slate-400">Your Stories Are Right Where You Left Them.</p></div><a href="/my-cinema" className="text-sm font-semibold text-cinema-200 hover:text-white">My Cinema <ArrowRight className="inline h-4 w-4" /></a></div><ContinueWatchingRow items={cinemaShelves.resume} /></section> : null}
       <PublisherDestinations titles={titles ?? []} />
       <section className="space-y-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">A World Of Stories</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Find Your Next Favourite.</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Explore Real Movie And Series Information, Studio Features And Stories From Across The World.</p></div><a href="/discover" className="inline-flex items-center gap-2 text-sm font-semibold text-cinema-200 transition hover:text-white">Go To Discover <ArrowRight className="h-4 w-4" /></a></div><div className="grid gap-3 sm:grid-cols-3">
@@ -163,9 +178,9 @@ export function HomePage() {
       <TmdbRow heading="Comedy To Enjoy" description="A lighter collection for your next movie night." mediaType="movie" list="popular" genreId={35} />
       <TmdbRow heading="Animated Worlds" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
       <TmdbRow heading="Drama Series" description="Series led by memorable characters and stories." mediaType="tv" list="popular" genreId={18} />
-      {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Content published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
-      {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
-      {cinemaShelves && cinemaShelves.comingSoon.length > 0 && <TitleRow heading="Coming Soon" description="Upcoming Titles Already Announced In Cinema." titles={cinemaShelves.comingSoon} />}
+      {cinemaShelves && cinemaShelves.movies.length > 0 && <section id="home-movies" className="scroll-mt-28"><TitleRow heading="Available On Cinema" description="Movies published in Cinema's own catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} /></section>}
+      {cinemaShelves && cinemaShelves.series.length > 0 && <section id="home-series" className="scroll-mt-28"><TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} /></section>}
+      {cinemaShelves && <section id="home-coming-soon" className="scroll-mt-28"><TitleRow heading="Coming Soon" description="Upcoming titles already announced in Cinema." titles={cinemaShelves.comingSoon} />{cinemaShelves.comingSoon.length === 0 && <p className="rounded-2xl border border-white/10 bg-white/[.02] p-5 text-sm text-slate-400">New announcements will appear here as upcoming titles are added to Cinema.</p>}</section>}
       {!titles && (titlesError ? <ErrorState onRetry={reloadTitles} /> : <LoadingState label="Loading Your Cinema Catalogue" />)}
       <section className="grid gap-4 md:grid-cols-2">
         <a href="/live-tv" className="group relative isolate min-h-48 overflow-hidden rounded-3xl border border-sky-300/20 bg-[radial-gradient(ellipse_at_82%_16%,rgba(55,135,255,.22),transparent_42%),linear-gradient(125deg,#05080e,#0b1422_58%,#05070c)] p-6 transition duration-300 hover:-translate-y-1 hover:border-sky-200/45 hover:shadow-[0_24px_65px_rgba(20,90,190,.16)]">
