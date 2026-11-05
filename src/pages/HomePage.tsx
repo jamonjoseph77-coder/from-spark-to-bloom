@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, Compass, MessageCircle, Play, Radio, Users } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { ShortCard } from '@/components/discover/ShortCard';
@@ -77,6 +77,8 @@ function PublisherDestinations({ titles }: { titles: Title[] }) {
 export function HomePage() {
   const { user } = useAuth();
   const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
+  const openShort = useCallback((clip: DiscoverClip) => setActiveShort(clip), []);
+  const closeShort = useCallback(() => setActiveShort(null), []);
   const { progress, watchlistIds, favouriteIds } = useLibrary();
   const { data: titles, error: titlesError, reload: reloadTitles } = useAsyncData(fetchPublishedTitles, []);
   const { data: publishedClips, error: clipsError, reload: reloadClips } = useAsyncData(fetchPublishedShorts, []);
@@ -138,9 +140,10 @@ export function HomePage() {
           </div>
         )}
         {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden">
-          {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}
+          {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={openShort} />)}
         </div>}
       </section>
+      {activeShort && <ShortViewer clip={activeShort} onClose={closeShort} />}
       <HomeCommunity social={social} loading={Boolean(user) && socialLoading} />
       <section className="space-y-4"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Beyond The Screen</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Inside The Story</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Go closer with cast conversations, behind-the-scenes moments and the craft behind the stories.</p></div><a href="/discover" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Features <ArrowRight className="inline h-4 w-4" /></a></div><CinemaSpotlights /></section>
       {recommendations.titles.length > 0 && <TitleRow heading="Recommended For You" description={recommendations.reason} titles={recommendations.titles} landscape />}
@@ -173,7 +176,6 @@ export function HomePage() {
         </a>
       </section>
       <section className="relative overflow-hidden rounded-[1.75rem] border border-sky-300/15 bg-[linear-gradient(115deg,rgba(96,165,250,.10),rgba(255,255,255,.025)_50%,rgba(255,255,255,.01))] p-6 sm:p-8"><div className="max-w-3xl"><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">The Cinema Experience</p><h2 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">Discover A Story. Experience It. Share It.</h2><p className="mt-3 text-sm leading-7 text-slate-300">Cinema Brings Entertainment And The People Who Love It Into One Connected Destination. Move From A Story Feature To A Title, From A Title To A Conversation, And From A Conversation To Watching Together.</p><a href="/discover" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">Explore Discover <Compass className="h-4 w-4" /></a></div></section>
-      {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
     </div>
   );
 }
