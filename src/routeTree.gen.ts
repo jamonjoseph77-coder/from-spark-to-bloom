@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BoxOfficeRouteImport } from './routes/box-office'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FriendsRouteImport } from './routes/friends'
@@ -46,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
 const BoxOfficeRoute = BoxOfficeRouteImport.update({
   id: '/box-office',
   path: '/box-office',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiscoverRoute = DiscoverRouteImport.update({
@@ -182,6 +188,9 @@ const TmdbMediaTypeIdRoute = TmdbMediaTypeIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/box-office': typeof BoxOfficeRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/friends': typeof FriendsRoute
@@ -275,6 +284,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/box-office'
+    | '/category/$slug'
     | '/discover'
     | '/forgot-password'
     | '/friends'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BoxOfficeRoute: typeof BoxOfficeRoute
+  CategorySlugRoute: typeof CategorySlugRoute
   DiscoverRoute: typeof DiscoverRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   FriendsRoute: typeof FriendsRoute
@@ -408,6 +419,13 @@ declare module '@tanstack/react-router' {
       path: '/box-office'
       fullPath: '/box-office'
       preLoaderRoute: typeof BoxOfficeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/discover': {
@@ -598,6 +616,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BoxOfficeRoute: BoxOfficeRoute,
+  CategorySlugRoute: CategorySlugRoute,
   DiscoverRoute: DiscoverRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   FriendsRoute: FriendsRoute,
