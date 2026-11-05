@@ -89,7 +89,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
     : title.release_year ? String(title.release_year) : '';
 
   return (
-    <div className="animate-fade-in">
+    <div className="cinema-title-page animate-fade-in">
       <section className="relative isolate overflow-hidden border-b border-white/5">
         <Artwork src={title.backdrop_url || title.poster_url} alt="" fallbackTitle={title.title} className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-55" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#080d14] via-[#080d14]/85 to-[#080d14]/35" />
