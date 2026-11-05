@@ -17,13 +17,13 @@ export function TopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/5 bg-ink-950/90 px-3 backdrop-blur-xl sm:gap-4 sm:px-6 lg:px-10">
+    <header className="cinema-topbar sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-white/10 bg-[#070909]/90 px-3 backdrop-blur-2xl sm:gap-4 sm:px-6 lg:px-10">
       <a href="/" className="flex h-11 w-[116px] shrink-0 items-center lg:hidden" aria-label="Cinema home">
         <img src="/cinema-wordmark.png" alt="Cinema" className="h-8 w-auto max-w-full object-contain object-left" />
       </a>
       <form role="search" onSubmit={handleSearch} className="min-w-0 w-full max-w-xl">
         <label htmlFor="global-cinema-search" className="sr-only">Search Cinema</label>
-        <div className="group flex min-w-0 items-center rounded-2xl border border-white/15 bg-ink-850/95 p-1.5 transition focus-within:border-cinema-300/60 focus-within:ring-2 focus-within:ring-cinema-300/15">
+        <div className="cinema-global-search group flex min-w-0 items-center rounded-2xl border border-white/10 bg-white/[.035] p-1.5 transition focus-within:border-white/25 focus-within:bg-white/[.05] focus-within:ring-2 focus-within:ring-white/[.04]">
           <Search aria-hidden="true" className="ml-3 h-4 w-4 shrink-0 text-slate-400" />
           <input
             id="global-cinema-search"
@@ -42,7 +42,7 @@ export function TopBar() {
             disabled={!query.trim()}
             aria-label="Search"
             title="Search"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cinema-500 text-white transition hover:bg-cinema-400 active:scale-95 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[.09] text-white transition hover:bg-white/[.15] active:scale-95 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200"
           >
             <Search aria-hidden="true" className="h-4 w-4" />
           </button>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Search as SearchIcon, Compass, MessageSquareText, Users, Clapperboard, Megaphone, Sparkles, BadgeCheck, Building2, Film, ArrowUpRight, X } from 'lucide-react';
+import { Search as SearchIcon, Compass, Users, Clapperboard, Megaphone, Sparkles, BadgeCheck, Building2, Film, ArrowUpRight, X } from 'lucide-react';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TmdbSearchResults } from '@/components/tmdb/TmdbSearchResults';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -19,7 +19,6 @@ const scopes: { id: SearchScope; label: string }[] = [
 ];
 const destinations = [
   { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass },
-  { href: '/letterbox', label: 'Letterbox', detail: 'Entertainment Conversations', icon: MessageSquareText },
   { href: '/friends', label: 'Friends', detail: 'Find People And Recommendations', icon: Users },
   { href: '/publishers', label: 'Studios', detail: 'Explore Official Industry Profiles', icon: Megaphone },
   { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard },
