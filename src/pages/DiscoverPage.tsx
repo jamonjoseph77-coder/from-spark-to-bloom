@@ -5,9 +5,9 @@ import { TmdbRow } from '@/components/tmdb/TmdbRow';
 export function DiscoverPage() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8 px-4 pb-8 sm:px-6 lg:space-y-10 lg:px-10">
-      <header className="relative isolate overflow-hidden rounded-3xl border border-cinema-400/20 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.25),transparent_55%),linear-gradient(135deg,#0b1425,#050912_70%)] p-6 shadow-2xl shadow-black/20 sm:p-9">
-        <div className="absolute -right-12 -top-16 h-56 w-56 rounded-full bg-cinema-500/10 blur-3xl" />
-        <div className="absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-sky-400/[.07] blur-3xl" />
+      <header className="relative isolate overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(ellipse_at_top_right,rgba(170,190,182,.075),transparent_55%),linear-gradient(135deg,#111715,#070909_72%)] p-6 shadow-[0_24px_70px_rgba(0,0,0,.26)] sm:p-8">
+        <div className="absolute -right-12 -top-16 h-56 w-56 rounded-full bg-white/[.035] blur-3xl" />
+        <div className="absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-emerald-100/[.025] blur-3xl" />
         <div className="relative max-w-2xl space-y-3">
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-cinema-300"><Compass className="h-4 w-4" /> Explore Cinema</p>
           <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">More than a trailer. Find the story.</h1>
