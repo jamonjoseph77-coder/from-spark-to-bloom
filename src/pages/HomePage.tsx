@@ -19,7 +19,7 @@ import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { loadFriendsActivity, type FriendsActivity } from '@/lib/friendActivity';
-import { buildRecommendations } from '@/lib/recommendations';
+import { buildPersonalizedSectionOrder, buildRecommendations, type PersonalizedSection } from '@/lib/recommendations';
 import { groupByPublisher } from '@/lib/publishers';
 import type { Title } from '@/lib/types';
 
@@ -97,6 +97,14 @@ export function HomePage() {
   );
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
   const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
+  const categoryOrder = useMemo(() => buildPersonalizedSectionOrder(titles ?? [], progress, watchlistIds, favouriteIds, social?.follows ?? []), [titles, progress, watchlistIds, favouriteIds, social?.follows]);
+  const categoryDestinations: Record<PersonalizedSection, { label: string; target: string }> = {
+    movies: { label: 'Movies', target: 'home-movies' }, shorts: { label: 'Shorts', target: 'home-shorts' },
+    news: { label: 'News', target: 'home-news' }, documentaries: { label: 'Documentaries', target: 'home-documentaries' },
+    animation: { label: 'Animation', target: 'home-animation' }, family: { label: 'Family', target: 'home-family' },
+    reality: { label: 'Reality', target: 'home-reality' }, sports: { label: 'Sports', target: 'home-sports' },
+    'live-tv': { label: 'Live TV', target: 'home-live-tv' },
+  };
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
     const today = new Date().toISOString().slice(0, 10);
@@ -111,16 +119,10 @@ export function HomePage() {
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(190,205,196,.07),transparent_62%)]" aria-hidden="true" />
       <nav className="cinema-home-categories -mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
-        {[
-          ['Movies', 'home-movies'],
-          ['Shorts', 'home-shorts'],
-          ['News', 'home-news'],
-          ['Documentaries', 'home-documentaries'],
-          ['Animation', 'home-animation'],
-          ['Family', 'home-family'],
-        ].map(([label, target]) => (
-          <a key={target} href={'#' + target} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{label}</a>
-        ))}
+        {categoryOrder.filter((section) => ['movies', 'shorts', 'news', 'documentaries', 'animation', 'family'].includes(section)).map((section) => {
+          const destination = categoryDestinations[section];
+          return <a key={destination.target} href={'#' + destination.target} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{destination.label}</a>;
+        })}
       </nav>
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28">
         {titles && (recommendations.titles.length > 0
