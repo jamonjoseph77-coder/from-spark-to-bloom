@@ -2,6 +2,7 @@ import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy } 
 import { OfficialTrailers } from '@/components/discover/OfficialTrailers';
 import { DiscoverShorts, CinemaPulse } from '@/components/discover/DiscoverShorts';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
+import { LetterboxPage } from '@/pages/LetterboxPage';
 
 export function DiscoverPage() {
   return (
@@ -39,6 +40,8 @@ export function DiscoverPage() {
         <a href="/publishers" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-sky-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-200/20 bg-sky-300/10 text-sky-100"><BadgeCheck className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">Verified Studios & Publishers</span><span className="mt-1 block text-xs text-slate-400">Track official entertainment destinations.</span></span></a>
         <a href="/friends" className="flex items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-indigo-400/[.10] to-white/[.02] p-5 transition hover:border-sky-200/30"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-indigo-200/20 bg-indigo-300/10 text-indigo-100"><Flame className="h-6 w-6" /></span><span className="min-w-0 flex-1"><span className="block font-bold text-white">What Your Circle Is Watching</span><span className="mt-1 block text-xs text-slate-400">Find conversations and shared favourites.</span></span></a>
       </section>
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <LetterboxPage embedded />
       <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <DiscoverShorts />
       <CinemaPulse />
