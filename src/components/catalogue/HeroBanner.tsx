@@ -16,11 +16,16 @@ export function HeroBanner({ titles }: { titles: Title[] }) {
   const paused = hoverPaused || manualPaused || reducedMotion;
 
   useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
     const updatePreference = () => setReducedMotion(preference.matches);
     updatePreference();
-    preference.addEventListener('change', updatePreference);
-    return () => preference.removeEventListener('change', updatePreference);
+    if (typeof preference.addEventListener === 'function') {
+      preference.addEventListener('change', updatePreference);
+      return () => preference.removeEventListener('change', updatePreference);
+    }
+    preference.addListener(updatePreference);
+    return () => preference.removeListener(updatePreference);
   }, []);
 
   useEffect(() => {
@@ -67,9 +72,9 @@ export function HeroBanner({ titles }: { titles: Title[] }) {
 
       {count > 1 && (
         <div className="absolute bottom-4 right-4 flex items-center gap-2 sm:bottom-7 sm:right-7">
-          <button type="button" onClick={() => setManualPaused((value) => !value)} aria-label={paused ? 'Resume featured titles' : 'Pause featured titles'} aria-pressed={manualPaused} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur transition hover:bg-black/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
-            {paused ? <Play className="h-3.5 w-3.5 fill-current" /> : <Pause className="h-3.5 w-3.5" />}
-          </button>
+          {!reducedMotion && <button type="button" onClick={() => setManualPaused((value) => !value)} aria-label={manualPaused ? 'Resume featured titles' : 'Pause featured titles'} aria-pressed={manualPaused} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur transition hover:bg-black/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+            {manualPaused ? <Play className="h-3.5 w-3.5 fill-current" /> : <Pause className="h-3.5 w-3.5" />}
+          </button>}
           {titles.map((title, position) => (
             <button key={title.id} type="button" onClick={() => setIndex(position)} aria-label={`Show ${title.title}`} aria-current={position === index ? 'true' : undefined} className={`h-1.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${position === index ? 'w-8 bg-white' : 'w-3 bg-white/30 hover:bg-white/60'}`} />
           ))}
