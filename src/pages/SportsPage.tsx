@@ -52,13 +52,13 @@ export function SportsPage() {
       <header className="relative isolate overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#080c13] px-5 py-7 shadow-[0_22px_70px_rgba(0,0,0,.28)] sm:px-8 sm:py-9">
         <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600&q=90" alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.22]" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/45" />
-        <div className="pointer-events-none absolute -right-16 -top-24 -z-10 h-72 w-72 rounded-full bg-blue-500/[.12] blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 -top-24 -z-10 h-72 w-72 rounded-full bg-white/[.035] blur-3xl" />
         <div className="max-w-3xl">
-          <p className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.24em] text-slate-200"><Trophy className="h-4 w-4 text-sky-300" /> The Sports Destination</p>
+          <p className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.24em] text-slate-200"><Trophy className="h-4 w-4 text-slate-200" /> The Sports Destination</p>
           <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">Your Sports. All In Cinema.</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">Follow the competitions, channels and moments that matter. Move from live coverage to highlights and replays in one place.</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <a href="#sports-live" className="inline-flex items-center gap-2 rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white shadow-[0_8px_24px_rgba(0,102,255,.25)]">Live Coverage <ArrowRight className="h-3.5 w-3.5" /></a>
+            <a href="#sports-live" className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-[#edf0ef] px-4 py-2.5 text-xs font-extrabold text-[#080b0a] shadow-[0_8px_24px_rgba(0,0,0,.22)] transition hover:bg-white">Live Coverage <ArrowRight className="h-3.5 w-3.5" /></a>
             <a href="#sports-highlights" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/30 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-sm">Highlights & Replays</a>
           </div>
         </div>
@@ -74,7 +74,7 @@ export function SportsPage() {
       {titles && (
         <>
           <section id="sports-live" className="space-y-4 scroll-mt-24">
-            <div className="flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">Live Now</p><h2 className="mt-1 text-2xl font-extrabold text-white">Live Sports Coverage</h2><p className="mt-1 text-sm text-slate-400">Playable sports streams published by Cinema.</p></div><span className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-[10px] font-bold text-slate-300">{sections.liveNow.length} Available</span></div>
+            <div className="flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-slate-200">Live Now</p><h2 className="mt-1 text-2xl font-extrabold text-white">Live Sports Coverage</h2><p className="mt-1 text-sm text-slate-400">Playable sports streams published by Cinema.</p></div><span className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-[10px] font-bold text-slate-300">{sections.liveNow.length} Available</span></div>
             {sections.liveNow.length ? <TitleGrid titles={sections.liveNow} /> : <p className="rounded-2xl border border-white/10 bg-white/[.02] px-4 py-5 text-sm text-slate-400">No verified live sports streams are published right now. Connected broadcaster streams will appear here when available.</p>}
           </section>
 
