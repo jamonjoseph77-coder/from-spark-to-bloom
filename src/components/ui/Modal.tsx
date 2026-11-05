@@ -7,10 +7,11 @@ interface ModalProps {
   children: ReactNode;
   wide?: boolean;
   immersive?: boolean;
+  contained?: boolean;
   showCloseButton?: boolean;
 }
 
-export function Modal({ label, onClose, children, wide = false, immersive = false, showCloseButton = true }: ModalProps) {
+export function Modal({ label, onClose, children, wide = false, immersive = false, contained = false, showCloseButton = true }: ModalProps) {
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -31,7 +32,7 @@ export function Modal({ label, onClose, children, wide = false, immersive = fals
         aria-modal="true"
         aria-label={label}
         onClick={(event) => event.stopPropagation()}
-        className={`relative w-full animate-rise-in shadow-2xl ${immersive ? 'h-[100dvh] max-w-[520px] overflow-hidden rounded-none border-0 bg-black p-0 sm:h-[min(94dvh,920px)] sm:rounded-3xl sm:border sm:border-white/10' : `${wide ? 'max-w-5xl' : 'max-w-lg'} rounded-2xl border border-white/10 bg-ink-900 p-4 sm:p-6`}`}
+        className={`relative w-full animate-rise-in shadow-2xl ${immersive ? `h-[100dvh] max-w-[520px] overflow-hidden rounded-none border-0 bg-black p-0 sm:h-[min(94dvh,920px)] sm:rounded-3xl sm:border sm:border-white/10 ${contained ? 'flex items-center justify-center' : ''}` : `${wide ? 'max-w-5xl' : 'max-w-lg'} rounded-2xl border border-white/10 bg-ink-900 p-4 sm:p-6`}`}
       >
         {showCloseButton && <button
           type="button"
