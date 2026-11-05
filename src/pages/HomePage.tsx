@@ -106,14 +106,38 @@ export function HomePage() {
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(35,105,220,.13),transparent_62%)]" aria-hidden="true" />
       <TmdbHero />
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">Quick Stories</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Cinema Shorts</h2><p className="mt-1 text-sm text-slate-400">Short Videos And Moments From Official Cinema Publishers.</p></div>
-          <a href="/discover" className="text-sm font-semibold text-cinema-200 transition hover:text-white">Explore All Shorts</a>
+      <section className="cinema-home-shorts space-y-5" aria-label="Cinema Shorts">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.24em] text-slate-400"><span className="h-1.5 w-1.5 rounded-full bg-[#087cff] shadow-[0_0_12px_rgba(8,124,255,.8)]" /> Quick Stories</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">Cinema Shorts</h2>
+            <p className="mt-1.5 text-sm leading-6 text-slate-400">A closer look at the moments, voices and stories moving through Cinema.</p>
+          </div>
+          <a href="/discover" className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-white transition hover:border-[#087cff]/60 hover:bg-[#087cff]/10">
+            Explore All Shorts <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+          </a>
         </div>
-        {!publishedClips && (clipsError ? <ErrorState onRetry={reloadClips} description="Cinema Could Not Load The Shorts Feed. Check Your Connection And Try Again." /> : <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex snap-x gap-4 overflow-hidden px-4 pb-3 sm:mx-0 sm:px-0">{Array.from({ length: 5 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[9/16] w-[min(42vw,168px)] shrink-0 rounded-[1.2rem] sm:w-[168px]" />)}</div>)}
-        {publishedClips && shorts.length === 0 && <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-sky-200/15 bg-sky-300/[.025] px-5 py-7 text-center"><EmptyState icon={<Play className="h-7 w-7 text-cinema-300" />} title="Cinema Shorts Are Getting Ready" description="Approved Short Videos Will Appear Here. Refresh To Check For Newly Published Videos." /><button type="button" onClick={reloadClips} className="rounded-full border border-sky-200/20 bg-sky-300/[.08] px-4 py-2 text-xs font-bold text-sky-100 transition hover:bg-sky-300/[.15]">Refresh Shorts</button></div>}
-        {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
+        {!publishedClips && (clipsError
+          ? <ErrorState onRetry={reloadClips} description="Cinema Shorts could not load just now. Your other Cinema features are still available; try the feed again." />
+          : <div role="status" aria-label="Loading Cinema Shorts" className="-mx-4 flex gap-4 overflow-hidden px-4 pb-3 sm:mx-0 sm:px-0">{Array.from({ length: 4 }, (_, index) => <div key={index} className="cinema-short-skeleton aspect-[3/4] w-[min(62vw,236px)] shrink-0 rounded-[1.4rem] sm:w-[220px]" />)}</div>
+        )}
+        {publishedClips && shorts.length === 0 && (
+          <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-[linear-gradient(115deg,#10151e,#080b11_62%,#05070b)] p-6 sm:p-8">
+            <div className="pointer-events-none absolute -right-12 -top-20 h-64 w-64 rounded-full border border-white/[.06] bg-white/[.015]" />
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="max-w-xl">
+                <p className="text-[10px] font-bold uppercase tracking-[.2em] text-slate-500">The Shorts Shelf</p>
+                <h3 className="mt-2 text-lg font-extrabold text-white">Fresh Stories Are On Their Way</h3>
+                <p className="mt-1.5 text-sm leading-6 text-slate-400">Approved creator and publisher videos will appear here as they are added. We only show playable videos, never empty or broken cards.</p>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <button type="button" onClick={reloadClips} className="rounded-full border border-white/15 bg-white/[.04] px-4 py-2.5 text-xs font-bold text-white transition hover:border-[#087cff]/50 hover:bg-[#087cff]/10">Refresh Feed</button>
+                <a href="/creator/shorts" className="rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white shadow-[0_8px_24px_rgba(8,124,255,.24)] transition hover:bg-[#168cff]">Submit A Short</a>
+              </div>
+            </div>
+          </div>
+        )}
+        {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden">
           {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}
         </div>}
       </section>
