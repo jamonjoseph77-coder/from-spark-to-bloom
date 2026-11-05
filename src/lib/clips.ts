@@ -73,6 +73,61 @@ export function isPlayableShort(clip: DiscoverClip): boolean {
   return clip.is_published && supported && validDuration;
 }
 
+/**
+ * Ranks playable Shorts for the Home shelf. Freshness and editorial ordering
+ * keep the feed current; views are deliberately dampened so older viral clips
+ * do not permanently crowd out new publishers. Followed publishers receive a
+ * modest boost, while greedy selection limits repeated publishers.
+ */
+export function rankPublishedShorts(
+  clips: DiscoverClip[],
+  followedPublishers: string[] = [],
+  limit = 12,
+  now = Date.now(),
+): DiscoverClip[] {
+  if (limit <= 0) return [];
+  const followed = new Set(followedPublishers.map((name) => name.trim().toLocaleLowerCase()).filter(Boolean));
+  const ranked = clips
+    .filter(isPlayableShort)
+    .map((clip, index) => {
+      const publisher = clip.publisher_name.trim().toLocaleLowerCase();
+      const createdAt = clip.created_at ? new Date(clip.created_at).getTime() : Number.NaN;
+      const ageDays = Number.isFinite(createdAt) ? Math.max(0, (now - createdAt) / 86_400_000) : 365;
+      const freshness = Math.exp(-ageDays / 21);
+      const popularity = Math.log1p(Math.max(0, clip.views_count ?? 0)) / 4;
+      const editorial = 1 / (1 + Math.max(0, clip.sort_order || 0) * 0.12);
+      const followedBoost = publisher && followed.has(publisher) ? 2.5 : 0;
+      return {
+        clip,
+        publisher,
+        index,
+        score: freshness * 3.2 + popularity * 0.65 + editorial * 0.8 + followedBoost,
+      };
+    })
+    .sort((a, b) => b.score - a.score || a.index - b.index);
+
+  const selected: DiscoverClip[] = [];
+  const publisherCounts = new Map<string, number>();
+  const remaining = [...ranked];
+  while (selected.length < limit && remaining.length) {
+    let bestIndex = 0;
+    let bestScore = Number.NEGATIVE_INFINITY;
+    remaining.forEach((entry, index) => {
+      const count = publisherCounts.get(entry.publisher) ?? 0;
+      const diversityAdjustment = count === 0 ? 0.75 : count === 1 ? 0 : -2.5 * count;
+      const adjusted = entry.score + diversityAdjustment;
+      if (adjusted > bestScore) {
+        bestScore = adjusted;
+        bestIndex = index;
+      }
+    });
+    const [chosen] = remaining.splice(bestIndex, 1);
+    selected.push(chosen.clip);
+    publisherCounts.set(chosen.publisher, (publisherCounts.get(chosen.publisher) ?? 0) + 1);
+  }
+  return selected;
+}
+
 export async function fetchClipEngagement(clipId: string): Promise<ClipEngagement> {
   const { data, error } = await supabase.rpc('get_discover_clip_engagement', { p_clip_id: clipId });
   if (error) throw error;
