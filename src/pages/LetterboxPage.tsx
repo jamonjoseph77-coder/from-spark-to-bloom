@@ -10,7 +10,7 @@ import { fetchPublishedTitles } from '@/lib/library';
 import { addLetterboxComment, createLetterboxPost, fetchLetterboxFeed, toggleLetterboxReaction, type LetterboxPost, subscribeToLetterbox } from '@/lib/letterbox';
 import { loadFriendsSnapshot } from '@/lib/friends';
 
-function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: string; onChanged: () => void }) {
+export function LetterboxPostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: string; onChanged: () => void }) {
   const [comment, setComment] = useState('');
   const [busy, setBusy] = useState(false);
   const { notify } = useToast();
@@ -19,7 +19,7 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
   const count = post.reactionCount;
 
   async function sharePost() {
-    const url = `${window.location.origin}/letterbox#post-${post.id}`;
+    const url = `${window.location.origin}/discover#post-${post.id}`;
     try {
       if (navigator.share) await navigator.share({ title: `Cinema conversation by ${author}`, text: post.body.slice(0, 140), url });
       else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url); notify('Post link copied.'); }
@@ -54,6 +54,7 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
       </div>
       <div className="space-y-3 px-4 pb-3 sm:px-5">
         <p className="whitespace-pre-wrap text-sm leading-7 text-slate-200">{post.body}</p>
+        {post.image_url && <a href={post.image_url} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-2xl border border-white/10 bg-black"><img src={post.image_url} alt="Media shared with this Cinema post" loading="lazy" className="max-h-[600px] w-full object-contain" /></a>}
         {post.title && <a href={`/title/${post.title.id}`} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-cinema-400/30"><div className="grid h-14 w-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-ink-800">{post.title.poster_url ? <img src={post.title.poster_url} alt="" loading="lazy" className="h-full w-full object-cover" /> : <Film className="h-5 w-5 text-cinema-300" />}</div><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-cinema-300">About this title</p><p className="truncate font-bold text-white">{post.title.title}</p><p className="text-xs text-slate-500">{post.title.type}</p></div></a>}
       </div>
       <div className="flex items-center justify-between gap-1 border-t border-white/5 px-3 py-2 sm:px-4">
@@ -65,7 +66,7 @@ function PostCard({ post, userId, onChanged }: { post: LetterboxPost; userId?: s
         <ContentEngagement
           contentKey={`letterbox:${post.id}`}
           title={`Letterbox: ${post.body.slice(0, 100)}`}
-          href={`/letterbox#post-${post.id}`}
+          href={`/discover#post-${post.id}`}
           imageUrl={post.title?.poster_url || ''}
           compact
           reviewOnly
@@ -129,7 +130,7 @@ export function LetterboxPage({ embedded = false, titleId: scopedTitleId }: { em
       </div>}
       {!feed && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {feed && visibleFeed && visibleFeed.length === 0 && <EmptyState icon={<MessageCircle className="h-7 w-7 text-cinema-300" />} title={feedMode === 'following' ? 'Your Following Feed Is Quiet' : 'The Conversation Starts Here'} description={feedMode === 'following' ? 'Posts from people in your Cinema circle will appear here when they share something.' : 'When the Cinema community shares entertainment recommendations and discussions, they will appear here.'} />}
-      {feed && visibleFeed && visibleFeed.length > 0 && <div className="mx-auto max-w-3xl space-y-0">{visibleFeed.map((post) => <PostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}
+      {feed && visibleFeed && visibleFeed.length > 0 && <div className="mx-auto max-w-3xl space-y-0">{visibleFeed.map((post) => <LetterboxPostCard key={post.id} post={post} userId={user?.id} onChanged={reload} />)}</div>}
     </div>
   );
 }
