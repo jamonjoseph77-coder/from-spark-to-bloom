@@ -27,7 +27,7 @@ export function MobileNav({ route }: MobileNavProps) {
     const Icon = item.icon;
     return (
       <li key={item.key} className="flex h-full min-w-0 flex-1 items-center justify-center">
-        <a href={item.href} aria-current={active ? 'page' : undefined} className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${active ? 'text-[#f1f4f8]' : 'text-[#aeb8c4] hover:text-[#f1f4f8]'}`}>
+        <a href={item.href} aria-current={active ? 'page' : undefined} className={`cinema-mobile-nav-item relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${active ? 'text-[#f1f4f8]' : 'text-[#aeb8c4] hover:text-[#f1f4f8]'}`}>
           <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={active ? 2.3 : 1.8} />
           <span className="max-w-full truncate whitespace-nowrap text-[9px] font-semibold leading-none">{item.label}</span>
           {active && <span className="absolute bottom-0 h-0.5 w-5 rounded-full bg-[#168cff]" />}
@@ -37,7 +37,7 @@ export function MobileNav({ route }: MobileNavProps) {
   });
 
   return (
-    <nav aria-label="Primary" className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[.08] bg-[#030407]/[.98] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_32px_rgba(0,0,0,.38)] backdrop-blur-2xl lg:hidden">
+    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-0 bottom-0 z-40 border-t border-white/[.10] bg-[#050706]/[.97] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_32px_rgba(0,0,0,.42)] backdrop-blur-2xl lg:hidden">
       <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_68px_minmax(0,1fr)] items-center px-1">
         <ul className="flex h-full min-w-0 items-center justify-around">
           {renderItems(LEFT_ITEMS)}
@@ -53,7 +53,7 @@ export function MobileNav({ route }: MobileNavProps) {
         aria-current={cinemaActive ? 'page' : undefined}
         className={`absolute left-1/2 top-[-8px] flex h-[60px] w-[60px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${cinemaActive ? 'ring-2 ring-[#168cff]/65' : 'hover:scale-[1.04]'}`}
       >
-        <CinemaLogo compact className="!h-[52px] !w-[52px] rounded-full border border-white/[.16] bg-[#080c14] object-cover shadow-[0_5px_18px_rgba(0,0,0,.42)]" />
+        <CinemaLogo compact className="!h-[52px] !w-[52px] rounded-full border border-white/[.16] bg-[#080b09] object-cover shadow-[0_5px_18px_rgba(0,0,0,.5)]" />
         <span className="sr-only">Cinema</span>
       </a>
     </nav>
