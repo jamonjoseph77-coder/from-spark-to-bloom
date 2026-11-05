@@ -41,7 +41,7 @@ async function loadExploreData(): Promise<ExploreData> {
   const clips = clipsResult.status === 'fulfilled'
     ? clipsResult.value.filter((clip) => {
       const playable = Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url)));
-      if (clip.kind === 'short') return isPlayableShort(clip);
+      if (clip.kind === 'short' || clip.kind === 'clip') return isPlayableShort(clip);
       return playable;
     })
     : [];
@@ -60,7 +60,7 @@ function PublisherVideoPost({ clip, onOpenShort, onOpenVideo }: {
   onOpenShort: (clip: DiscoverClip) => void;
   onOpenVideo: (clip: DiscoverClip) => void;
 }) {
-  const isShort = clip.kind === 'short' && isPlayableShort(clip);
+  const isShort = (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip);
   const publisher = clip.publisher_name?.trim() || 'Cinema Publisher';
   return (
     <article id={isShort ? `short-${clip.id}` : undefined} className="border-b border-white/10 bg-[#07090d] px-4 py-4 transition-colors hover:bg-white/[.018] sm:px-5">
@@ -142,7 +142,7 @@ export function ExploreTimeline() {
       .map((post): ExploreEntry => ({ id: `post:${post.id}`, kind: 'post', createdAt: Date.parse(post.created_at) || 0, post }));
     const clips = data.clips
       .filter((clip) => mode !== 'titles' || Boolean(clip.title_id))
-      .filter((clip) => mode !== 'following' || Boolean(social?.followedPublishers.some((name) => name.toLowerCase() === clip.publisher_name.toLowerCase())))
+      .filter((clip) => mode !== 'following' || Boolean(social?.followedPublishers.some((name) => name.toLowerCase() === (clip.publisher_name ?? '').toLowerCase())))
       .map((clip): ExploreEntry => ({ id: `clip:${clip.id}`, kind: 'clip', createdAt: Date.parse(clip.created_at ?? '') || 0, clip }));
     const trailers = mode === 'for-you'
       ? data.trailers.map((trailer): ExploreEntry => ({ id: `trailer:${trailer.mediaType}:${trailer.id}`, kind: 'trailer', createdAt: Date.parse(trailer.releaseDate ?? '') || 0, trailer }))
