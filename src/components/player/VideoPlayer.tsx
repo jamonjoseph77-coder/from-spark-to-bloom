@@ -249,12 +249,12 @@ export function VideoPlayer({
   const hasQualityMenu = levels.length > 1;
 
   return (
-    <div className={`cinema-video-player mx-auto w-full ${layout === 'portrait' ? 'h-full space-y-0 rounded-none border-0 bg-transparent p-0 shadow-none' : 'space-y-3 rounded-[1.65rem] border border-sky-300/15 bg-[#080b11] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3'}`}>
+    <div className={`cinema-video-player mx-auto w-full ${layout === 'portrait' ? 'h-full space-y-0 rounded-none border-0 bg-transparent p-0 shadow-none' : 'space-y-3 rounded-[1.65rem] border border-white/10 bg-[#080b0a] p-2 shadow-[0_28px_90px_rgba(0,0,0,.5)] sm:p-3'}`}>
       {layout === 'landscape' && <div className="flex items-center justify-between gap-3 px-2 pt-1">
-        <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-sky-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
+        <div className="min-w-0"><p className="text-[9px] font-black uppercase tracking-[.24em] text-slate-200/80">Cinema player</p><p className="mt-1 truncate text-sm font-semibold text-slate-100">{title}</p></div>
         {isLive && <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-200"><Radio className="h-3 w-3" /> Live</span>}
       </div>}
-      <div className={`cinema-video-stage relative mx-auto overflow-hidden bg-black ${layout === 'portrait' ? 'h-full min-h-0 w-full max-w-full rounded-none shadow-none ring-0' : 'aspect-video w-full rounded-[1.25rem] shadow-2xl shadow-black/60 ring-1 ring-white/10'}`}>
+      <div aria-busy={status === "loading"} className={`cinema-video-stage relative mx-auto overflow-hidden bg-black ${layout === 'portrait' ? 'h-full min-h-0 w-full max-w-full rounded-none shadow-none ring-0' : 'aspect-video w-full rounded-[1.25rem] shadow-2xl shadow-black/60 ring-1 ring-white/10'}`}>
         <video
           ref={videoRef}
           className="h-full w-full bg-black object-contain"
@@ -305,9 +305,9 @@ export function VideoPlayer({
             onClick={toggleMute}
             aria-label={isMuted ? 'Turn Sound On' : 'Mute Video'}
             aria-pressed={!isMuted}
-            className="absolute left-3 top-16 z-30 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.6)] backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 active:scale-95"
+            className="absolute left-3 top-16 z-30 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.6)] backdrop-blur-xl transition hover:border-white/45 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 active:scale-95"
           >
-            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5 text-sky-100" />}
+            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5 text-slate-200" />}
             <span className="sr-only">{isMuted ? 'Sound Off' : 'Sound On'}</span>
           </button>
         )}
@@ -342,7 +342,7 @@ export function VideoPlayer({
           {hasQualityMenu && (
             <label className="flex items-center gap-2 text-sm text-slate-400">
               <span className="font-semibold">Quality</span>
-              <select value={quality} onChange={handleQualityChange} className="rounded-lg border border-sky-200/15 bg-[#080d16] px-3 py-1.5 text-sm text-slate-100 transition focus:border-sky-300/60 focus:outline-none focus:ring-2 focus:ring-sky-300/15">
+              <select value={quality} onChange={handleQualityChange} className="rounded-lg border border-white/15 bg-[#080d16] px-3 py-1.5 text-sm text-slate-100 transition focus:border-white/35 focus:outline-none focus:ring-2 focus:ring-white/10">
                 <option value={-1}>Auto</option>
                 {levels.map((level) => <option key={level.index} value={level.index}>{level.label}</option>)}
               </select>
