@@ -102,6 +102,7 @@ export async function reviewCreatorShort(
       .from('discover_clips')
       .select('id')
       .eq('video_url', data.publicUrl)
+      .limit(1)
       .maybeSingle();
     if (existingClipError) throw existingClipError;
 
