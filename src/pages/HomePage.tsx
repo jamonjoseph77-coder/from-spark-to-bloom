@@ -119,8 +119,6 @@ export function HomePage() {
           ['Documentaries', '/category/documentaries'],
           ['Animation', '/category/animation'],
           ['Family', '/category/family'],
-          ['Reality', '/category/reality'],
-          ['Coming Soon', '#home-coming-soon'],
         ].map(([label, href]) => (
           <a key={label} href={href} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{label}</a>
         ))}
@@ -182,7 +180,6 @@ export function HomePage() {
             { title: 'Documentaries', detail: 'Real Stories And Ideas', href: '/category/documentaries', icon: '◎' },
             { title: 'Animation', detail: 'Animated Worlds', href: '/category/animation', icon: '✦' },
             { title: 'Family', detail: 'Stories To Enjoy Together', href: '/category/family', icon: '⌂' },
-            { title: 'Reality', detail: 'Unscripted Entertainment', href: '/category/reality', icon: '◌' },
           ].map((category) => (
             <a key={category.title} href={category.href} className="group relative isolate min-h-36 overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(22,42,65,.72),rgba(8,12,20,.96)_72%)] p-4 transition duration-300 hover:-translate-y-1 hover:border-sky-200/35 hover:shadow-[0_18px_45px_rgba(8,124,255,.12)] sm:min-h-40 sm:p-5">
               <span aria-hidden="true" className="absolute -right-6 -top-8 -z-10 h-28 w-28 rounded-full border border-sky-200/[.08] bg-sky-300/[.035] transition duration-500 group-hover:scale-125 group-hover:bg-sky-300/[.07]" />
