@@ -20,7 +20,7 @@ export function ContinueWatchingRow({ items }: { items: ResumeItem[] }) {
             <a
               key={item.progress.content_id}
               href={resumeHref(item)}
-              className="group w-72 flex-none snap-start sm:w-80"
+              className="group w-72 flex-none snap-start rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-950 sm:w-80"
             >
               <div className="relative aspect-video overflow-hidden rounded-xl ring-1 ring-white/10 transition duration-300 group-hover:-translate-y-1 group-hover:ring-cinema-400/50">
                 <Artwork
@@ -34,7 +34,7 @@ export function ContinueWatchingRow({ items }: { items: ResumeItem[] }) {
                     <Play className="h-5 w-5 fill-current" />
                   </span>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-white/20" aria-hidden="true">
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-white/20" role="progressbar" aria-label={`Viewing progress for ${item.title.title}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(ratio * 100)}>
                   <div className="h-full bg-cinema-400" style={{ width: `${Math.round(ratio * 100)}%` }} />
                 </div>
               </div>
