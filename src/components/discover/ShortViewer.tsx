@@ -154,8 +154,8 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   }
 
   return (
-    <Modal label={clip.headline} onClose={onClose} immersive showCloseButton={false}>
-      <div className="cinema-short-viewer relative flex h-full min-h-0 flex-col justify-center overflow-hidden bg-[#030508]">
+    <Modal label={clip.headline} onClose={onClose} immersive contained showCloseButton={false}>
+      <div className="cinema-short-viewer relative mx-auto flex min-h-0 flex-col justify-center overflow-hidden bg-[#030508]">
         <div className="cinema-short-video-stage absolute inset-0 flex items-center justify-center bg-black">
           {direct && <VideoPlayer src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={isMuted} onMutedChange={setIsMuted} showMuteToggle showControls={!clearScreen} />}
           {embed && <iframe ref={iframeRef} src={embed} title={clip.headline} className="cinema-short-embed h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />}
