@@ -48,7 +48,7 @@ export function SportsPage() {
   );
 
   return (
-    <div className={`${PAGE_CONTAINER} space-y-9 pb-16`}>
+    <div className={`${PAGE_CONTAINER} cinema-sports space-y-9 pb-16`}>
       <header className="relative isolate overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#080c13] px-5 py-7 shadow-[0_22px_70px_rgba(0,0,0,.28)] sm:px-8 sm:py-9">
         <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600&q=90" alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.22]" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/45" />
