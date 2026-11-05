@@ -1289,3 +1289,90 @@ body {
 
 
 /* Vite stylesheet smoke test regression guard: keep this file parseable in dev mode. */
+
+
+/*
+ * CINEMA COLOR CALIBRATION — neutral obsidian, clean silver, electric-blue
+ * interaction. This is intentionally a final, scoped override: layout,
+ * components, routes, media, and data behavior remain untouched.
+ */
+:root {
+  color-scheme: dark;
+  --cinema-obsidian: #030407;
+  --cinema-carbon: #080b11;
+  --cinema-surface: #10151e;
+  --cinema-surface-raised: #171e29;
+  --cinema-surface-hover: #1d2633;
+  --cinema-electric: #087cff;
+  --cinema-electric-bright: #00e5ff;
+  --cinema-text-primary: #f1f4f8;
+  --cinema-text-secondary: #b8c2cf;
+  --cinema-border: rgba(190, 204, 224, .15);
+}
+html, body, #root {
+  min-height: 100%;
+  background: #030407 !important;
+}
+body {
+  color: var(--cinema-text-primary) !important;
+  background: #030407 !important;
+  background-image: none !important;
+}
+.cinema-app-shell {
+  color: var(--cinema-text-primary) !important;
+  background: #030407 !important;
+  background-image: none !important;
+}
+.cinema-app-shell aside {
+  background: #080b11 !important;
+  border-color: var(--cinema-border) !important;
+}
+.cinema-app-shell header {
+  background: rgba(5, 7, 11, .97) !important;
+  border-color: var(--cinema-border) !important;
+}
+.cinema-home,
+.cinema-home::before {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.cinema-home {
+  color: var(--cinema-text-primary) !important;
+}
+.cinema-home :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--cinema-text-primary) !important;
+}
+.cinema-app-shell [class*="bg-ink-"] {
+  background-color: var(--cinema-surface) !important;
+}
+.cinema-app-shell :where(
+  [class*="text-slate-300"], [class*="text-slate-400"],
+  [class*="text-slate-500"], [class*="text-gray-300"],
+  [class*="text-gray-400"], [class*="text-gray-500"],
+  [class*="text-muted-foreground"]
+) {
+  color: var(--cinema-text-secondary) !important;
+}
+/* Blue is reserved for clear interaction, never used as a page wash. */
+.cinema-app-shell a[aria-current="page"],
+.cinema-app-shell [data-state="active"],
+.cinema-app-shell [aria-pressed="true"] {
+  border-color: rgba(8, 124, 255, .58) !important;
+  background-color: rgba(8, 124, 255, .14) !important;
+  box-shadow: inset 0 0 0 1px rgba(8, 124, 255, .16);
+}
+.cinema-app-shell :is(button, a, [role="button"]):focus-visible {
+  outline: 2px solid var(--cinema-electric-bright) !important;
+  outline-offset: 3px;
+}
+.cinema-app-shell :is(button, a, [role="button"]):hover {
+  border-color: rgba(8, 124, 255, .34);
+}
+.cinema-hero-light--one,
+.cinema-hero-light--two {
+  opacity: .18 !important;
+}
+::selection {
+  color: #fff;
+  background: rgba(8, 124, 255, .42);
+}
