@@ -3,7 +3,7 @@ import { Film, UploadCloud } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { supabase } from '@/lib/supabase';
-import { submitCreatorShort } from '@/lib/creator-shorts';
+import { removeCreatorShortUploads, submitCreatorShort } from '@/lib/creator-shorts';
 import { fetchPublishedTitles } from '@/lib/library';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { BUTTON_PRIMARY, CARD, INPUT, LABEL, PAGE_CONTAINER } from '@/components/ui/styles';
@@ -100,6 +100,7 @@ export function CreatorShortsPage() {
       form.reset();
       notify('Your Short has been submitted for Cinema review.');
     } catch (submitError) {
+      await removeCreatorShortUploads(videoPath, posterPath);
       console.error('Creator Short submission failed', submitError);
       notify('Your Short could not be submitted. Please try again.', 'error');
     } finally {
