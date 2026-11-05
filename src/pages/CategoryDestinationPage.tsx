@@ -52,18 +52,7 @@ const CATEGORIES: Record<string, CategoryConfig> = {
       { heading: 'Trending Family Series', description: 'Family series gaining attention.', mediaType: 'tv', list: 'trending', genreId: 10751 },
     ],
   },
-  reality: {
-    title: 'Reality',
-    eyebrow: 'Real People. Unscripted Moments.',
-    description: 'Explore reality programmes, competition formats and unscripted series from around the world.',
-    icon: Tv,
-    accent: 'Unscripted Entertainment',
-    shelves: [
-      { heading: 'Trending Reality Series', description: 'Unscripted series creating conversation.', mediaType: 'tv', list: 'trending', genreId: 10764 },
-      { heading: 'Popular Reality Series', description: 'More reality entertainment to explore.', mediaType: 'tv', list: 'popular', genreId: 10764 },
-      { heading: 'Trending Reality & Competition', description: 'Competition and reality formats people are finding.', mediaType: 'tv', list: 'trending', genreId: 10764 },
-    ],
-  },
+
 };
 
 const DESTINATIONS = [
