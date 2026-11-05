@@ -1,13 +1,13 @@
-export const PAGE_CONTAINER = 'mx-auto w-full max-w-[112rem] animate-rise-in px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pt-10';
+export const PAGE_CONTAINER = 'cinema-page-container mx-auto w-full max-w-[112rem] animate-rise-in px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pt-10';
 
 export const BUTTON_PRIMARY =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-white/75 bg-slate-100 px-5 py-3 text-sm font-bold text-ink-950 shadow-lg shadow-black/25 transition hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-white/80 bg-[#edf0ef] px-5 py-3 text-sm font-bold text-[#080b0a] shadow-[0_8px_24px_rgba(0,0,0,.22)] transition hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 
 export const BUTTON_ACCENT =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-sky-200/30 bg-sky-300/15 px-5 py-3 text-sm font-bold text-sky-100 shadow-[0_8px_28px_rgba(48,91,150,.16)] backdrop-blur-xl transition hover:border-sky-200/45 hover:bg-sky-300/25 hover:text-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[.07] px-5 py-3 text-sm font-bold text-slate-100 shadow-[0_8px_28px_rgba(0,0,0,.16)] backdrop-blur-xl transition hover:border-white/25 hover:bg-white/[.12] hover:text-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 
 export const BUTTON_SECONDARY =
-  'inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-sky-300/35 hover:bg-white/10 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[.035] px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/25 hover:bg-white/[.075] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50';
 
 export const BUTTON_GHOST =
   'inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/5 hover:text-white disabled:opacity-50';
