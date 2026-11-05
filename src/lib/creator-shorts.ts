@@ -62,6 +62,20 @@ export async function reviewCreatorShort(
   decision: 'approved' | 'rejected',
   reviewNote = '',
 ): Promise<void> {
+  // Make repeated review actions safe and prevent stale admin screens from
+  // reprocessing submissions another reviewer has already completed.
+  const { data: current, error: currentError } = await supabase
+    .from('creator_short_submissions')
+    .select('status')
+    .eq('id', submission.id)
+    .maybeSingle();
+  if (currentError) throw currentError;
+  if (!current) throw new Error('This creator submission no longer exists.');
+  if (current.status === decision) return;
+  if (current.status !== 'pending') {
+    throw new Error('This creator submission has already been reviewed. Refresh the review queue.');
+  }
+
   if (decision === 'approved') {
     const copiedPaths: string[] = [];
     let clipPublished = false;
@@ -72,7 +86,7 @@ export async function reviewCreatorShort(
       if (videoDownloadError || !videoFile) throw videoDownloadError ?? new Error('The submitted video could not be read.');
       const { error: videoCopyError } = await supabase.storage
         .from('cinema-shorts')
-        .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: false });
+        .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: true });
       if (videoCopyError) throw videoCopyError;
       copiedPaths.push(submission.video_path);
 
@@ -84,29 +98,42 @@ export async function reviewCreatorShort(
         if (posterDownloadError || !posterFile) throw posterDownloadError ?? new Error('The submitted poster could not be read.');
         const { error: posterCopyError } = await supabase.storage
           .from('cinema-shorts')
-          .upload(submission.poster_path, posterFile, { contentType: posterFile.type || 'image/jpeg', upsert: false });
+          .upload(submission.poster_path, posterFile, { contentType: posterFile.type || 'image/jpeg', upsert: true });
         if (posterCopyError) throw posterCopyError;
         copiedPaths.push(submission.poster_path);
         posterUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.poster_path).data.publicUrl;
       }
 
       const videoUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path).data.publicUrl;
-      const { error: clipError } = await supabase.from('discover_clips').insert({
-        kind: 'short',
-        headline: submission.headline,
-        description: submission.description,
-        video_url: videoUrl,
-        poster_url: posterUrl,
-        publisher_name: submission.publisher_name,
-        title_id: submission.title_id,
-        duration_seconds: submission.duration_seconds,
-        sort_order: 0,
-        is_published: true,
-      });
-      if (clipError) throw clipError;
-      clipPublished = true;
+      const { data: existingClip, error: existingClipError } = await supabase
+        .from('discover_clips')
+        .select('id')
+        .eq('video_url', videoUrl)
+        .limit(1)
+        .maybeSingle();
+      if (existingClipError) throw existingClipError;
+
+      if (existingClip) {
+        clipPublished = true;
+      } else {
+        const { error: clipError } = await supabase.from('discover_clips').insert({
+          kind: 'short',
+          headline: submission.headline,
+          description: submission.description,
+          video_url: videoUrl,
+          poster_url: posterUrl,
+          publisher_name: submission.publisher_name,
+          title_id: submission.title_id,
+          duration_seconds: submission.duration_seconds,
+          sort_order: 0,
+          is_published: true,
+        });
+        if (clipError) throw clipError;
+        clipPublished = true;
+      }
     } catch (error) {
-      // Remove only copied files when no published clip references them.
+      // Retain the existing cleanup safeguard: only remove copied media when
+      // no published Discover clip references those files.
       if (!clipPublished && copiedPaths.length) {
         const { error: cleanupError } = await supabase.storage.from('cinema-shorts').remove(copiedPaths);
         if (cleanupError) console.warn('Unpublished creator media cleanup could not complete', cleanupError);
@@ -115,7 +142,7 @@ export async function reviewCreatorShort(
     }
   }
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from('creator_short_submissions')
     .update({
       status: decision,
@@ -123,6 +150,19 @@ export async function reviewCreatorShort(
       reviewed_at: new Date().toISOString(),
     })
     .eq('id', submission.id)
-    .eq('status', 'pending');
+    .eq('status', 'pending')
+    .select('id')
+    .maybeSingle();
   if (error) throw error;
+  if (!updated) {
+    const { data: latest, error: latestError } = await supabase
+      .from('creator_short_submissions')
+      .select('status')
+      .eq('id', submission.id)
+      .maybeSingle();
+    if (latestError) throw latestError;
+    if (latest?.status !== decision) {
+      throw new Error('The creator submission changed during review. Refresh the queue before trying again.');
+    }
+  }
 }
