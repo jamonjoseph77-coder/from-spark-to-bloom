@@ -112,14 +112,17 @@ export function HomePage() {
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(190,205,196,.07),transparent_62%)]" aria-hidden="true" />
       <nav className="cinema-home-categories -mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
         {[
-          ['Movies', 'home-movies'],
-          ['Series', 'home-series'],
-          ['News', 'home-news'],
-          ['Documentaries', 'home-documentaries'],
-          ['Reality', 'home-reality'],
-          ['Coming Soon', 'home-coming-soon'],
-        ].map(([label, target]) => (
-          <a key={target} href={'#' + target} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{label}</a>
+          ['Movies', '/movies'],
+          ['Series', '/series'],
+          ['Shorts', '/discover'],
+          ['News', '/news'],
+          ['Documentaries', '/category/documentaries'],
+          ['Animation', '/category/animation'],
+          ['Family', '/category/family'],
+          ['Reality', '/category/reality'],
+          ['Coming Soon', '#home-coming-soon'],
+        ].map(([label, href]) => (
+          <a key={label} href={href} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{label}</a>
         ))}
       </nav>
       <TmdbHero />
