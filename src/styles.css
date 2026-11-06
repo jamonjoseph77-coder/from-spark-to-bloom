@@ -2064,3 +2064,95 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cinema-home .cinema-hero::after { opacity: .08; }
 }
+
+
+/* CINEMA CATEGORY MOTION — each destination gets its own living hero surface. */
+.cinema-category-live-hero,
+.cinema-category-page .cinema-category-hero {
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 76% 18%, rgba(22,139,255,.2), transparent 38%),
+    radial-gradient(ellipse at 18% 100%, rgba(67,190,255,.1), transparent 42%),
+    linear-gradient(128deg, rgba(13,22,36,.98), rgba(5,9,16,.98) 68%, rgba(7,15,26,.98));
+}
+.cinema-category-live-hero::before,
+.cinema-category-page .cinema-category-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .17;
+  background: repeating-linear-gradient(135deg, rgba(110,190,255,.12) 0 1px, transparent 1px 12px);
+  mask-image: linear-gradient(110deg, black, transparent 76%);
+}
+.cinema-category-live-hero::after,
+.cinema-category-page .cinema-category-hero::after {
+  content: "";
+  position: absolute;
+  inset: -30% -70%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .34;
+  background: linear-gradient(105deg, transparent 43%, rgba(100,185,255,.12) 49%, rgba(180,230,255,.2) 50%, rgba(100,185,255,.08) 51%, transparent 57%);
+  transform: translateX(-28%);
+  animation: cinema-category-scan 9s ease-in-out infinite;
+}
+.cinema-category-hero__orb {
+  animation: cinema-category-orbit 13s ease-in-out infinite alternate;
+}
+.cinema-category-hero__orb--two { animation-delay: -6s; }
+@keyframes cinema-category-scan {
+  0%, 12% { transform: translateX(-32%); opacity: .12; }
+  65%, 100% { transform: translateX(32%); opacity: .38; }
+}
+@keyframes cinema-category-orbit {
+  from { transform: translate3d(-2%, -3%, 0) scale(.92); }
+  to { transform: translate3d(5%, 7%, 0) scale(1.12); }
+}
+
+/* Dedicated Shorts — one snap page per vertical video, only the active item plays. */
+.cinema-shorts-page {
+  min-width: 0;
+}
+.cinema-shorts-feed {
+  height: min(76svh, 860px);
+  min-height: 28rem;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.cinema-shorts-feed::-webkit-scrollbar { display: none; }
+.cinema-shorts-feed__slot {
+  height: 100%;
+  min-height: 28rem;
+  padding: 0 0 .75rem;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.cinema-shorts-feed .cinema-video-player,
+.cinema-shorts-feed .cinema-video-stage {
+  height: 100%;
+  min-height: 0;
+}
+.cinema-shorts-feed .cinema-video-stage video {
+  object-fit: cover;
+}
+.cinema-shorts-feed [data-short-feed-item] {
+  height: 100%;
+}
+@media (max-width: 640px) {
+  .cinema-shorts-page { padding-bottom: .5rem; }
+  .cinema-shorts-feed { height: min(73svh, 780px); min-height: 25rem; }
+  .cinema-shorts-feed__slot { min-height: 25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-category-live-hero::after,
+  .cinema-category-page .cinema-category-hero::after,
+  .cinema-category-hero__orb {
+    animation: none !important;
+  }
+  .cinema-shorts-feed { scroll-behavior: auto; }
+}
