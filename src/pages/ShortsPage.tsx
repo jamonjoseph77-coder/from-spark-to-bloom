@@ -7,7 +7,7 @@ import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
-import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, recordDiscoverClipView, type DiscoverClip } from '@/lib/clips';
+import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, recordDiscoverClipView, toggleClipReaction, type DiscoverClip } from '@/lib/clips';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 
 type ViewerSignals = { completedIds: string[]; likedIds: string[]; skippedIds: string[]; publisherAffinity: Record<string, number> };
@@ -74,6 +74,7 @@ export function ShortsPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeDetails, setActiveDetails] = useState<DiscoverClip | null>(null);
   const [signals, setSignals] = useState<ViewerSignals>(EMPTY_SIGNALS);
+  const recordedViewsRef = useRef(new Set<string>());
   const { data: clips, error, loading, reload } = useAsyncData(fetchPublishedShorts, []);
   const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
 
@@ -110,7 +111,10 @@ export function ShortsPage() {
   useEffect(() => {
     const clip = shorts[activeIndex];
     if (!clip) return;
-    void recordDiscoverClipView(clip.id).catch(() => undefined);
+    if (!recordedViewsRef.current.has(clip.id)) {
+      recordedViewsRef.current.add(clip.id);
+      void recordDiscoverClipView(clip.id).catch(() => undefined);
+    }
     setSignals((current) => {
       const next = { ...current, skippedIds: current.skippedIds.filter((id) => id !== clip.id) };
       saveSignals(next);
@@ -133,6 +137,8 @@ export function ShortsPage() {
   }
 
   function toggleLike(clip: DiscoverClip) {
+    const wasLiked = signals.likedIds.includes(clip.id);
+    if (user) void toggleClipReaction(clip.id, user.id, wasLiked).catch((error) => console.warn('Cinema Shorts reaction could not be saved', error));
     setSignals((current) => {
       const liked = current.likedIds.includes(clip.id);
       const publisher = clip.publisher_name.trim().toLocaleLowerCase();
