@@ -2456,3 +2456,51 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cinema-nav-link, .cinema-category-destinations a, .cinema-mobile-nav-item { transition: none !important; }
 }
+
+
+/* SEARCH EXPERIENCE — clearer artwork, stronger search actions and calmer result hierarchy. */
+.cinema-search-hero {
+  background:
+    linear-gradient(90deg, rgba(7, 12, 20, .96) 0%, rgba(7, 12, 20, .82) 48%, rgba(7, 12, 20, .54) 100%),
+    linear-gradient(0deg, rgba(5, 9, 16, .55), rgba(5, 9, 16, .2)),
+    url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1800&q=88") center 42% / cover,
+    #101923;
+  border-color: rgba(143, 197, 255, .28);
+}
+.cinema-search-page form[role="search"] > div {
+  border-color: rgba(157, 201, 245, .3);
+  background: rgba(5, 10, 18, .92);
+  box-shadow: 0 14px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.055);
+}
+.cinema-search-page form[role="search"] > div:focus-within {
+  border-color: rgba(119, 193, 255, .72);
+  box-shadow: 0 0 0 3px rgba(71, 157, 255, .13), 0 16px 42px rgba(0,0,0,.32);
+}
+.cinema-search-page form[role="search"] button[type="submit"] { min-width: 7.4rem; }
+.cinema-search-destination {
+  background: linear-gradient(145deg, rgba(31, 45, 63, .5), rgba(8, 13, 22, .88));
+  box-shadow: 0 12px 30px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.cinema-search-destination > span:not([aria-hidden="true"]) { position: relative; z-index: 1; }
+.cinema-search-destination > img { transition: opacity .35s ease, transform .7s ease; }
+.cinema-search-destination:hover > img { opacity: .52; }
+.cinema-search-page [role="tablist"] {
+  padding: .35rem; border: 1px solid rgba(180, 205, 235, .13);
+  border-radius: 999px; background: rgba(8, 13, 21, .55);
+  width: fit-content; max-width: 100%;
+}
+.cinema-search-page [role="tab"] { border-radius: 999px; padding-inline: 1rem; }
+.cinema-search-page h2 { letter-spacing: -.025em; }
+.cinema-topbar .cinema-global-search {
+  border-color: rgba(157, 201, 245, .22);
+  background: linear-gradient(110deg, rgba(255,255,255,.065), rgba(255,255,255,.025));
+}
+.cinema-topbar .cinema-global-search:focus-within {
+  border-color: rgba(119, 193, 255, .62);
+  box-shadow: 0 0 0 3px rgba(71, 157, 255, .12);
+}
+@media (max-width: 640px) {
+  .cinema-search-hero { background-position: 58% center; }
+  .cinema-search-page form[role="search"] button[type="submit"] { min-width: 3.1rem; padding-inline: .9rem; }
+}
+@media (prefers-reduced-motion: reduce) { .cinema-search-destination > img { transition: none; } }
