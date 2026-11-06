@@ -109,7 +109,7 @@ export function MyCinemaPage() {
       </nav>}
         <section id="my-downloads" className="scroll-mt-24 space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Available Offline</p><h2 className={SECTION_HEADING}>Downloads</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Only videos that their rights holders have explicitly approved for download appear here. Most films, series and third-party streams remain view-only.</p></div>
+            <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Available Offline</p><h2 className={SECTION_HEADING}>Downloads</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Only individual videos that their rights holders have explicitly approved for download appear here. Full movies and series need separate download permission and are not downloadable unless Cinema displays that approval.</p></div>
             <button type="button" onClick={reloadDownloads} className={BUTTON_SECONDARY}><History className="h-4 w-4" /> Refresh</button>
           </div>
           {downloadsError && <ErrorState onRetry={reloadDownloads} description="Your permitted downloads could not be loaded right now." />}
