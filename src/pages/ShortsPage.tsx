@@ -43,6 +43,8 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   const [reactionCount, setReactionCount] = useState(0);
   const [likedByUser, setLikedByUser] = useState(false);
   const [savingReaction, setSavingReaction] = useState(false);
+  const [savingComment, setSavingComment] = useState(false);
+  const [engagementLoading, setEngagementLoading] = useState(true);
   const [comments, setComments] = useState<DiscoverContentComment[]>([]);
   const [commentText, setCommentText] = useState('');
   const [commentOpen, setCommentOpen] = useState(false);
@@ -53,11 +55,14 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   useEffect(() => {
     if (!active) return;
     let current = true;
+    setEngagementLoading(true);
     fetchDiscoverContentEngagement("clip:" + clip.id).then((value) => {
       if (current) { setReactionCount(value.reactionCount); setLikedByUser(value.likedByCurrentUser); setComments(value.comments); }
-    }).catch((error) => console.warn("Cinema Short Engagement Could Not Load", error));
+    }).catch((error) => console.warn("Cinema Short Engagement Could Not Load", error)).finally(() => {
+      if (current) setEngagementLoading(false);
+    });
     return () => { current = false; };
-  }, [active, clip.id]);
+  }, [active, clip.id, userId]);
 
   function sendEmbeddedAudio(enabled: boolean) {
     const frame = iframeRef.current?.contentWindow;
@@ -79,7 +84,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   }
   async function handleLike() {
     if (!userId) { onSignIn(); return; }
-    if (savingReaction) return;
+    if (savingReaction || engagementLoading) return;
     const previous = likedByUser;
     setLikedByUser(!previous);
     setReactionCount((count) => Math.max(0, count + (previous ? -1 : 1)));
@@ -95,7 +100,8 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     event.preventDefault();
     if (!userId) { onSignIn(); return; }
     const body = commentText.trim();
-    if (!body) return;
+    if (!body || savingComment) return;
+    setSavingComment(true);
     try {
       await addDiscoverContentComment(`clip:${clip.id}`, userId, body);
       setCommentText('');
@@ -105,7 +111,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     } catch (cause) {
       console.error('Cinema Short Comment Could Not Be Added', cause);
       notify('Your Comment Could Not Be Added. Please Try Again.', 'error');
-    }
+    } finally { setSavingComment(false); }
   }
 
   function shareShort() {
@@ -141,7 +147,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
         </div>
         <div className="cinema-short-action-rail absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-2 sm:right-5">
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><span>{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</span><span className="text-[9px] font-bold">Sound</span></button>}
-          <button type="button" onClick={() => void handleLike()} disabled={savingReaction} aria-label={likedByUser ? "Unlike This Short" : "Like This Short"} aria-pressed={likedByUser} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50"><Heart className={"h-6 w-6 drop-shadow-lg " + (likedByUser ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[9px] font-bold tabular-nums">{reactionCount.toLocaleString()}</span></button>
+          <button type="button" onClick={() => void handleLike()} disabled={savingReaction || engagementLoading} aria-label={likedByUser ? "Unlike This Short" : "Like This Short"} aria-pressed={likedByUser} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50"><Heart className={"h-6 w-6 drop-shadow-lg " + (likedByUser ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[9px] font-bold tabular-nums">{reactionCount.toLocaleString()}</span></button>
           <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><MessageCircle className="h-6 w-6 drop-shadow-lg" /><span className="text-[9px] font-bold tabular-nums">{comments.length.toLocaleString()}</span></button>
           <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? "Remove From Saved Shorts" : "Save This Short"} aria-pressed={saved} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50">{saved ? <BookmarkCheck className="h-6 w-6 text-sky-200" /> : <BookmarkPlus className="h-6 w-6" />}<span className="text-[9px] font-bold">{saved ? "Saved" : "Save"}</span></button>
           <button type="button" onClick={shareShort} aria-label="Share This Short" className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><Share2 className="h-6 w-6 drop-shadow-lg" /><span className="text-[9px] font-bold">Share</span></button>
@@ -151,7 +157,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
       {commentOpen && <section aria-label="Short Comments" className="absolute inset-x-3 bottom-3 z-50 max-h-[52dvh] overflow-hidden rounded-2xl border border-white/20 bg-black/75 p-4 shadow-2xl backdrop-blur-2xl sm:inset-x-6">
         <div className="mb-3 flex items-center justify-between gap-3"><div><h3 className="text-sm font-extrabold text-white">Comments</h3><p className="text-[11px] text-white/60">{comments.length} Comments</p></div><button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white">Close</button></div>
         <div className="max-h-[25dvh] space-y-3 overflow-y-auto pr-1">{comments.length ? comments.map((comment) => <article key={comment.id} className="border-b border-white/10 pb-2"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 break-words text-xs leading-5 text-white/85">{comment.body}</p></article>) : <p className="py-4 text-center text-xs text-white/60">No Comments Yet. Start The Conversation.</p>}</div>
-        <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2"><input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={userId ? 'Write A Comment…' : 'Sign In To Comment'} aria-label="Your Comment" className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/[.06] px-3 py-2.5 text-xs text-white outline-none placeholder:text-white/45 focus:border-white/35" /><button type="submit" disabled={!commentText.trim()} className="rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-black disabled:opacity-50">Post</button></form>
+        <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2"><input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={userId ? 'Write A Comment…' : 'Sign In To Comment'} aria-label="Your Comment" className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/[.06] px-3 py-2.5 text-xs text-white outline-none placeholder:text-white/45 focus:border-white/35" /><button type="submit" disabled={!commentText.trim() || savingComment} className="rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-black disabled:opacity-50">{savingComment ? "Posting…" : "Post"}</button></form>
       </section>}
     </article>
   );
@@ -316,7 +322,13 @@ export function ShortsPage() {
 
   async function toggleLike(clip: DiscoverClip, wasLiked: boolean): Promise<void> {
     if (!user) throw new Error('Sign in required to react.');
-    await toggleDiscoverContentLike(`clip:${clip.id}`, user.id, wasLiked);
+    try {
+      await toggleDiscoverContentLike(`clip:${clip.id}`, user.id, wasLiked);
+    } catch (cause) {
+      console.error('Cinema Short Reaction Could Not Be Saved', cause);
+      notify('Your Reaction Could Not Be Saved. Please Try Again.', 'error');
+      throw cause;
+    }
     setSignals((current) => {
       const publisher = clip.publisher_name.trim().toLocaleLowerCase();
       const next: ViewerSignals = {
