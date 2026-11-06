@@ -18,17 +18,17 @@ async function compressProfileImage(file: File): Promise<string> {
       element.src = source;
     });
     const canvas = document.createElement('canvas');
-    canvas.width = 192;
-    canvas.height = 192;
+    canvas.width = 160;
+    canvas.height = 160;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Image editing is not available in this browser.');
-    const scale = Math.max(192 / image.naturalWidth, 192 / image.naturalHeight);
+    const scale = Math.max(160 / image.naturalWidth, 160 / image.naturalHeight);
     const width = image.naturalWidth * scale;
     const height = image.naturalHeight * scale;
-    context.drawImage(image, (192 - width) / 2, (192 - height) / 2, width, height);
+    context.drawImage(image, (160 - width) / 2, (160 - height) / 2, width, height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.76));
     if (!blob) throw new Error('The image could not be compressed.');
-    if (blob.size > 80 * 1024) throw new Error('Choose a simpler image. Profile pictures must compress below 80 KB.');
+    if (blob.size > 32 * 1024) throw new Error('Choose a simpler image. Profile pictures must compress below 32 KB.');
     return await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('The image could not be saved.'));
