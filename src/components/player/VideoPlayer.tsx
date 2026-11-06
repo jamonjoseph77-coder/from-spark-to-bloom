@@ -147,6 +147,7 @@ export function VideoPlayer({
             index,
             label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)} kbps`,
           })));
+          setStatus('ready');
         });
         hls.on(HlsLib.Events.ERROR, (_event, data) => {
           if (!data.fatal || cancelled) return;
