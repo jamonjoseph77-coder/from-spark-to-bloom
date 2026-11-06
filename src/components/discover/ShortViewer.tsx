@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/useToast';
 import {
   type DiscoverClip,
   recordDiscoverClipView,
+  fetchSavedDiscoverClipIds,
+  setDiscoverClipSaved,
 } from '@/lib/clips';
 import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
@@ -44,7 +46,17 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const [savingReaction, setSavingReaction] = useState(false);
   const [savingComment, setSavingComment] = useState(false);
   const [savingToLibrary, setSavingToLibrary] = useState(false);
+  const [savedShort, setSavedShort] = useState(false);
+  const [savingShort, setSavingShort] = useState(false);
   const inLibrary = Boolean(clip.title && watchlistIds.has(clip.title.id));
+
+  useEffect(() => {
+    let active = true;
+    if (!user) { setSavedShort(false); return; }
+    fetchSavedDiscoverClipIds(user.id).then((ids) => { if (active) setSavedShort(ids.includes(clip.id)); })
+      .catch((cause) => console.warn('Saved Short Status Could Not Be Loaded', cause));
+    return () => { active = false; };
+  }, [clip.id, user?.id]);
 
   useEffect(() => {
     setViewsCount(clip.views_count ?? 0);
@@ -105,6 +117,20 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       console.error('Cinema Short Reaction Could Not Be Saved', error);
       notify('Your Reaction Could Not Be Saved. Please Try Again.', 'error');
     } finally { setSavingReaction(false); }
+  }
+
+  async function toggleSaveShort() {
+    if (!user) { notify('Sign In To Save Shorts To My Cinema.'); navigateTo('/sign-in'); return; }
+    if (savingShort) return;
+    const next = !savedShort;
+    setSavedShort(next);
+    setSavingShort(true);
+    try { await setDiscoverClipSaved(clip.id, user.id, next); }
+    catch (cause) {
+      setSavedShort(!next);
+      console.error('Cinema Short Could Not Be Saved', cause);
+      notify('This Short Could Not Be Saved. Please Try Again.', 'error');
+    } finally { setSavingShort(false); }
   }
 
   async function saveToLibrary() {
@@ -217,6 +243,10 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
               <button type="button" onClick={() => void toggleLike()} disabled={savingReaction} aria-label={liked ? 'Remove Like' : 'Like This Cinema Short'} aria-pressed={liked} className="cinema-social-action cinema-short-action group flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                 <Heart className={`h-6 w-6 transition ${liked ? 'fill-[#58a9ff] text-[#8bc5ff]' : 'text-white group-hover:text-[#8bc5ff]'}`} />
                 <span className="text-[10px] font-bold tabular-nums">{likeCount}</span>
+              </button>
+              <button type="button" onClick={() => void toggleSaveShort()} disabled={savingShort} aria-label={savedShort ? 'Remove Short From Saved Shorts' : 'Save This Short'} aria-pressed={savedShort} className="cinema-social-action cinema-short-action flex flex-col items-center justify-center gap-1 p-2 text-white disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
+                {savedShort ? <Check className="h-6 w-6 text-sky-200" /> : <BookmarkPlus className="h-6 w-6" />}
+                <span className="text-[10px] font-bold">{savedShort ? 'Saved' : 'Save'}</span>
               </button>
               <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-social-action cinema-short-action flex flex-col items-center justify-center gap-1 p-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                 <MessageCircle className="h-6 w-6" />

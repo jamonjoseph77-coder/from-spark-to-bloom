@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, ChevronDown, Clapperboard, Heart, RefreshCw, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, BookmarkCheck, BookmarkPlus, ChevronDown, Clapperboard, Heart, RefreshCw, Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
+import { navigateTo } from '@/lib/router';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
-import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
+import { fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 
 type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number> };
@@ -29,9 +31,9 @@ function saveSignals(signals: ViewerSignals) {
   try { window.localStorage.setItem(SIGNALS_KEY, JSON.stringify(signals)); } catch { /* Local personalization is optional. */ }
 }
 
-function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted, onAudioChange }: {
-  clip: DiscoverClip; active: boolean; liked: boolean; audioEnabled: boolean;
-  onLike: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
+function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLike, onSave, onCompleted, onAudioChange }: {
+  clip: DiscoverClip; active: boolean; liked: boolean; saved: boolean; saving: boolean; audioEnabled: boolean;
+  onLike: (clip: DiscoverClip) => void; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
@@ -81,6 +83,10 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
         </div>
         <div className="mb-1 flex shrink-0 flex-col items-center gap-2">
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-12 w-12 place-items-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-sky-300/15">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>}
+          <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? 'Remove this Short from Saved Shorts' : 'Save this Short'} aria-pressed={saved} className={`grid h-12 w-12 place-items-center rounded-full border backdrop-blur-xl transition disabled:opacity-50 ${saved ? 'border-sky-200/60 bg-sky-400/25 text-sky-100' : 'border-white/20 bg-black/45 text-white hover:border-sky-200/60 hover:bg-sky-300/15'}`}>
+            {saved ? <BookmarkCheck className="h-5 w-5" /> : <BookmarkPlus className="h-5 w-5" />}
+            <span className="sr-only">{saved ? 'Saved' : 'Save Short'}</span>
+          </button>
           <button type="button" onClick={() => onLike(clip)} aria-label={liked ? 'Unlike this Short' : 'Like this Short'} aria-pressed={liked} className={`grid h-12 w-12 place-items-center rounded-full border backdrop-blur-xl transition ${liked ? 'border-sky-200/60 bg-sky-400/25 text-sky-100' : 'border-white/20 bg-black/45 text-white hover:border-sky-200/60 hover:bg-sky-300/15'}`}><Heart className={`h-5 w-5 ${liked ? 'fill-current' : ''}`} /></button>
           <span className="text-[10px] font-bold tabular-nums text-white/80">{(clip.views_count ?? 0).toLocaleString()}</span>
         </div>
@@ -91,15 +97,25 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
 
 export function ShortsPage() {
   const { user } = useAuth();
+  const { notify } = useToast();
   const feedRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [signals, setSignals] = useState<ViewerSignals>(EMPTY_SIGNALS);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [savedClipIds, setSavedClipIds] = useState<string[]>([]);
+  const [savingClipId, setSavingClipId] = useState<string | null>(null);
   const requestedClipId = useMemo(() => new URLSearchParams(window.location.search).get('clip'), []);
   const { data: clips, error, loading, reload } = useAsyncData(fetchPublishedShorts, []);
   const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
 
   useEffect(() => { setSignals(readSignals()); }, []);
+  useEffect(() => {
+    let active = true;
+    if (!user) { setSavedClipIds([]); return; }
+    fetchSavedDiscoverClipIds(user.id).then((ids) => { if (active) setSavedClipIds(ids); })
+      .catch((cause) => console.warn('Saved Cinema Shorts Could Not Be Loaded', cause));
+    return () => { active = false; };
+  }, [user?.id]);
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -156,6 +172,20 @@ export function ShortsPage() {
     });
   }
 
+  async function toggleSave(clip: DiscoverClip) {
+    if (!user) { notify('Sign In To Save Shorts To My Cinema.'); navigateTo('/sign-in'); return; }
+    if (savingClipId) return;
+    const wasSaved = savedClipIds.includes(clip.id);
+    setSavingClipId(clip.id);
+    setSavedClipIds((current) => wasSaved ? current.filter((id) => id !== clip.id) : [...current, clip.id]);
+    try { await setDiscoverClipSaved(clip.id, user.id, !wasSaved); }
+    catch (cause) {
+      setSavedClipIds((current) => wasSaved ? [...current, clip.id] : current.filter((id) => id !== clip.id));
+      console.error('Cinema Short Could Not Be Saved', cause);
+      notify('This Short Could Not Be Saved. Please Try Again.', 'error');
+    } finally { setSavingClipId(null); }
+  }
+
   function toggleLike(clip: DiscoverClip) {
     setSignals((current) => {
       const liked = current.likedIds.includes(clip.id);
@@ -186,7 +216,7 @@ export function ShortsPage() {
         <div ref={feedRef} className="cinema-shorts-feed h-full w-full overflow-y-auto snap-y snap-mandatory" aria-label="Scroll Cinema Shorts vertically">
           {shorts.map((clip, index) => (
             <div key={clip.id} data-short-index={index} className="cinema-shorts-feed__slot h-[100dvh] min-h-[100dvh] w-full snap-start snap-always">
-              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} audioEnabled={audioEnabled} onLike={toggleLike} onCompleted={completeClip} onAudioChange={setAudioEnabled} />
+              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} />
             </div>
           ))}
           <div className="pointer-events-none absolute bottom-3 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-2 text-[10px] font-bold uppercase tracking-[.18em] text-white/55 backdrop-blur"><ChevronDown className="h-3.5 w-3.5" /> Keep Scrolling For More</div>
