@@ -1,12 +1,13 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import {
   ArrowLeft, Building2, ChevronRight, Clock3, Film,
-  Play, Radio, Share2, Users,
+  Play, Radio, Share2, Users, MessageCircle,
 } from 'lucide-react';
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { ShortCard } from '@/components/discover/ShortCard';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { titleTrailerSource } from '@/lib/videoSource';
 import { uniqueVideos, videoIdentity } from '@/lib/videoIdentity';
 import { TitleRow } from '@/components/catalogue/TitleRow';
@@ -20,6 +21,7 @@ import { relatedTitles, titleMeta } from '@/lib/catalogue';
 import { formatDuration } from '@/lib/format';
 import { publisherHref } from '@/lib/publishers';
 import { fetchPublishedTitles, fetchTitleDetail } from '@/lib/library';
+import { fetchLetterboxFeed } from '@/lib/letterbox';
 import { CLIP_KIND_LABEL, fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { TITLE_TYPE_LABELS, type TitleType } from '@/lib/types';
 import { navigateTo } from '@/lib/router';
@@ -33,12 +35,13 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState<DiscoverClip | null>(null);
   const { data, error, reload } = useAsyncData(async () => {
-    const [detail, published, clips] = await Promise.all([
+    const [detail, published, clips, posts] = await Promise.all([
       fetchTitleDetail(titleId),
       fetchPublishedTitles(),
       fetchPublishedClips().catch((cause) => { console.warn('Title clips unavailable', cause); return []; }),
+      fetchLetterboxFeed(80).catch((cause) => { console.warn('Title conversations unavailable', cause); return []; }),
     ]);
-    return { ...detail, published, clips };
+    return { ...detail, published, clips, posts };
   }, [titleId]);
 
   const related = useMemo(() => (data?.title ? relatedTitles(data.published, data.title) : []), [data]);
@@ -46,6 +49,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const { title, seasons } = data;
   if (!title) return <NotFoundPage />;
 
+  const titlePosts = data.posts.filter((post) => post.title_id === title.id);
   const trailerIdentity = videoIdentity(title.trailer_url);
   const titleClips = uniqueVideos(
     data.clips.filter((clip) => clip.title_id === title.id && videoIdentity(clip.video_url) !== trailerIdentity),
@@ -147,6 +151,17 @@ export function TitlePage({ titleId }: { titleId: string }) {
             <section className="space-y-3">
               <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">The story</p><h2 className={SECTION_HEADING}>About {title.title}</h2></div>
               <p className="max-w-3xl text-sm leading-8 text-slate-300 sm:text-base">{title.synopsis || 'A synopsis has not been added for this title yet.'}</p>
+            </section>
+            <section className="space-y-4">
+              <div className="flex items-center gap-2"><MessageCircle className="h-4 w-4 text-sky-200" /><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Cinema Conversations</p><h2 className={SECTION_HEADING}>Around {title.title}</h2></div></div>
+              {titlePosts.length ? <div className="space-y-3">{titlePosts.slice(0, 12).map((post) => {
+                const author = post.author?.display_name || post.author?.username || 'Cinema Member';
+                return <article key={post.id} className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
+                  <div className="flex items-center gap-3"><ProfileAvatar name={author} imageUrl={post.author?.avatar_url} size="sm" /><div className="min-w-0"><p className="truncate text-xs font-bold text-white">{author}</p><p className="text-[10px] text-slate-500">{new Date(post.created_at).toLocaleDateString()}</p></div><span className="ml-auto inline-flex items-center gap-1 text-[10px] text-slate-500"><MessageCircle className="h-3 w-3" /> {post.comments?.length ?? 0}</span></div>
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-300">{post.body}</p>
+                  <a href={`/discover#post-${post.id}`} className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-sky-200 hover:text-white">Open Conversation <ChevronRight className="h-3.5 w-3.5" /></a>
+                </article>;
+              })}</div> : <p className="rounded-xl border border-white/8 bg-white/[.02] p-4 text-sm text-slate-500">No conversations about this title yet. When people share a Cinema post about it, it will appear here.</p>}
             </section>
 
             {title.type === 'series' && (
