@@ -19,7 +19,7 @@ function ProfileEditor({ userId }: { userId: string }) {
       <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-cinema-900/70 via-ink-900 to-ink-950 p-6 sm:p-8">
         <div className="absolute -right-12 -top-16 -z-10 h-56 w-56 rounded-full bg-cinema-400/10 blur-3xl" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <ProfileAvatar name={profile?.display_name ?? 'C'} size="lg" />
+          <ProfileAvatar name={profile?.display_name ?? 'C'} imageUrl={profile?.avatar_url} size="lg" />
           <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase tracking-[0.18em] text-cinema-200">Your Cinema identity</p><h2 className="mt-1 truncate text-2xl font-black tracking-tight text-white">{profile?.display_name ?? 'Set up your profile'}</h2><p className="mt-1 text-sm text-slate-300">{profile ? `@${profile.username}` : 'Choose a name friends can recognise.'}</p>{profile?.bio && <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">{profile.bio}</p>}</div>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300">{profile?.is_discoverable ? 'Discoverable' : 'Private in search'}</span>
         </div>
@@ -53,7 +53,7 @@ function PublicFriendProfile({ username }: { username: string }) {
       <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-sky-300/[.12] via-ink-900 to-ink-950 p-6 sm:p-9">
         <div className="absolute -right-12 -top-16 -z-10 h-64 w-64 rounded-full bg-sky-300/10 blur-3xl" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <ProfileAvatar name={profile.display_name} size="lg" />
+          <ProfileAvatar name={profile.display_name} imageUrl={profile.avatar_url} size="lg" />
           <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase tracking-[.18em] text-sky-200">Cinema profile</p><h2 className="mt-2 truncate text-3xl font-black text-white">{profile.display_name}</h2><p className="mt-1 text-sm text-slate-300">@{profile.username}</p>{profile.bio && <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">{profile.bio}</p>}</div>
           <a href="/friends" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"><Users className="h-4 w-4" /> Friends</a>
         </div>
