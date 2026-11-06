@@ -167,7 +167,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
         )}
       </div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 z-20">
+      <div className="cinema-short-overlay pointer-events-none absolute inset-0 z-20">
         <div className="cinema-short-info pointer-events-auto min-w-0 flex-1 pr-2">
           <a href={publisherHref(clip.publisher_name || "Cinema")} className="inline-flex max-w-full items-center gap-2 text-xs font-bold text-white/90">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/30 bg-black/55 text-xs font-black">{(clip.publisher_name || "C").slice(0, 1).toUpperCase()}</span>
@@ -177,7 +177,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
           {clip.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/75">{clip.description}</p>}
           <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/75"><Eye className="h-3.5 w-3.5" /> {(clip.views_count ?? 0).toLocaleString()} Views</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <a href={clip.title ? "/title/" + clip.title.id : "/search?q=" + encodeURIComponent(clip.headline)} aria-label={clip.title ? "Watch " + clip.title.title + " Now" : "Find A Title Related To " + clip.headline} className="cinema-short-watch-now inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/55 bg-white/15 px-5 py-3 text-sm font-black text-white shadow-[0_8px_28px_rgba(0,0,0,.38)] backdrop-blur-2xl transition hover:border-white/80 hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80">{clip.title ? "Watch Now" : "Find Title"} <ArrowUpRight className="h-4 w-4" /></a>
+            <a href={clip.title ? "/title/" + clip.title.id : "/search?q=" + encodeURIComponent(clip.headline)} aria-label={clip.title ? "Watch " + clip.title.title + " Now" : "Watch Now — Explore Titles Related To " + clip.headline} className="cinema-short-watch-now inline-flex min-h-12 items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-black text-white shadow-[0_8px_28px_rgba(0,0,0,.38)] backdrop-blur-2xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80">Watch Now <ArrowUpRight className="h-4 w-4" /></a>
             <button type="button" onClick={() => onTrack(clip)} disabled={tracking} aria-pressed={tracked} className="cinema-short-track inline-flex min-h-11 items-center justify-center rounded-full border border-white/35 bg-black/40 px-4 py-2.5 text-xs font-extrabold text-white shadow-lg backdrop-blur-xl transition hover:bg-white/10 disabled:opacity-50">{tracking ? '…' : tracked ? 'Tracking' : 'Track'}</button>
           </div>
         </div>
