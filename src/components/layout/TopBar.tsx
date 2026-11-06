@@ -1,6 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { Search } from 'lucide-react';
 import { NotificationBell } from '@/components/layout/NotificationBell';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
+import { useAsyncData } from '@/hooks/useAsyncData';
+import { fetchProfile } from '@/lib/profiles';
 import { useAuth } from '@/hooks/useAuth';
 import { BUTTON_SECONDARY } from '@/components/ui/styles';
 import { navigateTo } from '@/lib/router';
@@ -8,6 +11,7 @@ import { navigateTo } from '@/lib/router';
 export function TopBar() {
   const { user } = useAuth();
   const [query, setQuery] = useState('');
+  const { data: profile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,8 +55,8 @@ export function TopBar() {
       <div className="ml-auto flex shrink-0 items-center gap-2">
         {user && <NotificationBell userId={user.id} />}
         {user ? (
-          <a href="/profile" aria-label="Your profile" title={user.email ?? 'Your profile'} className="grid h-10 w-10 place-items-center rounded-full bg-cinema-600 text-sm font-extrabold uppercase text-white ring-2 ring-cinema-400/30 transition hover:bg-cinema-500">
-            {(user.email?.charAt(0) ?? '?').toUpperCase()}
+          <a href="/profile" aria-label="Your profile" title={profile?.display_name || user.email || 'Your profile'} className="rounded-full ring-2 ring-cinema-400/30 transition hover:ring-cinema-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">
+            <ProfileAvatar name={profile?.display_name || profile?.username || user.email || 'Cinema'} imageUrl={profile?.avatar_url} size="sm" />
           </a>
         ) : (
           <a href="/sign-in" className={`${BUTTON_SECONDARY} rounded-full px-3 py-2 text-xs sm:px-4 sm:text-sm`}>Sign In</a>
