@@ -73,8 +73,8 @@ export function LiveTVPage() {
         </div>
       </header>
 
-      <YourNextWatch titleTypes={['live']} categoryLabel="Live TV" />
-      <CinemaSeasonalSpotlight categoryLabel="Live TV" />
+      <YourNextWatch titleTypes={['live']} categoryLabel="Live TV" heading="Channels Picked For You" />
+      <CinemaSeasonalSpotlight categoryLabel="Live TV" titleTypes={['live']} />
 
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
 
