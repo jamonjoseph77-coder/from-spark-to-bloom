@@ -27,13 +27,13 @@ export function TitleRow({ heading, description, titles, progressById, action, l
         </div>
         {action}
       </div>
-      <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10 [&::-webkit-scrollbar]:hidden">
+      <div className="w-full min-w-0 max-w-full overflow-hidden"><div role="region" aria-label={`${heading} titles`} tabIndex={0} className="flex w-full min-w-0 max-w-full snap-x snap-mandatory touch-pan-x gap-4 overflow-x-auto overscroll-x-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {titles.map((title) => (
           <div key={title.id} className={`${landscape ? 'w-64 sm:w-80 lg:w-96' : 'w-36 sm:w-44 lg:w-48'} flex-none snap-start`}>
             <TitleCard title={title} progress={progressById?.get(title.id)} landscape={landscape} />
           </div>
         ))}
-      </div>
+      </div></div>
     </section>
   );
 }
