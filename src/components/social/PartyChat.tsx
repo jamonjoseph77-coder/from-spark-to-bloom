@@ -12,11 +12,11 @@ import {
   sendPartyMessage,
   subscribeToPartyChanges,
 } from '@/lib/watchParties';
-import type { WatchPartyMessage } from '@/lib/types';
+import type { Profile, WatchPartyMessage } from '@/lib/types';
 
 interface ChatSnapshot {
   messages: WatchPartyMessage[];
-  names: Map<string, string>;
+  profiles: Map<string, Profile>;
 }
 
 async function loadChat(partyId: string): Promise<ChatSnapshot> {
@@ -24,7 +24,7 @@ async function loadChat(partyId: string): Promise<ChatSnapshot> {
   const profiles = await fetchProfilesByIds([...new Set(messages.map((message) => message.user_id))]);
   return {
     messages,
-    names: new Map(profiles.map((profile) => [profile.user_id, profile.display_name])),
+    profiles: new Map(profiles.map((profile) => [profile.user_id, profile])),
   };
 }
 
@@ -103,10 +103,11 @@ export function PartyChat({ partyId, userId, canPost, isHost }: PartyChatProps) 
         )}
         {chat.data?.messages.map((message) => {
           const mine = message.user_id === userId;
-          const name = mine ? 'You' : chat.data?.names.get(message.user_id) ?? 'Cinema member';
+          const profile = chat.data?.profiles.get(message.user_id);
+          const name = mine ? 'You' : profile?.display_name ?? profile?.username ?? 'Cinema member';
           return (
             <div key={message.id} className={`group flex gap-3 ${mine ? 'flex-row-reverse text-right' : ''}`}>
-              {!mine && <ProfileAvatar name={name} size="sm" />}
+              <ProfileAvatar name={name} imageUrl={profile?.avatar_url} size="sm" />
               <div className={`min-w-0 max-w-[80%] ${mine ? 'items-end' : ''} flex flex-col`}>
                 <p className="text-xs text-slate-400">
                   {name} · {new Date(message.created_at).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
