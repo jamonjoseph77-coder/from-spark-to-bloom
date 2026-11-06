@@ -22,6 +22,7 @@ export function ProfileAvatar({ name, size = 'md', imageUrl }: { name: string; s
   const label = name.trim() || 'Cinema member';
 
   return (
+    <>
     <span
       role={source && !imageFailed ? undefined : "img"}
       aria-label={source && !imageFailed ? undefined : `${label}'s profile initials`}
@@ -39,5 +40,6 @@ export function ProfileAvatar({ name, size = 'md', imageUrl }: { name: string; s
       <img src={source} alt={`${label}'s profile picture`} className="mx-auto max-h-[75dvh] max-w-full rounded-xl object-contain" />
       <p className="mt-3 text-center text-sm font-semibold text-white">{label}</p>
     </Modal>}
+    </>
   );
 }
