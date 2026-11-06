@@ -10,7 +10,7 @@ export interface LetterboxPost {
   visibility: 'public' | 'friends';
   status: 'published' | 'hidden' | 'removed';
   created_at: string;
-  author?: { username: string; display_name: string } | null;
+  author?: { username: string; display_name: string; avatar_url: string | null } | null;
   title?: { id: string; title: string; poster_url: string; type: string } | null;
   reactionCount: number;
   likedByCurrentUser: boolean;
@@ -34,7 +34,7 @@ export async function fetchLetterboxFeed(limit = 40, authorId?: string): Promise
   const postIds = posts.map((post) => post.id);
 
   const [authorsResult, titlesResult, engagementResult, commentsResult] = await Promise.all([
-    supabase.from('profiles').select('user_id,username,display_name').in('user_id', authorIds),
+    supabase.from('profiles').select('user_id,username,display_name,avatar_url').in('user_id', authorIds),
     titleIds.length
       ? supabase.from('titles').select('id,title,poster_url,type').in('id', titleIds)
       : Promise.resolve({ data: [], error: null }),
