@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { progressRatioByTitle, resumeItems, titlesOfType } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
-import { fetchPublishedShorts, isPlayableShort, type DiscoverClip } from '@/lib/clips';
+import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
@@ -91,11 +91,15 @@ export function HomePage() {
       document.removeEventListener('visibilitychange', refreshShorts);
     };
   }, [reloadClips]);
-  const shorts = useMemo(
-    () => (publishedClips ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)),
-    [publishedClips],
-  );
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
+  const shorts = useMemo(
+    () => rankPublishedShorts(
+      (publishedClips ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)),
+      social?.follows ?? [],
+      12,
+    ),
+    [publishedClips, social?.follows],
+  );
   const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
