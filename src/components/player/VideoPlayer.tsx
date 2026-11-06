@@ -316,7 +316,7 @@ export function VideoPlayer({
             onClick={toggleMute}
             aria-label={isMuted ? 'Turn Sound On' : 'Mute Video'}
             aria-pressed={!isMuted}
-            className="absolute left-3 top-16 z-30 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/25 bg-black/75 text-white shadow-[0_8px_28px_rgba(0,0,0,.6)] backdrop-blur-xl transition hover:border-white/45 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 active:scale-95"
+            className="absolute right-4 top-20 z-40 grid h-12 w-12 touch-manipulation place-items-center rounded-full border border-white/30 bg-black/80 text-white shadow-[0_8px_28px_rgba(0,0,0,.65)] backdrop-blur-xl transition hover:border-white/55 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 active:scale-95"
           >
             {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5 text-slate-200" />}
             <span className="sr-only">{isMuted ? 'Sound Off' : 'Sound On'}</span>
