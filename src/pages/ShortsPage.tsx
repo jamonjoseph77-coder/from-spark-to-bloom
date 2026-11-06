@@ -177,6 +177,10 @@ export function ShortsPage() {
   const visibleShorts = useMemo(() => feedMode === 'following'
     ? shorts.filter((clip) => (followedPublishers ?? []).some((name) => name.trim().toLowerCase() === clip.publisher_name.trim().toLowerCase()))
     : shorts, [shorts, feedMode, followedPublishers]);
+  useEffect(() => {
+    setActiveIndex(0);
+    feedRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [feedMode]);
 
   useEffect(() => {
     if (!requestedClipId || !visibleShorts.length) return;
@@ -270,7 +274,7 @@ export function ShortsPage() {
       </header>
       {loading && !clips && <div className="absolute inset-0 grid place-items-center px-5 pt-16"><div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/65 p-6 backdrop-blur-xl"><LoadingState label="Loading Cinema Shorts" /></div></div>}
       {error && !clips && <div className="absolute inset-0 grid place-items-center px-5 pt-16"><div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/65 p-6 backdrop-blur-xl"><ErrorState onRetry={reload} description="Cinema Shorts Could Not Load. Try Again In A Moment." /></div></div>}
-      {clips && visibleShorts.length === 0 && <section className="cinema-category-live-hero absolute inset-0 grid min-h-0 place-items-center overflow-hidden p-8 pt-20 text-center"><div className="relative z-10 max-w-md"><Clapperboard className="mx-auto h-10 w-10 text-sky-200" /><h2 className="mt-4 text-2xl font-black text-white">The Shorts Feed Is Getting Ready</h2><p className="mt-2 text-sm leading-6 text-slate-300">Approved, playable Shorts from Cinema creators and publishers will appear here. No broken placeholders or unrelated long-form videos.</p><div className="mt-5 flex flex-wrap justify-center gap-2"><button type="button" onClick={reload} className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 text-xs font-bold text-white"><RefreshCw className="h-3.5 w-3.5" /> Refresh Feed</button><a href="/creator/shorts" className="rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white">Submit A Short</a></div></div></section>}
+      {clips && followedPublishers !== undefined && visibleShorts.length === 0 && <section className="cinema-category-live-hero absolute inset-0 grid min-h-0 place-items-center overflow-hidden p-8 pt-20 text-center"><div className="relative z-10 max-w-md"><Clapperboard className="mx-auto h-10 w-10 text-sky-200" /><h2 className="mt-4 text-2xl font-black text-white">{feedMode === 'following' ? 'Your Following Feed Is Ready To Grow' : 'The Shorts Feed Is Getting Ready'}</h2><p className="mt-2 text-sm leading-6 text-slate-300">{feedMode === 'following' ? 'Follow creators, studios and publishers in Cinema to see their Shorts here.' : 'Approved, playable Shorts from Cinema creators and publishers will appear here. No broken placeholders or unrelated long-form videos.'}</p><div className="mt-5 flex flex-wrap justify-center gap-2"><button type="button" onClick={reload} className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 text-xs font-bold text-white"><RefreshCw className="h-3.5 w-3.5" /> Refresh Feed</button><a href={feedMode === 'following' ? '/publishers' : '/creator/shorts'} className="rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white">{feedMode === 'following' ? 'Find Publishers' : 'Submit A Short'}</a></div></div></section>}
       {visibleShorts.length > 0 && (
         <div ref={feedRef} className="cinema-shorts-feed h-full w-full overflow-y-auto snap-y snap-mandatory" aria-label="Scroll Cinema Shorts vertically">
           {visibleShorts.map((clip, index) => (
