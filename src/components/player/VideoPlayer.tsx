@@ -46,6 +46,7 @@ export function VideoPlayer({
   const startAtRef = useRef(startAt);
   const onProgressRef = useRef(onProgress);
   const lastSavedRef = useRef(0);
+  const playRequestedRef = useRef(false);
   const [status, setStatus] = useState<PlayerStatus>('loading');
   const [errorText, setErrorText] = useState(PLAYBACK_ERROR);
   const [levels, setLevels] = useState<QualityLevel[]>([]);
@@ -99,6 +100,7 @@ export function VideoPlayer({
     setLevels([]);
     setQuality(-1);
     lastSavedRef.current = 0;
+    playRequestedRef.current = false;
 
     let hls: Hls | null = null;
     let cancelled = false;
@@ -127,6 +129,7 @@ export function VideoPlayer({
         }
         hls = new HlsLib({
           enableWorker: true,
+          autoStartLoad: autoPlay,
           capLevelToPlayerSize: true,
           // Keep mobile memory and data use under control while retaining a short safety buffer.
           maxBufferLength: 12,
@@ -146,6 +149,8 @@ export function VideoPlayer({
             index,
             label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)} kbps`,
           })));
+          if (autoPlay || playRequestedRef.current) hls?.startLoad();
+          setStatus('ready');
         });
         hls.on(HlsLib.Events.ERROR, (_event, data) => {
           if (!data.fatal || cancelled) return;
@@ -267,6 +272,7 @@ export function VideoPlayer({
           controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
+          onPlay={() => { playRequestedRef.current = true; hlsRef.current?.startLoad(); }}
           muted={isMuted}
           preload={autoPlay ? 'auto' : 'metadata'}
           poster={poster || undefined}
