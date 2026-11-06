@@ -14,6 +14,8 @@ import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { fetchPublishedTitles } from '@/lib/library';
 import { canonicalCinemaHref } from '@/lib/canonicalTitle';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
+import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
+import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 
 const MODE_LABELS: Record<TmdbListKind, string> = { popular: 'Popular', trending: 'Trending this week' };
 const SEARCH_DEBOUNCE_MS = 350;
@@ -55,6 +57,9 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
         <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">{heading}</h1>
         <p className="max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">Explore real titles, discover official trailers and find the stories you want to experience. Availability to watch on Cinema depends on distribution rights.</p>
       </header>
+
+      <YourNextWatch titleTypes={[mediaType === 'movie' ? 'movie' : 'series']} categoryLabel={heading} fallbackMediaType={mediaType} fallbackGenreId={genreId || undefined} />
+      <CinemaSeasonalSpotlight categoryLabel={heading} mediaType={mediaType} genreId={genreId || undefined} />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="w-full sm:w-96">
