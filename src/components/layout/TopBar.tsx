@@ -55,7 +55,7 @@ export function TopBar() {
         {user && <NotificationBell userId={user.id} />}
         {user ? (
           <a href="/profile" aria-label="Your profile" title={profile?.display_name || user.email || 'Your profile'} className="rounded-full ring-2 ring-cinema-400/30 transition hover:ring-cinema-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">
-            <ProfileAvatar name={profile?.display_name || profile?.username || user.email || 'Cinema'} imageUrl={profile?.avatar_url} size="sm" />
+            <ProfileAvatar name={profile?.display_name || profile?.username || user.email || 'Cinema'} imageUrl={profile?.avatar_url} size="sm" previewable={false} />
           </a>
         ) : (
           <a href="/sign-in" className={`${BUTTON_SECONDARY} rounded-full px-3 py-2 text-xs sm:px-4 sm:text-sm`}>Sign In</a>
