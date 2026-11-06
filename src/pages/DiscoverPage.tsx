@@ -47,14 +47,14 @@ function DailyDiscovery() {
   );
 }
 
-const SEASONAL_COLLECTIONS = [
+const SEASONAL_COLLECTIONS: { id: string; label: string; description: string; movieGenreId: number; seriesGenreId: number; months: number[] }[] = [
   { id: 'independence', label: 'Independence & New Voices', description: 'Stories about courage, change and new beginnings.', movieGenreId: 18, seriesGenreId: 18, months: [2, 8] },
   { id: 'africa', label: 'Africa Month', description: 'Discover stories, places, creativity and perspectives from across the continent.', movieGenreId: 99, seriesGenreId: 18, months: [4] },
   { id: 'together', label: 'Family & Togetherness', description: 'Warm stories for shared moments and all generations.', movieGenreId: 10751, seriesGenreId: 10751, months: [3, 5, 10] },
   { id: 'adventure', label: 'Adventure Escapes', description: 'Travel beyond the everyday with bold journeys and new worlds.', movieGenreId: 12, seriesGenreId: 10759, months: [6, 7] },
   { id: 'mystery', label: 'Mystery Nights', description: 'Follow the clues through suspense, mystery and the unexpected.', movieGenreId: 9648, seriesGenreId: 9648, months: [9] },
   { id: 'festive', label: 'Festive Favourites', description: 'Find stories for celebrations, reflection and time together.', movieGenreId: 10751, seriesGenreId: 10751, months: [11] },
-] as const;
+];
 
 function SeasonalCalendar() {
   const month = new Date().getMonth();
