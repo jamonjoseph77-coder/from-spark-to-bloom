@@ -1,18 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, ChevronDown, Clapperboard, Heart, MessageCircle, RefreshCw, Sparkles } from 'lucide-react';
-import { ShortViewer } from '@/components/discover/ShortViewer';
+import { ArrowLeft, ArrowUpRight, ChevronDown, Clapperboard, Heart, RefreshCw, Sparkles } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
-import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, recordDiscoverClipView, toggleClipReaction, type DiscoverClip } from '@/lib/clips';
+import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 
-type ViewerSignals = { completedIds: string[]; likedIds: string[]; skippedIds: string[]; publisherAffinity: Record<string, number> };
+type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number> };
 const SIGNALS_KEY = 'cinema:shorts-viewer-signals:v1';
-const EMPTY_SIGNALS: ViewerSignals = { completedIds: [], likedIds: [], skippedIds: [], publisherAffinity: {} };
+const EMPTY_SIGNALS: ViewerSignals = { completedIds: [], likedIds: [], publisherAffinity: {} };
 
 function readSignals(): ViewerSignals {
   try {
@@ -22,7 +21,6 @@ function readSignals(): ViewerSignals {
     return {
       completedIds: Array.isArray(parsed.completedIds) ? parsed.completedIds : [],
       likedIds: Array.isArray(parsed.likedIds) ? parsed.likedIds : [],
-      skippedIds: Array.isArray(parsed.skippedIds) ? parsed.skippedIds : [],
       publisherAffinity: parsed.publisherAffinity && typeof parsed.publisherAffinity === 'object' ? parsed.publisherAffinity : {},
     };
   } catch { return EMPTY_SIGNALS; }
@@ -31,8 +29,8 @@ function saveSignals(signals: ViewerSignals) {
   try { window.localStorage.setItem(SIGNALS_KEY, JSON.stringify(signals)); } catch { /* Local personalization is optional. */ }
 }
 
-function ShortFeedItem({ clip, active, liked, onDetails, onLike, onCompleted }: {
-  clip: DiscoverClip; active: boolean; liked: boolean; onDetails: (clip: DiscoverClip) => void;
+function ShortFeedItem({ clip, active, liked, onLike, onCompleted }: {
+  clip: DiscoverClip; active: boolean; liked: boolean;
   onLike: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void;
 }) {
   const embed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: true }) : null;
@@ -56,7 +54,6 @@ function ShortFeedItem({ clip, active, liked, onDetails, onLike, onCompleted }: 
           {clip.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-200/85">{clip.description}</p>}
           <div className="mt-4 flex flex-wrap gap-2">
             {clip.title && <a href={`/title/${clip.title.id}`} className="inline-flex items-center gap-2 rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white shadow-[0_8px_28px_rgba(8,124,255,.3)] transition hover:bg-[#168cff]">Watch Now <ArrowUpRight className="h-3.5 w-3.5" /></a>}
-            <button type="button" onClick={() => onDetails(clip)} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/45 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-xl transition hover:border-sky-200/50 hover:bg-sky-300/10"><MessageCircle className="h-3.5 w-3.5" /> Details & Reactions</button>
           </div>
         </div>
         <div className="mb-1 flex shrink-0 flex-col items-center gap-2">
@@ -72,9 +69,7 @@ export function ShortsPage() {
   const { user } = useAuth();
   const feedRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeDetails, setActiveDetails] = useState<DiscoverClip | null>(null);
   const [signals, setSignals] = useState<ViewerSignals>(EMPTY_SIGNALS);
-  const recordedViewsRef = useRef(new Set<string>());
   const { data: clips, error, loading, reload } = useAsyncData(fetchPublishedShorts, []);
   const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
 
@@ -82,7 +77,7 @@ export function ShortsPage() {
   const shorts = useMemo(() => {
     const ranked = rankPublishedShorts((clips ?? []).filter(isPlayableShort), followedPublishers ?? [], 60);
     const affinity = signals.publisherAffinity;
-    return ranked.filter((clip) => !signals.skippedIds.includes(clip.id)).sort((a, b) => {
+    return ranked.sort((a, b) => {
       const score = (clip: DiscoverClip) => {
         const publisher = clip.publisher_name.trim().toLocaleLowerCase();
         return (affinity[publisher] ?? 0) * 0.35
@@ -108,20 +103,6 @@ export function ShortsPage() {
     return () => observer.disconnect();
   }, [shorts]);
 
-  useEffect(() => {
-    const clip = shorts[activeIndex];
-    if (!clip) return;
-    if (!recordedViewsRef.current.has(clip.id)) {
-      recordedViewsRef.current.add(clip.id);
-      void recordDiscoverClipView(clip.id).catch(() => undefined);
-    }
-    setSignals((current) => {
-      const next = { ...current, skippedIds: current.skippedIds.filter((id) => id !== clip.id) };
-      saveSignals(next);
-      return next;
-    });
-  }, [activeIndex, shorts]);
-
   function completeClip(clip: DiscoverClip) {
     setSignals((current) => {
       if (current.completedIds.includes(clip.id)) return current;
@@ -137,8 +118,6 @@ export function ShortsPage() {
   }
 
   function toggleLike(clip: DiscoverClip) {
-    const wasLiked = signals.likedIds.includes(clip.id);
-    if (user) void toggleClipReaction(clip.id, user.id, wasLiked).catch((error) => console.warn('Cinema Shorts reaction could not be saved', error));
     setSignals((current) => {
       const liked = current.likedIds.includes(clip.id);
       const publisher = clip.publisher_name.trim().toLocaleLowerCase();
@@ -168,13 +147,12 @@ export function ShortsPage() {
         <div ref={feedRef} className="cinema-shorts-feed mx-auto max-w-[34rem]" aria-label="Scroll Cinema Shorts vertically">
           {shorts.map((clip, index) => (
             <div key={clip.id} data-short-index={index} className="cinema-shorts-feed__slot">
-              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} onDetails={setActiveDetails} onLike={toggleLike} onCompleted={completeClip} />
+              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} onLike={toggleLike} onCompleted={completeClip} />
             </div>
           ))}
           <div className="flex items-center justify-center gap-2 py-3 text-[10px] font-bold uppercase tracking-[.18em] text-slate-500"><ChevronDown className="h-3.5 w-3.5" /> Keep Scrolling For More</div>
         </div>
       )}
-      {activeDetails && <ShortViewer clip={activeDetails} onClose={() => setActiveDetails(null)} />}
     </main>
   );
 }
