@@ -12,7 +12,7 @@ export interface DiscoverClip {
 export interface ClipComment { id: string; author_id: string; body: string; created_at: string; author_name: string }
 export interface ClipEngagement { reactionCount: number; likedByCurrentUser: boolean; comments: ClipComment[] }
 
-const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed,views_count';
+const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed';
 
 export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
   trailer: 'Trailer', short: 'Short', clip: 'Clip', featured: 'Featured',
