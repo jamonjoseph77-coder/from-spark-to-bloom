@@ -11,6 +11,8 @@ import { fetchTmdbGenres, fetchTmdbList, searchTmdb, tmdbHref, tmdbImageUrl, tmd
 import { Clapperboard } from 'lucide-react';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
+import { fetchPublishedTitles } from '@/lib/library';
+import { canonicalCinemaHref } from '@/lib/canonicalTitle';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 
 const MODE_LABELS: Record<TmdbListKind, string> = { popular: 'Popular', trending: 'Trending this week' };
@@ -29,6 +31,7 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
   }, [draft]);
 
   const genres = useAsyncData(() => fetchTmdbGenres(mediaType), [mediaType]);
+  const localTitles = useAsyncData(fetchPublishedTitles, []);
   const items = useAsyncData(
     () => (query ? searchTmdb(mediaType, query) : fetchTmdbList(mediaType, mode, genreId)),
     [mediaType, mode, genreId, query],
@@ -71,7 +74,7 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
       {!items.loading && !items.error && items.data && items.data.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title={query ? `No results for "${query}"` : `No ${heading.toLowerCase()} to show`} description="Try a different search or genre." />}
 
       {!items.loading && !items.error && items.data && items.data.length > 0 && <>
-        {!query && featured && <a href={tmdbHref(featured)} className="group cinema-category-live-hero relative isolate block min-h-[21rem] overflow-hidden rounded-[1.75rem] border border-white/10 bg-ink-900 sm:min-h-[27rem]">
+        {!query && featured && <a href={canonicalCinemaHref(featured, localTitles.data ?? [])} className="group cinema-category-live-hero relative isolate block min-h-[21rem] overflow-hidden rounded-[1.75rem] border border-white/10 bg-ink-900 sm:min-h-[27rem]">
           <Artwork src={featuredImage} alt="" fallbackTitle={featured.title} className="absolute inset-0 h-full w-full transition duration-700 group-hover:scale-[1.02]" />
           <span className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent" />
           <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
@@ -85,7 +88,7 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
         </a>}
         <div className="flex items-center justify-between gap-3"><div><h2 className="text-xl font-extrabold text-white">{query ? 'Search results' : mode === 'trending' ? 'Trending now' : 'Popular picks'}</h2><p className="mt-1 text-xs text-slate-500">{items.data.length} titles · Metadata and artwork supplied by TMDB</p></div></div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
-          {(query ? items.data : items.data.slice(1)).map((item) => <TmdbCard key={item.id} item={item} />)}
+          {(query ? items.data : items.data.slice(1)).map((item) => <TmdbCard key={item.id} item={item} localTitles={localTitles.data ?? []} />)}
         </div>
       </>}
 
