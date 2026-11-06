@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowUpRight, BookmarkCheck, BookmarkPlus, Clapperboard, Download, Eye, Heart, MessageCircle, RefreshCw, Search, Share2, Volume2, VolumeX } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -14,12 +14,16 @@ import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscov
 import { publisherHref } from '@/lib/publishers';
 
 type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number>; titleAffinity: Record<string, number> };
-const SIGNALS_KEY = 'cinema:shorts-viewer-signals:v1';
+const SIGNALS_KEY_PREFIX = 'cinema:shorts-viewer-signals:v2:';
+
+function signalsStorageKey(userId?: string): string {
+  return SIGNALS_KEY_PREFIX + (userId || 'guest');
+}
 const EMPTY_SIGNALS: ViewerSignals = { completedIds: [], likedIds: [], publisherAffinity: {}, titleAffinity: {} };
 
-function readSignals(): ViewerSignals {
+function readSignals(userId?: string): ViewerSignals {
   try {
-    const raw = window.localStorage.getItem(SIGNALS_KEY);
+    const raw = window.localStorage.getItem(signalsStorageKey(userId));
     if (!raw) return EMPTY_SIGNALS;
     const parsed = JSON.parse(raw) as Partial<ViewerSignals>;
     return {
@@ -30,13 +34,13 @@ function readSignals(): ViewerSignals {
     };
   } catch { return EMPTY_SIGNALS; }
 }
-function saveSignals(signals: ViewerSignals) {
-  try { window.localStorage.setItem(SIGNALS_KEY, JSON.stringify(signals)); } catch { /* Local personalization is optional. */ }
+function saveSignals(signals: ViewerSignals, userId?: string) {
+  try { window.localStorage.setItem(signalsStorageKey(userId), JSON.stringify(signals)); } catch { /* Local personalization is optional. */ }
 }
 
-function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLike, onSave, onCompleted, onAudioChange, onDownload, downloadingClipId, onSignIn, onTrack, tracked, tracking }: {
+function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLike, onEngagementLoaded, onSave, onCompleted, onAudioChange, onDownload, downloadingClipId, onSignIn, onTrack, tracked, tracking }: {
   clip: DiscoverClip; active: boolean; saved: boolean; saving: boolean; audioEnabled: boolean; userId?: string;
-  onLike: (clip: DiscoverClip, wasLiked: boolean) => Promise<void>; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
+  onLike: (clip: DiscoverClip, wasLiked: boolean) => Promise<void>; onEngagementLoaded: (clip: DiscoverClip, liked: boolean) => void; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
   onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onSignIn: () => void; onTrack: (clip: DiscoverClip) => void; tracked: boolean; tracking: boolean;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -57,12 +61,12 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     let current = true;
     setEngagementLoading(true);
     fetchDiscoverContentEngagement("clip:" + clip.id).then((value) => {
-      if (current) { setReactionCount(value.reactionCount); setLikedByUser(value.likedByCurrentUser); setComments(value.comments); }
+      if (current) { setReactionCount(value.reactionCount); setLikedByUser(value.likedByCurrentUser); setComments(value.comments); onEngagementLoaded(clip, value.likedByCurrentUser); }
     }).catch((error) => console.warn("Cinema Short Engagement Could Not Load", error)).finally(() => {
       if (current) setEngagementLoading(false);
     });
     return () => { current = false; };
-  }, [active, clip.id, userId]);
+  }, [active, clip, userId, onEngagementLoaded]);
 
   function sendEmbeddedAudio(enabled: boolean) {
     const frame = iframeRef.current?.contentWindow;
@@ -180,7 +184,7 @@ export function ShortsPage() {
   const { data: followedPublishers, reload: reloadTrackedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
   useEffect(() => { setTrackedPublishers(followedPublishers ?? []); }, [followedPublishers]);
 
-  useEffect(() => { setSignals(readSignals()); }, []);
+  useEffect(() => { setSignals(readSignals(user?.id)); }, [user?.id]);
   useEffect(() => {
     let active = true;
     if (!user) { setSavedClipIds([]); return; }
@@ -268,10 +272,26 @@ export function ShortsPage() {
         publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + 1 },
         titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: (current.titleAffinity[clip.title_id] ?? 0) + 0.75 } : current.titleAffinity,
       };
-      saveSignals(next);
+      saveSignals(next, user?.id);
       return next;
     });
   }
+
+  const syncServerLikeSignal = useCallback((clip: DiscoverClip, liked: boolean) => {
+    setSignals((current) => {
+      const alreadyLiked = current.likedIds.includes(clip.id);
+      if (alreadyLiked === liked) return current;
+      const publisher = clip.publisher_name.trim().toLocaleLowerCase();
+      const next: ViewerSignals = {
+        ...current,
+        likedIds: liked ? [...current.likedIds, clip.id].slice(-300) : current.likedIds.filter((id) => id !== clip.id),
+        publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (liked ? 1.2 : -0.8) },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (liked ? 1 : -0.6)) } : current.titleAffinity,
+      };
+      saveSignals(next, user?.id);
+      return next;
+    });
+  }, [user?.id]);
 
   async function toggleTrack(clip: DiscoverClip) {
     if (!user) { notify('Sign In To Track Creators And Publishers.'); navigateTo('/sign-in'); return; }
@@ -337,7 +357,7 @@ export function ShortsPage() {
         publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (wasLiked ? -0.8 : 1.2) },
         titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (wasLiked ? -0.6 : 1.0)) } : current.titleAffinity,
       };
-      saveSignals(next);
+      saveSignals(next, user?.id);
       return next;
     });
   }
@@ -359,7 +379,7 @@ export function ShortsPage() {
         <div ref={feedRef} className="cinema-shorts-feed h-full w-full overflow-y-auto snap-y snap-mandatory" aria-label="Scroll Cinema Shorts vertically">
           {visibleShorts.map((clip, index) => (
             <div key={clip.id} data-short-index={index} className="cinema-shorts-feed__slot h-[100dvh] min-h-[100dvh] w-full snap-start snap-always">
-              <ShortFeedItem clip={clip} active={index === activeIndex} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} onDownload={downloadClip} downloadingClipId={downloadingClipId} userId={user?.id} onSignIn={() => { notify('Sign In To React Or Comment On Shorts.'); navigateTo('/sign-in'); }} onTrack={toggleTrack} tracked={trackedPublishers.some((name) => name.toLowerCase() === clip.publisher_name.trim().toLowerCase())} tracking={trackingPublisher?.toLowerCase() === clip.publisher_name.trim().toLowerCase()} />
+              <ShortFeedItem clip={clip} active={index === activeIndex} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onEngagementLoaded={syncServerLikeSignal} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} onDownload={downloadClip} downloadingClipId={downloadingClipId} userId={user?.id} onSignIn={() => { notify('Sign In To React Or Comment On Shorts.'); navigateTo('/sign-in'); }} onTrack={toggleTrack} tracked={trackedPublishers.some((name) => name.toLowerCase() === clip.publisher_name.trim().toLowerCase())} tracking={trackingPublisher?.toLowerCase() === clip.publisher_name.trim().toLowerCase()} />
             </div>
           ))}
         </div>
