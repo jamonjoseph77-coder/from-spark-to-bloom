@@ -43,7 +43,8 @@ export function TmdbHero() {
 
   if (!entries?.length || !current) {
     return (
-      <section className="relative flex min-h-[25rem] items-end overflow-hidden rounded-[1.75rem] border border-white/10 bg-[radial-gradient(ellipse_at_78%_16%,rgba(96,165,250,.16),transparent_44%),linear-gradient(120deg,#111925,#080c12_70%)] p-7 sm:min-h-[34rem] sm:p-12">
+      <section className="cinema-hero cinema-hero-fallback relative flex min-h-[25rem] items-end overflow-hidden rounded-[1.75rem] border border-white/10 p-7 sm:min-h-[34rem] sm:p-12">
+        <img src="/cinema-icon.png" alt="" aria-hidden="true" className="pointer-events-none absolute -right-8 -top-8 h-[min(70vw,30rem)] w-[min(70vw,30rem)] object-contain opacity-[.055] grayscale" loading="lazy" />
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[.24em] text-cinema-300">Cinema · Experience the World of Stories</p>
           <h1 className="mt-5 text-4xl font-black tracking-tight text-white sm:text-6xl">Your world of entertainment starts here.</h1>
@@ -68,7 +69,7 @@ export function TmdbHero() {
         onMouseLeave={() => setPaused(false)}
         onFocus={() => setPaused(true)}
         onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false); }}
-        className="group cinema-hero relative isolate min-h-[31rem] overflow-hidden rounded-[2rem] border border-sky-200/20 bg-ink-900 shadow-[0_40px_120px_rgba(0,0,0,.58)] sm:min-h-[40rem] lg:min-h-[46rem]"
+        className="group cinema-hero relative isolate min-h-[31rem] overflow-hidden rounded-[2rem] border border-sky-200/25 bg-ink-900 shadow-[0_40px_120px_rgba(0,0,0,.58),0_0_42px_rgba(8,124,255,.1)] sm:min-h-[40rem] lg:min-h-[46rem]"
       >
         <Artwork key={item.id} src={image} alt="" fallbackTitle={item.title} priority className="absolute inset-0 h-full w-full animate-fade-in object-cover object-center saturate-[1.12] transition-transform duration-[12000ms] group-hover:scale-[1.035]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#080d14] via-[#080d14]/80 to-[#080d14]/8" />
@@ -101,7 +102,7 @@ export function TmdbHero() {
               </button>;
             })}
           </div>
-          <div className="absolute bottom-5 right-5 flex items-center gap-2 rounded-full border border-white/10 bg-black/40 p-2 backdrop-blur sm:bottom-8 sm:right-8">
+          <div className="absolute bottom-5 right-5 flex items-center gap-2 sm:bottom-8 sm:right-8">
             <div className="flex items-center gap-1.5" aria-label={`Featured title ${index + 1} of ${entries.length}`}>
               {entries.map((entry, position) => <button key={`${entry.item.mediaType}-${entry.item.id}`} type="button" onClick={() => setIndex(position)} aria-label={`Show ${entry.item.title}`} aria-current={position === index} className={`h-1.5 rounded-full transition-all ${position === index ? 'w-7 bg-sky-300' : 'w-1.5 bg-white/40 hover:bg-white/80'}`} />)}
             </div>
