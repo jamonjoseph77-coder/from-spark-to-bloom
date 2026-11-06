@@ -145,13 +145,14 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
           <input id="clip-poster" type="url" className={INPUT} placeholder="https://" value={form.poster_url} onChange={(e) => update('poster_url', e.target.value)} />
         </div>
         <div>
-          <label htmlFor="clip-title" className={LABEL}>Linked title</label>
+          <label htmlFor="clip-title" className={LABEL}>Related Movie Or Series</label>
           <select id="clip-title" className={INPUT} value={form.title_id} onChange={(e) => update('title_id', e.target.value)}>
-            <option value="">None</option>
-            {titles.map((item) => (
+            <option value="">No Linked Title</option>
+            {titles.filter((item) => item.type === 'movie' || item.type === 'series').map((item) => (
               <option key={item.id} value={item.id}>{item.title}</option>
             ))}
           </select>
+          <p className="mt-1.5 text-xs leading-5 text-slate-500">Connect this video to the movie or series it promotes so Cinema can surface the correct title destination.</p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
