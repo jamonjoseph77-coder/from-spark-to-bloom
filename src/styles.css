@@ -2510,3 +2510,12 @@ body {
   background: rgba(255, 255, 255, .09) !important;
   border-color: rgba(205, 216, 228, .24) !important;
 }
+
+
+/* Rounded mobile navigation stays flush with the bottom edge. */
+.cinema-mobile-nav {
+  overflow: visible;
+  border-radius: 1.35rem !important;
+  border: 1px solid rgba(190, 211, 239, .18) !important;
+  box-shadow: 0 0 30px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.055) !important;
+}
