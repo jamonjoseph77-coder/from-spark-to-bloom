@@ -12,7 +12,7 @@ export interface DiscoverClip {
 export interface ClipComment { id: string; author_id: string; body: string; created_at: string; author_name: string }
 export interface ClipEngagement { reactionCount: number; likedByCurrentUser: boolean; comments: ClipComment[] }
 
-const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed';
+const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed,views_count';
 
 // Saved Shorts are a personal library feature. Keep them per-account in this
 // browser until a reviewed, deployed cross-device save service is available.
