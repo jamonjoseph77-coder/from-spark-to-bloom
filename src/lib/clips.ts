@@ -12,6 +12,8 @@ export interface DiscoverClip {
 export interface ClipComment { id: string; author_id: string; body: string; created_at: string; author_name: string }
 export interface ClipEngagement { reactionCount: number; likedByCurrentUser: boolean; comments: ClipComment[] }
 
+const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed,views_count';
+
 export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
   trailer: 'Trailer', short: 'Short', clip: 'Clip', featured: 'Featured',
   behind_the_scenes: 'Behind the scenes', interview: 'Interview', making_of: 'Making of',
@@ -38,8 +40,8 @@ async function attachTitles(clips: Omit<DiscoverClip, 'title'>[]): Promise<Disco
 }
 
 export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
-  const { data, error } = await supabase.from('discover_clips').select('*').eq('is_published', true)
-    .order('created_at', { ascending: false }).order('sort_order', { ascending: true });
+  const { data, error } = await supabase.from('discover_clips').select(CLIP_FEED_FIELDS).eq('is_published', true)
+    .order('created_at', { ascending: false }).order('sort_order', { ascending: true }).limit(120);
   if (error) throw error;
   return attachTitles((data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[]);
 }
@@ -49,7 +51,7 @@ export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
  * downloading trailers and other long-form promotional assets into Shorts.
  */
 export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
-  const { data, error } = await supabase.from('discover_clips').select('*')
+  const { data, error } = await supabase.from('discover_clips').select(CLIP_FEED_FIELDS)
     .eq('is_published', true)
     .eq('kind', 'short')
     .order('created_at', { ascending: false })
