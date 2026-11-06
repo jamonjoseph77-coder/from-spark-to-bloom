@@ -34,7 +34,7 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
   onLike: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: true }) : null;
+  const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
   const embed = rawEmbed ? (getYouTubeVideoId(clip.video_url) ? rawEmbed + '&enablejsapi=1&origin=' + encodeURIComponent(window.location.origin) : rawEmbed + '&api=1&player_id=cinema-short-' + clip.id) : null;
   function toggleAudio() {
     const next = !audioEnabled;
@@ -50,7 +50,7 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
         {active && isDirectVideoUrl(clip.video_url) ? (
           <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls showMuteToggle={false} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />
         ) : active && embed ? (
-          <iframe ref={iframeRef} src={embed} title={clip.headline} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+          <iframe ref={iframeRef} src={embed} title={clip.headline} onLoad={() => { const frame = iframeRef.current?.contentWindow; if (!audioEnabled || !frame) return; if (getYouTubeVideoId(clip.video_url)) frame.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "https://www.youtube.com"); else if (/vimeo\.com/i.test(clip.video_url)) frame.postMessage(JSON.stringify({ method: "setVolume", value: 1 }), "https://player.vimeo.com"); }} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
         ) : (
           <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover opacity-80" />
         )}
