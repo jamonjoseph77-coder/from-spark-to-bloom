@@ -93,7 +93,7 @@ export function ShortsPage() {
     return () => { document.body.style.overflow = previousOverflow; };
   }, []);
   const shorts = useMemo(() => {
-    const ranked = rankPublishedShorts((clips ?? []).filter(isPlayableShort), followedPublishers ?? [], 60);
+    const ranked = rankPublishedShorts((clips ?? []).filter(isPlayableShort), followedPublishers ?? [], 200);
     const affinity = signals.publisherAffinity;
     return ranked.sort((a, b) => {
       const score = (clip: DiscoverClip) => {
