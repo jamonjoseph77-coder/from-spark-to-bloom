@@ -156,7 +156,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     }
   }
   return (
-    <article className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none">
+    <article onDoubleClick={() => { if (!likedByUser) void handleLike(); }} className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none" aria-label="Cinema Short Video. Double-click To Like.">
       <div className="absolute inset-0 bg-[#030508]">
         {active && isDirectVideoUrl(clip.video_url) ? (
           <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls showMuteToggle onMutedChange={(muted) => onAudioChange(!muted)} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />

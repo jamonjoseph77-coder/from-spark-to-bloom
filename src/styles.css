@@ -2661,3 +2661,125 @@ body {
     min-height: 2.65rem !important;
   }
 }
+
+
+/* Cinema Shorts: true edge-to-edge playback and calmer, touch-first controls. */
+.cinema-shorts-page {
+  isolation: isolate;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  padding: 0 !important;
+  background: #030508 !important;
+}
+.cinema-shorts-page .cinema-shorts-feed {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  padding: 0 !important;
+  scroll-padding: 0 !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.cinema-shorts-page .cinema-shorts-feed::-webkit-scrollbar { display: none; }
+.cinema-shorts-page .cinema-shorts-feed__slot {
+  position: relative !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  padding: 0 !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  border-radius: 0 !important;
+}
+.cinema-shorts-page .cinema-video-player,
+.cinema-shorts-page .cinema-video-stage {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #030508 !important;
+  box-shadow: none !important;
+}
+.cinema-shorts-page .cinema-video-stage video {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  background: #030508 !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot iframe {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  border: 0 !important;
+}
+.cinema-shorts-page header {
+  padding-top: max(env(safe-area-inset-top), .8rem) !important;
+  padding-left: max(1rem, env(safe-area-inset-left)) !important;
+  padding-right: max(1rem, env(safe-area-inset-right)) !important;
+  padding-bottom: .8rem !important;
+  background: linear-gradient(180deg, rgba(2,5,10,.64), rgba(2,5,10,0)) !important;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.cinema-shorts-page .cinema-short-action-rail {
+  top: 50% !important;
+  right: max(.65rem, env(safe-area-inset-right)) !important;
+  max-height: calc(100dvh - 9rem) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: none;
+  gap: .2rem !important;
+  padding: .45rem .18rem !important;
+}
+.cinema-shorts-page .cinema-short-action-rail::-webkit-scrollbar { display: none; }
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child {
+  left: max(.85rem, env(safe-area-inset-left)) !important;
+  bottom: max(.85rem, env(safe-area-inset-bottom)) !important;
+  width: min(74%, 36rem) !important;
+  max-width: min(74%, 36rem) !important;
+  padding: 0 .35rem 0 0 !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child > div:last-child {
+  align-items: center;
+  gap: .55rem !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child > div:last-child a,
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child > div:last-child button {
+  min-height: 2.55rem;
+  border-color: rgba(255,255,255,.38) !important;
+  background: rgba(5,10,18,.34) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child > div:last-child a:hover,
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child > div:last-child button:hover {
+  background: rgba(255,255,255,.14) !important;
+}
+@media (max-width: 420px) {
+  .cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child {
+    width: min(72%, 27rem) !important;
+    max-width: min(72%, 27rem) !important;
+  }
+  .cinema-shorts-page .cinema-short-action-rail .cinema-short-action {
+    min-width: 2.55rem !important;
+    width: 2.55rem !important;
+    min-height: 2.5rem !important;
+  }
+}
