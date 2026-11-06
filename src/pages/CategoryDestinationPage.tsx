@@ -1,6 +1,7 @@
 import { ArrowRight, Clapperboard, Compass, Film, Sparkles, Tv } from 'lucide-react';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
+import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 
 type Shelf = { heading: string; description: string; mediaType: 'movie' | 'tv'; list: 'popular' | 'trending'; genreId?: number };
 type CategoryConfig = {
@@ -58,7 +59,7 @@ const CATEGORIES: Record<string, CategoryConfig> = {
 const DESTINATIONS = [
   { label: 'Movies', href: '/movies' },
   { label: 'Series', href: '/series' },
-  { label: 'Shorts', href: '/discover' },
+  { label: 'Shorts', href: '/shorts' },
   { label: 'News', href: '/news' },
   { label: 'Documentaries', href: '/category/documentaries' },
   { label: 'Animation', href: '/category/animation' },
@@ -83,9 +84,7 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
   const Icon = category.icon;
   return (
     <main className={`${PAGE_CONTAINER} cinema-category-page space-y-10 pb-16`}>
-      <nav aria-label="Cinema destinations" className="cinema-category-destinations -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
-        {DESTINATIONS.map((item) => <a key={item.href} href={item.href} aria-current={item.href === `/category/${slug}` ? 'page' : undefined} className="shrink-0 rounded-full border border-white/10 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-slate-300 transition hover:border-sky-200/35 hover:bg-sky-300/[.08] hover:text-white">{item.label}</a>)}
-      </nav>
+      <CinemaCategoryNav active={category.title} />
 
       <header className="cinema-category-hero relative isolate overflow-hidden rounded-[2rem] border border-sky-200/15 p-6 shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:p-10 lg:p-12">
         <div className="cinema-category-hero__orb cinema-category-hero__orb--one" aria-hidden="true" />
