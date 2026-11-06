@@ -3059,3 +3059,50 @@ body {
     min-height: 3rem !important;
   }
 }
+
+
+/* Latest Shorts refinement: lower the complete action stack and use Cinema's
+   premium midnight/blue glass finish for title and publisher actions. */
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
+  bottom: max(3.5dvh, calc(env(safe-area-inset-bottom) + 2.2rem)) !important;
+  height: min(54dvh, 32rem) !important;
+  min-height: 17rem !important;
+}
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions > .cinema-short-action {
+  border-color: rgba(91, 164, 255, .28) !important;
+  background: linear-gradient(155deg, rgba(13, 31, 55, .78), rgba(2, 7, 15, .78)) !important;
+  box-shadow: 0 7px 22px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(142, 193, 255, .16), 0 0 14px rgba(42, 126, 224, .08) !important;
+}
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions > .cinema-short-action:hover {
+  border-color: rgba(116, 184, 255, .68) !important;
+  background: linear-gradient(155deg, rgba(20, 57, 96, .88), rgba(3, 12, 25, .9)) !important;
+}
+.cinema-shorts-page .cinema-short-overlay .cinema-short-watch-now,
+.cinema-shorts-page .cinema-short-overlay .cinema-short-track {
+  color: #f7fbff !important;
+  border: 1px solid rgba(112, 178, 255, .58) !important;
+  background: linear-gradient(115deg, rgba(15, 39, 68, .94), rgba(3, 9, 19, .94)) !important;
+  box-shadow: 0 9px 28px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(174, 211, 255, .2), 0 0 18px rgba(48, 132, 230, .14) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+  backdrop-filter: blur(20px) saturate(145%) !important;
+}
+.cinema-shorts-page .cinema-short-overlay .cinema-short-watch-now:hover,
+.cinema-shorts-page .cinema-short-overlay .cinema-short-track:hover {
+  border-color: rgba(151, 204, 255, .9) !important;
+  background: linear-gradient(115deg, rgba(23, 66, 111, .97), rgba(5, 15, 30, .97)) !important;
+  filter: brightness(1.08) !important;
+}
+@media (max-width: 430px) {
+  .cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
+    bottom: max(2.5dvh, calc(env(safe-area-inset-bottom) + 1.7rem)) !important;
+    height: min(53dvh, 29rem) !important;
+    min-height: 16rem !important;
+  }
+}
+@media (max-height: 680px) {
+  .cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
+    bottom: max(2dvh, calc(env(safe-area-inset-bottom) + 1.4rem)) !important;
+    height: 50dvh !important;
+    min-height: 15rem !important;
+  }
+}
