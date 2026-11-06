@@ -13,9 +13,9 @@ import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib
 import { fetchDiscoverContentEngagement } from '@/lib/discoverEngagement';
 import { publisherHref } from '@/lib/publishers';
 
-type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number> };
+type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number>; titleAffinity: Record<string, number> };
 const SIGNALS_KEY = 'cinema:shorts-viewer-signals:v1';
-const EMPTY_SIGNALS: ViewerSignals = { completedIds: [], likedIds: [], publisherAffinity: {} };
+const EMPTY_SIGNALS: ViewerSignals = { completedIds: [], likedIds: [], publisherAffinity: {}, titleAffinity: {} };
 
 function readSignals(): ViewerSignals {
   try {
@@ -26,6 +26,7 @@ function readSignals(): ViewerSignals {
       completedIds: Array.isArray(parsed.completedIds) ? parsed.completedIds : [],
       likedIds: Array.isArray(parsed.likedIds) ? parsed.likedIds : [],
       publisherAffinity: parsed.publisherAffinity && typeof parsed.publisherAffinity === 'object' ? parsed.publisherAffinity : {},
+      titleAffinity: parsed.titleAffinity && typeof parsed.titleAffinity === 'object' ? parsed.titleAffinity : {},
     };
   } catch { return EMPTY_SIGNALS; }
 }
@@ -159,6 +160,7 @@ export function ShortsPage() {
         const diversity = count === 0 ? 0.42 : count === 1 ? 0 : -1.15 * count;
         const personal = (affinity[publisher] ?? 0) * 0.28
           + (signals.likedIds.includes(entry.clip.id) ? 0.5 : 0)
+          + (entry.clip.title_id ? (signals.titleAffinity[entry.clip.title_id] ?? 0) * 0.32 : 0)
           - (signals.completedIds.includes(entry.clip.id) ? 0.85 : 0);
         const baseOrder = (ranked.length - entry.index) / Math.max(1, ranked.length) * 0.3;
         const score = diversity + personal + baseOrder;
@@ -213,6 +215,7 @@ export function ShortsPage() {
         ...current,
         completedIds: [...current.completedIds, clip.id].slice(-300),
         publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + 1 },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: (current.titleAffinity[clip.title_id] ?? 0) + 0.75 } : current.titleAffinity,
       };
       saveSignals(next);
       return next;
@@ -255,6 +258,7 @@ export function ShortsPage() {
         ...current,
         likedIds: liked ? current.likedIds.filter((id) => id !== clip.id) : [...current.likedIds, clip.id].slice(-300),
         publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (liked ? -0.8 : 1.2) },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (liked ? -0.6 : 1.0)) } : current.titleAffinity,
       };
       saveSignals(next);
       return next;
