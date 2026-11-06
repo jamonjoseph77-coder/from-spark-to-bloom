@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Search as SearchIcon, Compass, Users, Clapperboard, Megaphone, Sparkles, BadgeCheck, Building2, Film, ArrowUpRight, X } from 'lucide-react';
+import { Search as SearchIcon, Compass, Users, Clapperboard, Megaphone, BadgeCheck, Building2, Film, ArrowUpRight, X } from 'lucide-react';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TmdbSearchResults } from '@/components/tmdb/TmdbSearchResults';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -112,8 +112,10 @@ export function SearchPage({ query }: { query: string }) {
               {destinations.map(({ href, label, detail, icon: Icon }) => (
                 <a key={href} href={href} className="cinema-search-destination group flex min-h-36 items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:-translate-y-0.5 hover:border-cinema-400/35 hover:bg-white/[.06]">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-500/10 text-cinema-200 transition group-hover:bg-cinema-500/20"><Icon className="h-5 w-5" /></span>
-                  <span className="min-w-0">                  <span className="block font-semibold text-white">{label}</span>
-                  <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-white">{label}</span>
+                    <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
+                  </span>
                 </a>
               ))}
             </div>
