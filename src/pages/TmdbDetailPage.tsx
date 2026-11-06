@@ -36,7 +36,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
     );
   }
 
-  const canonicalTitle = findCanonicalCinemaTitle(data, localTitles);
+  const canonicalTitle = findCanonicalCinemaTitle(data, localTitles ?? []);
   const backdrop = tmdbImageUrl(data.backdropPath, 'w1280');
   const poster = tmdbImageUrl(data.posterPath, 'w500');
   const typeLabel = mediaType === 'movie' ? 'Movie' : 'Series';
