@@ -3,6 +3,8 @@ import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
+import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
+import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 
 type Shelf = { heading: string; description: string; mediaType: 'movie' | 'tv'; list: 'popular' | 'trending'; genreId?: number };
 type CategoryConfig = {
@@ -113,6 +115,8 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
         </div>
       </header>
 
+      <YourNextWatch titleTypes={['movie', 'series']} categoryLabel={category.title} genreTerms={slug === 'documentaries' ? ['documentary'] : slug === 'animation' ? ['animation', 'anime'] : slug === 'family' ? ['family', 'kids'] : slug === 'reality' ? ['reality'] : undefined} fallbackMediaType={category.shelves[0]?.mediaType} fallbackGenreId={category.shelves[0]?.genreId} />
+      <CinemaSeasonalSpotlight categoryLabel={category.title} mediaType={category.shelves[0]?.mediaType} genreId={category.shelves[0]?.genreId} />
       <section className="space-y-3 rounded-2xl border border-sky-200/10 bg-[linear-gradient(110deg,rgba(8,124,255,.09),rgba(255,255,255,.018)_58%,rgba(255,255,255,.01))] p-5 sm:p-6">
         <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-sky-200">Your Category, Your Cinema</p>
         <h2 className="text-xl font-extrabold text-white sm:text-2xl">{category.accent}</h2>

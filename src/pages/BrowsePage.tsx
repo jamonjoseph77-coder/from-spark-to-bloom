@@ -10,6 +10,8 @@ import { Clapperboard, Radio, Trophy, Newspaper } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
+import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
+import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 
 type LocalBrowseKind = Exclude<TitleType, 'movie' | 'series'>;
 const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: string }> = {
@@ -46,6 +48,8 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
           <a href="/search" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#087cff] px-5 py-3 text-xs font-extrabold text-white shadow-[0_8px_26px_rgba(8,124,255,.25)] transition hover:bg-[#168cff]">Find More On Cinema</a>
         </div>
       </header>
+      <YourNextWatch titleTypes={[kind]} categoryLabel={copy.heading} />
+      <CinemaSeasonalSpotlight categoryLabel={copy.heading} />
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {titles && ofType.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title={`${copy.heading} Is Getting Ready`} description={copy.empty} />}
       {titles && ofType.length > 0 && <>

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Radio, Search, Signal, TvMinimalPlay } from 'lucide-react';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
+import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
+import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 import { KeepUpButton } from '@/components/social/KeepUpButton';
 import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -70,6 +72,9 @@ export function LiveTVPage() {
           </div>
         </div>
       </header>
+
+      <YourNextWatch titleTypes={['live']} categoryLabel="Live TV" />
+      <CinemaSeasonalSpotlight categoryLabel="Live TV" />
 
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
 

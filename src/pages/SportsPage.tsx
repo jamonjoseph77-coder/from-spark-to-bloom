@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Activity, ArrowRight, CalendarClock, CalendarDays, Radio, Search, Trophy, Tv } from 'lucide-react';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TitleRow } from '@/components/catalogue/TitleRow';
+import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
+import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -68,6 +70,9 @@ export function SportsPage() {
           <span className="inline-flex items-center gap-2"><Activity className="h-4 w-4 text-sky-300" /> Highlights & Replays</span>
         </div>
       </header>
+
+      <YourNextWatch titleTypes={['sport']} categoryLabel="Sports" />
+      <CinemaSeasonalSpotlight categoryLabel="Sports" />
 
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState label="Loading Sports On Cinema" />)}
 
