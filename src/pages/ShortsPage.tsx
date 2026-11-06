@@ -124,15 +124,35 @@ export function ShortsPage() {
   const shorts = useMemo(() => {
     const ranked = rankPublishedShorts((clips ?? []).filter(isPlayableShort), followedPublishers ?? [], 200);
     const affinity = signals.publisherAffinity;
-    return ranked.sort((a, b) => {
-      const score = (clip: DiscoverClip) => {
-        const publisher = clip.publisher_name.trim().toLocaleLowerCase();
-        return (affinity[publisher] ?? 0) * 0.35
-          + (signals.likedIds.includes(clip.id) ? 0.45 : 0)
-          - (signals.completedIds.includes(clip.id) ? 0.8 : 0);
-      };
-      return score(b) - score(a);
-    });
+    const remaining = ranked.map((clip, index) => ({ clip, index }));
+    const selected: DiscoverClip[] = [];
+    const publisherCounts = new Map<string, number>();
+
+    // Blend local likes and completion signals into the existing freshness,
+    // follow, popularity and editorial ranking without sacrificing publisher variety.
+    while (remaining.length) {
+      let bestIndex = 0;
+      let bestScore = Number.NEGATIVE_INFINITY;
+      remaining.forEach((entry, index) => {
+        const publisher = entry.clip.publisher_name.trim().toLocaleLowerCase();
+        const count = publisherCounts.get(publisher) ?? 0;
+        const diversity = count === 0 ? 0.42 : count === 1 ? 0 : -1.15 * count;
+        const personal = (affinity[publisher] ?? 0) * 0.28
+          + (signals.likedIds.includes(entry.clip.id) ? 0.5 : 0)
+          - (signals.completedIds.includes(entry.clip.id) ? 0.85 : 0);
+        const baseOrder = (ranked.length - entry.index) / Math.max(1, ranked.length) * 0.3;
+        const score = diversity + personal + baseOrder;
+        if (score > bestScore) {
+          bestScore = score;
+          bestIndex = index;
+        }
+      });
+      const [chosen] = remaining.splice(bestIndex, 1);
+      selected.push(chosen.clip);
+      const publisher = chosen.clip.publisher_name.trim().toLocaleLowerCase();
+      publisherCounts.set(publisher, (publisherCounts.get(publisher) ?? 0) + 1);
+    }
+    return selected;
   }, [clips, followedPublishers, signals]);
 
   useEffect(() => {
