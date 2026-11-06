@@ -10,6 +10,8 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbGenres, fetchTmdbList, searchTmdb, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbListKind, type TmdbMediaType } from '@/lib/tmdb';
 import { Clapperboard } from 'lucide-react';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
+import { TmdbRow } from '@/components/tmdb/TmdbRow';
+import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 
 const MODE_LABELS: Record<TmdbListKind, string> = { popular: 'Popular', trending: 'Trending this week' };
 const SEARCH_DEBOUNCE_MS = 350;
@@ -87,6 +89,11 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
         </div>
       </>}
 
+      {!query && <section className="space-y-10 border-t border-white/10 pt-8">
+        <TmdbRow heading={mediaType === 'movie' ? 'Trending Movies' : 'Trending Series'} description="Stories gaining attention across Cinema's discovery catalogue." mediaType={mediaType} list="trending" />
+        <TmdbRow heading={mediaType === 'movie' ? 'Popular Movies' : 'Popular Series'} description="More titles to explore and add to your Cinema journey." mediaType={mediaType} list="popular" />
+      </section>}
+      <CategoryCinemaFeed category={mediaType === 'movie' ? 'movie' : 'series'} label={heading} />
       <TmdbAttribution />
     </div>
   );
