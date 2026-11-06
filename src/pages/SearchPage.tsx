@@ -18,9 +18,9 @@ const scopes: { id: SearchScope; label: string }[] = [
   { id: 'studios', label: 'Studios & Publishers' },
 ];
 const destinations = [
-  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass, image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=900&q=82' }
-  { href: '/friends', label: 'Friends', detail: 'Find People And Recommendations', icon: Users, image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=82' }
-  { href: '/publishers', label: 'Studios', detail: 'Explore Official Industry Profiles', icon: Megaphone, image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=82' }
+  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass, image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=900&q=82' },
+  { href: '/friends', label: 'Friends', detail: 'Find People And Recommendations', icon: Users, image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=82' },
+  { href: '/publishers', label: 'Studios', detail: 'Explore Official Industry Profiles', icon: Megaphone, image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=82' },
   { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard, image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=900&q=82' }
 ];
 
