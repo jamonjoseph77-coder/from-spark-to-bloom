@@ -34,6 +34,7 @@ export function MyCinemaPage() {
     if (!titles) return null;
     return {
       resume: resumeItems(progress, titles),
+      recent: [...new Map([...progress].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map((entry) => [entry.title_id, titles.find((title) => title.id === entry.title_id)]).filter((entry): entry is [string, NonNullable<typeof entry[1]>] => Boolean(entry[1]))).values()].slice(0, 12),
       watchlist: titles.filter((title) => watchlistIds.has(title.id)),
       favourites: titles.filter((title) => favouriteIds.has(title.id)),
     };
@@ -108,7 +109,7 @@ export function MyCinemaPage() {
         <a href="/movies" className="group relative isolate overflow-hidden rounded-3xl border border-indigo-200/15 bg-[linear-gradient(120deg,#1a1830,#080d17)] p-5 transition hover:border-indigo-200/35"><span className="absolute -right-4 -top-8 -z-10 h-36 w-36 rounded-full bg-indigo-300/10 blur-2xl" /><Film className="h-6 w-6 text-indigo-200" /><h3 className="mt-4 text-lg font-extrabold text-white">Build Your Next Watchlist</h3><p className="mt-1 text-sm text-slate-400">Find films and series worth saving for later.</p></a>
       </section>
       {view && <nav aria-label="My Cinema sections" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-saved-shorts', label: 'Saved Shorts' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
+        {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#recently-watched', label: 'Recently watched' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-saved-shorts', label: 'Saved Shorts' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
       </nav>}
         <section id="my-downloads" className="scroll-mt-24 space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
@@ -129,6 +130,10 @@ export function MyCinemaPage() {
       {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {view && <>
         <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
+        <section id="recently-watched" className="scroll-mt-24 space-y-5">
+          <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Recently Watched</h2><p className="mt-1 text-sm text-slate-400">Your latest viewing activity, all in one place.</p></div></div>
+          {view.recent.length ? <TitleGrid titles={view.recent} /> : <p className={`${CARD} text-sm text-slate-400`}>Titles you watch will appear here, so you can easily return to your recent viewing.</p>}
+        </section>
         <section id="my-watchlist" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>
           {!ready ? <LoadingState label="Loading your list" /> : view.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.</p> : <TitleGrid titles={view.watchlist} />}
