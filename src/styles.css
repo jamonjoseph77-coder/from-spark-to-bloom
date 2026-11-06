@@ -2374,3 +2374,85 @@ body {
     transition: none !important;
   }
 }
+
+
+/* Premium Cinema Atmosphere — clearer depth, refined glass and controlled colour. */
+.cinema-app-shell {
+  background:
+    radial-gradient(ellipse at 7% 8%, rgba(83, 157, 255, .075), transparent 34%),
+    radial-gradient(ellipse at 94% 20%, rgba(255, 139, 115, .055), transparent 30%),
+    linear-gradient(180deg, rgba(31, 42, 57, .22), transparent 42%);
+}
+.cinema-sidenav {
+  background: linear-gradient(180deg, rgba(20, 27, 37, .97), rgba(12, 17, 24, .97)) !important;
+  border-right-color: rgba(190, 211, 239, .16) !important;
+  box-shadow: 12px 0 44px rgba(0, 0, 0, .18), inset -1px 0 0 rgba(255,255,255,.025);
+}
+.cinema-nav-link {
+  min-height: 46px;
+  border: 1px solid transparent;
+  position: relative;
+}
+.cinema-nav-link[aria-current="page"] {
+  background: linear-gradient(112deg, rgba(87, 159, 255, .27), rgba(89, 204, 192, .12) 58%, rgba(255, 154, 126, .09)) !important;
+  border-color: rgba(151, 199, 255, .52) !important;
+  box-shadow: inset 3px 0 0 #8dc5ff, 0 8px 24px rgba(49, 111, 184, .14), inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+.cinema-mobile-nav {
+  background: linear-gradient(180deg, rgba(19, 26, 35, .98), rgba(10, 14, 19, .99)) !important;
+  border-top-color: rgba(190, 211, 239, .2) !important;
+  box-shadow: 0 -12px 38px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.045);
+}
+.cinema-mobile-nav-item[aria-current="page"] {
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(86, 159, 255, .19), rgba(93, 202, 190, .09)) !important;
+  box-shadow: inset 0 0 0 1px rgba(155, 203, 255, .18);
+}
+.cinema-category-destinations a {
+  border-color: rgba(195, 211, 232, .22);
+  background: linear-gradient(145deg, rgba(255,255,255,.085), rgba(255,255,255,.035));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+}
+.cinema-category-destinations a[aria-current="page"] {
+  color: #fff !important;
+  border-color: rgba(156, 207, 255, .72) !important;
+  background: linear-gradient(115deg, rgba(72, 151, 255, .32), rgba(83, 199, 190, .19) 58%, rgba(255, 151, 125, .15)) !important;
+  box-shadow: 0 8px 28px rgba(57, 133, 212, .18), inset 0 1px 0 rgba(255,255,255,.19), inset 0 -1px 0 rgba(255,255,255,.04);
+}
+.cinema-category-destinations a:not([aria-current="page"]):hover {
+  border-color: rgba(174, 210, 246, .42);
+  background: linear-gradient(115deg, rgba(82, 151, 220, .15), rgba(255,255,255,.055));
+}
+.cinema-shorts-page {
+  background: #030405 !important;
+  isolation: isolate;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot {
+  padding: 0 !important;
+}
+.cinema-shorts-page article > div:last-of-type {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+.cinema-shorts-page article > div:last-of-type > div:first-child {
+  max-width: min(78%, 34rem);
+}
+.cinema-shorts-page article > div:last-of-type > div:last-child button {
+  width: 2.85rem;
+  height: 2.85rem;
+  background: rgba(10, 13, 18, .52);
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 6px 22px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.cinema-shorts-page article > div:last-of-type > div:last-child button[aria-pressed="true"] {
+  background: rgba(76, 145, 210, .35);
+  border-color: rgba(169, 215, 255, .62);
+}
+@media (max-width: 640px) {
+  .cinema-shorts-page article > div:last-of-type { gap: .65rem; padding-top: 1rem; }
+  .cinema-shorts-page article > div:last-of-type h2 { font-size: 1.15rem; line-height: 1.25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-nav-link, .cinema-category-destinations a, .cinema-mobile-nav-item { transition: none !important; }
+}
