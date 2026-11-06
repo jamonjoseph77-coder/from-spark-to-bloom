@@ -118,7 +118,7 @@ export function HomePage() {
         {[
           ['Movies', '/movies'],
           ['Series', '/series'],
-          ['Shorts', '/discover'],
+          ['Shorts', '/shorts'],
           ['News', '/news'],
           ['Documentaries', '/category/documentaries'],
           ['Animation', '/category/animation'],
