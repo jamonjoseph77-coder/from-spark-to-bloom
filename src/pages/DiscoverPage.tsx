@@ -8,6 +8,9 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { fetchPublishedTitles } from '@/lib/library';
+import { useLibrary } from '@/hooks/useLibrary';
+import { buildRecommendations } from '@/lib/recommendations';
+import { TitleRow } from '@/components/catalogue/TitleRow';
 import { groupByPublisher, publisherHref } from '@/lib/publishers';
 import { fetchFollowedPublishers, followPublisher, unfollowPublisher } from '@/lib/publisherFollows';
 
@@ -49,20 +52,44 @@ function DailyDiscovery() {
   );
 }
 
-const SEASONAL_COLLECTIONS: { id: string; label: string; description: string; movieGenreId: number; seriesGenreId: number; months: number[] }[] = [
-  { id: 'independence', label: 'Independence & New Voices', description: 'Stories about courage, change and new beginnings.', movieGenreId: 18, seriesGenreId: 18, months: [2, 8] },
-  { id: 'africa', label: 'Africa Month', description: 'Discover stories, places, creativity and perspectives from across the continent.', movieGenreId: 99, seriesGenreId: 18, months: [4] },
-  { id: 'together', label: 'Family & Togetherness', description: 'Warm stories for shared moments and all generations.', movieGenreId: 10751, seriesGenreId: 10751, months: [3, 5, 10] },
-  { id: 'adventure', label: 'Adventure Escapes', description: 'Travel beyond the everyday with bold journeys and new worlds.', movieGenreId: 12, seriesGenreId: 10759, months: [6, 7] },
-  { id: 'mystery', label: 'Mystery Nights', description: 'Follow the clues through suspense, mystery and the unexpected.', movieGenreId: 9648, seriesGenreId: 9648, months: [9] },
-  { id: 'festive', label: 'Festive Favourites', description: 'Find stories for celebrations, reflection and time together.', movieGenreId: 10751, seriesGenreId: 10751, months: [11] },
+const SEASONAL_COLLECTIONS: { id: string; label: string; description: string; movieGenreId: number; seriesGenreId: number; months: number[]; keywords: string[] }[] = [
+  { id: 'independence', label: 'Independence & New Voices', description: 'Stories about courage, change and new beginnings.', movieGenreId: 18, seriesGenreId: 18, months: [2, 8], keywords: ['independence', 'freedom', 'history', 'courage', 'change', 'politics', 'revolution', 'drama'] },
+  { id: 'africa', label: 'Africa Month', description: 'Discover stories, places, creativity and perspectives from across the continent.', movieGenreId: 99, seriesGenreId: 18, months: [4], keywords: ['africa', 'african', 'ghana', 'nigeria', 'culture', 'documentary', 'history', 'community'] },
+  { id: 'together', label: 'Family & Togetherness', description: 'Warm stories for shared moments and all generations.', movieGenreId: 10751, seriesGenreId: 10751, months: [3, 5, 10], keywords: ['family', 'together', 'friendship', 'comedy', 'kids', 'children', 'home'] },
+  { id: 'adventure', label: 'Adventure Escapes', description: 'Travel beyond the everyday with bold journeys and new worlds.', movieGenreId: 12, seriesGenreId: 10759, months: [6, 7], keywords: ['adventure', 'travel', 'journey', 'action', 'exploration', 'fantasy', 'world'] },
+  { id: 'mystery', label: 'Mystery Nights', description: 'Follow the clues through suspense, mystery and the unexpected.', movieGenreId: 9648, seriesGenreId: 9648, months: [9], keywords: ['mystery', 'thriller', 'horror', 'crime', 'supernatural', 'suspense'] },
+  { id: 'festive', label: 'Festive Favourites', description: 'Find stories for celebrations, reflection and time together.', movieGenreId: 10751, seriesGenreId: 10751, months: [11], keywords: ['holiday', 'christmas', 'festive', 'family', 'celebration', 'together', 'comedy'] },
 ];
 
 function SeasonalCalendar() {
   const month = new Date().getMonth();
+  const { user } = useAuth();
+  const { progress, watchlistIds, favouriteIds } = useLibrary();
+  const { data: titles } = useAsyncData(fetchPublishedTitles, []);
+  const { data: trackedPublishers } = useAsyncData(
+    () => user ? fetchFollowedPublishers(user.id) : Promise.resolve([] as string[]),
+    [user?.id],
+  );
   const initial = SEASONAL_COLLECTIONS.find((item) => item.months.includes(month)) ?? SEASONAL_COLLECTIONS[2];
   const [selectedId, setSelectedId] = useState<string>(initial.id);
   const selected = SEASONAL_COLLECTIONS.find((item) => item.id === selectedId) ?? initial;
+  const personalizedPicks = useMemo(() => {
+    if (!titles?.length) return [];
+    const ranked = buildRecommendations(
+      titles,
+      progress,
+      watchlistIds,
+      favouriteIds,
+      trackedPublishers ?? [],
+      40,
+    ).titles.filter((title) => title.type === 'movie' || title.type === 'series');
+    const seasonal = ranked.filter((title) => {
+      const searchable = `${title.title} ${title.genre} ${title.synopsis}`.toLocaleLowerCase();
+      return selected.keywords.some((keyword) => searchable.includes(keyword));
+    });
+    return (seasonal.length >= 4 ? seasonal : ranked).slice(0, 8);
+  }, [titles, progress, watchlistIds, favouriteIds, trackedPublishers, selected]);
+  const hasPersonalSignals = progress.length > 0 || watchlistIds.size > 0 || favouriteIds.size > 0 || Boolean(trackedPublishers?.length);
   return (
     <section className="space-y-5 rounded-3xl border border-amber-100/10 bg-[radial-gradient(ellipse_at_top_right,rgba(245,190,90,.12),transparent_48%),linear-gradient(130deg,#17140f,#0b0d0d_72%)] p-5 sm:p-7" aria-labelledby="seasonal-calendar-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -73,6 +100,14 @@ function SeasonalCalendar() {
         {SEASONAL_COLLECTIONS.map((item) => <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} aria-pressed={selectedId === item.id} className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-bold transition ${selectedId === item.id ? 'border-amber-100/40 bg-amber-100/15 text-white' : 'border-white/10 bg-white/[.035] text-slate-300 hover:border-amber-100/25 hover:bg-white/[.07]'}`}>{item.label}</button>)}
       </div>
       <div><h3 className="text-lg font-extrabold text-white">{selected.label}</h3><p className="mt-1 text-sm text-slate-300">{selected.description}</p></div>
+      {personalizedPicks.length > 0 && <TitleRow
+        heading={hasPersonalSignals ? 'Seasonal Picks From Your Cinema Activity' : 'Cinema Picks For This Season'}
+        description={hasPersonalSignals
+          ? 'A changing mix shaped by your viewing, saved titles, favourites and tracked publishers. Your other Cinema shelves remain available.'
+          : 'A varied selection from Cinema while you build your viewing history.'}
+        titles={personalizedPicks}
+        landscape
+      />}
       <TmdbRow key={`season-movie-${selected.id}`} heading={`${selected.label} · Movies`} mediaType="movie" list="popular" genreId={selected.movieGenreId} />
       <TmdbRow key={`season-series-${selected.id}`} heading={`${selected.label} · Series`} mediaType="tv" list="popular" genreId={selected.seriesGenreId} />
     </section>
