@@ -97,8 +97,8 @@ function HomeEngagement() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
         {moments.map(({ title, detail, href, icon: Icon, tone, accent, image }) => (
           <a key={title} href={href} className={`group relative isolate flex min-h-40 flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${tone} p-4 shadow-[0_10px_28px_rgba(0,0,0,.18)] transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_18px_42px_rgba(0,0,0,.34)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300`}>
-            <img src={image} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-35 transition duration-700 group-hover:scale-105 group-hover:opacity-50" />
-            <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#050811]/95 via-[#050811]/65 to-[#050811]/35" />
+            <img src={image} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-43 transition duration-700 group-hover:scale-105 group-hover:opacity-58" />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#050811]/92 via-[#050811]/62 to-[#050811]/30" />
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-black/35 via-transparent to-transparent" />
             <span className={`grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-black/35 shadow-lg shadow-black/20 backdrop-blur-sm ${accent}`}><Icon className="h-5 w-5" /></span>
             <span className="mt-4 text-sm font-extrabold leading-snug text-white">{title}</span>
