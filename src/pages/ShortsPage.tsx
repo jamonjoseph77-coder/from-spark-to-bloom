@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowUpRight, BookmarkCheck, BookmarkPlus, Clapperboard, Download, Eye, Heart, MessageCircle, RefreshCw, Search, Share2, Volume2, VolumeX } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -10,7 +10,7 @@ import { navigateTo } from '@/lib/router';
 import { fetchFollowedPublishers, followPublisher, unfollowPublisher } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
-import { fetchDiscoverContentEngagement } from '@/lib/discoverEngagement';
+import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { publisherHref } from '@/lib/publishers';
 
 type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number>; titleAffinity: Record<string, number> };
@@ -34,25 +34,35 @@ function saveSignals(signals: ViewerSignals) {
   try { window.localStorage.setItem(SIGNALS_KEY, JSON.stringify(signals)); } catch { /* Local personalization is optional. */ }
 }
 
-function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLike, onSave, onCompleted, onAudioChange, onDownload, downloadingClipId, onOpenComments, onTrack, tracked, tracking }: {
-  clip: DiscoverClip; active: boolean; liked: boolean; saved: boolean; saving: boolean; audioEnabled: boolean;
-  onLike: (clip: DiscoverClip) => void; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
-  onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onOpenComments: (clip: DiscoverClip) => void; onTrack: (clip: DiscoverClip) => void; tracked: boolean; tracking: boolean;
+function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLike, onSave, onCompleted, onAudioChange, onDownload, downloadingClipId, onSignIn, onTrack, tracked, tracking }: {
+  clip: DiscoverClip; active: boolean; saved: boolean; saving: boolean; audioEnabled: boolean; userId?: string;
+  onLike: (clip: DiscoverClip, wasLiked: boolean) => Promise<void>; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
+  onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onSignIn: () => void; onTrack: (clip: DiscoverClip) => void; tracked: boolean; tracking: boolean;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [reactionCount, setReactionCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
+  const [likedByUser, setLikedByUser] = useState(false);
+  const [savingReaction, setSavingReaction] = useState(false);
+  const [savingComment, setSavingComment] = useState(false);
+  const [engagementLoading, setEngagementLoading] = useState(true);
+  const [comments, setComments] = useState<DiscoverContentComment[]>([]);
+  const [commentText, setCommentText] = useState('');
+  const [commentOpen, setCommentOpen] = useState(false);
+  const { notify } = useToast();
   const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
   const embed = rawEmbed ? (getYouTubeVideoId(clip.video_url) ? rawEmbed + "&enablejsapi=1&origin=" + encodeURIComponent(window.location.origin) : rawEmbed + "&api=1&player_id=cinema-short-" + clip.id) : null;
 
   useEffect(() => {
     if (!active) return;
     let current = true;
+    setEngagementLoading(true);
     fetchDiscoverContentEngagement("clip:" + clip.id).then((value) => {
-      if (current) { setReactionCount(value.reactionCount); setCommentCount(value.comments.length); }
-    }).catch((error) => console.warn("Cinema Short Engagement Could Not Load", error));
+      if (current) { setReactionCount(value.reactionCount); setLikedByUser(value.likedByCurrentUser); setComments(value.comments); }
+    }).catch((error) => console.warn("Cinema Short Engagement Could Not Load", error)).finally(() => {
+      if (current) setEngagementLoading(false);
+    });
     return () => { current = false; };
-  }, [active, clip.id]);
+  }, [active, clip.id, userId]);
 
   function sendEmbeddedAudio(enabled: boolean) {
     const frame = iframeRef.current?.contentWindow;
@@ -72,6 +82,38 @@ function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLik
     window.setTimeout(() => sendEmbeddedAudio(next), 120);
     window.setTimeout(() => sendEmbeddedAudio(next), 420);
   }
+  async function handleLike() {
+    if (!userId) { onSignIn(); return; }
+    if (savingReaction || engagementLoading) return;
+    const previous = likedByUser;
+    setLikedByUser(!previous);
+    setReactionCount((count) => Math.max(0, count + (previous ? -1 : 1)));
+    setSavingReaction(true);
+    try { await onLike(clip, previous); }
+    catch {
+      setLikedByUser(previous);
+      setReactionCount((count) => Math.max(0, count + (previous ? 1 : -1)));
+    } finally { setSavingReaction(false); }
+  }
+
+  async function submitComment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!userId) { onSignIn(); return; }
+    const body = commentText.trim();
+    if (!body || savingComment) return;
+    setSavingComment(true);
+    try {
+      await addDiscoverContentComment(`clip:${clip.id}`, userId, body);
+      setCommentText('');
+      const refreshed = await fetchDiscoverContentEngagement(`clip:${clip.id}`);
+      setComments(refreshed.comments);
+      notify('Your Comment Has Been Added.');
+    } catch (cause) {
+      console.error('Cinema Short Comment Could Not Be Added', cause);
+      notify('Your Comment Could Not Be Added. Please Try Again.', 'error');
+    } finally { setSavingComment(false); }
+  }
+
   function shareShort() {
     const url = window.location.origin + "/shorts?clip=" + encodeURIComponent(clip.id);
     if (navigator.share) void navigator.share({ title: clip.headline, text: clip.description, url }).catch(() => undefined);
@@ -95,21 +137,28 @@ function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLik
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/30 bg-black/55 text-xs font-black">{(clip.publisher_name || "C").slice(0, 1).toUpperCase()}</span>
             <span className="truncate">{clip.publisher_name || "Cinema Creator"}</span>
           </a>
-          <button type="button" onClick={() => onTrack(clip)} disabled={tracking} aria-pressed={tracked} className="ml-2 rounded-full border border-white/35 bg-black/35 px-3 py-1.5 text-[10px] font-extrabold text-white backdrop-blur-md disabled:opacity-50">{tracking ? '…' : tracked ? 'Tracking' : 'Track'}</button>
-          <h2 className="mt-3 line-clamp-2 text-lg font-black leading-tight text-white drop-shadow-lg sm:text-xl">{clip.headline}</h2>
+          <h2 className="mt-2 line-clamp-2 text-lg font-black leading-tight text-white drop-shadow-lg sm:text-xl">{clip.headline}</h2>
           {clip.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/75">{clip.description}</p>}
           <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/75"><Eye className="h-3.5 w-3.5" /> {(clip.views_count ?? 0).toLocaleString()} Views</p>
-          {clip.title && <a href={"/title/" + clip.title.id} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/35 bg-black/25 px-3.5 py-2 text-xs font-bold text-white/95 shadow-sm backdrop-blur-md transition hover:border-white/65 hover:bg-white/10">Watch Now <ArrowUpRight className="h-3.5 w-3.5" /></a>}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => onTrack(clip)} disabled={tracking} aria-pressed={tracked} className="inline-flex items-center justify-center rounded-full border border-white/35 bg-black/35 px-4 py-2.5 text-xs font-extrabold text-white shadow-lg backdrop-blur-xl transition hover:bg-white/10 disabled:opacity-50">{tracking ? '…' : tracked ? 'Tracking' : 'Track'}</button>
+            {clip.title && <a href={"/title/" + clip.title.id} className="inline-flex items-center gap-2 rounded-full border border-white/45 bg-white/15 px-4 py-2.5 text-xs font-extrabold text-white shadow-lg backdrop-blur-xl transition hover:border-white/70 hover:bg-white/25">Watch Now <ArrowUpRight className="h-3.5 w-3.5" /></a>}
+          </div>
         </div>
-        <div className="absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-3 sm:right-5">
-          {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-10 w-10 place-items-center rounded-full bg-black/45 text-white backdrop-blur-xl">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>}
-          <button type="button" onClick={() => onLike(clip)} aria-label={liked ? "Unlike This Short" : "Like This Short"} aria-pressed={liked} className="flex flex-col items-center gap-1 text-white"><Heart className={"h-8 w-8 drop-shadow-lg " + (liked ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[11px] font-bold tabular-nums">{(reactionCount + (liked ? 1 : 0)).toLocaleString()}</span></button>
-          <button type="button" onClick={() => onOpenComments(clip)} aria-label="Open Comments" className="flex flex-col items-center gap-1 text-white"><MessageCircle className="h-8 w-8 drop-shadow-lg" /><span className="text-[11px] font-bold tabular-nums">{commentCount.toLocaleString()}</span></button>
-          <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? "Remove From Saved Shorts" : "Save This Short"} aria-pressed={saved} className="flex flex-col items-center gap-1 text-white disabled:opacity-50">{saved ? <BookmarkCheck className="h-8 w-8 text-sky-200" /> : <BookmarkPlus className="h-8 w-8" />}<span className="text-[11px] font-bold">{saved ? "Saved" : "Save"}</span></button>
-          <button type="button" onClick={shareShort} aria-label="Share This Short" className="flex flex-col items-center gap-1 text-white"><Share2 className="h-8 w-8 drop-shadow-lg" /><span className="text-[11px] font-bold">Share</span></button>
-          {clip.download_allowed && isDirectVideoUrl(clip.video_url) && !isHlsUrl(clip.video_url) && <button type="button" onClick={() => onDownload(clip)} disabled={downloadingClipId === clip.id} aria-label="Download Approved Video" className="grid h-10 w-10 place-items-center rounded-full bg-black/45 text-white disabled:opacity-50"><Download className="h-5 w-5" /></button>}
+        <div className="cinema-short-action-rail absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-2 sm:right-5">
+          {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><span>{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</span><span className="text-[9px] font-bold">Sound</span></button>}
+          <button type="button" onClick={() => void handleLike()} disabled={savingReaction || engagementLoading} aria-label={likedByUser ? "Unlike This Short" : "Like This Short"} aria-pressed={likedByUser} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50"><Heart className={"h-6 w-6 drop-shadow-lg " + (likedByUser ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[9px] font-bold tabular-nums">{reactionCount.toLocaleString()}</span></button>
+          <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><MessageCircle className="h-6 w-6 drop-shadow-lg" /><span className="text-[9px] font-bold tabular-nums">{comments.length.toLocaleString()}</span></button>
+          <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? "Remove From Saved Shorts" : "Save This Short"} aria-pressed={saved} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50">{saved ? <BookmarkCheck className="h-6 w-6 text-sky-200" /> : <BookmarkPlus className="h-6 w-6" />}<span className="text-[9px] font-bold">{saved ? "Saved" : "Save"}</span></button>
+          <button type="button" onClick={shareShort} aria-label="Share This Short" className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><Share2 className="h-6 w-6 drop-shadow-lg" /><span className="text-[9px] font-bold">Share</span></button>
+          {clip.download_allowed && isDirectVideoUrl(clip.video_url) && !isHlsUrl(clip.video_url) && <button type="button" onClick={() => onDownload(clip)} disabled={downloadingClipId === clip.id} aria-label="Download Approved Video" className="cinema-short-action grid place-items-center text-white disabled:opacity-50"><Download className="h-5 w-5" /><span className="text-[9px] font-bold">Download</span></button>}
         </div>
       </div>
+      {commentOpen && <section aria-label="Short Comments" className="absolute inset-x-3 bottom-3 z-50 max-h-[52dvh] overflow-hidden rounded-2xl border border-white/20 bg-black/75 p-4 shadow-2xl backdrop-blur-2xl sm:inset-x-6">
+        <div className="mb-3 flex items-center justify-between gap-3"><div><h3 className="text-sm font-extrabold text-white">Comments</h3><p className="text-[11px] text-white/60">{comments.length} Comments</p></div><button type="button" onClick={() => setCommentOpen(false)} className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-white">Close</button></div>
+        <div className="max-h-[25dvh] space-y-3 overflow-y-auto pr-1">{comments.length ? comments.map((comment) => <article key={comment.id} className="border-b border-white/10 pb-2"><p className="text-xs font-bold text-sky-100">{comment.author_name}</p><p className="mt-1 break-words text-xs leading-5 text-white/85">{comment.body}</p></article>) : <p className="py-4 text-center text-xs text-white/60">No Comments Yet. Start The Conversation.</p>}</div>
+        <form onSubmit={(event) => void submitComment(event)} className="mt-3 flex items-center gap-2"><input value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder={userId ? 'Write A Comment…' : 'Sign In To Comment'} aria-label="Your Comment" className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/[.06] px-3 py-2.5 text-xs text-white outline-none placeholder:text-white/45 focus:border-white/35" /><button type="submit" disabled={!commentText.trim() || savingComment} className="rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-black disabled:opacity-50">{savingComment ? "Posting…" : "Post"}</button></form>
+      </section>}
     </article>
   );
 }
@@ -271,15 +320,22 @@ export function ShortsPage() {
     }
   }
 
-  function toggleLike(clip: DiscoverClip) {
+  async function toggleLike(clip: DiscoverClip, wasLiked: boolean): Promise<void> {
+    if (!user) throw new Error('Sign in required to react.');
+    try {
+      await toggleDiscoverContentLike(`clip:${clip.id}`, user.id, wasLiked);
+    } catch (cause) {
+      console.error('Cinema Short Reaction Could Not Be Saved', cause);
+      notify('Your Reaction Could Not Be Saved. Please Try Again.', 'error');
+      throw cause;
+    }
     setSignals((current) => {
-      const liked = current.likedIds.includes(clip.id);
       const publisher = clip.publisher_name.trim().toLocaleLowerCase();
       const next: ViewerSignals = {
         ...current,
-        likedIds: liked ? current.likedIds.filter((id) => id !== clip.id) : [...current.likedIds, clip.id].slice(-300),
-        publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (liked ? -0.8 : 1.2) },
-        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (liked ? -0.6 : 1.0)) } : current.titleAffinity,
+        likedIds: wasLiked ? current.likedIds.filter((id) => id !== clip.id) : [...current.likedIds, clip.id].slice(-300),
+        publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (wasLiked ? -0.8 : 1.2) },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (wasLiked ? -0.6 : 1.0)) } : current.titleAffinity,
       };
       saveSignals(next);
       return next;
@@ -303,7 +359,7 @@ export function ShortsPage() {
         <div ref={feedRef} className="cinema-shorts-feed h-full w-full overflow-y-auto snap-y snap-mandatory" aria-label="Scroll Cinema Shorts vertically">
           {visibleShorts.map((clip, index) => (
             <div key={clip.id} data-short-index={index} className="cinema-shorts-feed__slot h-[100dvh] min-h-[100dvh] w-full snap-start snap-always">
-              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} onDownload={downloadClip} downloadingClipId={downloadingClipId} onOpenComments={(item) => navigateTo('/discover#short-' + item.id)} onTrack={toggleTrack} tracked={trackedPublishers.some((name) => name.toLowerCase() === clip.publisher_name.trim().toLowerCase())} tracking={trackingPublisher?.toLowerCase() === clip.publisher_name.trim().toLowerCase()} />
+              <ShortFeedItem clip={clip} active={index === activeIndex} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} onDownload={downloadClip} downloadingClipId={downloadingClipId} userId={user?.id} onSignIn={() => { notify('Sign In To React Or Comment On Shorts.'); navigateTo('/sign-in'); }} onTrack={toggleTrack} tracked={trackedPublishers.some((name) => name.toLowerCase() === clip.publisher_name.trim().toLowerCase())} tracking={trackingPublisher?.toLowerCase() === clip.publisher_name.trim().toLowerCase()} />
             </div>
           ))}
         </div>

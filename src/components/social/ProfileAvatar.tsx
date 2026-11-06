@@ -14,7 +14,7 @@ function safeAvatarSource(value?: string | null): string | null {
   return null;
 }
 
-export function ProfileAvatar({ name, size = 'md', imageUrl }: { name: string; size?: keyof typeof SIZES; imageUrl?: string | null }) {
+export function ProfileAvatar({ name, size = 'md', imageUrl, previewable = true }: { name: string; size?: keyof typeof SIZES; imageUrl?: string | null; previewable?: boolean }) {
   const source = safeAvatarSource(imageUrl);
   const [imageFailed, setImageFailed] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -29,9 +29,9 @@ export function ProfileAvatar({ name, size = 'md', imageUrl }: { name: string; s
       className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-gradient-to-br from-cinema-500 to-cinema-800 font-extrabold uppercase text-white shadow-lg shadow-black/20 ring-2 ring-white/5 ${SIZES[size]}`}
     >
       {source && !imageFailed ? (
-        <button type="button" onClick={() => setPreviewOpen(true)} aria-label={`View ${label}'s profile picture`} className="h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+        previewable ? <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); setPreviewOpen(true); }} aria-haspopup="dialog" aria-label={`View ${label}'s profile picture`} className="h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
           <img src={source} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setImageFailed(true)} className="h-full w-full object-cover" />
-        </button>
+        </button> : <img src={source} alt={`${label}'s profile picture`} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setImageFailed(true)} className="h-full w-full object-cover" />
       ) : (
         <span aria-hidden="true">{label.charAt(0) || '?'}</span>
       )}
