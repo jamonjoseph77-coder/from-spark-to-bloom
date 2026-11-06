@@ -1,5 +1,12 @@
+import { useMemo } from 'react';
 import { CalendarDays } from 'lucide-react';
+import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
+import { useAsyncData } from '@/hooks/useAsyncData';
+import { useLibrary } from '@/hooks/useLibrary';
+import { fetchPublishedTitles } from '@/lib/library';
+import { buildRecommendations } from '@/lib/recommendations';
+import type { TitleType } from '@/lib/types';
 import type { TmdbMediaType } from '@/lib/tmdb';
 
 interface SeasonalTheme {
@@ -22,14 +29,40 @@ export function getCinemaSeasonalTheme(date = new Date()): SeasonalTheme {
   return { title: 'New Perspectives & Great Stories', description: 'Discover stories that bring fresh ideas, people and places into view.', movieGenreId: 18, seriesGenreId: 18 };
 }
 
-export function CinemaSeasonalSpotlight({ categoryLabel, mediaType, genreId }: { categoryLabel?: string; mediaType?: TmdbMediaType; genreId?: number }) {
+function seasonalTerms(date = new Date()): string[] {
+  const month = date.getMonth();
+  if (month === 9) return ['halloween', 'spooky', 'horror', 'mystery', 'supernatural'];
+  if (month === 11) return ['holiday', 'christmas', 'festive', 'family', 'celebration'];
+  if (month === 1) return ['love', 'friendship', 'relationship', 'romance'];
+  if (month === 0) return ['new year', 'fresh start', 'journey', 'discovery'];
+  if (month === 6 || month === 7) return ['adventure', 'travel', 'summer', 'journey'];
+  return ['family', 'culture', 'community', 'documentary', 'inspiration'];
+}
+
+export function CinemaSeasonalSpotlight({ categoryLabel, mediaType, genreId, titleTypes }: { categoryLabel?: string; mediaType?: TmdbMediaType; genreId?: number; titleTypes?: TitleType[] }) {
   const theme = getCinemaSeasonalTheme();
   const selectedGenre = genreId ?? (mediaType === 'tv' ? theme.seriesGenreId : theme.movieGenreId);
+  const { progress, watchlistIds, favouriteIds } = useLibrary();
+  const { data: titles } = useAsyncData(fetchPublishedTitles, []);
+  const seasonalPicks = useMemo(() => {
+    if (!titles || !titleTypes?.length) return [];
+    const terms = seasonalTerms();
+    const ranked = buildRecommendations(titles, progress, watchlistIds, favouriteIds, []).titles;
+    return ranked.filter((title) => {
+      if (!titleTypes.includes(title.type)) return false;
+      const searchable = `${title.title} ${title.genre} ${title.synopsis}`.toLocaleLowerCase();
+      return terms.some((term) => searchable.includes(term));
+    }).slice(0, 10);
+  }, [titles, titleTypes, progress, watchlistIds, favouriteIds]);
 
   return (
     <section className="cinema-seasonal-spotlight space-y-4 rounded-[1.6rem] border border-white/10 bg-[radial-gradient(ellipse_at_top_right,rgba(210,190,150,.10),transparent_48%),linear-gradient(125deg,#151714,#0a0d0b_68%,#080a09)] p-5 sm:p-7">
       <div className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.22em] text-amber-100/80"><CalendarDays className="h-3.5 w-3.5" /> Seasonal Spotlight{categoryLabel ? ` · ${categoryLabel}` : ''}</div>
-      {mediaType ? (
+      {titleTypes?.length ? (
+        seasonalPicks.length ? <TitleRow heading={theme.title} description={theme.description} titles={seasonalPicks} landscape /> : (
+          <div><h2 className="text-2xl font-black tracking-tight text-white">{theme.title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">We’ll feature seasonal {categoryLabel?.toLocaleLowerCase() || 'programmes'} here when a verified publisher adds matching titles to Cinema.</p></div>
+        )
+      ) : mediaType ? (
         <TmdbRow heading={theme.title} description={theme.description} mediaType={mediaType} list="popular" genreId={selectedGenre} />
       ) : (
         <div><h2 className="text-2xl font-black tracking-tight text-white">{theme.title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">{theme.description} Seasonal programmes and special collections will appear here as verified publishers add them to Cinema.</p><a href="/discover" className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-100/20 bg-amber-100/[.07] px-4 py-2.5 text-xs font-bold text-amber-50 transition hover:bg-amber-100/[.12]">Explore Seasonal Stories</a></div>
