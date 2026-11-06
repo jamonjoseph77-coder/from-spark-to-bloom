@@ -13,7 +13,6 @@ import { fetchLetterboxFeed, createLetterboxPost, subscribeToLetterbox, type Let
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
-import { navigateTo } from '@/lib/router';
 import { LetterboxPostCard } from '@/pages/LetterboxPage';
 
 type ExploreEntry =
