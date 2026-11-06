@@ -4,6 +4,9 @@ import { NotificationBell } from '@/components/layout/NotificationBell';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchProfile } from '@/lib/profiles';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
+import { useAsyncData } from '@/hooks/useAsyncData';
+import { fetchProfile } from '@/lib/profiles';
 import { useAuth } from '@/hooks/useAuth';
 import { BUTTON_SECONDARY } from '@/components/ui/styles';
 import { navigateTo } from '@/lib/router';
@@ -11,6 +14,7 @@ import { navigateTo } from '@/lib/router';
 export function TopBar() {
   const { user } = useAuth();
   const [query, setQuery] = useState('');
+  const { data: profile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
   const { data: profile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
