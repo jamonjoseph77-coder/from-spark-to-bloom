@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowUpRight, MessageCircle, Play, Sparkles, Users } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
@@ -81,7 +81,22 @@ function VideoShelf({ heading, clips, onOpen }: { heading: string; clips: Discov
 
 export function CategoryCinemaFeed({ category, label }: { category: CinemaFeedCategory; label: string }) {
   const { user } = useAuth();
-  const feed = useAsyncData(() => loadCategoryFeed(user?.id), [user?.id]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node || shouldLoad) return;
+    if (typeof IntersectionObserver === 'undefined') { setShouldLoad(true); return; }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setShouldLoad(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '480px 0px' });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shouldLoad]);
+  const feed = useAsyncData(() => shouldLoad ? loadCategoryFeed(user?.id) : Promise.resolve(null), [shouldLoad, user?.id]);
   const [activeVideo, setActiveVideo] = useState<DiscoverClip | null>(null);
   const data = feed.data;
 
@@ -96,8 +111,9 @@ export function CategoryCinemaFeed({ category, label }: { category: CinemaFeedCa
     return { titles, clips, posts, watching };
   }, [data, category]);
 
-  if (feed.loading && !data) return <section className="space-y-3"><h2 className="text-xl font-extrabold text-white">Inside {label}</h2><LoadingState label={`Connecting ${label.toLowerCase()} to Cinema`} /></section>;
-  if (feed.error && !data) return <section className="space-y-3"><h2 className="text-xl font-extrabold text-white">Inside {label}</h2><ErrorState onRetry={feed.reload} /></section>;
+  if (!shouldLoad) return <section ref={sectionRef} className="space-y-3 border-t border-white/10 pt-8"><h2 className="text-xl font-extrabold text-white">Inside {label}</h2><p className="text-sm text-slate-500">Your category conversations and videos load as you reach this section.</p></section>;
+  if (feed.loading && !data) return <section ref={sectionRef} className="space-y-3"><h2 className="text-xl font-extrabold text-white">Inside {label}</h2><LoadingState label={`Connecting ${label.toLowerCase()} to Cinema`} /></section>;
+  if (feed.error && !data) return <section ref={sectionRef} className="space-y-3"><h2 className="text-xl font-extrabold text-white">Inside {label}</h2><ErrorState onRetry={feed.reload} /></section>;
 
   const shorts = scoped.clips.filter(isPlayableShort);
   const trailers = scoped.clips.filter((clip) => clip.kind === 'trailer');
@@ -105,7 +121,7 @@ export function CategoryCinemaFeed({ category, label }: { category: CinemaFeedCa
   const openVideo = (clip: DiscoverClip) => setActiveVideo(clip);
 
   return (
-    <section className="space-y-10 border-t border-white/10 pt-8" aria-label={`${label} Cinema Feed`}>
+    <section ref={sectionRef} className="space-y-10 border-t border-white/10 pt-8" aria-label={`${label} Cinema Feed`}>
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-sky-200"><Sparkles className="h-3.5 w-3.5" /> One Connected Cinema</p><h2 className="mt-1 text-2xl font-black text-white">Inside {label}</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Conversations, official videos, Shorts and what your circle is watching—connected to the same Cinema titles.</p></div>
         <span className="rounded-full border border-white/10 bg-white/[.035] px-3 py-1.5 text-xs text-slate-400">{scoped.titles.length} Linked Titles</span>
