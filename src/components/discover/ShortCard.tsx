@@ -1,4 +1,4 @@
-import { Eye, Play } from 'lucide-react';
+import { ArrowUpRight, Eye, Play } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import type { DiscoverClip } from '@/lib/clips';
 
@@ -28,7 +28,7 @@ export function ShortCard({ clip, onOpen }: ShortCardProps) {
           </span>
         </span>
       </button>
-      <p className="mt-2 line-clamp-1 px-0.5 text-[11px] font-semibold text-slate-300">{clip.publisher_name || 'Cinema'}</p>
+      <div className="mt-2 flex min-w-0 items-center justify-between gap-2"><p className="min-w-0 truncate px-0.5 text-[11px] font-semibold text-slate-300">{clip.publisher_name || 'Cinema'}</p>{clip.title && <a href={'/title/' + clip.title.id} onClick={(event) => event.stopPropagation()} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/20 bg-white/[.045] px-2 py-1 text-[10px] font-bold text-white/90 transition hover:border-white/45 hover:bg-white/10">Watch Now <ArrowUpRight className="h-3 w-3" /></a>}</div>
     </article>
   );
 }

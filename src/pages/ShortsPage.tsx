@@ -98,7 +98,7 @@ function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLik
           <h2 className="mt-3 line-clamp-2 text-lg font-black leading-tight text-white drop-shadow-lg sm:text-xl">{clip.headline}</h2>
           {clip.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/75">{clip.description}</p>}
           <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/75"><Eye className="h-3.5 w-3.5" /> {(clip.views_count ?? 0).toLocaleString()} Views</p>
-          {clip.title && <a href={"/title/" + clip.title.id} className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white shadow-lg">Watch Now <ArrowUpRight className="h-3.5 w-3.5" /></a>}
+          {clip.title && <a href={"/title/" + clip.title.id} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/35 bg-black/25 px-3.5 py-2 text-xs font-bold text-white/95 shadow-sm backdrop-blur-md transition hover:border-white/65 hover:bg-white/10">Watch Now <ArrowUpRight className="h-3.5 w-3.5" /></a>}
         </div>
         <div className="mb-1 flex shrink-0 flex-col items-center gap-3">
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-10 w-10 place-items-center rounded-full bg-black/45 text-white backdrop-blur-xl">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>}
