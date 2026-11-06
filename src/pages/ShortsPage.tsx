@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { ArrowLeft, ArrowUpRight, BookmarkCheck, BookmarkPlus, Clapperboard, Download, Eye, Heart, MessageCircle, RefreshCw, Search, Share2, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, CircleUserRound, BookmarkCheck, BookmarkPlus, Clapperboard, Download, Eye, Heart, MessageCircle, RefreshCw, Search, Share2, Volume2, VolumeX } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
@@ -182,6 +182,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
           </div>
         </div>
         <div className="cinema-short-action-rail cinema-short-actions pointer-events-auto absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-2 sm:right-5">
+          <a href={publisherHref(clip.publisher_name || "Cinema")} aria-label={"View " + (clip.publisher_name || "Cinema Creator") + " Profile"} title="Publisher Profile" className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><CircleUserRound className="h-8 w-8 drop-shadow-lg" /><span className="text-[9px] font-bold">Profile</span></a>
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><span>{audioEnabled ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}</span><span className="text-[9px] font-bold">Sound</span></button>}
           <button type="button" onClick={() => void handleLike()} disabled={savingReaction || engagementLoading} aria-label={likedByUser ? "Unlike This Short" : "Like This Short"} aria-pressed={likedByUser} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50"><Heart className={"h-8 w-8 drop-shadow-lg " + (likedByUser ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[9px] font-bold tabular-nums">{reactionCount.toLocaleString()}</span></button>
           <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><MessageCircle className="h-8 w-8 drop-shadow-lg" /><span className="text-[9px] font-bold tabular-nums">{comments.length.toLocaleString()}</span></button>
