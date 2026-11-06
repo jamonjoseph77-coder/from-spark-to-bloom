@@ -118,10 +118,23 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     } finally { setSavingComment(false); }
   }
 
-  function shareShort() {
+  async function shareShort() {
     const url = window.location.origin + "/shorts?clip=" + encodeURIComponent(clip.id);
-    if (navigator.share) void navigator.share({ title: clip.headline, text: clip.description, url }).catch(() => undefined);
-    else if (navigator.clipboard?.writeText) void navigator.clipboard.writeText(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: clip.headline, text: clip.description, url });
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        notify('Cinema Short Link Copied.');
+      } else {
+        notify('Sharing Is Not Available On This Browser.', 'error');
+      }
+    } catch (cause) {
+      if (cause instanceof Error && cause.name !== 'AbortError') {
+        console.warn('Cinema Short Could Not Be Shared', cause);
+        notify('This Short Could Not Be Shared. Please Try Again.', 'error');
+      }
+    }
   }
   return (
     <article className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none">
