@@ -23,7 +23,7 @@ export function MobileNav({ route }: MobileNavProps) {
   const cinemaActive = activeKey === 'cinema';
 
   const renderItems = (items: NavItem[]) => items.map((item) => {
-    const active = item.key === activeKey;
+    const active = item.key === activeKey || (item.key === 'home' && route.name === 'browse');
     const Icon = item.icon;
     return (
       <li key={item.key} className="flex h-full min-w-0 flex-1 items-center justify-center">
