@@ -36,8 +36,8 @@ export function ProfileAvatar({ name, size = 'md', imageUrl, previewable = true 
         <span aria-hidden="true">{label.charAt(0) || '?'}</span>
       )}
     </span>
-    {source && !imageFailed && previewOpen && <Modal label={`${label}'s profile picture`} onClose={() => setPreviewOpen(false)}>
-      <img src={source} alt={`${label}'s profile picture`} className="mx-auto max-h-[75dvh] max-w-full rounded-xl object-contain" />
+    {source && !imageFailed && previewOpen && <Modal label={`${label}'s profile picture`} onClose={() => setPreviewOpen(false)} compact>
+      <img src={source} alt={`${label}'s profile picture`} className="mx-auto max-h-[42dvh] max-w-full rounded-xl object-contain" />
       <p className="mt-3 text-center text-sm font-semibold text-white">{label}</p>
     </Modal>}
     </>
