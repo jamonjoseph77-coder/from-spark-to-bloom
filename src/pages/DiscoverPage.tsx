@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy, CalendarDays, Building2, BellPlus, BellRing, ArrowRight } from 'lucide-react';
+import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy, CalendarDays, Building2, BellPlus, BellRing, ArrowRight, UploadCloud } from 'lucide-react';
 import { ExploreTimeline } from '@/components/discover/ExploreTimeline';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
@@ -142,9 +142,10 @@ export function DiscoverPage() {
           <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-cinema-300"><Compass className="h-4 w-4" /> Explore Cinema</p>
           <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">More than a trailer. Find the story.</h1>
           <p className="text-sm leading-relaxed text-slate-300 sm:text-base">Watch official previews, catch short moments, discover what people are saying and move straight to the stories worth your time.</p>
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-200"><Sparkles className="h-3.5 w-3.5 text-cinema-300" /> Watch. Discover. Talk.</span>
             <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-400">Official video + community conversation</span>
+            <a href="/creator/shorts" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/[.07] px-3.5 py-2 text-xs font-bold text-white transition hover:border-white/50 hover:bg-white/[.12]"><UploadCloud className="h-3.5 w-3.5" /> Submit A Short</a>
           </div>
         </div>
       </header>
