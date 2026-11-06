@@ -20,10 +20,10 @@ const CATEGORIES: Record<string, CategoryConfig> = {
     icon: Clapperboard,
     accent: 'Real Stories, From Every Perspective',
     shelves: [
-      { heading: 'Trending Documentaries', description: 'Non-fiction stories people are discovering now.', mediaType: 'movie', list: 'trending', genreId: 99 },
-      { heading: 'Popular Documentary Films', description: 'Remarkable real-world stories from the film catalogue.', mediaType: 'movie', list: 'popular', genreId: 99 },
-      { heading: 'Documentary Series', description: 'True stories told across episodes.', mediaType: 'tv', list: 'popular', genreId: 99 },
-      { heading: 'Trending Documentary Series', description: 'Factual series gaining attention.', mediaType: 'tv', list: 'trending', genreId: 99 },
+      { heading: 'True Stories In Focus', description: 'Non-fiction stories people are discovering now.', mediaType: 'movie', list: 'trending', genreId: 99 },
+      { heading: 'Remarkable Real-Life Films', description: 'Remarkable real-world stories from the film catalogue.', mediaType: 'movie', list: 'popular', genreId: 99 },
+      { heading: 'Real Stories, Episode By Episode', description: 'True stories told across episodes.', mediaType: 'tv', list: 'popular', genreId: 99 },
+      { heading: 'Factual Series To Explore', description: 'Factual series gaining attention.', mediaType: 'tv', list: 'trending', genreId: 99 },
     ],
   },
   animation: {
@@ -33,10 +33,10 @@ const CATEGORIES: Record<string, CategoryConfig> = {
     icon: Sparkles,
     accent: 'Find Your Next Animated World',
     shelves: [
-      { heading: 'Trending Animation', description: 'Animated stories gaining attention right now.', mediaType: 'movie', list: 'trending', genreId: 16 },
-      { heading: 'Popular Animated Films', description: 'More worlds and characters to discover.', mediaType: 'movie', list: 'popular', genreId: 16 },
-      { heading: 'Animated Series', description: 'Stories that continue episode by episode.', mediaType: 'tv', list: 'popular', genreId: 16 },
-      { heading: 'Trending Animated Series', description: 'Series audiences are exploring.', mediaType: 'tv', list: 'trending', genreId: 16 },
+      { heading: 'Animation In The Spotlight', description: 'Animated stories gaining attention right now.', mediaType: 'movie', list: 'trending', genreId: 16 },
+      { heading: 'Animated Films To Discover', description: 'More worlds and characters to discover.', mediaType: 'movie', list: 'popular', genreId: 16 },
+      { heading: 'Worlds That Keep Going', description: 'Stories that continue episode by episode.', mediaType: 'tv', list: 'popular', genreId: 16 },
+      { heading: 'Popular Animated Adventures', description: 'Series audiences are exploring.', mediaType: 'tv', list: 'trending', genreId: 16 },
     ],
   },
   family: {
@@ -46,10 +46,10 @@ const CATEGORIES: Record<string, CategoryConfig> = {
     icon: Film,
     accent: 'Something For Everyone',
     shelves: [
-      { heading: 'Trending Family Films', description: 'Family-friendly films being discovered.', mediaType: 'movie', list: 'trending', genreId: 10751 },
-      { heading: 'Popular Family Films', description: 'More stories for a shared movie moment.', mediaType: 'movie', list: 'popular', genreId: 10751 },
-      { heading: 'Family Series', description: 'Series for shared viewing and discovery.', mediaType: 'tv', list: 'popular', genreId: 10751 },
-      { heading: 'Trending Family Series', description: 'Family series gaining attention.', mediaType: 'tv', list: 'trending', genreId: 10751 },
+      { heading: 'Family Film Favourites', description: 'Family-friendly films being discovered.', mediaType: 'movie', list: 'trending', genreId: 10751 },
+      { heading: 'More Stories To Share', description: 'More stories for a shared movie moment.', mediaType: 'movie', list: 'popular', genreId: 10751 },
+      { heading: 'Series For Everyone', description: 'Series for shared viewing and discovery.', mediaType: 'tv', list: 'popular', genreId: 10751 },
+      { heading: 'Family Series In The Spotlight', description: 'Family series gaining attention.', mediaType: 'tv', list: 'trending', genreId: 10751 },
     ],
   },
 
@@ -83,6 +83,10 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
   const Icon = category.icon;
   return (
     <main className={`${PAGE_CONTAINER} cinema-category-page space-y-10 pb-16`}>
+      <nav aria-label="Cinema destinations" className="cinema-category-destinations -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
+        {DESTINATIONS.map((item) => <a key={item.href} href={item.href} aria-current={item.href === `/category/${slug}` ? 'page' : undefined} className="shrink-0 rounded-full border border-white/10 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-slate-300 transition hover:border-sky-200/35 hover:bg-sky-300/[.08] hover:text-white">{item.label}</a>)}
+      </nav>
+
       <header className="cinema-category-hero relative isolate overflow-hidden rounded-[2rem] border border-sky-200/15 p-6 shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:p-10 lg:p-12">
         <div className="cinema-category-hero__orb cinema-category-hero__orb--one" aria-hidden="true" />
         <div className="cinema-category-hero__orb cinema-category-hero__orb--two" aria-hidden="true" />
@@ -100,10 +104,6 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
           </div>
         </div>
       </header>
-
-      <nav aria-label="Cinema destinations" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
-        {DESTINATIONS.map((item) => <a key={item.href} href={item.href} aria-current={item.href === `/category/${slug}` ? 'page' : undefined} className="shrink-0 rounded-full border border-white/10 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-slate-300 transition hover:border-sky-200/35 hover:bg-sky-300/[.08] hover:text-white">{item.label}</a>)}
-      </nav>
 
       <section className="space-y-3 rounded-2xl border border-sky-200/10 bg-[linear-gradient(110deg,rgba(8,124,255,.09),rgba(255,255,255,.018)_58%,rgba(255,255,255,.01))] p-5 sm:p-6">
         <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-sky-200">Your Category, Your Cinema</p>
