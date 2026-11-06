@@ -58,7 +58,7 @@ export function CircleActivity({ friendIds }: CircleActivityProps) {
           return (
             <article key={post.id} id={`post-${post.id}`} className="rounded-3xl border border-white/10 bg-ink-900/80 p-5 shadow-lg shadow-black/10 transition hover:border-cinema-400/25">
               <div className="flex items-center gap-3">
-                <ProfileAvatar name={author} size="sm" />
+                <ProfileAvatar name={author} imageUrl={post.author?.avatar_url} size="sm" />
                 <div className="min-w-0 flex-1">
                   <a href={profileUrl} className="block truncate text-sm font-extrabold text-white hover:text-cinema-200">{author}</a>
                   <p className="text-xs text-slate-500">{new Date(post.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' })}</p>

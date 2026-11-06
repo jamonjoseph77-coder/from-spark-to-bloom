@@ -11,6 +11,8 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbDetail, tmdbImageUrl, type TmdbMediaType } from '@/lib/tmdb';
 import { fetchKinoCheckVideos, type KinoCheckVideo } from '@/lib/kinocheck';
 import { uniqueVideos } from '@/lib/videoIdentity';
+import { fetchPublishedTitles } from '@/lib/library';
+import { findCanonicalCinemaTitle } from '@/lib/canonicalTitle';
 
 function formatReleaseDate(value: string): string {
   const date = new Date(`${value}T00:00:00`);
@@ -21,6 +23,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
   const [activeVideo, setActiveVideo] = useState<VideoSource | null>(null);
   const { data, error, loading, reload } = useAsyncData(() => fetchTmdbDetail(mediaType, id), [mediaType, id]);
   const { data: kinoVideos = [] } = useAsyncData(() => fetchKinoCheckVideos(mediaType, id), [mediaType, id]);
+  const { data: localTitles = [] } = useAsyncData(fetchPublishedTitles, []);
   const backLink = mediaType === 'movie' ? '/movies' : '/series';
   const backLabel = mediaType === 'movie' ? 'Back to movies' : 'Back to series';
 
@@ -33,6 +36,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
     );
   }
 
+  const canonicalTitle = findCanonicalCinemaTitle(data, localTitles ?? []);
   const backdrop = tmdbImageUrl(data.backdropPath, 'w1280');
   const poster = tmdbImageUrl(data.posterPath, 'w500');
   const typeLabel = mediaType === 'movie' ? 'Movie' : 'Series';
@@ -62,6 +66,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
             <h1 className="max-w-4xl text-4xl font-black leading-[1.02] tracking-[-.045em] text-white [text-wrap:balance] sm:text-5xl lg:text-6xl">{data.title}</h1>
             {data.tagline && <p className="text-base italic text-slate-300">{data.tagline}</p>}
             <div className="flex flex-wrap items-center gap-3">
+              {canonicalTitle && <a href={`/title/${canonicalTitle.id}`} className="inline-flex items-center gap-2 rounded-full border border-sky-200/25 bg-sky-300/10 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200/40 hover:bg-sky-300/15">Open This Title In Cinema</a>}
               {trailer && <button type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${trailer.key}`, label: `${data.title} trailer`, heading: `Trailer: ${data.title}` })} className="inline-flex items-center gap-2 rounded-full border border-sky-200/25 bg-sky-300/10 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200/40 hover:bg-sky-300/15"><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
               {data.rating !== null && (
                 <span className="flex items-center gap-1.5 rounded-full bg-amber-400/15 px-3 py-1.5 text-sm font-semibold text-amber-300">

@@ -128,10 +128,15 @@ export function VideoPlayer({
         hls = new HlsLib({
           enableWorker: true,
           capLevelToPlayerSize: true,
-          maxBufferLength: 20,
-          maxMaxBufferLength: 40,
-          backBufferLength: 30,
-          lowLatencyMode: true,
+          // Keep mobile memory and data use under control while retaining a short safety buffer.
+          maxBufferLength: 12,
+          maxMaxBufferLength: 24,
+          maxBufferSize: 30 * 1000 * 1000,
+          backBufferLength: 10,
+          abrEwmaDefaultEstimate: 500_000,
+          abrBandWidthFactor: 0.7,
+          abrBandWidthUpFactor: 0.5,
+          lowLatencyMode: isLive,
           startLevel: -1,
         });
         hlsRef.current = hls;

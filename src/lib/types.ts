@@ -94,6 +94,7 @@ export type UserListTable = 'watchlist_items' | 'favourites';
 
 export interface Profile {
   user_id: string;
+  avatar_url: string | null;
   username: string;
   display_name: string;
   bio: string;
@@ -104,6 +105,7 @@ export interface Profile {
 }
 
 export interface ProfileInput {
+  avatar_url: string | null;
   username: string;
   display_name: string;
   bio: string;

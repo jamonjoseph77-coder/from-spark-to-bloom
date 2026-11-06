@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Clapperboard, Film, Heart, MessageCircle, Send, Share2, Users } from 'lucide-react';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { ContentEngagement } from '@/components/discover/ContentEngagement';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { BUTTON_PRIMARY, INPUT, PAGE_CONTAINER } from '@/components/ui/styles';
 import { useAuth } from '@/hooks/useAuth';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -47,7 +48,7 @@ export function LetterboxPostCard({ post, userId, onChanged }: { post: Letterbox
   return (
     <article id={`post-${post.id}`} className="scroll-mt-24 overflow-hidden border-b border-white/10 bg-[#07090d] transition-colors hover:bg-white/[.018]">
       <div className="flex items-center gap-3 px-4 pb-2 pt-5 sm:px-5">
-        <a href={post.author?.username ? `/profile?username=${encodeURIComponent(post.author.username)}` : '/friends'} aria-label={`View ${author}'s profile`} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-cinema-400 to-indigo-700 text-sm font-black text-white transition hover:ring-2 hover:ring-cinema-300/60">{author.slice(0,1).toUpperCase()}</a>
+        <a href={post.author?.username ? `/profile?username=${encodeURIComponent(post.author.username)}` : '/friends'} aria-label={`View ${author}'s profile`} className="shrink-0 rounded-full transition hover:ring-2 hover:ring-cinema-300/60"><ProfileAvatar name={author} imageUrl={post.author?.avatar_url} /></a>
         <div className="min-w-0 flex-1"><a href={post.author?.username ? `/profile?username=${encodeURIComponent(post.author.username)}` : '/friends'} className="truncate text-sm font-extrabold text-white hover:text-cinema-200">{author}</a><p className="text-xs text-slate-500">Cinema community · {new Date(post.created_at).toLocaleDateString()}</p></div>
         <span className="rounded-full border border-cinema-400/20 bg-cinema-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cinema-200">Message</span>
       </div>

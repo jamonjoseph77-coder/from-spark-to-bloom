@@ -15,14 +15,33 @@ export interface TitleDetail {
   seasons: SeasonWithEpisodes[];
 }
 
+const PUBLISHED_TITLES_CACHE_MS = 30_000;
+let publishedTitlesCache: { expiresAt: number; promise: Promise<Title[]> } | null = null;
+
+function invalidatePublishedTitlesCache(): void {
+  publishedTitlesCache = null;
+}
+
 export async function fetchPublishedTitles(): Promise<Title[]> {
-  const { data, error } = await supabase
-    .from('titles')
-    .select('*')
-    .eq('is_published', true)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as Title[];
+  if (publishedTitlesCache && publishedTitlesCache.expiresAt > Date.now()) {
+    return publishedTitlesCache.promise;
+  }
+  const promise = (async () => {
+    const { data, error } = await supabase
+      .from('titles')
+      .select('*')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as Title[];
+  })();
+  publishedTitlesCache = { expiresAt: Date.now() + PUBLISHED_TITLES_CACHE_MS, promise };
+  try {
+    return await promise;
+  } catch (error) {
+    if (publishedTitlesCache?.promise === promise) publishedTitlesCache = null;
+    throw error;
+  }
 }
 
 export async function fetchAllTitles(): Promise<Title[]> {
@@ -98,6 +117,7 @@ export async function checkIsAdmin(): Promise<boolean> {
 }
 
 export async function saveTitle(input: TitleInput, titleId: string | null): Promise<Title> {
+  invalidatePublishedTitlesCache();
   const payload = { ...input, updated_at: new Date().toISOString() };
   const { data, error } = titleId
     ? await supabase.from('titles').update(payload).eq('id', titleId).select().single()
@@ -110,6 +130,7 @@ export async function setTitleFlags(
   titleId: string,
   flags: { is_published?: boolean; is_featured?: boolean },
 ): Promise<void> {
+  invalidatePublishedTitlesCache();
   const { error } = await supabase
     .from('titles')
     .update({ ...flags, updated_at: new Date().toISOString() })
@@ -118,6 +139,7 @@ export async function setTitleFlags(
 }
 
 export async function deleteTitle(titleId: string): Promise<void> {
+  invalidatePublishedTitlesCache();
   const { error } = await supabase.from('titles').delete().eq('id', titleId);
   if (error) throw error;
 }

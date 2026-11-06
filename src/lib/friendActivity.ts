@@ -23,7 +23,7 @@ export interface FriendsActivity {
 
 export async function loadFriendsActivity(userId: string): Promise<FriendsActivity> {
   const snapshot = await loadFriendsSnapshot(userId);
-  const friends = snapshot.friends;
+  const friends = snapshot.friends.filter((friend) => friend.profile?.share_watching_activity === true);
   if (!friends.length) return { watching: [], publishers: [] };
 
   const friendIds = friends.map((friend) => friend.otherUserId);

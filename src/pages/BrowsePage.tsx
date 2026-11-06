@@ -9,6 +9,7 @@ import type { TitleType } from '@/lib/types';
 import { Clapperboard, Radio, Trophy, Newspaper } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
+import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 
 type LocalBrowseKind = Exclude<TitleType, 'movie' | 'series'>;
 const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: string }> = {
@@ -57,6 +58,7 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
         {genres.length > 0 && <div className="flex flex-wrap gap-2" role="group" aria-label="Genres">{[ALL_GENRES, ...genres].map((item) => <button key={item} type="button" aria-pressed={genre === item} onClick={() => setGenre(item)} className={`${CHIP_BASE} ${chipClass(genre === item)}`}>{item}</button>)}</div>}
         {visible.length === 0 ? <p className="rounded-2xl border border-white/10 bg-ink-850/60 p-8 text-center text-sm text-slate-400">Nothing Matches Those Filters. Try A Different Genre Or Clear The Search.</p> : <><p className="text-sm text-slate-500">{visible.length} {visible.length === 1 ? 'title' : 'titles'}</p><TitleGrid titles={visible} /></>}
       </>}
+      <CategoryCinemaFeed category={kind} label={copy.heading} />
     </div>
   );
 }

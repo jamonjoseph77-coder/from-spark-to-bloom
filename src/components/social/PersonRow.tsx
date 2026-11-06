@@ -7,7 +7,7 @@ export function PersonRow({ profile, children }: { profile: Profile | null; chil
   return (
     <li className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-ink-850/70 p-4 transition hover:border-white/20 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-4">
-        <ProfileAvatar name={name} />
+        <ProfileAvatar name={name} imageUrl={profile?.avatar_url} />
         <div className="min-w-0">
           {profile ? <a href={`/profile?username=${encodeURIComponent(profile.username)}`} className="block truncate font-semibold text-white transition hover:text-sky-200">{name}</a> : <p className="truncate font-semibold text-white">{name}</p>}
           {profile && <a href={`/profile?username=${encodeURIComponent(profile.username)}`} className="block truncate text-sm text-slate-400 hover:text-sky-200">@{profile.username}</a>}

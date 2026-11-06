@@ -2,6 +2,7 @@ import { ArrowRight, Clapperboard, Compass, Film, Sparkles, Tv } from 'lucide-re
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
+import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 
 type Shelf = { heading: string; description: string; mediaType: 'movie' | 'tv'; list: 'popular' | 'trending'; genreId?: number };
 type CategoryConfig = {
@@ -38,6 +39,14 @@ const CATEGORIES: Record<string, CategoryConfig> = {
       { heading: 'Animated Films To Discover', description: 'More worlds and characters to discover.', mediaType: 'movie', list: 'popular', genreId: 16 },
       { heading: 'Worlds That Keep Going', description: 'Stories that continue episode by episode.', mediaType: 'tv', list: 'popular', genreId: 16 },
       { heading: 'Popular Animated Adventures', description: 'Series audiences are exploring.', mediaType: 'tv', list: 'trending', genreId: 16 },
+    ],
+  },
+  reality: {
+    title: 'Reality', eyebrow: 'Real People. Unscripted Stories.', description: 'Discover reality series, competition formats, real-life journeys and unscripted entertainment.', icon: Tv, accent: 'Unscripted Stories Worth Following',
+    shelves: [
+      { heading: 'Trending Reality Series', description: 'Unscripted series people are exploring now.', mediaType: 'tv', list: 'trending', genreId: 10764 },
+      { heading: 'Popular Reality Series', description: 'More reality formats and real-life stories.', mediaType: 'tv', list: 'popular', genreId: 10764 },
+      { heading: 'Reality Films & Specials', description: 'Non-fiction films and special programmes.', mediaType: 'movie', list: 'trending', genreId: 99 },
     ],
   },
   family: {
@@ -113,6 +122,8 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
       <section className="space-y-10" aria-label={`${category.title} collections`}>
         {category.shelves.map((shelf) => <TmdbRow key={shelf.heading} {...shelf} />)}
       </section>
+
+      <CategoryCinemaFeed category={slug.toLowerCase() as 'documentaries' | 'animation' | 'family' | 'reality'} label={category.title} />
 
       <footer className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-5 sm:p-6">
         <div><p className="text-sm font-bold text-white">Keep Exploring Cinema</p><p className="mt-1 text-xs leading-5 text-slate-400">Move between movies, series, Shorts, news and more dedicated destinations.</p></div>

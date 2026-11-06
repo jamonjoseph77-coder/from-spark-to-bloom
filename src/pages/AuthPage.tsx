@@ -103,11 +103,11 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         if (result.error) setError(result.error);
         else if (result.needsConfirmation) {
           setConfirmationPending(true);
-          setNotice(`Your account details have been accepted for ${trimmedEmail}. Check your inbox (and Spam/Promotions) for Cinema's confirmation email. You must confirm your email before signing in.`);
+          setNotice(`Your account details have been accepted for ${trimmedEmail}. Check your inbox (and Spam/Promotions) for Cinema's confirmation email. Confirm your email, sign in, and complete your Cinema profile to finish setting up your account.`);
           notify('Account Created — Check Your Email To Finish.');
         } else {
-          notify('Your Cinema Account Is Ready.');
-          navigateTo('/my-cinema');
+          notify('Your Cinema Account Is Ready. Set Up Your Cinema Profile Next.');
+          navigateTo('/profile');
         }
       } else {
         const failure = await requestPasswordReset(trimmedEmail);
