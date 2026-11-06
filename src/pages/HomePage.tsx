@@ -101,6 +101,8 @@ export function HomePage() {
     [publishedClips, social?.follows],
   );
   const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
+  const recommendedMovies = useMemo(() => titlesOfType(recommendations.titles, 'movie'), [recommendations.titles]);
+  const recommendedSeries = useMemo(() => titlesOfType(recommendations.titles, 'series'), [recommendations.titles]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
     const today = new Date().toISOString().slice(0, 10);
@@ -128,10 +130,10 @@ export function HomePage() {
         ))}
       </nav>
       <TmdbHero />
-      <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28">
-        {titles && (recommendations.titles.length > 0
-          ? <TitleRow heading="Recommendations" description={recommendations.reason} titles={recommendations.titles} landscape />
-          : <div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Recommendations</h2><p className="mt-1 text-sm text-slate-400">As you explore Cinema, your recommendations will become more relevant to the movies and series you enjoy.</p></div>)}
+      <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
+        {titles && recommendedMovies.length > 0 && <TitleRow heading="Recommended Movies" description="Films Picked From Your Cinema Activity And The Stories You Enjoy." titles={recommendedMovies} landscape action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />}
+        {titles && recommendedSeries.length > 0 && <TitleRow heading="Recommended Series" description="Series That May Be Worth Settling Into Next." titles={recommendedSeries} landscape action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />}
+        {titles && recommendedMovies.length === 0 && recommendedSeries.length === 0 && <div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Recommended For You</h2><p className="mt-1 text-sm text-slate-400">As you explore Cinema, recommendations will become more relevant to the movies and series you enjoy.</p></div>}
       </section>
       <section className="cinema-home-shorts space-y-5" aria-label="Cinema Shorts">
         <div className="flex flex-wrap items-end justify-between gap-4">
