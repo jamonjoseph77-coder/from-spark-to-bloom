@@ -4,7 +4,9 @@ import { Artwork } from '@/components/ui/Artwork';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { BUTTON_ACCENT, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchDiscoverTrailers, fetchTmdbList, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
+import { fetchDiscoverTrailers, fetchTmdbList, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
+import { fetchPublishedTitles } from '@/lib/library';
+import { canonicalCinemaHref } from '@/lib/canonicalTitle';
 
 const ROTATE_MS = 8500;
 type HeroEntry = { item: TmdbItem; videoKey?: string };
@@ -30,6 +32,7 @@ async function loadHero(): Promise<HeroEntry[]> {
 
 export function TmdbHero() {
   const { data: entries } = useAsyncData(loadHero, []);
+  const { data: localTitles } = useAsyncData(fetchPublishedTitles, []);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
@@ -86,7 +89,7 @@ export function TmdbHero() {
           {item.overview && <p className="line-clamp-3 max-w-xl text-sm leading-7 text-slate-200/90 sm:text-base">{item.overview}</p>}
           <div className="flex flex-wrap gap-3 pt-2">
             {current.videoKey && <button type="button" onClick={() => setTrailerOpen(true)} className={BUTTON_ACCENT}><Play className="h-4 w-4 fill-current" /> Watch trailer</button>}
-            <a href={tmdbHref(item)} className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> Explore title</a>
+            <a href={canonicalCinemaHref(item, localTitles ?? [])} className={BUTTON_SECONDARY}><Info className="h-4 w-4" /> Explore title</a>
           </div>
         </div>
         {entries.length > 1 && (
