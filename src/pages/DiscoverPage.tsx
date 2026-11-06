@@ -170,7 +170,7 @@ function ExploreStudioTracker() {
 
 export function DiscoverPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-8 px-4 pb-8 sm:px-6 lg:space-y-10 lg:px-10">
+    <div className="cinema-discover-page mx-auto w-full min-w-0 max-w-7xl space-y-8 overflow-x-clip px-4 pb-8 sm:px-6 lg:space-y-10 lg:px-10">
       <header className="relative isolate overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(ellipse_at_top_right,rgba(170,190,182,.075),transparent_55%),linear-gradient(135deg,#111715,#070909_72%)] p-6 shadow-[0_24px_70px_rgba(0,0,0,.26)] sm:p-8">
         <div className="absolute -right-12 -top-16 h-56 w-56 rounded-full bg-white/[.035] blur-3xl" />
         <div className="absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-emerald-100/[.025] blur-3xl" />
