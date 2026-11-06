@@ -21,9 +21,10 @@ const RIGHT_ITEMS = [
 export function MobileNav({ route }: MobileNavProps) {
   const activeKey = route.name === 'browse' && route.kind === 'movie' ? 'cinema' : navKeyOf(route);
   const cinemaActive = activeKey === 'cinema';
+  const homeContextActive = route.name === 'category' || (route.name === 'browse' && route.kind !== 'live');
 
   const renderItems = (items: NavItem[]) => items.map((item) => {
-    const active = item.key === activeKey || (item.key === 'home' && route.name === 'browse');
+    const active = item.key === activeKey || (item.key === 'home' && homeContextActive);
     const Icon = item.icon;
     return (
       <li key={item.key} className="flex h-full min-w-0 flex-1 items-center justify-center">

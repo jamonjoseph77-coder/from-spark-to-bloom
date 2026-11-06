@@ -26,7 +26,8 @@ export function SideNav({ route }: SideNavProps) {
             </p>
             <ul className="space-y-1">
               {section.items.map((item) => {
-                const active = item.key === activeKey || (item.key === 'home' && route.name === 'browse');
+                const homeContextActive = route.name === 'category' || (route.name === 'browse' && route.kind !== 'live');
+                const active = item.key === activeKey || (item.key === 'home' && homeContextActive);
                 const Icon = item.icon;
                 return (
                   <li key={item.key}>
