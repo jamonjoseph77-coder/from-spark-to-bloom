@@ -42,7 +42,7 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
     const frame = iframeRef.current?.contentWindow;
     if (!frame) return;
     if (getYouTubeVideoId(clip.video_url)) frame.postMessage(JSON.stringify({ event: 'command', func: next ? 'unMute' : 'mute', args: [] }), 'https://www.youtube.com');
-    else if (/vimeo\\.com/i.test(clip.video_url)) frame.postMessage(JSON.stringify({ method: 'setVolume', value: next ? 1 : 0 }), 'https://player.vimeo.com');
+    else if (/vimeo\.com/i.test(clip.video_url)) frame.postMessage(JSON.stringify({ method: 'setVolume', value: next ? 1 : 0 }), 'https://player.vimeo.com');
   }
   return (
     <article className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none">
