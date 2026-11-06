@@ -167,8 +167,8 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
         )}
       </div>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 z-20 flex items-end gap-3 p-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
-        <div className="cinema-short-info min-w-0 flex-1 pr-2">
+      <div className="pointer-events-none absolute inset-0 z-20">
+        <div className="cinema-short-info pointer-events-auto min-w-0 flex-1 pr-2">
           <a href={publisherHref(clip.publisher_name || "Cinema")} className="inline-flex max-w-full items-center gap-2 text-xs font-bold text-white/90">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/30 bg-black/55 text-xs font-black">{(clip.publisher_name || "C").slice(0, 1).toUpperCase()}</span>
             <span className="truncate">{clip.publisher_name || "Cinema Creator"}</span>
@@ -181,7 +181,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
             <button type="button" onClick={() => onTrack(clip)} disabled={tracking} aria-pressed={tracked} className="cinema-short-track inline-flex min-h-11 items-center justify-center rounded-full border border-white/35 bg-black/40 px-4 py-2.5 text-xs font-extrabold text-white shadow-lg backdrop-blur-xl transition hover:bg-white/10 disabled:opacity-50">{tracking ? '…' : tracked ? 'Tracking' : 'Track'}</button>
           </div>
         </div>
-        <div className="cinema-short-action-rail cinema-short-actions absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-2 sm:right-5">
+        <div className="cinema-short-action-rail cinema-short-actions pointer-events-auto absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-2 sm:right-5">
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><span>{audioEnabled ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}</span><span className="text-[9px] font-bold">Sound</span></button>}
           <button type="button" onClick={() => void handleLike()} disabled={savingReaction || engagementLoading} aria-label={likedByUser ? "Unlike This Short" : "Like This Short"} aria-pressed={likedByUser} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50"><Heart className={"h-8 w-8 drop-shadow-lg " + (likedByUser ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[9px] font-bold tabular-nums">{reactionCount.toLocaleString()}</span></button>
           <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><MessageCircle className="h-8 w-8 drop-shadow-lg" /><span className="text-[9px] font-bold tabular-nums">{comments.length.toLocaleString()}</span></button>
