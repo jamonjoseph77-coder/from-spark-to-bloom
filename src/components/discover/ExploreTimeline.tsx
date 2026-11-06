@@ -3,6 +3,7 @@ import { Clapperboard, MessageCircle, Play, Send } from 'lucide-react';
 import { ClipCard } from '@/components/discover/ClipCard';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { VideoDialog } from '@/components/player/VideoDialog';
+import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,7 +13,6 @@ import { fetchLetterboxFeed, createLetterboxPost, subscribeToLetterbox, type Let
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
-import { navigateTo } from '@/lib/router';
 import { LetterboxPostCard } from '@/pages/LetterboxPage';
 
 type ExploreEntry =
@@ -111,8 +111,9 @@ export function ExploreTimeline() {
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
-  const openShort = (clip: DiscoverClip) => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`);
+  const openShort = (clip: DiscoverClip) => setActiveShort(clip);
   const [activeVideo, setActiveVideo] = useState<DiscoverClip | null>(null);
+  const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
   const [activeTrailer, setActiveTrailer] = useState<TmdbTrailer | null>(null);
 
   useEffect(() => subscribeToLetterbox(reload), [reload]);
@@ -207,8 +208,9 @@ export function ExploreTimeline() {
         <p className="text-xs text-slate-500">Entertainment, People And Stories — Together On Cinema.</p>
       </footer>
 
-      {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.publisher_name || 'Cinema Video'} onClose={() => setActiveVideo(null)} />}
-      {activeTrailer && <VideoDialog url={`https://www.youtube.com/watch?v=${activeTrailer.videoKey}`} label={activeTrailer.videoName} heading={activeTrailer.title} onClose={() => setActiveTrailer(null)} />}
+      {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
+      {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.publisher_name || 'Cinema Video'} contentKey={`clip:${activeVideo.id}`} imageUrl={activeVideo.poster_url} onClose={() => setActiveVideo(null)} />}
+      {activeTrailer && <VideoDialog url={`https://www.youtube.com/watch?v=${activeTrailer.videoKey}`} label={activeTrailer.videoName} heading={activeTrailer.title} contentKey={`trailer:${activeTrailer.mediaType}:${activeTrailer.id}`} imageUrl={activeTrailer.backdropPath || activeTrailer.posterPath || undefined} onClose={() => setActiveTrailer(null)} />}
     </section>
   );
 }

@@ -1,13 +1,16 @@
 import { Modal } from '@/components/ui/Modal';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
+import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import type { VideoSource } from '@/lib/videoSource';
 
 interface VideoDialogProps extends VideoSource {
   onClose: () => void;
+  contentKey?: string;
+  imageUrl?: string;
 }
 
-export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) {
+export function VideoDialog({ url, label, heading, onClose, contentKey, imageUrl }: VideoDialogProps) {
   const direct = isDirectVideoUrl(url);
   const embedUrl = direct ? null : toEmbedUrl(url, { autoplay: true });
 
@@ -37,6 +40,7 @@ export function VideoDialog({ url, label, heading, onClose }: VideoDialogProps) 
             This video link cannot be played here. Ask an administrator to use a direct video link or a YouTube or Vimeo link.
           </p>
         )}
+        {contentKey && <div className="border-t border-white/10 pt-3"><ContentEngagement contentKey={contentKey} title={heading || label} href={window.location.href} imageUrl={imageUrl} /></div>}
       </div>
     </Modal>
   );

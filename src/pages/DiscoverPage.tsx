@@ -108,7 +108,7 @@ function ExploreStudioTracker() {
   return (
     <section className="space-y-4" aria-labelledby="explore-studios-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-cinema-300"><Building2 className="h-3.5 w-3.5" /> Follow The People Behind The Stories</p><h2 id="explore-studios-heading" className="mt-1 text-2xl font-black text-white sm:text-3xl">Studios To Track</h2><p className="mt-1 text-sm text-slate-400">Follow the studios, broadcasters and publishers whose new stories you want to find quickly.</p><p className="mt-2 text-xs font-semibold text-cinema-200">{trackedCount} {trackedCount === 1 ? 'publisher' : 'publishers'} tracked in your Cinema circle</p></div>
+        <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-cinema-300"><Building2 className="h-3.5 w-3.5" /> Discover The People Behind The Stories</p><h2 id="explore-studios-heading" className="mt-1 text-2xl font-black text-white sm:text-3xl">Studios To Track</h2><p className="mt-1 text-sm text-slate-400">Track the studios, broadcasters and publishers whose new stories you want to find quickly.</p><p className="mt-2 text-xs font-semibold text-cinema-200">{trackedCount} {trackedCount === 1 ? 'publisher' : 'publishers'} tracked in your Cinema circle</p></div>
         <a href="/publishers" className="inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">All Studios & Publishers <ArrowRight className="h-4 w-4" /></a>
       </div>
       {!titles.data && (titles.error ? <ErrorState onRetry={titles.reload} /> : <LoadingState label="Finding publishers in Cinema" />)}
@@ -122,7 +122,7 @@ function ExploreStudioTracker() {
               <span className="min-w-0 flex-1"><span className="block truncate text-sm font-extrabold text-white group-hover:text-cinema-100">{publisher.name}</span><span className="mt-1 block text-[11px] text-slate-400">{publisher.titles.length} {publisher.titles.length === 1 ? 'title' : 'titles'} · {publisher.upcoming.length} upcoming · {publisher.trailers.length} trailers</span></span>
             </a>
             {user ? <button type="button" onClick={() => void toggle(publisher.name)} disabled={Boolean(busy) || follows.loading} aria-pressed={tracked} className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold transition disabled:opacity-50 ${tracked ? 'border-cinema-300/25 bg-cinema-300/10 text-cinema-100' : 'border-white/10 bg-white/[.04] text-slate-200 hover:border-cinema-300/30 hover:bg-cinema-300/10'}`}>
-              {tracked ? <BellRing className="h-3.5 w-3.5" /> : <BellPlus className="h-3.5 w-3.5" />}{tracked ? 'Following' : 'Track Studio'}
+              {tracked ? <BellRing className="h-3.5 w-3.5" /> : <BellPlus className="h-3.5 w-3.5" />}{tracked ? 'Tracking' : 'Track Studio'}
             </button> : <a href="/sign-in" className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 bg-white/[.04] px-3 py-2.5 text-xs font-bold text-slate-200">Sign In To Track</a>}
           </article>;
         })}
@@ -145,7 +145,7 @@ export function DiscoverPage() {
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-200"><Sparkles className="h-3.5 w-3.5 text-cinema-300" /> Watch. Discover. Talk.</span>
             <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-400">Official video + community conversation</span>
-            <a href="/creator/shorts" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/[.07] px-3.5 py-2 text-xs font-bold text-white transition hover:border-white/50 hover:bg-white/[.12]"><UploadCloud className="h-3.5 w-3.5" /> Submit A Short</a>
+            <a href="/creator/shorts" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/[.07] px-3.5 py-2 text-xs font-bold text-white transition hover:border-white/50 hover:bg-white/[.12]"><UploadCloud className="h-3.5 w-3.5" /> Post A Video</a>
           </div>
         </div>
       </header>
