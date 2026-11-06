@@ -18,10 +18,10 @@ const scopes: { id: SearchScope; label: string }[] = [
   { id: 'studios', label: 'Studios & Publishers' },
 ];
 const destinations = [
-  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass },
-  { href: '/friends', label: 'Friends', detail: 'Find People And Recommendations', icon: Users },
-  { href: '/publishers', label: 'Studios', detail: 'Explore Official Industry Profiles', icon: Megaphone },
-  { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard },
+  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass, image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=900&q=82' },
+  { href: '/friends', label: 'Friends', detail: 'Find People And Recommendations', icon: Users, image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=82' },
+  { href: '/publishers', label: 'Studios', detail: 'Explore Official Industry Profiles', icon: Megaphone, image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=82' },
+  { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard, image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=900&q=82' }
 ];
 
 export function SearchPage({ query }: { query: string }) {
@@ -60,13 +60,13 @@ export function SearchPage({ query }: { query: string }) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextQuery = draft.trim();
-    if (!nextQuery) return;
+    if (!nextQuery) { navigateTo("/search"); return; }
     navigateTo(`/search?q=${encodeURIComponent(nextQuery)}`);
   }
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-search-page space-y-9 pb-12`}>
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_42%),linear-gradient(135deg,#121715,#090c0b_72%)] p-6 shadow-xl shadow-black/20 sm:p-9">
+      <header className="cinema-search-hero relative isolate overflow-hidden rounded-[2rem] border border-white/10 p-6 shadow-xl shadow-black/25 sm:p-9">
         <div className="absolute -right-12 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Sparkles aria-hidden="true" className="h-4 w-4" /> Find Your Next Experience</p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">Search The World Of Stories.</h1>
@@ -93,7 +93,7 @@ export function SearchPage({ query }: { query: string }) {
                 <X aria-hidden="true" className="h-4 w-4" />
               </button>
             )}
-            <button type="submit" disabled={!draft.trim()} aria-label="Search Cinema" className="ml-1 inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-cinema-200/20 bg-cinema-500 px-5 text-sm font-bold text-white shadow-lg shadow-cinema-950/25 transition hover:bg-cinema-400 active:scale-[.98] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/10 disabled:text-slate-500">
+            <button type="submit" aria-label="Search Cinema" className="ml-1 inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-sky-200/45 bg-gradient-to-r from-sky-500 via-cyan-500 to-cinema-500 px-5 text-sm font-extrabold text-white shadow-lg shadow-sky-950/40 transition hover:brightness-110 active:scale-[.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
               <SearchIcon aria-hidden="true" className="h-4 w-4" />
               Search
             </button>
@@ -110,9 +110,11 @@ export function SearchPage({ query }: { query: string }) {
           <div className="space-y-3">
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-              {destinations.map(({ href, label, detail, icon: Icon }) => (
-                <a key={href} href={href} className="group rounded-2xl border border-white/10 bg-ink-900/80 p-4 transition hover:-translate-y-1 hover:border-cinema-400/35">
-                  <span className="mb-4 grid h-10 w-10 place-items-center rounded-xl bg-cinema-500/15 text-cinema-200"><Icon className="h-5 w-5" /></span>
+              {destinations.map(({ href, label, detail, icon: Icon, image }) => (
+                <a key={href} href={href} className="cinema-search-destination group relative isolate flex min-h-40 flex-col overflow-hidden rounded-2xl border border-white/12 p-4 transition hover:-translate-y-1 hover:border-cinema-300/50">
+                  <img src={image} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-38 transition duration-700 group-hover:scale-105 group-hover:opacity-50" />
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#070b12]/95 via-[#070b12]/68 to-[#070b12]/36" />
+                  <span className="mb-4 grid h-10 w-10 place-items-center rounded-xl border border-white/20 bg-black/40 text-cinema-100 shadow-lg backdrop-blur-sm"><Icon className="h-5 w-5" /></span>
                   <span className="block font-bold text-white">{label}</span>
                   <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
                 </a>

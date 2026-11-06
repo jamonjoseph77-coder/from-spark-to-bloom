@@ -16,7 +16,7 @@ export function TopBar() {
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedQuery = query.trim();
-    if (!trimmedQuery) return;
+    if (!trimmedQuery) { navigateTo("/search"); return; }
     navigateTo(`/search?q=${encodeURIComponent(trimmedQuery)}`);
   }
 
@@ -43,10 +43,9 @@ export function TopBar() {
           />
           <button
             type="submit"
-            disabled={!query.trim()}
             aria-label="Search"
             title="Search"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[.09] text-white transition hover:bg-white/[.15] active:scale-95 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sky-200/40 bg-gradient-to-br from-sky-500 via-cyan-500 to-cinema-500 text-white shadow-lg shadow-sky-950/35 transition hover:brightness-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200"
           >
             <Search aria-hidden="true" className="h-4 w-4" />
           </button>
