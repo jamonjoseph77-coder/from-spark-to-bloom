@@ -6,7 +6,6 @@ import {
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
-import { ShortViewer } from '@/components/discover/ShortViewer';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { titleTrailerSource } from '@/lib/videoSource';
 import { uniqueVideos, videoIdentity } from '@/lib/videoIdentity';
@@ -23,6 +22,7 @@ import { publisherHref } from '@/lib/publishers';
 import { fetchPublishedTitles, fetchTitleDetail } from '@/lib/library';
 import { CLIP_KIND_LABEL, fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
 import { TITLE_TYPE_LABELS, type TitleType } from '@/lib/types';
+import { navigateTo } from '@/lib/router';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
 const BROWSE_PATH: Record<TitleType, string> = { movie: 'movies', series: 'series', sport: 'sports', live: 'live-tv', news: 'news' };
@@ -31,7 +31,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
   const { progress } = useLibrary();
   const { notify } = useToast();
   const [trailerOpen, setTrailerOpen] = useState(false);
-  const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
+  const [activeVideo, setActiveVideo] = useState<DiscoverClip | null>(null);
   const { data, error, reload } = useAsyncData(async () => {
     const [detail, published, clips] = await Promise.all([
       fetchTitleDetail(titleId),
@@ -159,10 +159,10 @@ export function TitlePage({ titleId }: { titleId: string }) {
             {(titleShorts.length > 0 || titleEditorial.length > 0) && (
               <section className="space-y-6">
                 <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">Official extras</p><h2 className={SECTION_HEADING}>More from {title.title}</h2><p className="mt-1 text-sm text-slate-400">Official extras and publisher-approved videos connected to this title.</p></div>
-                {behindScenes.length > 0 && <EditorialVideoGroup heading="Behind the scenes" clips={behindScenes} onOpen={setActiveShort} />}
-                {interviews.length > 0 && <EditorialVideoGroup heading="Cast and crew conversations" clips={interviews} onOpen={setActiveShort} />}
-                {additionalClips.length > 0 && <EditorialVideoGroup heading="More from this title" clips={additionalClips} onOpen={setActiveShort} />}
-                {titleShorts.length > 0 && <div className="space-y-3"><h3 className="text-sm font-bold text-slate-200">Short videos</h3><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}</div></div>}
+                {behindScenes.length > 0 && <EditorialVideoGroup heading="Behind the scenes" clips={behindScenes} onOpen={setActiveVideo} />}
+                {interviews.length > 0 && <EditorialVideoGroup heading="Cast and crew conversations" clips={interviews} onOpen={setActiveVideo} />}
+                {additionalClips.length > 0 && <EditorialVideoGroup heading="More from this title" clips={additionalClips} onOpen={setActiveVideo} />}
+                {titleShorts.length > 0 && <div className="space-y-3"><h3 className="text-sm font-bold text-slate-200">Short videos</h3><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveVideo} />)}</div></div>}
               </section>
             )}
           </div>
@@ -194,7 +194,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
         </section>
       </div>
       {trailerOpen && <VideoDialog {...titleTrailerSource(title)} onClose={() => setTrailerOpen(false)} />}
-      {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
+      {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.title?.title || activeVideo.publisher_name || title.title} onClose={() => setActiveVideo(null)} />}
     </div>
   );
 }
