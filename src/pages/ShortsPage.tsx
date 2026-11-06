@@ -85,9 +85,9 @@ export function ShortsPage() {
     return ranked.filter((clip) => !signals.skippedIds.includes(clip.id)).sort((a, b) => {
       const score = (clip: DiscoverClip) => {
         const publisher = clip.publisher_name.trim().toLocaleLowerCase();
-        return (affinity[publisher] ?? 0) * 1.4
-          + (signals.likedIds.includes(clip.id) ? 1.8 : 0)
-          - (signals.completedIds.includes(clip.id) ? 1.25 : 0);
+        return (affinity[publisher] ?? 0) * 0.35
+          + (signals.likedIds.includes(clip.id) ? 0.45 : 0)
+          - (signals.completedIds.includes(clip.id) ? 0.8 : 0);
       };
       return score(b) - score(a);
     });
