@@ -108,6 +108,49 @@ function HomeEngagement() {
   );
 }
 
+type HomeMood = { id: string; label: string; description: string; terms?: string[]; kind?: 'sport' | 'live'; href: string; };
+const HOME_MOODS: HomeMood[] = [
+  { id: 'laugh', label: 'Make Me Laugh', description: 'Light-hearted stories and comedies.', terms: ['comedy', 'comedies'], href: '/movies' },
+  { id: 'adventure', label: 'Take Me Somewhere', description: 'Adventure, action and big-screen worlds.', terms: ['action', 'adventure', 'fantasy'], href: '/movies' },
+  { id: 'drama', label: 'A Powerful Story', description: 'Character-led stories and emotional journeys.', terms: ['drama', 'romance'], href: '/series' },
+  { id: 'real', label: 'Real Life', description: 'Documentaries and reality entertainment.', terms: ['documentary', 'documentaries', 'reality'], href: '/discover' },
+  { id: 'sports', label: 'Feel The Competition', description: 'Sports coverage and highlights.', kind: 'sport', href: '/sports' },
+  { id: 'live', label: 'Turn On Live TV', description: 'Explore broadcaster channels.', kind: 'live', href: '/live-tv' },
+];
+
+function HomeMoodPicker({ titles }: { titles: Title[] }) {
+  const [selectedMood, setSelectedMood] = useState(HOME_MOODS[0].id);
+  const selected = HOME_MOODS.find((mood) => mood.id === selectedMood) ?? HOME_MOODS[0];
+  const matches = useMemo(() => {
+    if (selected.kind) return titlesOfType(titles, selected.kind);
+    const terms = selected.terms ?? [];
+    return titles.filter((title) => terms.some((term) => title.genre.toLocaleLowerCase().includes(term)));
+  }, [selected, titles]);
+  return (
+    <section className="space-y-4" aria-labelledby="home-mood-heading">
+      <div>
+        <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">A Little Inspiration</p>
+        <h2 id="home-mood-heading" className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">What Are You In The Mood For?</h2>
+        <p className="mt-1 text-sm text-slate-400">Choose a feeling and explore the stories and channels already available in Cinema.</p>
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Choose an entertainment mood">
+        {HOME_MOODS.map((mood) => (
+          <button key={mood.id} type="button" aria-pressed={selectedMood === mood.id} onClick={() => setSelectedMood(mood.id)} className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cinema-300 ${selectedMood === mood.id ? 'border-cinema-300/60 bg-cinema-300/15 text-white shadow-[0_6px_24px_rgba(8,124,255,.12)]' : 'border-white/10 bg-white/[.035] text-slate-300 hover:border-white/25 hover:bg-white/[.07]'}`}>
+            {mood.label}
+          </button>
+        ))}
+      </div>
+      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/[.055] via-white/[.025] to-transparent p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h3 className="text-base font-extrabold text-white">{selected.label}</h3><p className="mt-1 text-xs text-slate-400">{selected.description}</p></div>
+          <a href={selected.href} className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-cinema-200 transition hover:border-cinema-300/40 hover:bg-cinema-300/10">Explore <ArrowRight className="h-3.5 w-3.5" /></a>
+        </div>
+        {matches.length > 0 ? <div className="mt-4"><TitleRow heading={`Available In Cinema · ${matches.length}`} titles={matches.slice(0, 8)} landscape /></div> : <div className="mt-4 rounded-2xl border border-dashed border-white/10 bg-black/10 p-4"><p className="text-sm font-semibold text-white">More Choices Are On The Way</p><p className="mt-1 text-xs leading-5 text-slate-400">There are no published picks for this mood in the current Cinema catalogue yet. You can still explore the full section.</p></div>}
+      </div>
+    </section>
+  );
+}
+
 export function HomePage() {
   const { user } = useAuth();
   const openShort = useCallback((clip: DiscoverClip) => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`), []);
@@ -165,6 +208,7 @@ export function HomePage() {
       </nav>
       <TmdbHero />
       <HomeEngagement />
+      <HomeMoodPicker titles={titles ?? []} />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
         <div><p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Picked Around Your Taste</p><h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Next Watch</h2><p className="mt-1 text-sm text-slate-400">A personal mix shaped by what you watch, save and follow — with room for new discoveries.</p></div>
