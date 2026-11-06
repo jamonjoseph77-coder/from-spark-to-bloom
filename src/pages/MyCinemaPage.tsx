@@ -34,7 +34,7 @@ export function MyCinemaPage() {
     if (!titles) return null;
     return {
       resume: resumeItems(progress, titles),
-      recent: [...new Map([...progress].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map((entry) => [entry.title_id, titles.find((title) => title.id === entry.title_id)]).filter((entry): entry is [string, NonNullable<typeof entry[1]>] => Boolean(entry[1]))).values()].slice(0, 12),
+      recent: [...new Set([...progress].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map((entry) => entry.title_id))].slice(0, 12).flatMap((id) => { const title = titles.find((item) => item.id === id); return title ? [title] : []; }),
       watchlist: titles.filter((title) => watchlistIds.has(title.id)),
       favourites: titles.filter((title) => favouriteIds.has(title.id)),
     };
