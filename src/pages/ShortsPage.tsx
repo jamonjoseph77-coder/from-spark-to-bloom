@@ -5,6 +5,8 @@ import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
+import { navigateTo } from '@/lib/router';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
@@ -96,6 +98,7 @@ function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLik
 
 export function ShortsPage() {
   const { user } = useAuth();
+  const { notify } = useToast();
   const feedRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [signals, setSignals] = useState<ViewerSignals>(EMPTY_SIGNALS);
@@ -180,7 +183,7 @@ export function ShortsPage() {
   }
 
   async function toggleSave(clip: DiscoverClip) {
-    if (!user) { window.location.assign('/sign-in'); return; }
+    if (!user) { notify('Sign In To Save Shorts To My Cinema.'); navigateTo('/sign-in'); return; }
     if (savingClipId) return;
     const wasSaved = savedClipIds.includes(clip.id);
     setSavingClipId(clip.id);
@@ -189,6 +192,7 @@ export function ShortsPage() {
     catch (cause) {
       setSavedClipIds((current) => wasSaved ? [...current, clip.id] : current.filter((id) => id !== clip.id));
       console.error('Cinema Short Could Not Be Saved', cause);
+      notify('This Short Could Not Be Saved. Please Try Again.', 'error');
     } finally { setSavingClipId(null); }
   }
 
