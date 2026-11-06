@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Clapperboard, MessageCircle, Play, Send } from 'lucide-react';
 import { ClipCard } from '@/components/discover/ClipCard';
 import { ShortCard } from '@/components/discover/ShortCard';
-import { ShortViewer } from '@/components/discover/ShortViewer';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -13,6 +12,7 @@ import { fetchLetterboxFeed, createLetterboxPost, subscribeToLetterbox, type Let
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
+import { navigateTo } from '@/lib/router';
 import { LetterboxPostCard } from '@/pages/LetterboxPage';
 
 type ExploreEntry =
@@ -111,7 +111,7 @@ export function ExploreTimeline() {
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
-  const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
+  const openShort = (clip: DiscoverClip) => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`);
   const [activeVideo, setActiveVideo] = useState<DiscoverClip | null>(null);
   const [activeTrailer, setActiveTrailer] = useState<TmdbTrailer | null>(null);
 
@@ -198,7 +198,7 @@ export function ExploreTimeline() {
       {data && entries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
         {entries.map((entry) => {
           if (entry.kind === 'post') return <div key={entry.id} className="cinema-explore-post col-span-full overflow-hidden rounded-2xl border border-white/10 bg-[#0b0e10] shadow-[0_12px_36px_rgba(0,0,0,.16)]"><LetterboxPostCard post={entry.post} userId={user?.id} onChanged={() => void reload()} /></div>;
-          if (entry.kind === 'clip') return <PublisherVideoPost key={entry.id} clip={entry.clip} onOpenShort={setActiveShort} onOpenVideo={setActiveVideo} />;
+          if (entry.kind === 'clip') return <PublisherVideoPost key={entry.id} clip={entry.clip} onOpenShort={openShort} onOpenVideo={setActiveVideo} />;
           return <OfficialTrailerPost key={entry.id} trailer={entry.trailer} onOpen={setActiveTrailer} />;
         })}
       </div>}
@@ -207,7 +207,6 @@ export function ExploreTimeline() {
         <p className="text-xs text-slate-500">Entertainment, People And Stories — Together On Cinema.</p>
       </footer>
 
-      {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
       {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.publisher_name || 'Cinema Video'} onClose={() => setActiveVideo(null)} />}
       {activeTrailer && <VideoDialog url={`https://www.youtube.com/watch?v=${activeTrailer.videoKey}`} label={activeTrailer.videoName} heading={activeTrailer.title} onClose={() => setActiveTrailer(null)} />}
     </section>
