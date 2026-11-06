@@ -38,8 +38,8 @@ export function MobileNav({ route }: MobileNavProps) {
   });
 
   return (
-    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-2 bottom-0 z-40 rounded-[1.35rem] border border-white/[.14] bg-[#050706]/[.97] pb-[env(safe-area-inset-bottom)] shadow-[0_0_30px_rgba(0,0,0,.42)] backdrop-blur-2xl lg:hidden">
-      <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_68px_minmax(0,1fr)] items-center px-1">
+    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-2 bottom-1 z-40 rounded-[1.35rem] border border-white/[.14] bg-[#050706]/[.97] pb-[env(safe-area-inset-bottom)] shadow-[0_0_30px_rgba(0,0,0,.42)] backdrop-blur-2xl lg:hidden">
+      <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center px-1">
         <ul className="flex h-full min-w-0 items-center justify-around">
           {renderItems(LEFT_ITEMS)}
         </ul>
@@ -52,9 +52,9 @@ export function MobileNav({ route }: MobileNavProps) {
         href="/movies"
         aria-label="Cinema"
         aria-current={cinemaActive ? 'page' : undefined}
-        className={`absolute left-1/2 top-[-8px] flex h-[60px] w-[60px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${cinemaActive ? 'ring-2 ring-[#168cff]/65' : 'hover:scale-[1.04]'}`}
+        className={`absolute left-1/2 top-[-10px] flex h-[66px] w-[66px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${cinemaActive ? 'ring-2 ring-[#168cff]/65' : 'hover:scale-[1.04]'}`}
       >
-        <CinemaLogo compact className="!h-[52px] !w-[52px] rounded-full border border-white/[.16] bg-[#080b09] object-cover shadow-[0_5px_18px_rgba(0,0,0,.5)]" />
+        <CinemaLogo compact className="!h-[58px] !w-[58px] rounded-full border border-white/[.16] bg-[#080b09] object-cover shadow-[0_5px_18px_rgba(0,0,0,.5)]" />
         <span className="sr-only">Cinema</span>
       </a>
     </nav>
