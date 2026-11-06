@@ -102,6 +102,8 @@ export function HomePage() {
   const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
   const recommendedMovies = useMemo(() => titlesOfType(recommendations.titles, 'movie'), [recommendations.titles]);
   const recommendedSeries = useMemo(() => titlesOfType(recommendations.titles, 'series'), [recommendations.titles]);
+  const recommendedNews = useMemo(() => titlesOfType(recommendations.titles, 'news'), [recommendations.titles]);
+  const recommendedLiveChannels = useMemo(() => titlesOfType(recommendations.titles, 'live'), [recommendations.titles]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
     const today = new Date().toISOString().slice(0, 10);
@@ -134,6 +136,8 @@ export function HomePage() {
         <div><p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Picked Around Your Taste</p><h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Next Watch</h2><p className="mt-1 text-sm text-slate-400">A personal mix shaped by what you watch, save and follow — with room for new discoveries.</p></div>
         {titles && recommendedMovies.length > 0 && <TitleRow heading="Recommended Movies" description="Films Picked From Your Cinema Activity And The Stories You Enjoy." titles={recommendedMovies} landscape action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />}
         {titles && recommendedSeries.length > 0 && <TitleRow heading="Recommended Series" description="Series That May Be Worth Settling Into Next." titles={recommendedSeries} landscape action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />}
+        {titles && recommendedNews.length > 0 && <TitleRow heading="News In Your Focus" description="News and current-affairs picks shaped by the publishers and topics available in Cinema." titles={recommendedNews} landscape action={<a href="/news" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore News</a>} />}
+        {titles && recommendedLiveChannels.length > 0 && <TitleRow heading="Channels Picked For You" description="Live television channels from publishers represented in Cinema, ranked around your viewing interests." titles={recommendedLiveChannels} landscape action={<a href="/live-tv" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Live TV</a>} />}
         {titles && recommendedMovies.length === 0 && recommendedSeries.length === 0 && <div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Recommended For You</h2><p className="mt-1 text-sm text-slate-400">As you explore Cinema, recommendations will become more relevant to the movies and series you enjoy.</p></div>}
       </section>
       <section className="cinema-home-shorts space-y-5" aria-label="Cinema Shorts">
