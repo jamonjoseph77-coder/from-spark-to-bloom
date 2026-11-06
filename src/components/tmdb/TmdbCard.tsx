@@ -1,17 +1,20 @@
 import { ArrowUpRight, Star } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
-import { tmdbHref, tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
+import { tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
+import { canonicalCinemaHref } from '@/lib/canonicalTitle';
+import type { Title } from '@/lib/types';
 
-export function TmdbCard({ item, landscape = false }: { item: TmdbItem; landscape?: boolean }) {
+export function TmdbCard({ item, landscape = false, localTitles = [] }: { item: TmdbItem; landscape?: boolean; localTitles?: Title[] }) {
   const typeLabel = item.mediaType === 'movie' ? 'Movie' : 'Series';
   const year = tmdbYear(item);
+  const href = canonicalCinemaHref(item, localTitles);
   const image = landscape
     ? tmdbImageUrl(item.backdropPath, 'w780') || tmdbImageUrl(item.posterPath, 'w342')
     : tmdbImageUrl(item.posterPath, 'w342');
 
   return (
     <div className="min-w-0">
-    <a href={tmdbHref(item)} className="group block w-full" aria-label={`${item.title}, ${typeLabel}${year ? `, ${year}` : ''}`}>
+    <a href={href} className="group block w-full" aria-label={`${item.title}, ${typeLabel}${year ? `, ${year}` : ''}`}>
       <div className={`relative ${landscape ? 'aspect-[16/10]' : 'aspect-[3/4]'} overflow-hidden rounded-[1.15rem] bg-ink-800 ring-1 ring-white/10 transition duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl group-hover:shadow-black/50 group-hover:ring-sky-200/45`}>
         <Artwork src={image} alt="" fallbackTitle={item.title} className="h-full w-full transition duration-700 group-hover:scale-[1.06]" />
         <span className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent opacity-70 transition group-hover:opacity-100" />
