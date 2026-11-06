@@ -192,16 +192,49 @@ export async function recordDiscoverClipView(clipId: string): Promise<number> {
 }
 
 export async function fetchSavedDiscoverClipIds(userId: string): Promise<string[]> {
-  return readSavedShortIds(userId);
+  if (!userId) return [];
+  const { data, error } = await supabase.from('discover_clip_saves')
+    .select('clip_id')
+    .eq('user_id', userId);
+  if (error) throw error;
+  const savedIds = new Set((data ?? []).map((row) => row.clip_id));
+
+  // Carry forward this account's older browser-only saves once, where the
+  // referenced clips still exist. The table's owner-only RLS remains in force.
+  const legacyIds = readSavedShortIds(userId).filter((id) => !savedIds.has(id));
+  if (legacyIds.length) {
+    const { data: existingClips, error: clipsError } = await supabase.from('discover_clips')
+      .select('id')
+      .in('id', legacyIds);
+    if (clipsError) throw clipsError;
+    const validIds = (existingClips ?? []).map((clip) => clip.id);
+    if (validIds.length) {
+      const { error: migrateError } = await supabase.from('discover_clip_saves')
+        .upsert(validIds.map((clipId) => ({ clip_id: clipId, user_id: userId })), {
+          onConflict: 'clip_id,user_id',
+          ignoreDuplicates: true,
+        });
+      if (migrateError) throw migrateError;
+      validIds.forEach((id) => savedIds.add(id));
+    }
+    try { window.localStorage.removeItem(savedShortsStorageKey(userId)); } catch { /* Server saves are already safe. */ }
+  }
+  return [...savedIds];
 }
 
 export async function setDiscoverClipSaved(clipId: string, userId: string, saved: boolean): Promise<void> {
   if (!clipId || !userId) throw new Error('Sign in to save a Short.');
-  const current = readSavedShortIds(userId);
-  const next = saved
-    ? [...current.filter((id) => id !== clipId), clipId]
-    : current.filter((id) => id !== clipId);
-  writeSavedShortIds(userId, next);
+  if (saved) {
+    const { error } = await supabase.from('discover_clip_saves')
+      .upsert({ clip_id: clipId, user_id: userId }, { onConflict: 'clip_id,user_id', ignoreDuplicates: true });
+    if (error) throw error;
+    return;
+  }
+  const { error } = await supabase.from('discover_clip_saves')
+    .delete()
+    .eq('clip_id', clipId)
+    .eq('user_id', userId);
+  if (error) throw error;
 }
 
 export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverClip[]> {
