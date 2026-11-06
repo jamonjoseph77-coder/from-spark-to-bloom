@@ -6,6 +6,7 @@ import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchPublishedShorts, isPlayableShort, type DiscoverClip } from '@/lib/clips';
+import { navigateTo } from '@/lib/router';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 
 function getShortsErrorDescription(error: unknown): string {
@@ -80,8 +81,8 @@ export function DiscoverShorts() {
       {!data && !error && <ShortsLoading />}
       {!data && error && <ErrorState onRetry={reload} description={getShortsErrorDescription(error)} />}
       {data && shorts.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title="Your Shorts Feed Is Ready For More" description="Newly Approved Publisher And Creator Shorts Will Appear Here. Return To This Page To Check For New Videos." />}
-      {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
-        {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActive} />)}
+      {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden">
+        {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={(item) => navigateTo('/shorts?clip=' + encodeURIComponent(item.id))} />)}
       </div>}
       {active && <ShortViewer clip={active} onClose={closeViewer} />}
     </section>

@@ -226,10 +226,10 @@ export function HomePage() {
           <div className="max-w-2xl">
             <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.24em] text-slate-400"><span className="h-1.5 w-1.5 rounded-full bg-[#087cff] shadow-[0_0_12px_rgba(8,124,255,.8)]" /> Quick Stories</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">Cinema Shorts</h2>
-            <p className="mt-1.5 text-sm leading-6 text-slate-400">A closer look at the moments, voices and stories moving through Cinema.</p>
+            <p className="mt-1.5 text-sm leading-6 text-slate-400">Swipe through quick stories, creator moments and highlights from across Cinema.</p>
           </div>
           <a href="/shorts" className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-white transition hover:border-[#087cff]/60 hover:bg-[#087cff]/10">
-            Explore All Shorts <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+            See All Shorts <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
           </a>
         </div>
         {!publishedClips && (clipsError
@@ -252,7 +252,7 @@ export function HomePage() {
             </div>
           </div>
         )}
-        {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden">
+        {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden">
           {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={openShort} />)}
         </div>}
       </section>
