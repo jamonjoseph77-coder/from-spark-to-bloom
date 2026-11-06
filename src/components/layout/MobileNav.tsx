@@ -38,7 +38,7 @@ export function MobileNav({ route }: MobileNavProps) {
   });
 
   return (
-    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-0 bottom-0 z-40 border-t border-white/[.10] bg-[#050706]/[.97] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_32px_rgba(0,0,0,.42)] backdrop-blur-2xl lg:hidden">
+    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-2 bottom-2 z-40 rounded-[1.35rem] border border-white/[.14] bg-[#050706]/[.97] pb-[env(safe-area-inset-bottom)] shadow-[0_10px_34px_rgba(0,0,0,.42)] backdrop-blur-2xl lg:hidden">
       <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_68px_minmax(0,1fr)] items-center px-1">
         <ul className="flex h-full min-w-0 items-center justify-around">
           {renderItems(LEFT_ITEMS)}
