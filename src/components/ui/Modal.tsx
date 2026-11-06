@@ -27,13 +27,13 @@ export function Modal({ label, onClose, children, wide = false, immersive = fals
   }, [onClose, compact]);
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center ${compact ? 'bg-transparent' : 'bg-black/90 backdrop-blur-sm'} animate-fade-in ${immersive ? 'p-0 sm:p-3' : 'p-4'}`} onClick={onClose}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${compact ? 'pointer-events-none bg-transparent' : 'bg-black/90 backdrop-blur-sm'} animate-fade-in ${immersive ? 'p-0 sm:p-3' : 'p-4'}`} onClick={onClose}>
       <div
         role="dialog"
-        aria-modal="true"
+        aria-modal={!compact}
         aria-label={label}
         onClick={(event) => event.stopPropagation()}
-        className={`relative w-full animate-rise-in shadow-2xl ${compact ? 'max-w-xs rounded-2xl border border-white/15 bg-ink-900 p-3' : immersive ? `h-[100dvh] max-w-[520px] overflow-hidden rounded-none border-0 bg-black p-0 sm:h-[min(94dvh,920px)] sm:rounded-3xl sm:border sm:border-white/10 ${contained ? 'flex items-center justify-center' : ''}` : `${wide ? 'max-w-5xl' : 'max-w-lg'} rounded-2xl border border-white/10 bg-ink-900 p-4 sm:p-6`}`}
+        className={`pointer-events-auto relative w-full animate-rise-in shadow-2xl ${compact ? 'max-w-xs rounded-2xl border border-white/15 bg-ink-900 p-3' : immersive ? `h-[100dvh] max-w-[520px] overflow-hidden rounded-none border-0 bg-black p-0 sm:h-[min(94dvh,920px)] sm:rounded-3xl sm:border sm:border-white/10 ${contained ? 'flex items-center justify-center' : ''}` : `${wide ? 'max-w-5xl' : 'max-w-lg'} rounded-2xl border border-white/10 bg-ink-900 p-4 sm:p-6`}`}
       >
         {showCloseButton && <button
           type="button"
