@@ -2058,7 +2058,7 @@ body {
   background-size: 54px 54px;
   mask-image: linear-gradient(115deg, black, transparent 76%);
 }
-.cinema-home .cinema-hero > :not(img) { position: relative; }
+.cinema-home .cinema-hero > .relative { position: relative; z-index: 2; }
 .cinema-home .cinema-hero-fallback { isolation: isolate; background: radial-gradient(ellipse at 78% 16%, rgba(8,124,255,.2), transparent 44%), linear-gradient(120deg,#101a2a,#080c14 70%); }
 .cinema-category-page .cinema-category-hero { margin-top: .1rem; }
 @media (prefers-reduced-motion: reduce) {
