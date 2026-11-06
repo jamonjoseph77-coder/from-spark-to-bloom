@@ -14,8 +14,8 @@ export interface ClipEngagement { reactionCount: number; likedByCurrentUser: boo
 
 const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed,views_count';
 
-// Saved Shorts are a personal library feature. Keep them per-account in this
-// browser until a reviewed, deployed cross-device save service is available.
+// Legacy per-account browser saves are migrated into the owner-scoped save table
+// the first time a signed-in viewer opens My Cinema or Cinema Shorts.
 function savedShortsStorageKey(userId: string): string {
   return `cinema:saved-shorts:v1:${userId}`;
 }
@@ -27,15 +27,6 @@ function readSavedShortIds(userId: string): string[] {
     return Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : [];
   } catch {
     return [];
-  }
-}
-
-function writeSavedShortIds(userId: string, ids: string[]): void {
-  if (!userId || typeof window === 'undefined') throw new Error('Saved Shorts are only available in a browser.');
-  try {
-    window.localStorage.setItem(savedShortsStorageKey(userId), JSON.stringify([...new Set(ids)].slice(-500)));
-  } catch {
-    throw new Error('This device could not save the Short. Check available browser storage and try again.');
   }
 }
 
