@@ -111,7 +111,9 @@ export function SearchPage({ query }: { query: string }) {
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
               {destinations.map(({ href, label, detail, icon: Icon, image }) => (
-                <a key={href} href={href} className="cinema-search-destination group relative isolate flex min-h-40 flex-col overflow-hidden rounded-2xl border border-white/12 p-4 transition hover:-translate-y-1 hover:border-cinema-300/50">\n                  <img src={image} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-38 transition duration-700 group-hover:scale-105 group-hover:opacity-50" />\n                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#070b12]/95 via-[#070b12]/68 to-[#070b12]/36" />
+                <a key={href} href={href} className="cinema-search-destination group relative isolate flex min-h-40 flex-col overflow-hidden rounded-2xl border border-white/12 p-4 transition hover:-translate-y-1 hover:border-cinema-300/50">
+                  <img src={image} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-38 transition duration-700 group-hover:scale-105 group-hover:opacity-50" />
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#070b12]/95 via-[#070b12]/68 to-[#070b12]/36" />
                   <span className="mb-4 grid h-10 w-10 place-items-center rounded-xl border border-white/20 bg-black/40 text-cinema-100 shadow-lg backdrop-blur-sm"><Icon className="h-5 w-5" /></span>
                   <span className="block font-bold text-white">{label}</span>
                   <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
