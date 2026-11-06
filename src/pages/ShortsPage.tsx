@@ -30,7 +30,7 @@ function saveSignals(signals: ViewerSignals) {
 }
 
 function ShortFeedItem({ clip, active, liked, onLike, onCompleted }: {
-  clip: DiscoverClip; active: boolean; liked: boolean; onDetails: (clip: DiscoverClip) => void;
+  clip: DiscoverClip; active: boolean; liked: boolean;
   onLike: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void;
 }) {
   const embed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: true }) : null;
