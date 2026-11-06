@@ -1,10 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, MessageCircle, Play, RefreshCw, Sparkles } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ContentEngagement } from '@/components/discover/ContentEngagement';
+import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchPublishedShorts, isPlayableShort } from '@/lib/clips';
+import { fetchPublishedShorts, isPlayableShort, type DiscoverClip } from '@/lib/clips';
 import { navigateTo } from '@/lib/router';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 
@@ -33,6 +34,7 @@ function ShortsLoading() {
 }
 
 export function DiscoverShorts() {
+  const [active, setActive] = useState<DiscoverClip | null>(null);
   const { data, error, reload } = useAsyncData(fetchPublishedShorts, []);
   useEffect(() => {
     const refreshWhenVisible = () => { if (document.visibilityState === 'visible') reload(); };
@@ -48,6 +50,19 @@ export function DiscoverShorts() {
       .slice(0, 18),
     [data],
   );
+
+  useEffect(() => {
+    if (!data || !shorts.length) return;
+    const match = window.location.hash.match(/^#short-(.+)$/);
+    if (!match) return;
+    const linked = shorts.find((clip) => clip.id === match[1]);
+    if (linked) setActive(linked);
+  }, [data, shorts]);
+
+  function closeViewer() {
+    setActive(null);
+    if (window.location.hash.startsWith('#short-')) window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
 
   return (
     <section className="space-y-5" aria-label="Cinema Shorts">
@@ -69,6 +84,7 @@ export function DiscoverShorts() {
       {shorts.length > 0 && <div className="cinema-shorts-rail -mx-4 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden">
         {shorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={(item) => navigateTo('/shorts?clip=' + encodeURIComponent(item.id))} />)}
       </div>}
+      {active && <ShortViewer clip={active} onClose={closeViewer} />}
     </section>
   );
 }
