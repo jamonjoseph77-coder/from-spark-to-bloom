@@ -87,7 +87,8 @@ function SeasonalCalendar() {
       const searchable = `${title.title} ${title.genre} ${title.synopsis}`.toLocaleLowerCase();
       return selected.keywords.some((keyword) => searchable.includes(keyword));
     });
-    return (seasonal.length >= 4 ? seasonal : ranked).slice(0, 8);
+    const seasonalIds = new Set(seasonal.map((title) => title.id));
+    return [...seasonal, ...ranked.filter((title) => !seasonalIds.has(title.id))].slice(0, 8);
   }, [titles, progress, watchlistIds, favouriteIds, trackedPublishers, selected]);
   const hasPersonalSignals = progress.length > 0 || watchlistIds.size > 0 || favouriteIds.size > 0 || Boolean(trackedPublishers?.length);
   return (
