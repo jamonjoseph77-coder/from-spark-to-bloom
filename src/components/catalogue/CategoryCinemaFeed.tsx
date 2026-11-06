@@ -12,7 +12,7 @@ import { fetchPublishedTitles } from '@/lib/library';
 import { loadFriendsActivity, type FriendsActivity } from '@/lib/friendActivity';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { navigateTo } from '@/lib/router';
-import type { Title, TitleType } from '@/lib/types';
+import type { Title } from '@/lib/types';
 
 export type CinemaFeedCategory = 'movie' | 'series' | 'sport' | 'news' | 'live' | 'documentaries' | 'animation' | 'family' | 'reality';
 
@@ -85,14 +85,14 @@ export function CategoryCinemaFeed({ category, label }: { category: CinemaFeedCa
   const data = feed.data;
 
   const scoped = useMemo(() => {
-    if (!data) return { titles: [], titleIds: new Set<string>(), clips: [], posts: [], watching: [] };
+    if (!data) return { titles: [], clips: [], posts: [], watching: [] };
     const titles = data.titles.filter((title) => matchesCategory(title, category));
     const titleIds = new Set(titles.map((title) => title.id));
     const clips = data.clips.filter((clip) => clip.title_id && titleIds.has(clip.title_id)
       && (isDirectVideoUrl(clip.video_url) || Boolean(toEmbedUrl(clip.video_url))));
     const posts = data.posts.filter((post) => post.title_id && titleIds.has(post.title_id));
     const watching = data.friends.watching.filter((item) => titleIds.has(item.titleId));
-    return { titles, titleIds, clips, posts, watching };
+    return { titles, clips, posts, watching };
   }, [data, category]);
 
   if (feed.loading && !data) return <section className="space-y-3"><h2 className="text-xl font-extrabold text-white">Inside {label}</h2><LoadingState label={`Connecting ${label.toLowerCase()} to Cinema`} /></section>;
