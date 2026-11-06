@@ -210,8 +210,8 @@ export function ExploreTimeline() {
       </footer>
 
       {activeShort && <ShortViewer clip={activeShort} onClose={() => setActiveShort(null)} />}
-      {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.publisher_name || 'Cinema Video'} onClose={() => setActiveVideo(null)} />}
-      {activeTrailer && <VideoDialog url={`https://www.youtube.com/watch?v=${activeTrailer.videoKey}`} label={activeTrailer.videoName} heading={activeTrailer.title} onClose={() => setActiveTrailer(null)} />}
+      {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.publisher_name || 'Cinema Video'} contentKey={`clip:${activeVideo.id}`} imageUrl={activeVideo.poster_url} onClose={() => setActiveVideo(null)} />}
+      {activeTrailer && <VideoDialog url={`https://www.youtube.com/watch?v=${activeTrailer.videoKey}`} label={activeTrailer.videoName} heading={activeTrailer.title} contentKey={`trailer:${activeTrailer.mediaType}:${activeTrailer.id}`} imageUrl={activeTrailer.backdropPath || activeTrailer.posterPath || undefined} onClose={() => setActiveTrailer(null)} />}
     </section>
   );
 }
