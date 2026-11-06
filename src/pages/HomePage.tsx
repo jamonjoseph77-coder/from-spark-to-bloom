@@ -77,12 +77,12 @@ function PublisherDestinations({ titles }: { titles: Title[] }) {
 
 function HomeEngagement() {
   const moments = [
-    { title: 'Settle Into A Movie', detail: 'Find a film for the moment.', href: '/movies', icon: Clapperboard, tone: 'from-sky-400/20 to-blue-500/5', accent: 'text-sky-200' },
-    { title: 'Watch Something Quick', detail: 'Short stories and fresh moments.', href: '/shorts', icon: Play, tone: 'from-fuchsia-400/15 to-violet-500/5', accent: 'text-fuchsia-200' },
-    { title: 'Tune Into Live TV', detail: 'Explore channels in Cinema.', href: '/live-tv', icon: Radio, tone: 'from-emerald-400/15 to-teal-500/5', accent: 'text-emerald-200' },
-    { title: 'Catch The Sports', detail: 'Follow competitions and highlights.', href: '/sports', icon: Users, tone: 'from-amber-400/15 to-orange-500/5', accent: 'text-amber-200' },
-    { title: 'Discover A New Story', detail: 'Explore creators and features.', href: '/discover', icon: Compass, tone: 'from-indigo-400/15 to-blue-500/5', accent: 'text-indigo-200' },
-    { title: 'Watch Together', detail: 'Bring friends into movie night.', href: '/watch-parties', icon: MessageCircle, tone: 'from-rose-400/15 to-pink-500/5', accent: 'text-rose-200' },
+    { title: 'Settle Into A Movie', detail: 'Find a film for the moment.', href: '/movies', icon: Clapperboard, tone: 'from-sky-400/20 to-blue-500/5', accent: 'text-sky-200', image: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg' },
+    { title: 'Watch Something Quick', detail: 'Short stories and fresh moments.', href: '/shorts', icon: Play, tone: 'from-fuchsia-400/15 to-violet-500/5', accent: 'text-fuchsia-200', image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=80' },
+    { title: 'Tune Into Live TV', detail: 'Explore channels in Cinema.', href: '/live-tv', icon: Radio, tone: 'from-emerald-400/15 to-teal-500/5', accent: 'text-emerald-200', image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=900&q=80' },
+    { title: 'Catch The Sports', detail: 'Follow competitions and highlights.', href: '/sports', icon: Users, tone: 'from-amber-400/15 to-orange-500/5', accent: 'text-amber-200', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=85' },
+    { title: 'Discover A New Story', detail: 'Explore creators and features.', href: '/discover', icon: Compass, tone: 'from-indigo-400/15 to-blue-500/5', accent: 'text-indigo-200', image: 'https://image.tmdb.org/t/p/w500/1XDDXPXGiI8id7MrUxK36ke7gkX.jpg' },
+    { title: 'Watch Together', detail: 'Bring friends into movie night.', href: '/watch-parties', icon: MessageCircle, tone: 'from-rose-400/15 to-pink-500/5', accent: 'text-rose-200', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80' },
   ];
   return (
     <section className="space-y-4" aria-labelledby="home-moments-heading">
@@ -95,11 +95,14 @@ function HomeEngagement() {
         <a href="/discover" className="inline-flex items-center gap-2 text-sm font-bold text-cinema-200 transition hover:text-white">Explore Everything <ArrowRight className="h-4 w-4" /></a>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
-        {moments.map(({ title, detail, href, icon: Icon, tone, accent }) => (
-          <a key={title} href={href} className={`group relative flex min-h-36 flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${tone} p-4 transition duration-200 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_16px_36px_rgba(0,0,0,.22)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300`}>
-            <span className={`grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-black/20 ${accent}`}><Icon className="h-5 w-5" /></span>
+        {moments.map(({ title, detail, href, icon: Icon, tone, accent, image }) => (
+          <a key={title} href={href} className={`group relative isolate flex min-h-40 flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${tone} p-4 shadow-[0_10px_28px_rgba(0,0,0,.18)] transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_18px_42px_rgba(0,0,0,.34)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300`}>
+            <img src={image} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-35 transition duration-700 group-hover:scale-105 group-hover:opacity-50" />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#050811]/95 via-[#050811]/65 to-[#050811]/35" />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-black/35 via-transparent to-transparent" />
+            <span className={`grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-black/35 shadow-lg shadow-black/20 backdrop-blur-sm ${accent}`}><Icon className="h-5 w-5" /></span>
             <span className="mt-4 text-sm font-extrabold leading-snug text-white">{title}</span>
-            <span className="mt-1 text-[11px] leading-4 text-slate-400">{detail}</span>
+            <span className="mt-1 text-[11px] leading-4 text-slate-200/90">{detail}</span>
             <ArrowRight className="absolute bottom-4 right-4 h-4 w-4 text-white/35 transition group-hover:translate-x-1 group-hover:text-white" />
           </a>
         ))}
