@@ -18,17 +18,17 @@ async function compressProfileImage(file: File): Promise<string> {
       element.src = source;
     });
     const canvas = document.createElement('canvas');
-    canvas.width = 160;
-    canvas.height = 160;
+    canvas.width = 256;
+    canvas.height = 256;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Image editing is not available in this browser.');
-    const scale = Math.max(160 / image.naturalWidth, 160 / image.naturalHeight);
+    const scale = Math.max(256 / image.naturalWidth, 256 / image.naturalHeight);
     const width = image.naturalWidth * scale;
     const height = image.naturalHeight * scale;
-    context.drawImage(image, (160 - width) / 2, (160 - height) / 2, width, height);
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.76));
+    context.drawImage(image, (256 - width) / 2, (256 - height) / 2, width, height);
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.82));
     if (!blob) throw new Error('The image could not be compressed.');
-    if (blob.size > 32 * 1024) throw new Error('Choose a simpler image. Profile pictures must compress below 32 KB.');
+    if (blob.size > 120 * 1024) throw new Error('Choose a simpler image. Profile pictures must compress below 120 KB.');
     return await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('The image could not be saved.'));
@@ -114,7 +114,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
         <div className="min-w-0 flex-1">
           <label htmlFor="profile-picture" className={LABEL}>Profile Picture</label>
           <input id="profile-picture" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void handleAvatarChange(event)} className={`${INPUT} mt-2`} disabled={avatarBusy} />
-          <p className="mt-1 text-xs text-slate-500">JPG, PNG Or WebP · Up To 5 MB. Cinema Compresses It Before Saving.</p>
+          <p className="mt-1 text-xs text-slate-500">JPG, PNG Or WebP · Up To 5 MB. Cinema Optimises Your Picture For Profiles.</p>
           {avatarBusy && <p className="mt-1 text-xs text-sky-200">Preparing Your Picture...</p>}
         </div>
         {avatarUrl && <button type="button" onClick={() => setAvatarUrl('')} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-rose-300/30 hover:text-rose-200"><Trash2 className="h-3.5 w-3.5" /> Remove</button>}
