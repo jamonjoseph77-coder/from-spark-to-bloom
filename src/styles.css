@@ -2494,3 +2494,19 @@ body {
   .cinema-search-page form[role="search"] button[type="submit"] { min-width: 3rem; padding-inline: .85rem; }
 }
 @media (prefers-reduced-motion: reduce) { .cinema-search-destination { transition: none !important; } }
+
+
+/* Search controls use a neutral silver focus treatment, not the global blue accent. */
+.cinema-topbar .cinema-global-search:focus-within {
+  border-color: rgba(205, 216, 228, .24) !important;
+  box-shadow: none !important;
+}
+.cinema-topbar .cinema-global-search button:focus,
+.cinema-topbar .cinema-global-search button:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(205, 216, 228, .18) !important;
+}
+.cinema-topbar .cinema-global-search button:active {
+  background: rgba(255, 255, 255, .09) !important;
+  border-color: rgba(205, 216, 228, .24) !important;
+}
