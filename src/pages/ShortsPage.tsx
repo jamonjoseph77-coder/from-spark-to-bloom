@@ -8,9 +8,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { navigateTo } from '@/lib/router';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
-import { fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
+import { downloadPermittedClip, fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
-import { downloadPermittedClip } from '@/lib/clips';
 
 type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number> };
 const SIGNALS_KEY = 'cinema:shorts-viewer-signals:v1';
