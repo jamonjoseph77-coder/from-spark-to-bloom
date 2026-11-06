@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, Compass, MessageCircle, Play, Radio, Users } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { ShortCard } from '@/components/discover/ShortCard';
-import { ShortViewer } from '@/components/discover/ShortViewer';
 import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
@@ -21,6 +20,7 @@ import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { loadFriendsActivity, type FriendsActivity } from '@/lib/friendActivity';
 import { buildRecommendations } from '@/lib/recommendations';
 import { groupByPublisher } from '@/lib/publishers';
+import { navigateTo } from '@/lib/router';
 import type { Title } from '@/lib/types';
 
 interface HomeSocial { friends: FriendsSnapshot['friends']; posts: LetterboxPost[]; follows: string[]; activity: FriendsActivity }
@@ -76,9 +76,7 @@ function PublisherDestinations({ titles }: { titles: Title[] }) {
 
 export function HomePage() {
   const { user } = useAuth();
-  const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
-  const openShort = useCallback((clip: DiscoverClip) => setActiveShort(clip), []);
-  const closeShort = useCallback(() => setActiveShort(null), []);
+  const openShort = useCallback((clip: DiscoverClip) => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`), []);
   const { progress, watchlistIds, favouriteIds } = useLibrary();
   const { data: titles, error: titlesError, reload: reloadTitles } = useAsyncData(fetchPublishedTitles, []);
   const { data: publishedClips, error: clipsError, reload: reloadClips } = useAsyncData(fetchPublishedShorts, []);
@@ -170,7 +168,6 @@ export function HomePage() {
           {shorts.slice(0, 12).map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={openShort} />)}
         </div>}
       </section>
-      {activeShort && <ShortViewer clip={activeShort} onClose={closeShort} />}
       <HomeCommunity social={social} loading={Boolean(user) && socialLoading} />
 
       <section className="space-y-4"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Beyond The Screen</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Inside The Story</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Go closer with cast conversations, behind-the-scenes moments and the craft behind the stories.</p></div><a href="/discover" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Features <ArrowRight className="inline h-4 w-4" /></a></div><CinemaSpotlights /></section>
