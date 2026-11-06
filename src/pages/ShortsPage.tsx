@@ -83,7 +83,6 @@ function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLik
         </div>
         <div className="mb-1 flex shrink-0 flex-col items-center gap-2">
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-12 w-12 place-items-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-sky-300/15">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>}
-          <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? 'Remove this Short from Saved Shorts' : 'Save this Short'} aria-pressed={saved} className={`grid h-12 w-12 place-items-center rounded-full border backdrop-blur-xl transition disabled:opacity-50 ${saved ? 'border-sky-200/60 bg-sky-400/25 text-sky-100' : 'border-white/20 bg-black/45 text-white hover:border-sky-200/60 hover:bg-sky-300/15'}`}><span className="sr-only">{saved ? 'Saved' : 'Save'}</span>{saved ? <BookmarkCheck className="h-5 w-5" /> : <BookmarkPlus className="h-5 w-5" />}</button>
           <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? 'Remove this Short from Saved Shorts' : 'Save this Short'} aria-pressed={saved} className={`grid h-12 w-12 place-items-center rounded-full border backdrop-blur-xl transition disabled:opacity-50 ${saved ? 'border-sky-200/60 bg-sky-400/25 text-sky-100' : 'border-white/20 bg-black/45 text-white hover:border-sky-200/60 hover:bg-sky-300/15'}`}>
             {saved ? <BookmarkCheck className="h-5 w-5" /> : <BookmarkPlus className="h-5 w-5" />}
             <span className="sr-only">{saved ? 'Saved' : 'Save Short'}</span>
@@ -105,20 +104,11 @@ export function ShortsPage() {
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [savedClipIds, setSavedClipIds] = useState<string[]>([]);
   const [savingClipId, setSavingClipId] = useState<string | null>(null);
-  const [savedClipIds, setSavedClipIds] = useState<string[]>([]);
-  const [savingClipId, setSavingClipId] = useState<string | null>(null);
   const requestedClipId = useMemo(() => new URLSearchParams(window.location.search).get('clip'), []);
   const { data: clips, error, loading, reload } = useAsyncData(fetchPublishedShorts, []);
   const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
 
   useEffect(() => { setSignals(readSignals()); }, []);
-  useEffect(() => {
-    let active = true;
-    if (!user) { setSavedClipIds([]); return; }
-    fetchSavedDiscoverClipIds(user.id).then((ids) => { if (active) setSavedClipIds(ids); })
-      .catch((cause) => console.warn('Saved Cinema Shorts Could Not Be Loaded', cause));
-    return () => { active = false; };
-  }, [user?.id]);
   useEffect(() => {
     let active = true;
     if (!user) { setSavedClipIds([]); return; }
