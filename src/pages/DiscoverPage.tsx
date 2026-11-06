@@ -36,9 +36,11 @@ function DailyDiscovery() {
       </div>
       <div className="grid grid-cols-4 gap-2 sm:grid-cols-7" role="group" aria-label="Choose a daily Cinema theme">
         {DAILY_DISCOVERY.map((item, index) => (
-          <button key={item.name} type="button" onClick={() => setSelectedDay(index)} aria-pressed={selectedDay === index} className={`min-w-0 rounded-xl border px-2 py-3 text-center transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cinema-300 ${selectedDay === index ? 'border-cinema-300/50 bg-cinema-300/15 text-white shadow-[0_8px_24px_rgba(8,124,255,.10)]' : 'border-white/10 bg-white/[.025] text-slate-400 hover:border-white/20 hover:bg-white/[.06]'}`}>
-            <span className="block text-[10px] font-bold uppercase tracking-wide">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][index]}</span>
-            <span className="mt-1 block truncate text-[10px] font-semibold">{item.name.split(' ')[0]}</span>
+          <button key={item.name} type="button" onClick={() => setSelectedDay(index)} aria-pressed={selectedDay === index} className={`group relative isolate min-w-0 overflow-hidden rounded-xl border px-2 py-3 text-center transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cinema-300 ${selectedDay === index ? 'border-cinema-300/60 text-white shadow-[0_8px_24px_rgba(8,124,255,.16)]' : 'border-white/10 text-slate-200 hover:border-white/25'}`}>
+            <img src={['https://images.unsplash.com/photo-1511895426328-dc8714191300?w=500&q=75','https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=500&q=75','https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=75','https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=75','https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=500&q=75','https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500&q=75','https://images.unsplash.com/photo-1500534623283-312aade485b7?w=500&q=75'][index]} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-40 transition duration-500 group-hover:scale-105 group-hover:opacity-55" />
+            <span aria-hidden="true" className={`pointer-events-none absolute inset-0 -z-10 ${selectedDay === index ? 'bg-gradient-to-t from-[#07101d]/80 via-[#07101d]/55 to-[#07101d]/35' : 'bg-gradient-to-t from-[#07101d]/90 via-[#07101d]/65 to-[#07101d]/45'}`} />
+            <span className="relative block text-[10px] font-bold uppercase tracking-wide">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][index]}</span>
+            <span className="relative mt-1 block truncate text-[10px] font-semibold">{item.name.split(' ')[0]}</span>
           </button>
         ))}
       </div>
