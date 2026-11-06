@@ -14,6 +14,31 @@ export interface ClipEngagement { reactionCount: number; likedByCurrentUser: boo
 
 const CLIP_FEED_FIELDS = 'id,kind,headline,description,video_url,poster_url,publisher_name,title_id,duration_seconds,sort_order,created_at,is_published,download_allowed';
 
+// Saved Shorts are a personal library feature. Keep them per-account in this
+// browser until a reviewed, deployed cross-device save service is available.
+function savedShortsStorageKey(userId: string): string {
+  return `cinema:saved-shorts:v1:${userId}`;
+}
+
+function readSavedShortIds(userId: string): string[] {
+  if (!userId || typeof window === 'undefined') return [];
+  try {
+    const value: unknown = JSON.parse(window.localStorage.getItem(savedShortsStorageKey(userId)) || '[]');
+    return Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeSavedShortIds(userId: string, ids: string[]): void {
+  if (!userId || typeof window === 'undefined') throw new Error('Saved Shorts are only available in a browser.');
+  try {
+    window.localStorage.setItem(savedShortsStorageKey(userId), JSON.stringify([...new Set(ids)].slice(-500)));
+  } catch {
+    throw new Error('This device could not save the Short. Check available browser storage and try again.');
+  }
+}
+
 export const CLIP_KIND_LABEL: Record<ClipKind, string> = {
   trailer: 'Trailer', short: 'Short', clip: 'Clip', featured: 'Featured',
   behind_the_scenes: 'Behind the scenes', interview: 'Interview', making_of: 'Making of',
@@ -167,37 +192,27 @@ export async function recordDiscoverClipView(clipId: string): Promise<number> {
 }
 
 export async function fetchSavedDiscoverClipIds(userId: string): Promise<string[]> {
-  if (!userId) return [];
-  const { data, error } = await supabase.from('discover_clip_saves').select('clip_id').eq('user_id', userId);
-  if (error) throw error;
-  return (data ?? []).map((row) => row.clip_id);
+  return readSavedShortIds(userId);
 }
 
 export async function setDiscoverClipSaved(clipId: string, userId: string, saved: boolean): Promise<void> {
-  if (saved) {
-    const { error } = await supabase.from('discover_clip_saves').upsert(
-      { clip_id: clipId, user_id: userId }, { onConflict: 'clip_id,user_id' },
-    );
-    if (error) throw error;
-    return;
-  }
-  const { error } = await supabase.from('discover_clip_saves').delete().eq('clip_id', clipId).eq('user_id', userId);
-  if (error) throw error;
+  if (!clipId || !userId) throw new Error('Sign in to save a Short.');
+  const current = readSavedShortIds(userId);
+  const next = saved
+    ? [...current.filter((id) => id !== clipId), clipId]
+    : current.filter((id) => id !== clipId);
+  writeSavedShortIds(userId, next);
 }
 
 export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverClip[]> {
-  if (!userId) return [];
-  const { data, error } = await supabase.from('discover_clip_saves').select('clip_id')
-    .eq('user_id', userId).order('created_at', { ascending: false });
-  if (error) throw error;
-  const savedIds = (data ?? []).map((row) => row.clip_id);
+  const savedIds = readSavedShortIds(userId);
   if (!savedIds.length) return [];
   const clips = await fetchPublishedClips();
   const byId = new Map(clips.map((clip) => [clip.id, clip]));
   return savedIds.flatMap((id) => {
     const clip = byId.get(id);
     return clip ? [clip] : [];
-  });
+  }).reverse();
 }
 
 export async function fetchDownloadableClips(): Promise<DiscoverClip[]> {
