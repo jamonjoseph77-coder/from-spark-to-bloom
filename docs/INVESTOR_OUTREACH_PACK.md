@@ -18,7 +18,7 @@ Cinema brings movies, series, television, live programming, discovery and title-
 
 We are developing a title-centred Digital Box Office model, with potential revenue from rights-cleared title sponsorships, premiere partnerships, licensed viewing windows and B2B distribution. These are commercial opportunities we are validating; we are not presenting unsigned partnerships or untested revenue as established traction.
 
-The working product is available to demonstrate. I would value a short conversation about whether Cinema fits your investment focus and what evidence you would need to consider a pre-seed investment.
+We are preparing a US$300,000 pre-seed raise to support product development, rights-cleared content partnerships and initial market entry in Ghana and Nigeria. This is a fundraising target, not capital already secured. The working product is available to demonstrate. I would value a short conversation about whether Cinema fits your investment focus and what evidence you would need to consider a pre-seed investment.
 
 Would you be open to a brief introductory call?
 
@@ -30,7 +30,7 @@ Founder, Project Cinema
 
 ## 60-second verbal introduction
 
-“Project Cinema is a next-generation television service and digital entertainment home. We are bringing movies, series, live television, sports and publisher content together with discovery and title-centred conversations. We are not trying to build another subscription streaming service or another social-media feed. Our approach is to make television more accessible and create commercial value around each content property through a Digital Box Office, including approved sponsorships, premiere partnerships and licensed distribution. We have a working product and are preparing a Ghana-first validation plan. I’m looking for a pre-seed partner who can bring capital, industry relationships and practical experience as we validate rights, audience demand and the first commercial pilot.”
+“Project Cinema is a next-generation television service and digital entertainment home. We are bringing movies, series, live television, sports and publisher content together with discovery and title-centred conversations. We are not trying to build another subscription streaming service or another social-media feed. Our approach is to make television more accessible and create commercial value around each content property through a Digital Box Office, including approved sponsorships, premiere partnerships and licensed distribution. We have a working product and are preparing a Ghana- and Nigeria-focused validation plan. We are targeting a US$300,000 pre-seed round for product development, rights-cleared content partnerships and market entry. I’m looking for a pre-seed partner who can bring capital, industry relationships and practical experience as we validate rights, audience demand and the first commercial pilot.”
 
 ## What to send before a meeting
 
@@ -39,7 +39,7 @@ Founder, Project Cinema
 - A 12–18 month budget showing assumptions, milestones and runway.
 - A clear list of what works today versus what is still being tested.
 - Any real user interviews, pilot evidence or rights-holder conversations, labelled accurately.
-- A specific funding target and use of funds only after the budget has been reviewed.
+- The current US$300,000 pre-seed target and a reviewed use-of-funds budget for product development, rights-cleared content partnerships and Ghana/Nigeria market entry. The target is not secured capital.
 
 Do not send passwords, private customer data, personal identity documents or confidential production credentials in an initial approach.
 
