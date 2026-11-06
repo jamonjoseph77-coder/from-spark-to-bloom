@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ArrowUpRight, MessageCircle, Play, Sparkles, Users } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { VideoDialog } from '@/components/player/VideoDialog';
@@ -121,7 +122,7 @@ export function CategoryCinemaFeed({ category, label }: { category: CinemaFeedCa
         <div className="flex items-center gap-2"><MessageCircle className="h-4 w-4 text-sky-200" /><h3 className="text-xl font-extrabold text-white">Conversations Around {label}</h3></div>
         {scoped.posts.length ? <div className="grid gap-3 lg:grid-cols-2">
           {scoped.posts.slice(0, 12).map((post) => <article key={post.id} className="rounded-2xl border border-white/10 bg-white/[.025] p-4">
-            <div className="flex items-center justify-between gap-3"><span className="truncate text-xs font-bold text-white">{post.author?.display_name || post.author?.username || 'Cinema Member'}</span><span className="text-[10px] text-slate-500">{new Date(post.created_at).toLocaleDateString()}</span></div>
+            <div className="flex items-center justify-between gap-3"><div className="flex min-w-0 items-center gap-2"><ProfileAvatar name={post.author?.display_name || post.author?.username || 'Cinema Member'} imageUrl={post.author?.avatar_url} size="sm" /><span className="truncate text-xs font-bold text-white">{post.author?.display_name || post.author?.username || 'Cinema Member'}</span></div><span className="text-[10px] text-slate-500">{new Date(post.created_at).toLocaleDateString()}</span></div>
             <p className="mt-3 line-clamp-4 whitespace-pre-wrap text-sm leading-6 text-slate-300">{post.body}</p>
             {post.title && <a href={`/title/${post.title.id}`} className="mt-3 flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3 transition hover:border-sky-200/30"><Artwork src={post.title.poster_url} alt="" fallbackTitle={post.title.title} className="h-14 w-10 rounded-lg object-cover" /><span className="min-w-0 flex-1"><span className="block text-[10px] font-bold uppercase text-sky-200">Discussing</span><span className="block truncate text-xs font-bold text-white">{post.title.title}</span></span><ArrowUpRight className="h-4 w-4 text-slate-500" /></a>}
           </article>)}
