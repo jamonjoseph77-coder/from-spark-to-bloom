@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, Compass, MessageCircle, Play, Radio, Users } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
+import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
 import { TitleRow } from '@/components/catalogue/TitleRow';
@@ -128,7 +129,9 @@ export function HomePage() {
         ))}
       </nav>
       <TmdbHero />
+      <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
+        <div><p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Picked Around Your Taste</p><h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Next Watch</h2><p className="mt-1 text-sm text-slate-400">A personal mix shaped by what you watch, save and follow — with room for new discoveries.</p></div>
         {titles && recommendedMovies.length > 0 && <TitleRow heading="Recommended Movies" description="Films Picked From Your Cinema Activity And The Stories You Enjoy." titles={recommendedMovies} landscape action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />}
         {titles && recommendedSeries.length > 0 && <TitleRow heading="Recommended Series" description="Series That May Be Worth Settling Into Next." titles={recommendedSeries} landscape action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />}
         {titles && recommendedMovies.length === 0 && recommendedSeries.length === 0 && <div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Recommended For You</h2><p className="mt-1 text-sm text-slate-400">As you explore Cinema, recommendations will become more relevant to the movies and series you enjoy.</p></div>}
