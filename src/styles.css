@@ -2783,3 +2783,145 @@ body {
     min-height: 2.5rem !important;
   }
 }
+
+
+/* Cinema Shorts interaction layout: large, evenly distributed right-side actions. */
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > .cinema-short-info {
+  left: max(1rem, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  bottom: max(1.1rem, env(safe-area-inset-bottom)) !important;
+  width: min(70%, 34rem) !important;
+  max-width: min(70%, 34rem) !important;
+  z-index: 25 !important;
+  padding: 0 .4rem 0 0 !important;
+}
+.cinema-shorts-page .cinema-short-actions {
+  top: 48% !important;
+  right: max(.65rem, env(safe-area-inset-right)) !important;
+  bottom: auto !important;
+  width: 4.35rem !important;
+  height: min(64dvh, 36rem) !important;
+  min-height: 24rem !important;
+  max-height: calc(100dvh - 8rem) !important;
+  transform: translateY(-50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  gap: .45rem !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.cinema-shorts-page .cinema-short-actions .cinema-short-action {
+  width: 4rem !important;
+  min-width: 4rem !important;
+  min-height: 4rem !important;
+  height: 4rem !important;
+  flex: 0 0 4rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .18rem !important;
+  padding: .25rem !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 1.15rem !important;
+  background: rgba(5,9,16,.24) !important;
+  color: #fff !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.9) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+  backdrop-filter: blur(12px) saturate(135%) !important;
+  box-shadow: 0 5px 18px rgba(0,0,0,.18) !important;
+  touch-action: manipulation;
+}
+.cinema-shorts-page .cinema-short-actions .cinema-short-action svg {
+  width: 2rem !important;
+  height: 2rem !important;
+  flex: 0 0 auto !important;
+  filter: drop-shadow(0 2px 7px rgba(0,0,0,.8));
+}
+.cinema-shorts-page .cinema-short-actions .cinema-short-action span {
+  font-size: .68rem !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+.cinema-shorts-page .cinema-short-actions .cinema-short-action:active {
+  transform: scale(.94);
+  background: rgba(255,255,255,.18) !important;
+}
+.cinema-shorts-page .cinema-short-info > div:last-child {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: .7rem !important;
+  margin-top: .9rem !important;
+}
+.cinema-shorts-page .cinema-short-watch-now {
+  min-height: 3.1rem !important;
+  padding: .8rem 1.35rem !important;
+  border-color: rgba(255,255,255,.68) !important;
+  background: rgba(9,15,25,.55) !important;
+  box-shadow: 0 8px 26px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.18) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+  backdrop-filter: blur(20px) saturate(145%) !important;
+}
+.cinema-shorts-page .cinema-short-track {
+  min-height: 2.85rem !important;
+  background: rgba(4,8,15,.4) !important;
+}
+.cinema-shorts-page .cinema-video-stage video {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+@media (max-width: 430px) {
+  .cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > .cinema-short-info {
+    width: calc(100% - 5.5rem) !important;
+    max-width: calc(100% - 5.5rem) !important;
+    bottom: max(.8rem, env(safe-area-inset-bottom)) !important;
+  }
+  .cinema-shorts-page .cinema-short-actions {
+    width: 3.7rem !important;
+    height: min(62dvh, 31rem) !important;
+    min-height: 21rem !important;
+    right: max(.35rem, env(safe-area-inset-right)) !important;
+  }
+  .cinema-shorts-page .cinema-short-actions .cinema-short-action {
+    width: 3.45rem !important;
+    min-width: 3.45rem !important;
+    min-height: 3.45rem !important;
+    height: 3.45rem !important;
+    flex-basis: 3.45rem !important;
+    border-radius: 1rem !important;
+  }
+  .cinema-shorts-page .cinema-short-actions .cinema-short-action svg {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+  }
+  .cinema-shorts-page .cinema-short-info h2 {
+    font-size: 1.05rem !important;
+  }
+  .cinema-shorts-page .cinema-short-watch-now {
+    min-height: 2.9rem !important;
+    padding: .7rem 1.05rem !important;
+    font-size: .82rem !important;
+  }
+}
+@media (max-height: 700px) {
+  .cinema-shorts-page .cinema-short-actions {
+    height: 60dvh !important;
+    min-height: 18rem !important;
+  }
+  .cinema-shorts-page .cinema-short-actions .cinema-short-action {
+    width: 3.4rem !important;
+    min-width: 3.4rem !important;
+    min-height: 3.4rem !important;
+    height: 3.4rem !important;
+    flex-basis: 3.4rem !important;
+  }
+}
