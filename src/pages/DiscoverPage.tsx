@@ -22,16 +22,57 @@ const DAILY_DISCOVERY = [
 ] as const;
 
 function DailyDiscovery() {
-  const day = new Date().getDay();
-  const theme = DAILY_DISCOVERY[day];
-  const dateLabel = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date());
+  const today = new Date().getDay();
+  const [selectedDay, setSelectedDay] = useState(today);
+  const theme = DAILY_DISCOVERY[selectedDay];
+  const dateLabel = selectedDay === today
+    ? new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
+    : `Explore ${theme.name}`;
   return (
     <section className="space-y-4" aria-labelledby="daily-discovery-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-cinema-300"><CalendarDays className="h-3.5 w-3.5" /> Daily On Cinema · {dateLabel}</p><h2 id="daily-discovery-heading" className="mt-1 text-2xl font-black text-white sm:text-3xl">{theme.name}</h2><p className="mt-1 text-sm text-slate-400">{theme.line}</p></div>
-        <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-[11px] font-semibold text-slate-300">A New Theme Every Day</span>
+        <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-2 text-[11px] font-semibold text-slate-300">A Fresh Theme Every Day</span>
       </div>
-      <TmdbRow heading={`Today's Picks · ${theme.name}`} description="A daily discovery shelf to give every visit to Cinema a fresh starting point." mediaType="movie" list="popular" genreId={theme.genreId} />
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-7" role="group" aria-label="Choose a daily Cinema theme">
+        {DAILY_DISCOVERY.map((item, index) => (
+          <button key={item.name} type="button" onClick={() => setSelectedDay(index)} aria-pressed={selectedDay === index} className={`min-w-0 rounded-xl border px-2 py-3 text-center transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cinema-300 ${selectedDay === index ? 'border-cinema-300/50 bg-cinema-300/15 text-white shadow-[0_8px_24px_rgba(8,124,255,.10)]' : 'border-white/10 bg-white/[.025] text-slate-400 hover:border-white/20 hover:bg-white/[.06]'}`}>
+            <span className="block text-[10px] font-bold uppercase tracking-wide">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][index]}</span>
+            <span className="mt-1 block truncate text-[10px] font-semibold">{item.name.split(' ')[0]}</span>
+          </button>
+        ))}
+      </div>
+      <TmdbRow key={`daily-${selectedDay}`} heading={selectedDay === today ? `Today's Picks · ${theme.name}` : `Explore Picks · ${theme.name}`} description="Choose any day to explore a different Cinema mood. Today's theme refreshes automatically with the calendar." mediaType="movie" list="popular" genreId={theme.genreId} />
+    </section>
+  );
+}
+
+const SEASONAL_COLLECTIONS: { id: string; label: string; description: string; movieGenreId: number; seriesGenreId: number; months: number[] }[] = [
+  { id: 'independence', label: 'Independence & New Voices', description: 'Stories about courage, change and new beginnings.', movieGenreId: 18, seriesGenreId: 18, months: [2, 8] },
+  { id: 'africa', label: 'Africa Month', description: 'Discover stories, places, creativity and perspectives from across the continent.', movieGenreId: 99, seriesGenreId: 18, months: [4] },
+  { id: 'together', label: 'Family & Togetherness', description: 'Warm stories for shared moments and all generations.', movieGenreId: 10751, seriesGenreId: 10751, months: [3, 5, 10] },
+  { id: 'adventure', label: 'Adventure Escapes', description: 'Travel beyond the everyday with bold journeys and new worlds.', movieGenreId: 12, seriesGenreId: 10759, months: [6, 7] },
+  { id: 'mystery', label: 'Mystery Nights', description: 'Follow the clues through suspense, mystery and the unexpected.', movieGenreId: 9648, seriesGenreId: 9648, months: [9] },
+  { id: 'festive', label: 'Festive Favourites', description: 'Find stories for celebrations, reflection and time together.', movieGenreId: 10751, seriesGenreId: 10751, months: [11] },
+];
+
+function SeasonalCalendar() {
+  const month = new Date().getMonth();
+  const initial = SEASONAL_COLLECTIONS.find((item) => item.months.includes(month)) ?? SEASONAL_COLLECTIONS[2];
+  const [selectedId, setSelectedId] = useState<string>(initial.id);
+  const selected = SEASONAL_COLLECTIONS.find((item) => item.id === selectedId) ?? initial;
+  return (
+    <section className="space-y-5 rounded-3xl border border-amber-100/10 bg-[radial-gradient(ellipse_at_top_right,rgba(245,190,90,.12),transparent_48%),linear-gradient(130deg,#17140f,#0b0d0d_72%)] p-5 sm:p-7" aria-labelledby="seasonal-calendar-heading">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-amber-100/80"><CalendarDays className="h-3.5 w-3.5" /> The Cinema Calendar</p><h2 id="seasonal-calendar-heading" className="mt-1 text-2xl font-black text-white sm:text-3xl">Stories For Every Season</h2><p className="mt-1 max-w-2xl text-sm text-slate-300">Explore collections inspired by the year, from African storytelling and independence to family moments and festive favourites.</p></div>
+        <span className="rounded-full border border-amber-100/15 bg-amber-100/[.06] px-3 py-2 text-[11px] font-semibold text-amber-50/80">Seasonal Collections</span>
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Choose a seasonal collection">
+        {SEASONAL_COLLECTIONS.map((item) => <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} aria-pressed={selectedId === item.id} className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-bold transition ${selectedId === item.id ? 'border-amber-100/40 bg-amber-100/15 text-white' : 'border-white/10 bg-white/[.035] text-slate-300 hover:border-amber-100/25 hover:bg-white/[.07]'}`}>{item.label}</button>)}
+      </div>
+      <div><h3 className="text-lg font-extrabold text-white">{selected.label}</h3><p className="mt-1 text-sm text-slate-300">{selected.description}</p></div>
+      <TmdbRow key={`season-movie-${selected.id}`} heading={`${selected.label} · Movies`} mediaType="movie" list="popular" genreId={selected.movieGenreId} />
+      <TmdbRow key={`season-series-${selected.id}`} heading={`${selected.label} · Series`} mediaType="tv" list="popular" genreId={selected.seriesGenreId} />
     </section>
   );
 }
@@ -42,7 +83,8 @@ function ExploreStudioTracker() {
   const titles = useAsyncData(fetchPublishedTitles, []);
   const follows = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([] as string[]), [user?.id]);
   const [busy, setBusy] = useState<string | null>(null);
-  const publishers = useMemo(() => groupByPublisher(titles.data ?? []).slice(0, 8), [titles.data]);
+  const publishers = useMemo(() => groupByPublisher(titles.data ?? []).sort((a, b) => Number(follows.data?.includes(b.name) ?? false) - Number(follows.data?.includes(a.name) ?? false) || b.titles.length - a.titles.length || a.name.localeCompare(b.name)).slice(0, 12), [titles.data, follows.data]);
+  const trackedCount = follows.data?.length ?? 0;
   async function toggle(name: string) {
     if (!user || busy) return;
     setBusy(name);
@@ -64,7 +106,7 @@ function ExploreStudioTracker() {
   return (
     <section className="space-y-4" aria-labelledby="explore-studios-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-cinema-300"><Building2 className="h-3.5 w-3.5" /> Follow The People Behind The Stories</p><h2 id="explore-studios-heading" className="mt-1 text-2xl font-black text-white sm:text-3xl">Studios To Track</h2><p className="mt-1 text-sm text-slate-400">Choose studios, broadcasters and publishers you want updates from.</p></div>
+        <div><p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-cinema-300"><Building2 className="h-3.5 w-3.5" /> Follow The People Behind The Stories</p><h2 id="explore-studios-heading" className="mt-1 text-2xl font-black text-white sm:text-3xl">Studios To Track</h2><p className="mt-1 text-sm text-slate-400">Follow the studios, broadcasters and publishers whose new stories you want to find quickly.</p><p className="mt-2 text-xs font-semibold text-cinema-200">{trackedCount} {trackedCount === 1 ? 'publisher' : 'publishers'} tracked in your Cinema circle</p></div>
         <a href="/publishers" className="inline-flex items-center gap-2 text-sm font-bold text-cinema-200 hover:text-white">All Studios & Publishers <ArrowRight className="h-4 w-4" /></a>
       </div>
       {!titles.data && (titles.error ? <ErrorState onRetry={titles.reload} /> : <LoadingState label="Finding publishers in Cinema" />)}
@@ -75,10 +117,10 @@ function ExploreStudioTracker() {
           return <article key={publisher.name} className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:border-cinema-300/25">
             <a href={publisherHref(publisher.name)} className="group flex items-center gap-3">
               <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-400/10 text-lg font-black text-cinema-100">{publisher.name.charAt(0).toUpperCase()}</span>
-              <span className="min-w-0 flex-1"><span className="block truncate text-sm font-extrabold text-white group-hover:text-cinema-100">{publisher.name}</span><span className="mt-1 block text-[11px] text-slate-400">{publisher.titles.length} {publisher.titles.length === 1 ? 'title' : 'titles'} in Cinema</span></span>
+              <span className="min-w-0 flex-1"><span className="block truncate text-sm font-extrabold text-white group-hover:text-cinema-100">{publisher.name}</span><span className="mt-1 block text-[11px] text-slate-400">{publisher.titles.length} {publisher.titles.length === 1 ? 'title' : 'titles'} · {publisher.upcoming.length} upcoming · {publisher.trailers.length} trailers</span></span>
             </a>
             {user ? <button type="button" onClick={() => void toggle(publisher.name)} disabled={Boolean(busy) || follows.loading} aria-pressed={tracked} className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold transition disabled:opacity-50 ${tracked ? 'border-cinema-300/25 bg-cinema-300/10 text-cinema-100' : 'border-white/10 bg-white/[.04] text-slate-200 hover:border-cinema-300/30 hover:bg-cinema-300/10'}`}>
-              {tracked ? <BellRing className="h-3.5 w-3.5" /> : <BellPlus className="h-3.5 w-3.5" />}{tracked ? 'Tracking' : 'Track Studio'}
+              {tracked ? <BellRing className="h-3.5 w-3.5" /> : <BellPlus className="h-3.5 w-3.5" />}{tracked ? 'Following' : 'Track Studio'}
             </button> : <a href="/sign-in" className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-white/10 bg-white/[.04] px-3 py-2.5 text-xs font-bold text-slate-200">Sign In To Track</a>}
           </article>;
         })}
@@ -120,6 +162,7 @@ export function DiscoverPage() {
       </section>
 
       <DailyDiscovery />
+      <SeasonalCalendar />
       <section className="grid gap-4 lg:grid-cols-2" aria-label="Seasonal collections">
         <CinemaSeasonalSpotlight mediaType="movie" />
         <CinemaSeasonalSpotlight mediaType="tv" />
