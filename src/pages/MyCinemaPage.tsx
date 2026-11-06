@@ -14,10 +14,13 @@ import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchDownloadableClips } from '@/lib/clips';
 import { SavedShortsShelf } from '@/components/discover/SavedShortsShelf';
 import { useToast } from '@/hooks/useToast';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
+import { fetchProfile } from '@/lib/profiles';
 
 export function MyCinemaPage() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { notify } = useToast();
+  const { data: profile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const { data: downloadableClips, error: downloadsError, reload: reloadDownloads } = useAsyncData(fetchDownloadableClips, []);
   const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
@@ -56,7 +59,7 @@ export function MyCinemaPage() {
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(135deg,#121715,#090c0b_68%,#080a09)] p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-[1.65rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20"><CinemaLogo compact /></span>
+          <div className="flex shrink-0 items-center gap-3"><span className="grid h-16 w-16 place-items-center rounded-[1.35rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20"><CinemaLogo compact /></span><a href="/profile" aria-label="View and edit your profile picture" title="View And Edit Your Profile"><ProfileAvatar name={profile?.display_name || profile?.username || user.email || "Cinema"} imageUrl={profile?.avatar_url} size="lg" /></a></div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Your personal entertainment space</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>

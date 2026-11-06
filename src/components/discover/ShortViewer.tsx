@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
-  ArrowUpRight, BookmarkPlus, Check, Eye, EyeOff, Play,
+  ArrowUpRight, BookmarkPlus, Check, Download, Eye, EyeOff, Play,
   Heart, MessageCircle, Send, Volume2, VolumeX, X,
 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
@@ -14,9 +14,10 @@ import {
   recordDiscoverClipView,
   fetchSavedDiscoverClipIds,
   setDiscoverClipSaved,
+  downloadPermittedClip,
 } from '@/lib/clips';
 import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
-import { getYouTubeVideoId, isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
+import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
 import { navigateTo } from '@/lib/router';
 
 export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: () => void }) {
@@ -48,6 +49,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
   const [savingToLibrary, setSavingToLibrary] = useState(false);
   const [savedShort, setSavedShort] = useState(false);
   const [savingShort, setSavingShort] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const inLibrary = Boolean(clip.title && watchlistIds.has(clip.title.id));
 
   useEffect(() => {
@@ -131,6 +133,20 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
       console.error('Cinema Short Could Not Be Saved', cause);
       notify('This Short Could Not Be Saved. Please Try Again.', 'error');
     } finally { setSavingShort(false); }
+  }
+
+  async function downloadShortVideo() {
+    if (!clip.download_allowed || !direct || isHlsUrl(clip.video_url) || downloading) return;
+    setDownloading(true);
+    try {
+      await downloadPermittedClip(clip);
+      notify('Your approved download has started.');
+    } catch (cause) {
+      console.error('Cinema Short Download Could Not Start', cause);
+      notify('This approved video could not be downloaded from its host. Please try again later.', 'error');
+    } finally {
+      setDownloading(false);
+    }
   }
 
   async function saveToLibrary() {
@@ -234,6 +250,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                   ) : (
                     <p className="mt-3 text-[11px] font-semibold text-slate-300">Full Title Details Are Not Available For This Short Yet.</p>
                   )}
+                  {clip.download_allowed && direct && !isHlsUrl(clip.video_url) && <button type="button" onClick={() => void downloadShortVideo()} disabled={downloading} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/55 px-3.5 py-2 text-xs font-bold text-white transition hover:border-cinema-200/50 hover:bg-white/10 disabled:opacity-50"><Download className="h-3.5 w-3.5" /> {downloading ? 'Preparing Download…' : 'Download Approved Video'}</button>}
                   {youtubeId && <a href={clip.video_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-[11px] font-bold text-slate-300 underline decoration-white/30 underline-offset-4 transition hover:text-white">View Original Publisher Video <ArrowUpRight className="h-3.5 w-3.5" /></a>}
                 </div>
               </div>

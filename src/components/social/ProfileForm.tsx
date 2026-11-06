@@ -17,23 +17,35 @@ async function compressProfileImage(file: File): Promise<string> {
       element.onerror = () => reject(new Error('The selected image could not be opened.'));
       element.src = source;
     });
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('Image editing is not available in this browser.');
-    const scale = Math.max(256 / image.naturalWidth, 256 / image.naturalHeight);
-    const width = image.naturalWidth * scale;
-    const height = image.naturalHeight * scale;
-    context.drawImage(image, (256 - width) / 2, (256 - height) / 2, width, height);
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.82));
-    if (!blob) throw new Error('The image could not be compressed.');
-    if (blob.size > 120 * 1024) throw new Error('Choose a simpler image. Profile pictures must compress below 120 KB.');
+    const sizes = [256, 224, 192, 160];
+    const qualities = [0.82, 0.74, 0.66, 0.58];
+    let selected: Blob | null = null;
+    for (const size of sizes) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('Image editing is not available in this browser.');
+      const scale = Math.max(size / image.naturalWidth, size / image.naturalHeight);
+      const width = image.naturalWidth * scale;
+      const height = image.naturalHeight * scale;
+      context.drawImage(image, (size - width) / 2, (size - height) / 2, width, height);
+      for (const quality of qualities) {
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', quality));
+        if (blob && (!selected || blob.size < selected.size)) selected = blob;
+        if (blob && blob.size <= 120 * 1024) {
+          selected = blob;
+          break;
+        }
+      }
+      if (selected && selected.size <= 120 * 1024) break;
+    }
+    if (!selected || selected.size > 120 * 1024) throw new Error('This image could not be reduced enough. Try another photo.');
     return await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('The image could not be saved.'));
       reader.onerror = () => reject(new Error('The image could not be saved.'));
-      reader.readAsDataURL(blob);
+      reader.readAsDataURL(selected as Blob);
     });
   } finally { URL.revokeObjectURL(source); }
 }

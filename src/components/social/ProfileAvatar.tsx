@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const SIZES = {
   sm: 'h-9 w-9 text-xs',
@@ -16,6 +16,7 @@ function safeAvatarSource(value?: string | null): string | null {
 export function ProfileAvatar({ name, size = 'md', imageUrl }: { name: string; size?: keyof typeof SIZES; imageUrl?: string | null }) {
   const source = safeAvatarSource(imageUrl);
   const [imageFailed, setImageFailed] = useState(false);
+  useEffect(() => setImageFailed(false), [source]);
   const label = name.trim() || 'Cinema member';
 
   return (
