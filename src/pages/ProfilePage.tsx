@@ -78,7 +78,7 @@ export function ProfilePage() {
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8`}>
-      <header className="space-y-2"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Your Cinema</p><h1 className="flex items-center gap-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl"><UserRound className="h-7 w-7 text-cinema-300" /> Your profile</h1><p className="max-w-2xl text-sm text-slate-400">Your identity in Cinema. Set up your profile, connect with friends and manage how people find you.</p></header>
+      <header className="space-y-2"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Your Cinema</p><h1 className="flex items-center gap-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl"><UserRound className="h-7 w-7 text-cinema-300" /> Your profile</h1><p className="max-w-2xl text-sm text-slate-400">Add your photo, choose how your name appears, and decide who can find your profile.</p></header>
       {loading && <LoadingState />}
       {!loading && !user && <SignedOutGate icon={<UserRound className="h-7 w-7 text-cinema-300" />} title="Sign in to set up your profile" description="Your profile is how friends find you and how watch party guests see your name." />}
       {!loading && user && <ProfileEditor userId={user.id} />}
