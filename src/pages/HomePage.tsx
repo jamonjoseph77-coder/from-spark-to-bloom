@@ -140,7 +140,7 @@ export function HomePage() {
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">Cinema Shorts</h2>
             <p className="mt-1.5 text-sm leading-6 text-slate-400">A closer look at the moments, voices and stories moving through Cinema.</p>
           </div>
-          <a href="/discover" className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-white transition hover:border-[#087cff]/60 hover:bg-[#087cff]/10">
+          <a href="/shorts" className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-white transition hover:border-[#087cff]/60 hover:bg-[#087cff]/10">
             Explore All Shorts <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
           </a>
         </div>
