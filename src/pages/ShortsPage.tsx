@@ -7,7 +7,7 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { navigateTo } from '@/lib/router';
-import { fetchFollowedPublishers } from '@/lib/publisherFollows';
+import { fetchFollowedPublishers, followPublisher, unfollowPublisher } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
 import { fetchDiscoverContentEngagement } from '@/lib/discoverEngagement';
@@ -34,10 +34,10 @@ function saveSignals(signals: ViewerSignals) {
   try { window.localStorage.setItem(SIGNALS_KEY, JSON.stringify(signals)); } catch { /* Local personalization is optional. */ }
 }
 
-function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLike, onSave, onCompleted, onAudioChange, onDownload, downloadingClipId, onOpenComments }: {
+function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLike, onSave, onCompleted, onAudioChange, onDownload, downloadingClipId, onOpenComments, onTrack, tracked, tracking }: {
   clip: DiscoverClip; active: boolean; liked: boolean; saved: boolean; saving: boolean; audioEnabled: boolean;
   onLike: (clip: DiscoverClip) => void; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
-  onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onOpenComments: (clip: DiscoverClip) => void;
+  onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onOpenComments: (clip: DiscoverClip) => void; onTrack: (clip: DiscoverClip) => void; tracked: boolean; tracking: boolean;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [reactionCount, setReactionCount] = useState(0);
@@ -94,14 +94,14 @@ function ShortFeedItem({ clip, active, liked, saved, saving, audioEnabled, onLik
           <a href={publisherHref(clip.publisher_name || "Cinema")} className="inline-flex max-w-full items-center gap-2 text-xs font-bold text-white/90">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/30 bg-black/55 text-xs font-black">{(clip.publisher_name || "C").slice(0, 1).toUpperCase()}</span>
             <span className="truncate">{clip.publisher_name || "Cinema Creator"}</span>
-            <span className="rounded-full bg-[#ff315d] px-2 py-1 text-[9px] font-extrabold text-white">+</span>
           </a>
+          <button type="button" onClick={() => onTrack(clip)} disabled={tracking} aria-pressed={tracked} className="ml-2 rounded-full border border-white/35 bg-black/35 px-3 py-1.5 text-[10px] font-extrabold text-white backdrop-blur-md disabled:opacity-50">{tracking ? '…' : tracked ? 'Tracking' : 'Track'}</button>
           <h2 className="mt-3 line-clamp-2 text-lg font-black leading-tight text-white drop-shadow-lg sm:text-xl">{clip.headline}</h2>
           {clip.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/75">{clip.description}</p>}
           <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/75"><Eye className="h-3.5 w-3.5" /> {(clip.views_count ?? 0).toLocaleString()} Views</p>
           {clip.title && <a href={"/title/" + clip.title.id} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/35 bg-black/25 px-3.5 py-2 text-xs font-bold text-white/95 shadow-sm backdrop-blur-md transition hover:border-white/65 hover:bg-white/10">Watch Now <ArrowUpRight className="h-3.5 w-3.5" /></a>}
         </div>
-        <div className="mb-1 flex shrink-0 flex-col items-center gap-3">
+        <div className="absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-3 sm:right-5">
           {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-10 w-10 place-items-center rounded-full bg-black/45 text-white backdrop-blur-xl">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>}
           <button type="button" onClick={() => onLike(clip)} aria-label={liked ? "Unlike This Short" : "Like This Short"} aria-pressed={liked} className="flex flex-col items-center gap-1 text-white"><Heart className={"h-8 w-8 drop-shadow-lg " + (liked ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[11px] font-bold tabular-nums">{(reactionCount + (liked ? 1 : 0)).toLocaleString()}</span></button>
           <button type="button" onClick={() => onOpenComments(clip)} aria-label="Open Comments" className="flex flex-col items-center gap-1 text-white"><MessageCircle className="h-8 w-8 drop-shadow-lg" /><span className="text-[11px] font-bold tabular-nums">{commentCount.toLocaleString()}</span></button>
@@ -119,7 +119,8 @@ export function ShortsPage() {
   const { notify } = useToast();
   const feedRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [feedMode, setFeedMode] = useState<'for-you' | 'following'>('for-you');
+  const [trackedPublishers, setTrackedPublishers] = useState<string[]>([]);
+  const [trackingPublisher, setTrackingPublisher] = useState<string | null>(null);
   const [signals, setSignals] = useState<ViewerSignals>(EMPTY_SIGNALS);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [savedClipIds, setSavedClipIds] = useState<string[]>([]);
@@ -127,7 +128,8 @@ export function ShortsPage() {
   const [downloadingClipId, setDownloadingClipId] = useState<string | null>(null);
   const requestedClipId = useMemo(() => new URLSearchParams(window.location.search).get('clip'), []);
   const { data: clips, error, loading, reload } = useAsyncData(fetchPublishedShorts, []);
-  const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
+  const { data: followedPublishers, reload: reloadTrackedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([]), [user?.id]);
+  useEffect(() => { setTrackedPublishers(followedPublishers ?? []); }, [followedPublishers]);
 
   useEffect(() => { setSignals(readSignals()); }, []);
   useEffect(() => {
@@ -138,9 +140,15 @@ export function ShortsPage() {
     return () => { active = false; };
   }, [user?.id]);
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousRootOverflow = document.documentElement.style.overflow;
+    const previousBodyOverscroll = document.body.style.overscrollBehavior;
+    const previousRootOverscroll = document.documentElement.style.overscrollBehavior;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = previousOverflow; };
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+    document.documentElement.style.overscrollBehavior = 'none';
+    return () => { document.body.style.overflow = previousBodyOverflow; document.documentElement.style.overflow = previousRootOverflow; document.body.style.overscrollBehavior = previousBodyOverscroll; document.documentElement.style.overscrollBehavior = previousRootOverscroll; };
   }, []);
   const shorts = useMemo(() => {
     const ranked = rankPublishedShorts((clips ?? []).filter(isPlayableShort), followedPublishers ?? [], 200);
@@ -176,13 +184,7 @@ export function ShortsPage() {
     }
     return selected;
   }, [clips, followedPublishers, signals]);
-  const visibleShorts = useMemo(() => feedMode === 'following'
-    ? shorts.filter((clip) => (followedPublishers ?? []).some((name) => name.trim().toLowerCase() === clip.publisher_name.trim().toLowerCase()))
-    : shorts, [shorts, feedMode, followedPublishers]);
-  useEffect(() => {
-    setActiveIndex(0);
-    feedRef.current?.scrollTo({ top: 0, behavior: 'auto' });
-  }, [feedMode]);
+  const visibleShorts = shorts;
 
   useEffect(() => {
     if (!requestedClipId || !visibleShorts.length) return;
@@ -220,6 +222,25 @@ export function ShortsPage() {
       saveSignals(next);
       return next;
     });
+  }
+
+  async function toggleTrack(clip: DiscoverClip) {
+    if (!user) { notify('Sign In To Track Creators And Publishers.'); navigateTo('/sign-in'); return; }
+    if (trackingPublisher) return;
+    const name = clip.publisher_name.trim();
+    if (!name) return;
+    const wasTracked = trackedPublishers.some((item) => item.toLowerCase() === name.toLowerCase());
+    setTrackingPublisher(name);
+    setTrackedPublishers((current) => wasTracked ? current.filter((item) => item.toLowerCase() !== name.toLowerCase()) : [...current, name]);
+    try {
+      if (wasTracked) await unfollowPublisher(user.id, name); else await followPublisher(user.id, name);
+      await reloadTrackedPublishers();
+      notify(wasTracked ? `No Longer Tracking ${name}.` : `Now Tracking ${name}.`);
+    } catch (cause) {
+      setTrackedPublishers((current) => wasTracked ? [...current, name] : current.filter((item) => item.toLowerCase() !== name.toLowerCase()));
+      console.error('Cinema Track Setting Could Not Be Updated', cause);
+      notify('Your Track Setting Could Not Be Updated. Please Try Again.', 'error');
+    } finally { setTrackingPublisher(null); }
   }
 
   async function toggleSave(clip: DiscoverClip) {
@@ -269,21 +290,20 @@ export function ShortsPage() {
     <main className="cinema-shorts-page fixed inset-0 z-[100] h-[100dvh] w-screen max-w-none overflow-hidden bg-[#030508]">
       <header className="absolute inset-x-0 top-0 z-40 flex items-center gap-3 px-4 pt-[max(env(safe-area-inset-top),.8rem)] sm:px-6">
         <a href="/" aria-label="Back To Cinema Home" className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md"><ArrowLeft className="h-4 w-4" /></a>
-        <nav className="flex min-w-0 flex-1 items-center justify-center gap-4 text-[13px] font-bold sm:gap-7 sm:text-base" aria-label="Shorts Feed">
-          <button type="button" onClick={() => setFeedMode('following')} aria-pressed={feedMode === 'following'} className={feedMode === 'following' ? 'relative py-2 text-white after:absolute after:inset-x-0 after:-bottom-1 after:mx-auto after:h-[3px] after:w-8 after:rounded-full after:bg-white' : 'py-2 text-white/75'}>Following</button>
+        <nav className="flex min-w-0 flex-1 items-center justify-center gap-5 text-[13px] font-bold sm:gap-7 sm:text-base" aria-label="Cinema Shorts">
+          <span className="whitespace-nowrap text-white">Cinema Shorts</span>
           <a href="/friends" className="whitespace-nowrap text-white/75">Friends</a>
-          <button type="button" onClick={() => setFeedMode('for-you')} aria-pressed={feedMode === 'for-you'} className={feedMode === 'for-you' ? 'relative py-2 text-white after:absolute after:inset-x-0 after:-bottom-1 after:mx-auto after:h-[3px] after:w-8 after:rounded-full after:bg-white' : 'py-2 text-white/75'}>For You</button>
         </nav>
         <a href="/search" aria-label="Search Cinema" className="grid h-9 w-9 shrink-0 place-items-center text-white"><Search className="h-6 w-6" /></a>
       </header>
       {loading && !clips && <div className="absolute inset-0 grid place-items-center px-5 pt-16"><div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/65 p-6 backdrop-blur-xl"><LoadingState label="Loading Cinema Shorts" /></div></div>}
       {error && !clips && <div className="absolute inset-0 grid place-items-center px-5 pt-16"><div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/65 p-6 backdrop-blur-xl"><ErrorState onRetry={reload} description="Cinema Shorts Could Not Load. Try Again In A Moment." /></div></div>}
-      {clips && followedPublishers !== undefined && visibleShorts.length === 0 && <section className="cinema-category-live-hero absolute inset-0 grid min-h-0 place-items-center overflow-hidden p-8 pt-20 text-center"><div className="relative z-10 max-w-md"><Clapperboard className="mx-auto h-10 w-10 text-sky-200" /><h2 className="mt-4 text-2xl font-black text-white">{feedMode === 'following' ? 'Your Following Feed Is Ready To Grow' : 'The Shorts Feed Is Getting Ready'}</h2><p className="mt-2 text-sm leading-6 text-slate-300">{feedMode === 'following' ? 'Follow creators, studios and publishers in Cinema to see their Shorts here.' : 'Approved, playable Shorts from Cinema creators and publishers will appear here. No broken placeholders or unrelated long-form videos.'}</p><div className="mt-5 flex flex-wrap justify-center gap-2"><button type="button" onClick={reload} className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 text-xs font-bold text-white"><RefreshCw className="h-3.5 w-3.5" /> Refresh Feed</button><a href={feedMode === 'following' ? '/publishers' : '/creator/shorts'} className="rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white">{feedMode === 'following' ? 'Find Publishers' : 'Submit A Short'}</a></div></div></section>}
+      {clips && followedPublishers !== undefined && visibleShorts.length === 0 && <section className="cinema-category-live-hero absolute inset-0 grid min-h-0 place-items-center overflow-hidden p-8 pt-20 text-center"><div className="relative z-10 max-w-md"><Clapperboard className="mx-auto h-10 w-10 text-sky-200" /><h2 className="mt-4 text-2xl font-black text-white">Cinema Shorts Are Getting Ready</h2><p className="mt-2 text-sm leading-6 text-slate-300">Approved, playable Shorts from Cinema creators and publishers will appear here. No broken placeholders or unrelated long-form videos.</p><div className="mt-5 flex flex-wrap justify-center gap-2"><button type="button" onClick={reload} className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 text-xs font-bold text-white"><RefreshCw className="h-3.5 w-3.5" /> Refresh Feed</button><a href=/creator/shorts className="rounded-full bg-[#087cff] px-4 py-2.5 text-xs font-extrabold text-white">Submit A Short</a></div></div></section>}
       {visibleShorts.length > 0 && (
         <div ref={feedRef} className="cinema-shorts-feed h-full w-full overflow-y-auto snap-y snap-mandatory" aria-label="Scroll Cinema Shorts vertically">
           {visibleShorts.map((clip, index) => (
             <div key={clip.id} data-short-index={index} className="cinema-shorts-feed__slot h-[100dvh] min-h-[100dvh] w-full snap-start snap-always">
-              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} onDownload={downloadClip} downloadingClipId={downloadingClipId} onOpenComments={(item) => navigateTo('/discover#short-' + item.id)} />
+              <ShortFeedItem clip={clip} active={index === activeIndex} liked={signals.likedIds.includes(clip.id)} saved={savedClipIds.includes(clip.id)} saving={savingClipId === clip.id} audioEnabled={audioEnabled} onLike={toggleLike} onSave={toggleSave} onCompleted={completeClip} onAudioChange={setAudioEnabled} onDownload={downloadClip} downloadingClipId={downloadingClipId} onOpenComments={(item) => navigateTo('/discover#short-' + item.id)} onTrack={toggleTrack} tracked={trackedPublishers.some((name) => name.toLowerCase() === clip.publisher_name.trim().toLowerCase())} tracking={trackingPublisher?.toLowerCase() === clip.publisher_name.trim().toLowerCase()} />
             </div>
           ))}
         </div>
