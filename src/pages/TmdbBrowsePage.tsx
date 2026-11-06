@@ -9,6 +9,7 @@ import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbGenres, fetchTmdbList, searchTmdb, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbListKind, type TmdbMediaType } from '@/lib/tmdb';
 import { Clapperboard } from 'lucide-react';
+import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 
 const MODE_LABELS: Record<TmdbListKind, string> = { popular: 'Popular', trending: 'Trending this week' };
 const SEARCH_DEBOUNCE_MS = 350;
@@ -43,6 +44,7 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
+      <CinemaCategoryNav active={heading} />
       <header className="flex flex-col gap-3 border-b border-white/10 pb-6">
         <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">Explore Cinema</p>
         <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">{heading}</h1>
