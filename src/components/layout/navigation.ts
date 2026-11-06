@@ -1,4 +1,4 @@
-import { Compass, Film, Clapperboard, Home, MonitorPlay, Newspaper, PartyPopper, Search, Megaphone, Ticket, Trophy, TvMinimalPlay, UserRound, Users, type LucideIcon } from 'lucide-react';
+import { Compass, Film, Clapperboard, Home, MonitorPlay, Newspaper, PartyPopper, Search, Megaphone, Ticket, Trophy, TvMinimalPlay, UserRound, Users, Sparkles, type LucideIcon } from 'lucide-react';
 import type { Route } from '@/lib/router';
 
 export interface NavItem { key: string; label: string; href: string; icon: LucideIcon }
@@ -7,6 +7,7 @@ export interface NavSection { title: string; items: NavItem[] }
 const HOME: NavItem = { key: 'home', label: 'Home', href: '/', icon: Home };
 const MOVIES: NavItem = { key: 'movies', label: 'Movies', href: '/movies', icon: Film };
 const SERIES: NavItem = { key: 'series', label: 'Series', href: '/series', icon: MonitorPlay };
+const SHORTS: NavItem = { key: 'shorts', label: 'Shorts', href: '/shorts', icon: Sparkles };
 const SPORTS: NavItem = { key: 'sports', label: 'Sports', href: '/sports', icon: Trophy };
 const LIVE: NavItem = { key: 'live-tv', label: 'Live TV', href: '/live-tv', icon: TvMinimalPlay };
 const NEWS: NavItem = { key: 'news', label: 'News', href: '/news', icon: Newspaper };
@@ -20,7 +21,7 @@ const PUBLISHERS: NavItem = { key: 'publishers', label: 'Studios & Publishers', 
 const BOX_OFFICE: NavItem = { key: 'box-office', label: 'Digital Box Office', href: '/box-office', icon: Ticket };
 
 export const NAV_SECTIONS: NavSection[] = [
-  { title: 'Explore', items: [HOME, MOVIES, SERIES, DISCOVER, SPORTS, LIVE, NEWS, SEARCH] },
+  { title: 'Explore', items: [HOME, MOVIES, SERIES, SHORTS, DISCOVER, SPORTS, LIVE, NEWS, SEARCH] },
   { title: 'Your Cinema', items: [MY_CINEMA, FRIENDS, WATCH_PARTIES, PROFILE] },
   { title: 'Industry', items: [PUBLISHERS, BOX_OFFICE] },
 ];
@@ -32,6 +33,7 @@ export function navKeyOf(route: Route): string | null {
     case 'home': return 'home';
     case 'browse': return { movie: 'movies', series: 'series', sport: 'sports', live: 'live-tv', news: 'news' }[route.kind];
     case 'discover': return 'discover';
+    case 'shorts': return 'shorts';
     case 'search': return 'search';
     case 'my-cinema': return 'my-cinema';
     case 'friends': return 'friends';
