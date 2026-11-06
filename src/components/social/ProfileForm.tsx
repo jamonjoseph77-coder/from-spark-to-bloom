@@ -169,7 +169,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
       <div>
         <div className="mb-2 flex items-center justify-between">
           <label htmlFor="profile-bio" className={LABEL}>
-            Bio
+            About Me
           </label>
           <span className="text-xs text-slate-500">{bio.length}/280</span>
         </div>
@@ -180,15 +180,15 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
           maxLength={280}
           rows={3}
           className={`${INPUT} resize-none`}
-          placeholder="Your favourite genres, or what you are watching"
+          placeholder="Tell people a little about what you enjoy watching."
         />
       </div>
 
       <label className="flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-white/10 bg-ink-900/60 p-4">
         <span>
-          <span className="block text-sm font-semibold text-white">Let people find me</span>
+          <span className="block text-sm font-semibold text-white">Show My Profile In Search</span>
           <span className="mt-1 block text-sm text-slate-400">
-            When off, you will not appear in friend search. People you add or who add you can still see your profile.
+            When turned off, new people cannot find your profile in Cinema search. Your existing friends can still see it.
           </span>
         </span>
         <span className="relative mt-1 inline-flex shrink-0">
@@ -205,8 +205,8 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
 
       <label className="flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-white/10 bg-ink-900/60 p-4">
         <span>
-          <span className="block text-sm font-semibold text-white">Share What I’m Watching</span>
-          <span className="mt-1 block text-sm text-slate-400">When enabled, accepted friends can see titles you are actively watching. This is off by default, and activity disappears from their Home after 20 minutes.</span>
+          <span className="block text-sm font-semibold text-white">Share What I'm Watching</span>
+          <span className="mt-1 block text-sm text-slate-400">When turned on, your accepted friends can see what you are watching. This setting is off until you enable it.</span>
         </span>
         <span className="relative mt-1 inline-flex shrink-0">
           <input type="checkbox" className="peer sr-only" checked={shareWatching} onChange={(event) => setShareWatching(event.target.checked)} />
