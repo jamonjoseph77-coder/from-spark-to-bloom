@@ -2595,3 +2595,69 @@ body {
 .cinema-shorts-page article > div:last-of-type > div:first-child { position: absolute; left: 0; bottom: 0; max-width: min(76%, 34rem); pointer-events: auto; }
 .cinema-shorts-page article > div:last-of-type > div:last-child { pointer-events: auto; position: absolute; right: max(1rem, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%); }
 @media (max-width: 640px) { .cinema-shorts-page article > div:last-of-type > div:first-child { max-width: min(74%, 28rem); } }
+
+
+/* Dedicated Shorts polish: edge-aligned translucent TikTok-style action rail,
+   anchored bottom actions, and no scroll glide beyond the active snap page. */
+.cinema-shorts-page .cinema-shorts-feed {
+  scroll-behavior: auto !important;
+  overscroll-behavior-y: contain !important;
+  scroll-snap-type: y mandatory !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot {
+  scroll-snap-stop: always !important;
+  overflow: hidden !important;
+}
+.cinema-shorts-page .cinema-short-action-rail {
+  right: max(.75rem, env(safe-area-inset-right)) !important;
+  gap: .3rem !important;
+  padding: .45rem .2rem !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  border-radius: 999px !important;
+  background: rgba(5, 9, 16, .38) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.14) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(135%) !important;
+  backdrop-filter: blur(22px) saturate(135%) !important;
+}
+.cinema-shorts-page .cinema-short-action-rail .cinema-short-action {
+  display: flex !important;
+  width: 2.9rem !important;
+  min-width: 2.9rem !important;
+  min-height: 2.85rem !important;
+  height: auto !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .15rem !important;
+  padding: .2rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: rgba(255,255,255,.96) !important;
+  box-shadow: none !important;
+}
+.cinema-shorts-page .cinema-short-action-rail .cinema-short-action:hover,
+.cinema-shorts-page .cinema-short-action-rail .cinema-short-action[aria-pressed="true"] {
+  background: rgba(255,255,255,.13) !important;
+  color: #fff !important;
+}
+.cinema-shorts-page .cinema-short-action-rail .cinema-short-action svg {
+  filter: drop-shadow(0 2px 7px rgba(0,0,0,.65));
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child {
+  max-width: min(74%, 34rem) !important;
+  padding-right: .5rem !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article > div:last-of-type > div:first-child > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+}
+@media (max-width: 380px) {
+  .cinema-shorts-page .cinema-short-action-rail .cinema-short-action {
+    width: 2.65rem !important;
+    min-width: 2.65rem !important;
+    min-height: 2.65rem !important;
+  }
+}
