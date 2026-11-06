@@ -62,7 +62,9 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
 
   useEffect(() => {
     setViewsCount(clip.views_count ?? 0);
-    if (viewedClipIdRef.current === clip.id) return;
+    // The view-count RPC is restricted to authenticated members. Public viewers
+    // can still watch Shorts without triggering a predictable 401 request.
+    if (!userId || viewedClipIdRef.current === clip.id) return;
     viewedClipIdRef.current = clip.id;
     recordDiscoverClipView(clip.id).then((count) => {
       if (typeof count === 'number' && count > 0) setViewsCount(count);
