@@ -75,6 +75,39 @@ function PublisherDestinations({ titles }: { titles: Title[] }) {
   return <section className="space-y-4"><div className="flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cinema-300">The People Behind The Stories</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Publisher Destinations</h2><p className="mt-1 text-sm text-slate-400">Explore Studios, Broadcasters And Publishers Represented In Cinema’s Catalogue.</p></div><a href="/publishers" className="text-sm font-semibold text-cinema-200 hover:text-white">All Publishers</a></div><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{publishers.map((publisher) => <a key={publisher.name} href={`/publishers/${encodeURIComponent(publisher.name)}`} className="group rounded-2xl border border-white/10 bg-white/[.025] p-4 transition hover:-translate-y-0.5 hover:border-sky-300/30 hover:bg-sky-300/[.045]"><span className="grid h-10 w-10 place-items-center rounded-xl border border-sky-300/15 bg-sky-300/[.08] text-cinema-200"><Clapperboard className="h-6 w-6" /></span><span className="mt-3 block truncate text-sm font-bold text-white">{publisher.name}</span><span className="mt-1 block text-xs text-slate-500">{publisher.titles.length} {publisher.titles.length === 1 ? 'title' : 'titles'} in Cinema</span></a>)}</div></section>;
 }
 
+function HomeEngagement() {
+  const moments = [
+    { title: 'Settle Into A Movie', detail: 'Find a film for the moment.', href: '/movies', icon: Clapperboard, tone: 'from-sky-400/20 to-blue-500/5', accent: 'text-sky-200' },
+    { title: 'Watch Something Quick', detail: 'Short stories and fresh moments.', href: '/shorts', icon: Play, tone: 'from-fuchsia-400/15 to-violet-500/5', accent: 'text-fuchsia-200' },
+    { title: 'Tune Into Live TV', detail: 'Explore channels in Cinema.', href: '/live-tv', icon: Radio, tone: 'from-emerald-400/15 to-teal-500/5', accent: 'text-emerald-200' },
+    { title: 'Catch The Sports', detail: 'Follow competitions and highlights.', href: '/sports', icon: Users, tone: 'from-amber-400/15 to-orange-500/5', accent: 'text-amber-200' },
+    { title: 'Discover A New Story', detail: 'Explore creators and features.', href: '/discover', icon: Compass, tone: 'from-indigo-400/15 to-blue-500/5', accent: 'text-indigo-200' },
+    { title: 'Watch Together', detail: 'Bring friends into movie night.', href: '/watch-parties', icon: MessageCircle, tone: 'from-rose-400/15 to-pink-500/5', accent: 'text-rose-200' },
+  ];
+  return (
+    <section className="space-y-4" aria-labelledby="home-moments-heading">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Make It A Cinema Moment</p>
+          <h2 id="home-moments-heading" className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">What Are You In The Mood For?</h2>
+          <p className="mt-1 text-sm text-slate-400">Choose where you want to go. Your Home stays open to every part of Cinema.</p>
+        </div>
+        <a href="/discover" className="inline-flex items-center gap-2 text-sm font-bold text-cinema-200 transition hover:text-white">Explore Everything <ArrowRight className="h-4 w-4" /></a>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+        {moments.map(({ title, detail, href, icon: Icon, tone, accent }) => (
+          <a key={title} href={href} className={`group relative flex min-h-36 flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${tone} p-4 transition duration-200 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_16px_36px_rgba(0,0,0,.22)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300`}>
+            <span className={`grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-black/20 ${accent}`}><Icon className="h-5 w-5" /></span>
+            <span className="mt-4 text-sm font-extrabold leading-snug text-white">{title}</span>
+            <span className="mt-1 text-[11px] leading-4 text-slate-400">{detail}</span>
+            <ArrowRight className="absolute bottom-4 right-4 h-4 w-4 text-white/35 transition group-hover:translate-x-1 group-hover:text-white" />
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function HomePage() {
   const { user } = useAuth();
   const openShort = useCallback((clip: DiscoverClip) => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`), []);
@@ -131,6 +164,7 @@ export function HomePage() {
         ))}
       </nav>
       <TmdbHero />
+      <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
         <div><p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Picked Around Your Taste</p><h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Next Watch</h2><p className="mt-1 text-sm text-slate-400">A personal mix shaped by what you watch, save and follow — with room for new discoveries.</p></div>
