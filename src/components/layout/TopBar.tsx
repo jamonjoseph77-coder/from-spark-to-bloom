@@ -45,7 +45,7 @@ export function TopBar() {
             type="submit"
             aria-label="Search"
             title="Search"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sky-200/40 bg-gradient-to-br from-sky-500 via-cyan-500 to-cinema-500 text-white shadow-lg shadow-sky-950/35 transition hover:brightness-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[.07] text-slate-200 transition hover:border-white/20 hover:bg-white/[.13] hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"
           >
             <Search aria-hidden="true" className="h-4 w-4" />
           </button>
