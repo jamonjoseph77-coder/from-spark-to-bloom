@@ -17,7 +17,8 @@ export function findCanonicalCinemaTitle(item: TmdbItem, titles: Title[]): Title
   const year = item.releaseDate ? Number(item.releaseDate.slice(0, 4)) : null;
   const matches = titles.filter((title) => {
     if (title.type !== expectedType || normaliseTitle(title.title) !== normalized) return false;
-    return year === null || title.release_year === null || title.release_year === year;
+    const localYear = title.release_year ?? (title.release_date ? Number(title.release_date.slice(0, 4)) : null);
+    return year === null ? true : localYear === year;
   });
   if (matches.length !== 1) return null;
   const match = matches[0];
