@@ -127,6 +127,7 @@ export function VideoPlayer({
         }
         hls = new HlsLib({
           enableWorker: true,
+          autoStartLoad: autoPlay,
           capLevelToPlayerSize: true,
           // Keep mobile memory and data use under control while retaining a short safety buffer.
           maxBufferLength: 12,
@@ -267,6 +268,7 @@ export function VideoPlayer({
           controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
+          onPlay={() => { hlsRef.current?.startLoad(); }}
           muted={isMuted}
           preload={autoPlay ? 'auto' : 'metadata'}
           poster={poster || undefined}
