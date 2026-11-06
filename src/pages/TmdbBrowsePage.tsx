@@ -7,7 +7,7 @@ import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, LoadingState } from '@/components/ui/StatusViews';
 import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchTmdbGenres, fetchTmdbList, searchTmdb, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbListKind, type TmdbMediaType } from '@/lib/tmdb';
+import { fetchTmdbGenres, fetchTmdbList, searchTmdb, tmdbImageUrl, tmdbYear, type TmdbListKind, type TmdbMediaType } from '@/lib/tmdb';
 import { Clapperboard } from 'lucide-react';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
