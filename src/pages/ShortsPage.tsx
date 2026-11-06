@@ -36,19 +36,32 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
   const embed = rawEmbed ? (getYouTubeVideoId(clip.video_url) ? rawEmbed + '&enablejsapi=1&origin=' + encodeURIComponent(window.location.origin) : rawEmbed + '&api=1&player_id=cinema-short-' + clip.id) : null;
+  function sendEmbeddedAudio(enabled: boolean) {
+    const frame = iframeRef.current?.contentWindow;
+    if (!frame) return;
+    if (getYouTubeVideoId(clip.video_url)) {
+      frame.postMessage(JSON.stringify({ event: 'command', func: enabled ? 'unMute' : 'mute', args: [] }), 'https://www.youtube.com');
+      if (enabled) frame.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), 'https://www.youtube.com');
+    } else if (/vimeo\\.com/i.test(clip.video_url)) {
+      frame.postMessage(JSON.stringify({ method: 'setVolume', value: enabled ? 1 : 0 }), 'https://player.vimeo.com');
+      if (enabled) frame.postMessage(JSON.stringify({ method: 'play' }), 'https://player.vimeo.com');
+    }
+  }
+
   function toggleAudio() {
     const next = !audioEnabled;
     onAudioChange(next);
-    const frame = iframeRef.current?.contentWindow;
-    if (!frame) return;
-    if (getYouTubeVideoId(clip.video_url)) frame.postMessage(JSON.stringify({ event: 'command', func: next ? 'unMute' : 'mute', args: [] }), 'https://www.youtube.com');
-    else if (/vimeo\.com/i.test(clip.video_url)) frame.postMessage(JSON.stringify({ method: 'setVolume', value: next ? 1 : 0 }), 'https://player.vimeo.com');
+    // Some embeds finish initialising just after the iframe load event.
+    // Retry briefly so the user's sound tap is not lost during player startup.
+    sendEmbeddedAudio(next);
+    window.setTimeout(() => sendEmbeddedAudio(next), 120);
+    window.setTimeout(() => sendEmbeddedAudio(next), 420);
   }
   return (
     <article className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none">
       <div className="absolute inset-0 bg-[#030508]">
         {active && isDirectVideoUrl(clip.video_url) ? (
-          <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls showMuteToggle={false} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />
+          <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls showMuteToggle onMutedChange={(muted) => onAudioChange(!muted)} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />
         ) : active && embed ? (
           <iframe ref={iframeRef} src={embed} title={clip.headline} onLoad={() => { const frame = iframeRef.current?.contentWindow; if (!audioEnabled || !frame) return; if (getYouTubeVideoId(clip.video_url)) frame.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "https://www.youtube.com"); else if (/vimeo\.com/i.test(clip.video_url)) frame.postMessage(JSON.stringify({ method: "setVolume", value: 1 }), "https://player.vimeo.com"); }} className="h-full w-full bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
         ) : (
@@ -67,7 +80,7 @@ function ShortFeedItem({ clip, active, liked, audioEnabled, onLike, onCompleted,
           </div>
         </div>
         <div className="mb-1 flex shrink-0 flex-col items-center gap-2">
-          <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-12 w-12 place-items-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-sky-300/15">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>
+          {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="grid h-12 w-12 place-items-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur-xl transition hover:border-sky-200/60 hover:bg-sky-300/15">{audioEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}</button>}
           <button type="button" onClick={() => onLike(clip)} aria-label={liked ? 'Unlike this Short' : 'Like this Short'} aria-pressed={liked} className={`grid h-12 w-12 place-items-center rounded-full border backdrop-blur-xl transition ${liked ? 'border-sky-200/60 bg-sky-400/25 text-sky-100' : 'border-white/20 bg-black/45 text-white hover:border-sky-200/60 hover:bg-sky-300/15'}`}><Heart className={`h-5 w-5 ${liked ? 'fill-current' : ''}`} /></button>
           <span className="text-[10px] font-bold tabular-nums text-white/80">{(clip.views_count ?? 0).toLocaleString()}</span>
         </div>
