@@ -196,19 +196,6 @@ export function ShortsPage() {
     } finally { setSavingClipId(null); }
   }
 
-  async function toggleSave(clip: DiscoverClip) {
-    if (!user) { window.location.assign('/sign-in'); return; }
-    if (savingClipId) return;
-    const wasSaved = savedClipIds.includes(clip.id);
-    setSavingClipId(clip.id);
-    setSavedClipIds((current) => wasSaved ? current.filter((id) => id !== clip.id) : [...current, clip.id]);
-    try { await setDiscoverClipSaved(clip.id, user.id, !wasSaved); }
-    catch (cause) {
-      setSavedClipIds((current) => wasSaved ? [...current, clip.id] : current.filter((id) => id !== clip.id));
-      console.error('Cinema Short Could Not Be Saved', cause);
-    } finally { setSavingClipId(null); }
-  }
-
   function toggleLike(clip: DiscoverClip) {
     setSignals((current) => {
       const liked = current.likedIds.includes(clip.id);
