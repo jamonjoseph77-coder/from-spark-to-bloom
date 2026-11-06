@@ -1,7 +1,9 @@
+import { useState } from 'react';
+
 const SIZES = {
-  sm: 'h-8 w-8 text-xs',
-  md: 'h-11 w-11 text-sm',
-  lg: 'h-20 w-20 text-3xl',
+  sm: 'h-9 w-9 text-xs',
+  md: 'h-12 w-12 text-sm',
+  lg: 'h-24 w-24 text-3xl',
 } as const;
 
 function safeAvatarSource(value?: string | null): string | null {
@@ -13,12 +15,28 @@ function safeAvatarSource(value?: string | null): string | null {
 
 export function ProfileAvatar({ name, size = 'md', imageUrl }: { name: string; size?: keyof typeof SIZES; imageUrl?: string | null }) {
   const source = safeAvatarSource(imageUrl);
+  const [imageFailed, setImageFailed] = useState(false);
+  const label = name.trim() || 'Cinema member';
+
   return (
     <span
-      aria-hidden="true"
-      className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-cinema-500 to-cinema-800 font-extrabold uppercase text-white ring-1 ring-white/15 ${SIZES[size]}`}
+      role="img"
+      aria-label={source && !imageFailed ? `${label}'s profile picture` : `${label}'s profile initials`}
+      className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-gradient-to-br from-cinema-500 to-cinema-800 font-extrabold uppercase text-white shadow-lg shadow-black/20 ring-2 ring-white/5 ${SIZES[size]}`}
     >
-      {source ? <img src={source} alt="" loading="lazy" className="h-full w-full object-cover" /> : (name.trim().charAt(0) || '?')}
+      {source && !imageFailed ? (
+        <img
+          src={source}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={() => setImageFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span aria-hidden="true">{label.charAt(0) || '?'}</span>
+      )}
     </span>
   );
 }
