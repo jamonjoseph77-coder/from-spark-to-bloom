@@ -2098,6 +2098,7 @@ body {
   transform: translateX(-28%);
   animation: cinema-category-scan 9s ease-in-out infinite;
 }
+ .cinema-category-page .cinema-category-hero > .relative { position: relative; z-index: 2; }
 .cinema-category-hero__orb {
   animation: cinema-category-orbit 13s ease-in-out infinite alternate;
 }
