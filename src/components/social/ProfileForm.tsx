@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { ImagePlus, Save, Trash2 } from 'lucide-react';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { useToast } from '@/hooks/useToast';
@@ -56,7 +56,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  async function handleAvatarChange(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
