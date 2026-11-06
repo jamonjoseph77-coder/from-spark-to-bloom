@@ -19,7 +19,7 @@ export function CinemaCategoryNav({ active }: { active: string }) {
     <nav aria-label="Cinema Categories" className="cinema-category-destinations -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
       {DESTINATIONS.map((item) => {
         const Icon = item.icon;
-        const selected = item.label === 'Home' || item.label.toLowerCase() === active.toLowerCase();
+        const selected = item.label.toLowerCase() === active.toLowerCase();
         return (
           <a key={item.href} href={item.href} aria-current={selected ? 'page' : undefined} className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-bold transition ${selected ? "border-sky-200/45 bg-sky-300/[.14] text-white shadow-[0_6px_24px_rgba(8,124,255,.14)]" : "border-white/10 bg-white/[.035] text-slate-300 hover:border-sky-200/35 hover:bg-sky-300/[.08] hover:text-white"}`}>
             <Icon className="h-3.5 w-3.5" />{item.label}
