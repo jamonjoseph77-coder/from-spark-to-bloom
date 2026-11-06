@@ -23,6 +23,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SeriesRouteImport } from './routes/series'
+import { Route as ShortsRouteImport } from './routes/shorts'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SportsRouteImport } from './routes/sports'
@@ -107,6 +108,11 @@ const SearchRoute = SearchRouteImport.update({
 const SeriesRoute = SeriesRouteImport.update({
   id: '/series',
   path: '/series',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShortsRoute = ShortsRouteImport.update({
+  id: '/shorts',
+  path: '/shorts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/series': typeof SeriesRoute
+  '/shorts': typeof ShortsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sports': typeof SportsRoute
@@ -296,6 +303,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/series'
+    | '/shorts'
     | '/sign-in'
     | '/sign-up'
     | '/sports'
@@ -389,6 +397,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SeriesRoute: typeof SeriesRoute
+  ShortsRoute: typeof ShortsRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   SportsRoute: typeof SportsRoute
@@ -504,6 +513,13 @@ declare module '@tanstack/react-router' {
       path: '/series'
       fullPath: '/series'
       preLoaderRoute: typeof SeriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shorts': {
+      id: '/shorts'
+      path: '/shorts'
+      fullPath: '/shorts'
+      preLoaderRoute: typeof ShortsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -629,6 +645,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SeriesRoute: SeriesRoute,
+  ShortsRoute: ShortsRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   SportsRoute: SportsRoute,

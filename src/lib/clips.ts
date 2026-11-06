@@ -51,7 +51,7 @@ export async function fetchPublishedClips(): Promise<DiscoverClip[]> {
 export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
   const { data, error } = await supabase.from('discover_clips').select('*')
     .eq('is_published', true)
-    .in('kind', ['short', 'clip'])
+    .eq('kind', 'short')
     .order('created_at', { ascending: false })
     .order('sort_order', { ascending: true })
     .limit(60);
@@ -70,7 +70,7 @@ export function isPlayableShort(clip: DiscoverClip): boolean {
   const url = clip.video_url?.trim() ?? '';
   const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(toEmbedUrl(url)));
   const validDuration = clip.duration_seconds === null || (clip.duration_seconds > 0 && clip.duration_seconds <= 90);
-  return clip.is_published && supported && validDuration;
+  return clip.is_published && clip.kind === 'short' && supported && validDuration;
 }
 
 /**

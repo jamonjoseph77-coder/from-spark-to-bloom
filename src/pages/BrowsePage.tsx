@@ -6,7 +6,9 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { genresOf, hasGenre, matchesQuery, SORT_LABELS, sortTitles, type SortOption } from '@/lib/catalogue';
 import { fetchPublishedTitles } from '@/lib/library';
 import type { TitleType } from '@/lib/types';
-import { Clapperboard } from 'lucide-react';
+import { Clapperboard, Radio, Trophy, Newspaper } from 'lucide-react';
+import { Artwork } from '@/components/ui/Artwork';
+import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 
 type LocalBrowseKind = Exclude<TitleType, 'movie' | 'series'>;
 const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: string }> = {
@@ -26,9 +28,23 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
   const genres = useMemo(() => genresOf(ofType), [ofType]);
   const visible = useMemo(() => sortTitles(ofType.filter((title) => (genre === ALL_GENRES || hasGenre(title, genre)) && matchesQuery(title, query)), sort), [ofType, genre, query, sort]);
 
+  const HeroIcon = kind === 'sport' ? Trophy : kind === 'live' ? Radio : Newspaper;
+  const heroImage = ofType[0]?.backdrop_url || ofType[0]?.poster_url || '';
+
   return (
     <div className={`${PAGE_CONTAINER} cinema-browse-page space-y-8`}>
-      <header className="space-y-3"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">Cinema</p><h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{copy.heading}</h1><p className="max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">{copy.intro}</p></header>
+      <CinemaCategoryNav active={copy.heading} />
+      <header className="cinema-category-live-hero relative isolate overflow-hidden rounded-[1.8rem] border border-sky-200/20 p-6 shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:p-10 lg:p-12">
+        {heroImage && <Artwork src={heroImage} alt="" fallbackTitle={copy.heading} className="absolute inset-0 h-full w-full object-cover opacity-25" />}
+        <div className="cinema-category-hero__orb cinema-category-hero__orb--one" aria-hidden="true" />
+        <div className="cinema-category-hero__orb cinema-category-hero__orb--two" aria-hidden="true" />
+        <div className="relative z-10 max-w-3xl">
+          <p className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.24em] text-sky-200"><HeroIcon className="h-4 w-4" /> Cinema Destination · {copy.heading}</p>
+          <h1 className="mt-5 text-4xl font-black tracking-[-.04em] text-white sm:text-6xl">{copy.heading}</h1>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-200/85 sm:text-base">{copy.intro}</p>
+          <a href="/search" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#087cff] px-5 py-3 text-xs font-extrabold text-white shadow-[0_8px_26px_rgba(8,124,255,.25)] transition hover:bg-[#168cff]">Find More On Cinema</a>
+        </div>
+      </header>
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
       {titles && ofType.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title={`${copy.heading} Is Getting Ready`} description={copy.empty} />}
       {titles && ofType.length > 0 && <>

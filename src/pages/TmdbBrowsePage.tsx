@@ -9,6 +9,7 @@ import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchTmdbGenres, fetchTmdbList, searchTmdb, tmdbHref, tmdbImageUrl, tmdbYear, type TmdbListKind, type TmdbMediaType } from '@/lib/tmdb';
 import { Clapperboard } from 'lucide-react';
+import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 
 const MODE_LABELS: Record<TmdbListKind, string> = { popular: 'Popular', trending: 'Trending this week' };
 const SEARCH_DEBOUNCE_MS = 350;
@@ -43,7 +44,8 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
-      <header className="flex flex-col gap-3 border-b border-white/10 pb-6">
+      <CinemaCategoryNav active={heading} />
+      <header className="cinema-category-live-hero relative isolate flex flex-col gap-3 overflow-hidden rounded-[1.7rem] border border-sky-200/15 p-6 sm:p-8">
         <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">Explore Cinema</p>
         <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">{heading}</h1>
         <p className="max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">Explore real titles, discover official trailers and find the stories you want to experience. Availability to watch on Cinema depends on distribution rights.</p>
@@ -67,11 +69,11 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
       {!items.loading && !items.error && items.data && items.data.length === 0 && <EmptyState icon={<Clapperboard className="h-7 w-7 text-cinema-300" />} title={query ? `No results for "${query}"` : `No ${heading.toLowerCase()} to show`} description="Try a different search or genre." />}
 
       {!items.loading && !items.error && items.data && items.data.length > 0 && <>
-        {!query && featured && <a href={tmdbHref(featured)} className="group relative block min-h-[21rem] overflow-hidden rounded-[1.75rem] border border-white/10 bg-ink-900 sm:min-h-[27rem]">
+        {!query && featured && <a href={tmdbHref(featured)} className="group cinema-category-live-hero relative isolate block min-h-[21rem] overflow-hidden rounded-[1.75rem] border border-white/10 bg-ink-900 sm:min-h-[27rem]">
           <Artwork src={featuredImage} alt="" fallbackTitle={featured.title} className="absolute inset-0 h-full w-full transition duration-700 group-hover:scale-[1.02]" />
           <span className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent" />
           <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-          <span className="relative flex min-h-[21rem] max-w-2xl flex-col justify-end p-6 sm:min-h-[27rem] sm:p-9">
+          <span className="relative z-10 flex min-h-[21rem] max-w-2xl flex-col justify-end p-6 sm:min-h-[27rem] sm:p-9">
             <span className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-200">Spotlight · {featured.mediaType === 'movie' ? 'Movie' : 'Series'}{tmdbYear(featured) ? ` · ${tmdbYear(featured)}` : ''}</span>
             <span className="mt-3 text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl">{featured.title}</span>
             {featured.overview && <span className="mt-3 line-clamp-3 max-w-xl text-sm leading-6 text-slate-200">{featured.overview}</span>}
