@@ -2206,3 +2206,171 @@ body {
     opacity: .12;
   }
 }
+
+
+/* CINEMA DAYLIGHT COLOUR PASS — brighter, warmer and more expressive without
+   changing the product structure or turning the interface into visual noise. */
+:root {
+  --cinema-obsidian: #10141b;
+  --cinema-carbon: #151c26;
+  --cinema-surface: #1c2633;
+  --cinema-surface-raised: #253243;
+  --cinema-silver: #dce4ee;
+  --cinema-silver-bright: #fbfcff;
+  --cinema-silver-muted: #aab7c7;
+  --cinema-electric: #4b9cff;
+  --cinema-electric-soft: #8cc5ff;
+  --cinema-coral: #ff806f;
+  --cinema-amber: #ffc46b;
+  --cinema-teal: #5ed8c0;
+  --cinema-violet: #b39aff;
+}
+html, body, #root {
+  background-color: #10141b !important;
+}
+body {
+  color: #f5f7fb !important;
+  background-color: #10141b !important;
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgba(67, 151, 255, .16), transparent 34%),
+    radial-gradient(ellipse at 92% 8%, rgba(255, 135, 112, .105), transparent 31%),
+    radial-gradient(ellipse at 76% 72%, rgba(100, 214, 190, .075), transparent 35%),
+    radial-gradient(ellipse at 18% 100%, rgba(173, 142, 255, .075), transparent 36%) !important;
+  background-attachment: fixed;
+}
+.dark {
+  --background: oklch(0.17 0.012 258);
+  --foreground: oklch(0.985 0.004 255);
+  --card: oklch(0.215 0.014 255);
+  --card-foreground: oklch(0.985 0.004 255);
+  --popover: oklch(0.23 0.014 255);
+  --popover-foreground: oklch(0.985 0.004 255);
+  --primary: oklch(0.73 0.14 250);
+  --primary-foreground: oklch(0.13 0.018 255);
+  --secondary: oklch(0.27 0.014 255);
+  --secondary-foreground: oklch(0.97 0.006 255);
+  --muted: oklch(0.255 0.012 255);
+  --muted-foreground: oklch(0.79 0.012 255);
+  --accent: oklch(0.30 0.035 250);
+  --accent-foreground: oklch(0.985 0.004 255);
+  --border: oklch(0.39 0.014 255 / 82%);
+  --input: oklch(0.34 0.014 255 / 92%);
+  --ring: oklch(0.76 0.14 250);
+  --sidebar: oklch(0.185 0.012 258);
+  --sidebar-foreground: oklch(0.97 0.006 255);
+  --sidebar-primary: oklch(0.73 0.14 250);
+  --sidebar-primary-foreground: oklch(0.13 0.018 255);
+  --sidebar-accent: oklch(0.26 0.018 255);
+  --sidebar-accent-foreground: oklch(0.97 0.006 255);
+  --sidebar-border: oklch(0.34 0.014 255);
+  --sidebar-ring: oklch(0.76 0.14 250);
+}
+.cinema-app-shell {
+  color: #f5f7fb;
+}
+.cinema-app-shell .text-slate-400,
+.cinema-app-shell .text-gray-400 {
+  color: #c0cad7 !important;
+}
+.cinema-app-shell .text-slate-500,
+.cinema-app-shell .text-gray-500 {
+  color: #a5b2c2 !important;
+}
+.cinema-app-shell .text-slate-300,
+.cinema-app-shell .text-gray-300 {
+  color: #d9e1eb !important;
+}
+.cinema-app-shell [class*="border-white/"],
+.cinema-app-shell [class*="border-slate-"] {
+  border-color: rgba(194, 211, 233, .22);
+}
+.cinema-app-shell [class*="bg-white/[.025]"],
+.cinema-app-shell [class*="bg-white/[.03]"],
+.cinema-app-shell [class*="bg-white/[.04]"] {
+  background-color: rgba(185, 204, 229, .075) !important;
+}
+.cinema-app-shell .cinema-home-category {
+  color: #e4edf8;
+  border-color: rgba(166, 197, 231, .27);
+  background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
+}
+.cinema-app-shell .cinema-home-category:nth-child(4n + 1) {
+  --cinema-chip-glow: rgba(73, 157, 255, .22);
+  border-color: rgba(104, 177, 255, .36);
+}
+.cinema-app-shell .cinema-home-category:nth-child(4n + 2) {
+  --cinema-chip-glow: rgba(255, 145, 117, .19);
+  border-color: rgba(255, 164, 139, .32);
+}
+.cinema-app-shell .cinema-home-category:nth-child(4n + 3) {
+  --cinema-chip-glow: rgba(95, 220, 191, .18);
+  border-color: rgba(112, 224, 199, .3);
+}
+.cinema-app-shell .cinema-home-category:nth-child(4n) {
+  --cinema-chip-glow: rgba(180, 151, 255, .2);
+  border-color: rgba(190, 166, 255, .32);
+}
+.cinema-app-shell .cinema-home-category:hover,
+.cinema-app-shell .cinema-home-category:focus-visible {
+  box-shadow: 0 8px 24px var(--cinema-chip-glow, rgba(73,157,255,.2)),
+    inset 0 1px 0 rgba(255,255,255,.17);
+}
+.cinema-app-shell .cinema-category-hero,
+.cinema-app-shell .cinema-category-live-hero {
+  background:
+    radial-gradient(ellipse at 80% 16%, rgba(69, 151, 255, .26), transparent 38%),
+    radial-gradient(ellipse at 12% 90%, rgba(255, 133, 112, .12), transparent 38%),
+    radial-gradient(ellipse at 65% 100%, rgba(87, 215, 190, .10), transparent 44%),
+    linear-gradient(128deg, #1b293b, #111923 65%, #17202c);
+  border-color: rgba(130, 185, 245, .34);
+}
+.cinema-app-shell .cinema-hero {
+  border-color: rgba(131, 190, 255, .42) !important;
+  box-shadow: 0 30px 86px rgba(0,0,0,.38),
+    0 0 42px rgba(54,145,255,.15),
+    0 0 70px rgba(255,139,115,.055) !important;
+}
+.cinema-app-shell .cinema-empty-board,
+.cinema-app-shell .cinema-home-empty {
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(68,151,255,.19), transparent 42%),
+    radial-gradient(ellipse at 12% 100%, rgba(255,137,114,.10), transparent 42%),
+    linear-gradient(135deg, #202d3d, #141c27 72%) !important;
+  border-color: rgba(153, 190, 230, .28) !important;
+}
+.cinema-app-shell .cinema-nav-link[aria-current="page"],
+.cinema-app-shell .cinema-mobile-nav-item[aria-current="page"] {
+  background: linear-gradient(115deg, rgba(56,145,255,.32), rgba(83,190,207,.14), rgba(255,151,120,.10)) !important;
+  border-color: rgba(133, 194, 255, .62) !important;
+  box-shadow: inset 3px 0 0 #69b3ff, 0 0 24px rgba(65,150,255,.17) !important;
+}
+.cinema-app-shell :is(button, a, [role="button"], [role="tab"]):focus-visible {
+  outline-color: #b7ddff !important;
+  box-shadow: 0 0 0 3px rgba(98,174,255,.2), 0 0 22px rgba(98,174,255,.16) !important;
+}
+.cinema-app-shell :is(button, a, [role="button"]) {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+.cinema-app-shell .cinema-hero-light--one {
+  background: radial-gradient(ellipse, rgba(88,166,255,.24), rgba(255,143,119,.07) 48%, transparent 74%);
+  opacity: .78;
+}
+.cinema-app-shell .cinema-hero-light--two {
+  background: radial-gradient(ellipse, rgba(89,218,193,.17), rgba(177,151,255,.07) 48%, transparent 74%);
+  opacity: .72;
+}
+@media (max-width: 767px) {
+  body {
+    background-attachment: scroll;
+  }
+  .cinema-app-shell :is(button, a, [role="button"]) {
+    transition-duration: 140ms;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-app-shell :is(button, a, [role="button"]) {
+    transition: none !important;
+  }
+}
