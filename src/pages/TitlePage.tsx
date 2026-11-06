@@ -177,7 +177,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
                 {behindScenes.length > 0 && <EditorialVideoGroup heading="Behind the scenes" clips={behindScenes} onOpen={setActiveVideo} />}
                 {interviews.length > 0 && <EditorialVideoGroup heading="Cast and crew conversations" clips={interviews} onOpen={setActiveVideo} />}
                 {additionalClips.length > 0 && <EditorialVideoGroup heading="More from this title" clips={additionalClips} onOpen={setActiveVideo} />}
-                {titleShorts.length > 0 && <div className="space-y-3"><h3 className="text-sm font-bold text-slate-200">Short videos</h3><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveVideo} />)}</div></div>}
+                {titleShorts.length > 0 && <div className="space-y-3"><h3 className="text-sm font-bold text-slate-200">Short videos</h3><div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{titleShorts.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={() => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`)} />)}</div></div>}
               </section>
             )}
           </div>
