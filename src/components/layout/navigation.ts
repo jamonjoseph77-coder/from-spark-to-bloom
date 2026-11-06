@@ -31,6 +31,7 @@ export const MOBILE_PRIMARY_NAV: NavItem[] = [HOME, DISCOVER, MOVIES, SERIES, MY
 export function navKeyOf(route: Route): string | null {
   switch (route.name) {
     case 'home': return 'home';
+    case 'category': return 'home';
     case 'browse': return { movie: 'movies', series: 'series', sport: 'sports', live: 'live-tv', news: 'news' }[route.kind];
     case 'discover': return 'discover';
     case 'shorts': return 'shorts';
