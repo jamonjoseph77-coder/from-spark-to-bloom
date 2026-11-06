@@ -54,7 +54,7 @@ export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
     .eq('kind', 'short')
     .order('created_at', { ascending: false })
     .order('sort_order', { ascending: true })
-    .limit(60);
+    .limit(200);
   if (error) throw error;
   const normalized = (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[];
   const playable = normalized.filter((clip) => {
