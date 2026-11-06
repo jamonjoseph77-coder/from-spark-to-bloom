@@ -21,16 +21,35 @@ function signalsStorageKey(userId?: string): string {
 }
 const EMPTY_SIGNALS: ViewerSignals = { completedIds: [], likedIds: [], publisherAffinity: {}, titleAffinity: {} };
 
+function readStringIds(value: unknown): string[] {
+  return Array.isArray(value)
+    ? [...new Set(value.filter((id): id is string => typeof id === 'string' && id.length > 0))].slice(-300)
+    : [];
+}
+
+function readAffinity(value: unknown): Record<string, number> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key, score]) => key.length > 0 && key.length <= 256 && typeof score === 'number' && Number.isFinite(score))
+      .map(([key, score]) => [key, Math.max(-8, Math.min(8, score as number))]),
+  );
+}
+
+function boundAffinity(score: number): number {
+  return Math.max(-8, Math.min(8, Number.isFinite(score) ? score : 0));
+}
+
 function readSignals(userId?: string): ViewerSignals {
   try {
     const raw = window.localStorage.getItem(signalsStorageKey(userId));
     if (!raw) return EMPTY_SIGNALS;
     const parsed = JSON.parse(raw) as Partial<ViewerSignals>;
     return {
-      completedIds: Array.isArray(parsed.completedIds) ? parsed.completedIds : [],
-      likedIds: Array.isArray(parsed.likedIds) ? parsed.likedIds : [],
-      publisherAffinity: parsed.publisherAffinity && typeof parsed.publisherAffinity === 'object' ? parsed.publisherAffinity : {},
-      titleAffinity: parsed.titleAffinity && typeof parsed.titleAffinity === 'object' ? parsed.titleAffinity : {},
+      completedIds: readStringIds(parsed.completedIds),
+      likedIds: readStringIds(parsed.likedIds),
+      publisherAffinity: readAffinity(parsed.publisherAffinity),
+      titleAffinity: readAffinity(parsed.titleAffinity),
     };
   } catch { return EMPTY_SIGNALS; }
 }
@@ -269,8 +288,8 @@ export function ShortsPage() {
       const next: ViewerSignals = {
         ...current,
         completedIds: [...current.completedIds, clip.id].slice(-300),
-        publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + 1 },
-        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: (current.titleAffinity[clip.title_id] ?? 0) + 0.75 } : current.titleAffinity,
+        publisherAffinity: { ...current.publisherAffinity, [publisher]: boundAffinity((current.publisherAffinity[publisher] ?? 0) + 1) },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: boundAffinity((current.titleAffinity[clip.title_id] ?? 0) + 0.75) } : current.titleAffinity,
       };
       saveSignals(next, user?.id);
       return next;
@@ -285,8 +304,8 @@ export function ShortsPage() {
       const next: ViewerSignals = {
         ...current,
         likedIds: liked ? [...current.likedIds, clip.id].slice(-300) : current.likedIds.filter((id) => id !== clip.id),
-        publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (liked ? 1.2 : -0.8) },
-        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (liked ? 1 : -0.6)) } : current.titleAffinity,
+        publisherAffinity: { ...current.publisherAffinity, [publisher]: boundAffinity((current.publisherAffinity[publisher] ?? 0) + (liked ? 1.2 : -0.8)) },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: boundAffinity((current.titleAffinity[clip.title_id] ?? 0) + (liked ? 1 : -0.6)) } : current.titleAffinity,
       };
       saveSignals(next, user?.id);
       return next;
@@ -354,8 +373,8 @@ export function ShortsPage() {
       const next: ViewerSignals = {
         ...current,
         likedIds: wasLiked ? current.likedIds.filter((id) => id !== clip.id) : [...current.likedIds, clip.id].slice(-300),
-        publisherAffinity: { ...current.publisherAffinity, [publisher]: (current.publisherAffinity[publisher] ?? 0) + (wasLiked ? -0.8 : 1.2) },
-        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: Math.max(0, (current.titleAffinity[clip.title_id] ?? 0) + (wasLiked ? -0.6 : 1.0)) } : current.titleAffinity,
+        publisherAffinity: { ...current.publisherAffinity, [publisher]: boundAffinity((current.publisherAffinity[publisher] ?? 0) + (wasLiked ? -0.8 : 1.2)) },
+        titleAffinity: clip.title_id ? { ...current.titleAffinity, [clip.title_id]: boundAffinity((current.titleAffinity[clip.title_id] ?? 0) + (wasLiked ? -0.6 : 1.0)) } : current.titleAffinity,
       };
       saveSignals(next, user?.id);
       return next;
