@@ -15,6 +15,18 @@ export async function fetchProfileByUsername(username: string): Promise<Profile 
   return (data ?? null) as Profile | null;
 }
 
+export async function fetchDiscoverableProfileByDisplayName(displayName: string): Promise<Profile | null> {
+  const clean = displayName.trim();
+  if (!clean) return null;
+  const { data, error } = await supabase.from('profiles').select('*')
+    .eq('is_discoverable', true)
+    .ilike('display_name', clean)
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as Profile | null;
+}
+
 export async function fetchProfilesByIds(userIds: string[]): Promise<Profile[]> {
   if (userIds.length === 0) return [];
   const { data, error } = await supabase.from('profiles').select('*').in('user_id', userIds);
