@@ -12,6 +12,8 @@ import { downloadPermittedClip, fetchPublishedShorts, fetchSavedDiscoverClipIds,
 import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
 import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { publisherHref } from '@/lib/publishers';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
+import { fetchDiscoverableProfileByDisplayName } from '@/lib/profiles';
 
 type ViewerSignals = { completedIds: string[]; likedIds: string[]; publisherAffinity: Record<string, number>; titleAffinity: Record<string, number> };
 const SIGNALS_KEY_PREFIX = 'cinema:shorts-viewer-signals:v2:';
@@ -63,6 +65,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onSignIn: () => void; onTrack: (clip: DiscoverClip) => void; tracked: boolean; tracking: boolean;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [publisherAvatarUrl, setPublisherAvatarUrl] = useState<string | null>(null);
   const [reactionCount, setReactionCount] = useState(0);
   const [likedByUser, setLikedByUser] = useState(false);
   const [savingReaction, setSavingReaction] = useState(false);
@@ -74,6 +77,16 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   const { notify } = useToast();
   const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
   const embed = rawEmbed ? (getYouTubeVideoId(clip.video_url) ? rawEmbed + "&enablejsapi=1&origin=" + encodeURIComponent(window.location.origin) : rawEmbed + "&api=1&player_id=cinema-short-" + clip.id) : null;
+
+  useEffect(() => {
+    if (!active) return;
+    let current = true;
+    setPublisherAvatarUrl(null);
+    fetchDiscoverableProfileByDisplayName(clip.publisher_name || '').then((profile) => {
+      if (current) setPublisherAvatarUrl(profile?.avatar_url ?? null);
+    }).catch((error) => console.warn('Cinema Creator Avatar Could Not Load', error));
+    return () => { current = false; };
+  }, [active, clip.publisher_name]);
 
   useEffect(() => {
     if (!active) return;
@@ -170,7 +183,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
       <div className="cinema-short-overlay pointer-events-none absolute inset-0 z-20">
         <div className="cinema-short-info pointer-events-auto min-w-0 flex-1 pr-2">
           <a href={publisherHref(clip.publisher_name || "Cinema")} className="inline-flex max-w-full items-center gap-2 text-xs font-bold text-white/90">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/30 bg-black/55 text-xs font-black">{(clip.publisher_name || "C").slice(0, 1).toUpperCase()}</span>
+            <ProfileAvatar name={clip.publisher_name || "Cinema Creator"} imageUrl={publisherAvatarUrl} size="sm" previewable={false} />
             <span className="truncate">{clip.publisher_name || "Cinema Creator"}</span>
           </a>
           <h2 className="mt-2 line-clamp-2 text-lg font-black leading-tight text-white drop-shadow-lg sm:text-xl">{clip.headline}</h2>
