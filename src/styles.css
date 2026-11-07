@@ -3203,3 +3203,71 @@ body {
     min-height: 2.85rem !important;
   }
 }
+
+
+/* Cinema Shorts final presentation pass: remove provider chrome from the feed,
+   retain full-bleed video, lower the reaction rail, and make Cinema actions
+   unmistakable against varied footage. */
+.cinema-shorts-page,
+.cinema-shorts-page .cinema-shorts-feed,
+.cinema-shorts-page .cinema-shorts-feed__slot,
+.cinema-shorts-page .cinema-shorts-feed__slot > article {
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  border-radius: 0 !important;
+}
+.cinema-shorts-page .cinema-shorts-feed__slot > article .cinema-video-stage,
+.cinema-shorts-page .cinema-shorts-feed__slot > article .cinema-video-stage video {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
+  bottom: max(2dvh, calc(env(safe-area-inset-bottom) + .45rem)) !important;
+  gap: clamp(.65rem, 1.45dvh, .95rem) !important;
+}
+.cinema-shorts-page .cinema-short-overlay .cinema-short-watch-now {
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  background: linear-gradient(108deg, #ff286f 0%, #a52cff 54%, #397dff 100%) !important;
+  box-shadow: 0 10px 34px rgba(0,0,0,.48), 0 0 28px rgba(186,54,255,.48), inset 0 1px 0 rgba(255,255,255,.42) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,.32) !important;
+}
+.cinema-shorts-page .cinema-short-overlay .cinema-short-track {
+  color: #fff !important;
+  border: 1px solid rgba(105,225,255,.98) !important;
+  background: linear-gradient(130deg, #087fc5 0%, #1457c8 55%, #3531a8 100%) !important;
+  box-shadow: 0 9px 28px rgba(0,0,0,.46), 0 0 24px rgba(42,173,255,.38), inset 0 1px 0 rgba(255,255,255,.32) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,.32) !important;
+}
+.cinema-shorts-page .cinema-short-overlay .cinema-short-watch-now:hover,
+.cinema-shorts-page .cinema-short-overlay .cinema-short-track:hover {
+  filter: brightness(1.16) saturate(1.18) !important;
+  transform: translateY(-1px) !important;
+}
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-info > a:first-child {
+  align-items: center !important;
+}
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-info > a:first-child > span:first-child {
+  overflow: hidden !important;
+  border-radius: 9999px !important;
+  background: rgba(7,12,22,.92) !important;
+}
+.cinema-shorts-page .cinema-short-double-tap-heart {
+  animation: cinema-short-heart-pop 720ms cubic-bezier(.18,.8,.28,1) both;
+}
+@keyframes cinema-short-heart-pop {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.35) rotate(-14deg); }
+  22% { opacity: 1; transform: translate(-50%,-50%) scale(1.18) rotate(7deg); }
+  52% { opacity: 1; transform: translate(-50%,-50%) scale(.96) rotate(0); }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(1.12) rotate(0); }
+}
+@media (max-width: 430px) {
+  .cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
+    bottom: max(1.5dvh, calc(env(safe-area-inset-bottom) + .3rem)) !important;
+  }
+}
