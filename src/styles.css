@@ -3232,17 +3232,21 @@ body {
 }
 .cinema-shorts-page .cinema-short-overlay .cinema-short-watch-now {
   color: #fff !important;
-  border: 1px solid rgba(255,255,255,.95) !important;
-  background: linear-gradient(108deg, #ff286f 0%, #a52cff 54%, #397dff 100%) !important;
-  box-shadow: 0 10px 34px rgba(0,0,0,.48), 0 0 28px rgba(186,54,255,.48), inset 0 1px 0 rgba(255,255,255,.42) !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,.32) !important;
+  border: 1px solid rgba(255,133,190,.58) !important;
+  background: linear-gradient(112deg, rgba(255,40,111,.25) 0%, rgba(165,44,255,.23) 54%, rgba(57,125,255,.2) 100%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(155%) !important;
+  backdrop-filter: blur(18px) saturate(155%) !important;
+  box-shadow: 0 8px 26px rgba(0,0,0,.24), 0 0 18px rgba(186,54,255,.2), inset 0 1px 0 rgba(255,255,255,.24) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,.5) !important;
 }
 .cinema-shorts-page .cinema-short-overlay .cinema-short-track {
   color: #fff !important;
-  border: 1px solid rgba(105,225,255,.98) !important;
-  background: linear-gradient(130deg, #087fc5 0%, #1457c8 55%, #3531a8 100%) !important;
-  box-shadow: 0 9px 28px rgba(0,0,0,.46), 0 0 24px rgba(42,173,255,.38), inset 0 1px 0 rgba(255,255,255,.32) !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,.32) !important;
+  border: 1px solid rgba(105,225,255,.58) !important;
+  background: linear-gradient(130deg, rgba(8,127,197,.25) 0%, rgba(20,87,200,.23) 55%, rgba(53,49,168,.2) 100%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(155%) !important;
+  backdrop-filter: blur(18px) saturate(155%) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.24), 0 0 16px rgba(42,173,255,.18), inset 0 1px 0 rgba(255,255,255,.22) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,.5) !important;
 }
 .cinema-shorts-page .cinema-short-overlay .cinema-short-watch-now:hover,
 .cinema-shorts-page .cinema-short-overlay .cinema-short-track:hover {
