@@ -3108,18 +3108,27 @@ body {
 }
 
 
-/* Shorts correction: keep publisher access on the creator name/avatar;
-   remove the extra Profile control and lower the remaining action rail. */
-.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
-  transform: translateY(3.5dvh) !important;
+/* Shorts correction: no standalone Profile action; publisher identity stays
+   with the existing creator attribution. Keep the right-side actions lower,
+   evenly spaced, and comfortably tappable without covering Watch Now. */
+.cinema-shorts-page .cinema-short-overlay .cinema-short-action-rail {
+  top: calc(50% + 9dvh) !important;
+  transform: translateY(-50%) !important;
+  gap: 1rem !important;
+}
+.cinema-shorts-page .cinema-short-overlay .cinema-short-action-rail .cinema-short-action {
+  min-width: 3.25rem !important;
+  min-height: 3.25rem !important;
 }
 @media (max-width: 430px) {
-  .cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
-    transform: translateY(3dvh) !important;
+  .cinema-shorts-page .cinema-short-overlay .cinema-short-action-rail {
+    top: calc(50% + 8dvh) !important;
+    gap: .85rem !important;
   }
 }
 @media (max-height: 680px) {
-  .cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
-    transform: translateY(2dvh) !important;
+  .cinema-shorts-page .cinema-short-overlay .cinema-short-action-rail {
+    top: calc(50% + 5dvh) !important;
+    gap: .55rem !important;
   }
 }
