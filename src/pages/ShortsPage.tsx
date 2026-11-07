@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from 'react';
 import { ArrowLeft, ArrowUpRight, BookmarkCheck, BookmarkPlus, Clapperboard, Download, Eye, Heart, MessageCircle, RefreshCw, Search, Share2, Volume2, VolumeX } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -170,7 +170,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
       }
     }
   }
-  function handleVideoDoubleTap(event: React.MouseEvent<HTMLElement>) {
+  function handleVideoDoubleTap(event: MouseEvent<HTMLElement>) {
     const target = event.target as HTMLElement;
     if (target.closest('button, a, input, textarea, form, section')) return;
     setShowDoubleTapHeart(true);
