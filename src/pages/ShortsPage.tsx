@@ -74,6 +74,8 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   const [comments, setComments] = useState<DiscoverContentComment[]>([]);
   const [commentText, setCommentText] = useState('');
   const [commentOpen, setCommentOpen] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
   const { notify } = useToast();
   const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
   const embed = rawEmbed ? (getYouTubeVideoId(clip.video_url) ? rawEmbed + "&enablejsapi=1&origin=" + encodeURIComponent(window.location.origin) : rawEmbed + "&api=1&player_id=cinema-short-" + clip.id) : null;
@@ -168,17 +170,28 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
       }
     }
   }
+  function handleVideoDoubleTap(event: React.MouseEvent<HTMLElement>) {
+    const target = event.target as HTMLElement;
+    if (target.closest('button, a, input, textarea, form, section')) return;
+    setShowDoubleTapHeart(true);
+    window.setTimeout(() => setShowDoubleTapHeart(false), 720);
+    if (!likedByUser) void handleLike();
+  }
+
+  const description = clip.description?.trim() || `${clip.publisher_name || 'This creator'} shares a short moment on Cinema.`;
+
   return (
-    <article onDoubleClick={() => { if (!likedByUser) void handleLike(); }} className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none" aria-label="Cinema Short Video. Double-click To Like.">
+    <article onDoubleClick={handleVideoDoubleTap} className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none" aria-label="Cinema Short Video. Double-click To Like.">
       <div className="absolute inset-0 bg-[#030508]">
         {active && isDirectVideoUrl(clip.video_url) ? (
-          <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls showMuteToggle onMutedChange={(muted) => onAudioChange(!muted)} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />
+          <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls={false} showMuteToggle={false} onMutedChange={(muted) => onAudioChange(!muted)} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />
         ) : active && embed ? (
-          <iframe ref={iframeRef} src={embed} title={clip.headline} onLoad={() => { sendEmbeddedAudio(audioEnabled); window.setTimeout(() => sendEmbeddedAudio(audioEnabled), 180); window.setTimeout(() => sendEmbeddedAudio(audioEnabled), 650); }} className="h-full w-full border-0 bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+          <iframe ref={iframeRef} src={embed} title={clip.headline} onLoad={() => { sendEmbeddedAudio(audioEnabled); window.setTimeout(() => sendEmbeddedAudio(audioEnabled), 180); window.setTimeout(() => sendEmbeddedAudio(audioEnabled), 650); }} className="pointer-events-none h-full w-full border-0 bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
         ) : (
           <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover opacity-80" />
         )}
       </div>
+      {showDoubleTapHeart && <div className="cinema-short-double-tap-heart pointer-events-none absolute left-1/2 top-[43%] z-40 -translate-x-1/2 -translate-y-1/2"><Heart className="h-24 w-24 fill-[#ff315d] text-white drop-shadow-[0_8px_28px_rgba(255,49,93,.65)]" /></div>}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
       <div className="cinema-short-overlay pointer-events-none absolute inset-0 z-20">
         <div className="cinema-short-info pointer-events-auto min-w-0 flex-1 pr-2">
@@ -187,7 +200,11 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
             <span className="truncate">{clip.publisher_name || "Cinema Creator"}</span>
           </a>
           <h2 className="mt-2 line-clamp-2 text-lg font-black leading-tight text-white drop-shadow-lg sm:text-xl">{clip.headline}</h2>
-          {clip.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/75">{clip.description}</p>}
+          <div className="mt-1 max-w-full">
+            <p className={`text-xs leading-5 text-white/85 drop-shadow-md ${descriptionExpanded ? 'max-h-[22dvh] overflow-y-auto' : 'line-clamp-2'}`}>{description}</p>
+            {description.length > 105 && <button type="button" onClick={() => setDescriptionExpanded((expanded) => !expanded)} className="mt-1 text-[11px] font-extrabold text-white underline decoration-white/50 underline-offset-2">{descriptionExpanded ? 'Show Less' : 'More'}</button>}
+          </div>
+          {clip.title && <a href={`/title/${clip.title.id}`} className="mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full border border-white/25 bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white/90 backdrop-blur-md"><Clapperboard className="h-3 w-3 shrink-0" /><span className="truncate">Related To {clip.title.title}</span></a>}
           <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/75"><Eye className="h-3.5 w-3.5" /> {(clip.views_count ?? 0).toLocaleString()} Views</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <a href={clip.title ? "/title/" + clip.title.id : "/search?q=" + encodeURIComponent(clip.headline)} aria-label={clip.title ? "Watch " + clip.title.title + " Now" : "Watch Now — Explore Titles Related To " + clip.headline} className="cinema-short-watch-now inline-flex min-h-12 items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-black text-white shadow-[0_8px_28px_rgba(0,0,0,.38)] backdrop-blur-2xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80">Watch Now <ArrowUpRight className="h-4 w-4" /></a>
@@ -195,7 +212,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
           </div>
         </div>
         <div className="cinema-short-action-rail cinema-short-actions pointer-events-auto absolute right-3 top-1/2 z-30 flex -translate-y-1/2 shrink-0 flex-col items-center gap-2 sm:right-5">
-          {!isDirectVideoUrl(clip.video_url) && <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><span>{audioEnabled ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}</span><span className="text-[9px] font-bold">Sound</span></button>}
+          <button type="button" onClick={toggleAudio} aria-label={audioEnabled ? "Mute This Short" : "Turn Sound On"} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><span>{audioEnabled ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}</span><span className="text-[9px] font-bold">Sound</span></button>
           <button type="button" onClick={() => void handleLike()} disabled={savingReaction || engagementLoading} aria-label={likedByUser ? "Unlike This Short" : "Like This Short"} aria-pressed={likedByUser} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50"><Heart className={"h-8 w-8 drop-shadow-lg " + (likedByUser ? "fill-[#ff315d] text-[#ff315d]" : "text-white")} /><span className="text-[9px] font-bold tabular-nums">{reactionCount.toLocaleString()}</span></button>
           <button type="button" onClick={() => setCommentOpen((open) => !open)} aria-label="Open Comments" aria-expanded={commentOpen} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white"><MessageCircle className="h-8 w-8 drop-shadow-lg" /><span className="text-[9px] font-bold tabular-nums">{comments.length.toLocaleString()}</span></button>
           <button type="button" onClick={() => onSave(clip)} disabled={saving} aria-label={saved ? "Remove From Saved Shorts" : "Save This Short"} aria-pressed={saved} className="cinema-short-action flex flex-col items-center justify-center gap-0.5 text-white disabled:opacity-50">{saved ? <BookmarkCheck className="h-8 w-8 text-sky-200" /> : <BookmarkPlus className="h-8 w-8" />}<span className="text-[9px] font-bold">{saved ? "Saved" : "Save"}</span></button>
@@ -411,10 +428,7 @@ export function ShortsPage() {
     <main className="cinema-shorts-page fixed inset-0 z-[100] h-[100dvh] w-screen max-w-none overflow-hidden bg-[#030508]">
       <header className="absolute inset-x-0 top-0 z-40 flex items-center gap-3 px-4 pt-[max(env(safe-area-inset-top),.8rem)] sm:px-6">
         <a href="/" aria-label="Back To Cinema Home" className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md"><ArrowLeft className="h-4 w-4" /></a>
-        <nav className="flex min-w-0 flex-1 items-center justify-center gap-5 text-[13px] font-bold sm:gap-7 sm:text-base" aria-label="Cinema Shorts">
-          <span className="whitespace-nowrap text-white">Cinema Shorts</span>
-          <a href="/friends" className="whitespace-nowrap text-white/75">Friends</a>
-        </nav>
+        <div className="min-w-0 flex-1" aria-hidden="true" />
         <a href="/search" aria-label="Search Cinema" className="grid h-9 w-9 shrink-0 place-items-center text-white"><Search className="h-6 w-6" /></a>
       </header>
       {loading && !clips && <div className="absolute inset-0 grid place-items-center px-5 pt-16"><div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/65 p-6 backdrop-blur-xl"><LoadingState label="Loading Cinema Shorts" /></div></div>}
