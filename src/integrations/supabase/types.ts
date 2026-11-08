@@ -1320,8 +1320,8 @@ export type Database = {
       update_my_verified_studio_profile: {
         Args: {
           p_description: string
-          p_logo_url?: string
-          p_website_url?: string
+          p_logo_url?: string | null
+          p_website_url?: string | null
         }
         Returns: boolean
       }
