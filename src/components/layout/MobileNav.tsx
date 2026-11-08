@@ -20,7 +20,6 @@ const RIGHT_ITEMS = [
 
 export function MobileNav({ route }: MobileNavProps) {
   const activeKey = navKeyOf(route);
-  const cinemaActive = route.name === 'home';
   const homeContextActive = route.name === 'category';
 
   const renderItems = (items: NavItem[]) => items.map((item) => {
@@ -51,10 +50,10 @@ export function MobileNav({ route }: MobileNavProps) {
       <a
         href="/"
         aria-label="Cinema Home"
-        aria-current={cinemaActive ? 'page' : undefined}
-        className={`cinema-mobile-home-button absolute left-1/2 top-[-17px] flex h-[76px] w-[76px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8d6c2] ${cinemaActive ? 'is-active' : 'hover:scale-[1.04]'}`}
+        title="Home"
+        className="cinema-mobile-home-button absolute left-1/2 top-[-11px] flex h-[64px] w-[64px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
       >
-        <span className="cinema-mobile-home-halo" aria-hidden="true" /><CinemaLogo compact className="relative z-10 !h-[62px] !w-[62px] rounded-full border border-white/[.2] bg-[#101712] object-cover shadow-[0_7px_24px_rgba(0,0,0,.52)]" />
+        <CinemaLogo compact className="!h-[62px] !w-[62px] rounded-full !border-0 !bg-transparent !drop-shadow-none !shadow-none object-cover" />
         <span className="sr-only">Cinema Home</span>
       </a>
     </nav>
