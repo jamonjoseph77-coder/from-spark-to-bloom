@@ -14,7 +14,7 @@ function readVideoDuration(file: File): Promise<number> {
   const objectUrl = URL.createObjectURL(file);
   return new Promise((resolve, reject) => {
     const probe = document.createElement('video');
-    const timeout = window.setTimeout(() => finish(new Error('The video length could not be checked. Please try an MP4 file.')), 15_000);
+    let timeout: number;
     const finish = (error?: Error, seconds?: number) => {
       window.clearTimeout(timeout);
       probe.onloadedmetadata = null;
@@ -24,6 +24,7 @@ function readVideoDuration(file: File): Promise<number> {
       if (error) reject(error);
       else resolve(seconds ?? 0);
     };
+    timeout = window.setTimeout(() => finish(new Error('The video length could not be checked. Please try an MP4 file.')), 15_000);
     probe.preload = 'metadata';
     probe.onloadedmetadata = () => {
       const seconds = probe.duration;
@@ -89,6 +90,7 @@ export function CreatorShortsPage() {
     const base = `${user.id}/${crypto.randomUUID()}`;
     const videoPath = `${base}/video-${video.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
     let posterPath: string | null = null;
+    let videoUploaded = false;
     try {
       setBusyStep('Checking Video Length…');
       const seconds = await readVideoDuration(video);
@@ -103,6 +105,7 @@ export function CreatorShortsPage() {
         upsert: false,
       });
       if (uploadError) throw uploadError;
+      videoUploaded = true;
 
       if (poster) {
         posterPath = `${base}/poster-${poster.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
@@ -135,7 +138,7 @@ export function CreatorShortsPage() {
       form.reset();
       notify('Your Short has been submitted for Cinema review.');
     } catch (submitError) {
-      await removeCreatorShortUploads(videoPath, posterPath);
+      if (videoUploaded || posterPath) await removeCreatorShortUploads(videoPath, posterPath);
       console.error('Creator Short submission failed', submitError);
       notify('Your Short could not be submitted. Please try again.', 'error');
     } finally {
