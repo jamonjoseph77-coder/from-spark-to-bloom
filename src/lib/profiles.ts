@@ -18,13 +18,7 @@ export async function fetchProfileByUsername(username: string): Promise<Profile 
 export async function fetchDiscoverableProfileByDisplayName(displayName: string): Promise<Profile | null> {
   const clean = displayName.trim();
   if (!clean) return null;
-  const escaped = clean.replace(/[\\%_]/g, '\\  const { data, error } = await supabase.from('profiles').select('*')
-    .eq('is_discoverable', true)
-    .ilike('display_name', clean)
-    .limit(1)
-    .maybeSingle();
-  if (error) throw error;
-  return (data ?? null) as Profile | null;');
+  const escaped = clean.replace(/[\\%_]/g, '\\$&');
   const { data, error } = await supabase.from('profiles').select('*')
     .eq('is_discoverable', true)
     .ilike('display_name', escaped)
