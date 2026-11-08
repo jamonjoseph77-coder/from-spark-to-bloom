@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowRight, FileCheck2, Film, Globe2, Plus, Send } from 'lucide-react';
+import { FileCheck2, Film, Plus, Send } from 'lucide-react';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useToast } from '@/hooks/useToast';
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, INPUT, LABEL } from '@/components/ui/styles';
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, INPUT } from '@/components/ui/styles';
 import { fetchMyStudioTitleSubmissions, submitStudioTitle, type StudioContentType, type StudioRightsBasis } from '@/lib/studio-content';
 import type { StudioAccount } from '@/lib/studios';
 
