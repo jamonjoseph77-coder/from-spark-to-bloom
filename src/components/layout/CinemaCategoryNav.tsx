@@ -1,4 +1,4 @@
-import { Film, Home, MonitorPlay, Newspaper, Sparkles, Users, Trophy, Radio } from 'lucide-react';
+import { Film, Home, MonitorPlay, Newspaper, Sparkles, Users } from 'lucide-react';
 
 const DESTINATIONS = [
   { label: 'Home', href: '/', icon: Home },
@@ -6,8 +6,6 @@ const DESTINATIONS = [
   { label: 'Series', href: '/series', icon: MonitorPlay },
   { label: 'Shorts', href: '/shorts', icon: Sparkles },
   { label: 'News', href: '/news', icon: Newspaper },
-  { label: 'Sports', href: '/sports', icon: Trophy },
-  { label: 'Live TV', href: '/live-tv', icon: Radio },
   { label: 'Documentaries', href: '/category/documentaries', icon: Users },
   { label: 'Animation', href: '/category/animation', icon: Sparkles },
   { label: 'Family', href: '/category/family', icon: Film },
