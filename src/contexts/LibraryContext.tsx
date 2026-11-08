@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -38,9 +38,15 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const [favouriteIds, setFavouriteIds] = useState<ReadonlySet<string>>(new Set());
   const [progress, setProgress] = useState<WatchProgress[]>([]);
   const [ready, setReady] = useState(false);
+  const watchlistRef = useRef<ReadonlySet<string>>(new Set());
+  const favouritesRef = useRef<ReadonlySet<string>>(new Set());
+  const pendingMembershipsRef = useRef(new Set<string>());
 
   useEffect(() => {
     if (!userId) {
+      watchlistRef.current = new Set();
+      favouritesRef.current = new Set();
+      pendingMembershipsRef.current.clear();
       setWatchlistIds(new Set());
       setFavouriteIds(new Set());
       setProgress([]);
@@ -49,6 +55,9 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     }
     let active = true;
     // Clear the previous account's private library immediately on account changes.
+    watchlistRef.current = new Set();
+    favouritesRef.current = new Set();
+    pendingMembershipsRef.current.clear();
     setWatchlistIds(new Set());
     setFavouriteIds(new Set());
     setProgress([]);
@@ -60,8 +69,12 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     ])
       .then(([watchlist, favourites, history]) => {
         if (!active) return;
-        setWatchlistIds(new Set(watchlist));
-        setFavouriteIds(new Set(favourites));
+        const nextWatchlist = new Set(watchlist);
+        const nextFavourites = new Set(favourites);
+        watchlistRef.current = nextWatchlist;
+        favouritesRef.current = nextFavourites;
+        setWatchlistIds(nextWatchlist);
+        setFavouriteIds(nextFavourites);
         setProgress(history);
       })
       .catch(() => {
@@ -78,32 +91,44 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const toggleMembership = useCallback(
     async (
       table: UserListTable,
-      ids: ReadonlySet<string>,
+      idsRef: { current: ReadonlySet<string> },
       setIds: (next: ReadonlySet<string>) => void,
       titleId: string,
     ) => {
       if (!userId) return;
-      const wasMember = ids.has(titleId);
-      setIds(withMember(ids, titleId, !wasMember));
+      const pendingKey = `${table}:${titleId}`;
+      if (pendingMembershipsRef.current.has(pendingKey)) return;
+
+      const current = idsRef.current;
+      const wasMember = current.has(titleId);
+      const next = withMember(current, titleId, !wasMember);
+      pendingMembershipsRef.current.add(pendingKey);
+      idsRef.current = next;
+      setIds(next);
+
       try {
         if (wasMember) await removeUserTitle(table, userId, titleId);
         else await addUserTitle(table, userId, titleId);
       } catch {
-        setIds(withMember(ids, titleId, wasMember));
+        const rolledBack = withMember(idsRef.current, titleId, wasMember);
+        idsRef.current = rolledBack;
+        setIds(rolledBack);
         notify('That change did not save. Please try again.', 'error');
+      } finally {
+        pendingMembershipsRef.current.delete(pendingKey);
       }
     },
     [userId, notify],
   );
 
   const toggleWatchlist = useCallback(
-    (titleId: string) => toggleMembership('watchlist_items', watchlistIds, setWatchlistIds, titleId),
-    [toggleMembership, watchlistIds],
+    (titleId: string) => toggleMembership('watchlist_items', watchlistRef, setWatchlistIds, titleId),
+    [toggleMembership],
   );
 
   const toggleFavourite = useCallback(
-    (titleId: string) => toggleMembership('favourites', favouriteIds, setFavouriteIds, titleId),
-    [toggleMembership, favouriteIds],
+    (titleId: string) => toggleMembership('favourites', favouritesRef, setFavouriteIds, titleId),
+    [toggleMembership],
   );
 
   const saveProgress = useCallback(
