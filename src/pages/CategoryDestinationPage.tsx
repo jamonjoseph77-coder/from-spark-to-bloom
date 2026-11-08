@@ -1,10 +1,15 @@
 import { ArrowRight, Clapperboard, Compass, Film, Sparkles, Tv } from 'lucide-react';
+import { useMemo } from 'react';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
+import { Artwork } from '@/components/ui/Artwork';
+import { useAsyncData } from '@/hooks/useAsyncData';
+import { fetchPublishedTitles } from '@/lib/library';
+import type { Title } from '@/lib/types';
 
 type Shelf = { heading: string; description: string; mediaType: 'movie' | 'tv'; list: 'popular' | 'trending'; genreId?: number };
 type CategoryConfig = {
@@ -79,7 +84,19 @@ const DESTINATIONS = [
 ];
 
 export function CategoryDestinationPage({ slug }: { slug: string }) {
+  const { data: titles } = useAsyncData(fetchPublishedTitles, []);
   const category = CATEGORIES[slug.toLowerCase()];
+  const categoryArtwork = useMemo(() => {
+    const terms: Record<string, RegExp> = {
+      documentaries: /documentary|documentaries|non-fiction/i,
+      animation: /animation|anime|animated/i,
+      family: /family|kids|children/i,
+      reality: /reality|unscripted/i,
+    };
+    const candidates = (titles ?? []).filter((title: Title) => terms[slug.toLowerCase()]?.test(`${title.genre ?? ''} ${title.title} ${title.overview ?? ''}`));
+    const selected = candidates.find((title) => title.backdrop_url || title.poster_url);
+    return selected?.backdrop_url || selected?.poster_url || '';
+  }, [titles, slug]);
   if (!category) {
     return (
       <main className={`${PAGE_CONTAINER} space-y-5`}>
@@ -98,6 +115,8 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
       <CinemaCategoryNav active={category.title} />
 
       <header className="cinema-category-hero relative isolate overflow-hidden rounded-[2rem] border border-sky-200/15 p-6 shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:p-10 lg:p-12">
+        {categoryArtwork && <Artwork src={categoryArtwork} alt="" fallbackTitle={category.title} className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.24]" />}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#05080e]/95 via-[#05080e]/80 to-[#05080e]/50" />
         <div className="cinema-category-hero__orb cinema-category-hero__orb--one" aria-hidden="true" />
         <div className="cinema-category-hero__orb cinema-category-hero__orb--two" aria-hidden="true" />
         <div className="relative max-w-3xl">
