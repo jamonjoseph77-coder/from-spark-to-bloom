@@ -19,8 +19,8 @@ const RIGHT_ITEMS = [
 ];
 
 export function MobileNav({ route }: MobileNavProps) {
-  const activeKey = route.name === 'browse' && route.kind === 'movie' ? 'cinema' : navKeyOf(route);
-  const cinemaActive = activeKey === 'cinema';
+  const activeKey = navKeyOf(route);
+  const cinemaActive = route.name === 'home';
   const homeContextActive = route.name === 'category';
 
   const renderItems = (items: NavItem[]) => items.map((item) => {
@@ -38,7 +38,7 @@ export function MobileNav({ route }: MobileNavProps) {
   });
 
   return (
-    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-2 bottom-1 z-40 rounded-[1.35rem] border border-white/[.14] bg-[#050706]/[.97] pb-[env(safe-area-inset-bottom)] shadow-[0_0_30px_rgba(0,0,0,.42)] backdrop-blur-2xl lg:hidden">
+    <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-2 bottom-1 z-40 rounded-[1.45rem] border border-white/[.14] pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl lg:hidden">
       <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center px-1">
         <ul className="flex h-full min-w-0 items-center justify-around">
           {renderItems(LEFT_ITEMS)}
@@ -49,13 +49,13 @@ export function MobileNav({ route }: MobileNavProps) {
         </ul>
       </div>
       <a
-        href="/movies"
-        aria-label="Cinema"
+        href="/"
+        aria-label="Cinema Home"
         aria-current={cinemaActive ? 'page' : undefined}
-        className={`absolute left-1/2 top-[-10px] flex h-[66px] w-[66px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#168cff] ${cinemaActive ? 'ring-2 ring-[#168cff]/65' : 'hover:scale-[1.04]'}`}
+        className={`cinema-mobile-home-button absolute left-1/2 top-[-17px] flex h-[76px] w-[76px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8d6c2] ${cinemaActive ? 'is-active' : 'hover:scale-[1.04]'}`}
       >
-        <CinemaLogo compact className="!h-[58px] !w-[58px] rounded-full border border-white/[.16] bg-[#080b09] object-cover shadow-[0_5px_18px_rgba(0,0,0,.5)]" />
-        <span className="sr-only">Cinema</span>
+        <span className="cinema-mobile-home-halo" aria-hidden="true" /><CinemaLogo compact className="relative z-10 !h-[62px] !w-[62px] rounded-full border border-white/[.2] bg-[#101712] object-cover shadow-[0_7px_24px_rgba(0,0,0,.52)]" />
+        <span className="sr-only">Cinema Home</span>
       </a>
     </nav>
   );
