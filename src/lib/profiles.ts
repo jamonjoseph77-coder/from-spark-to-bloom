@@ -18,14 +18,23 @@ export async function fetchProfileByUsername(username: string): Promise<Profile 
 export async function fetchDiscoverableProfileByDisplayName(displayName: string): Promise<Profile | null> {
   const clean = displayName.trim();
   if (!clean) return null;
+
+  // Creator submissions may use a Cinema username rather than the exact
+  // display name. Resolve a unique username first, then a unique display name.
+  const username = clean.replace(/^@/, '').toLowerCase();
+  const byUsername = await supabase.from('profiles').select('*')
+    .eq('is_discoverable', true)
+    .eq('username', username)
+    .maybeSingle();
+  if (byUsername.error) throw byUsername.error;
+  if (byUsername.data) return byUsername.data as Profile;
+
   const escaped = clean.replace(/[\\%_]/g, '\\$&');
   const { data, error } = await supabase.from('profiles').select('*')
     .eq('is_discoverable', true)
     .ilike('display_name', escaped)
     .limit(2);
   if (error) throw error;
-  // A display name is not a unique identifier. Never attach the wrong
-  // member's avatar when two discoverable profiles share the same name.
   return data?.length === 1 ? data[0] as Profile : null;
 }
 

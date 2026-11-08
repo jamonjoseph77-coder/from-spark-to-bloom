@@ -20,7 +20,7 @@ import { fetchProfile } from '@/lib/profiles';
 export function MyCinemaPage() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { notify } = useToast();
-  const { data: profile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
+  const { data: profile, error: profileError, reload: reloadProfile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const { data: downloadableClips, error: downloadsError, reload: reloadDownloads } = useAsyncData(fetchDownloadableClips, []);
   const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
@@ -57,6 +57,7 @@ export function MyCinemaPage() {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-my-cinema space-y-12 pb-12`}>
+      {profileError && <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/20 bg-amber-200/[.05] px-4 py-3 text-xs text-amber-100"><span>Your profile details could not be loaded. Your Cinema library is still available.</span><button type="button" onClick={reloadProfile} className="rounded-full border border-amber-100/25 px-3 py-1.5 font-bold hover:bg-white/5">Retry Profile</button></div>}
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(135deg,#121715,#090c0b_68%,#080a09)] p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
@@ -64,6 +65,7 @@ export function MyCinemaPage() {
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Your personal entertainment space</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>
+            <p className="mt-1 text-sm font-semibold text-slate-200">{profile?.display_name ? `Welcome Back, ${profile.display_name}` : 'Your Cinema, Your Stories'}</p>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Your viewing journey, saved stories and favourites—kept together, ready whenever you are.</p>
           </div>
           <div className="flex flex-wrap gap-2">
