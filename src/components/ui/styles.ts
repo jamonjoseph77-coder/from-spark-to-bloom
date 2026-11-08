@@ -17,7 +17,7 @@ export const INPUT =
 
 export const LABEL = 'mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-400';
 
-export const CARD = 'rounded-2xl border border-white/10 bg-ink-850/70 p-6 shadow-xl shadow-black/20';
+export const CARD = 'rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,44,38,.92),rgba(22,30,26,.94)_62%,rgba(17,23,20,.96))] p-6 shadow-xl shadow-black/20';
 
 export const SECTION_HEADING = 'text-xl font-extrabold tracking-tight text-white sm:text-2xl';
 
