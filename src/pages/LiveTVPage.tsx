@@ -42,11 +42,11 @@ export function LiveTVPage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-live-tv space-y-7`}>
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#141a17] via-[#0b0f0d] to-[#080b09] p-5 shadow-[0_24px_70px_rgba(0,0,0,.28)] sm:p-8">
-        {(channels[0]?.backdrop_url || channels[0]?.poster_url) && <Artwork src={channels[0].backdrop_url || channels[0].poster_url} alt="" fallbackTitle="Live TV" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.23]" />}
-        {(channels[0]?.backdrop_url || channels[0]?.poster_url) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#070b09]/95 via-[#070b09]/80 to-[#070b09]/48" />}
+        {(channels[0]?.backdrop_url || channels[0]?.poster_url) && <Artwork src={channels[0].backdrop_url || channels[0].poster_url} alt="" fallbackTitle="Live TV" className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.23]" />}
+        {(channels[0]?.backdrop_url || channels[0]?.poster_url) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#070b09]/95 via-[#070b09]/80 to-[#070b09]/48" />}
         <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-72 rounded-full bg-slate-200/[.07] blur-3xl" />
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.05] px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.2em] text-slate-200">
               <Signal className="h-3.5 w-3.5" /> Television, Together
