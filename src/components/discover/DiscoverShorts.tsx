@@ -6,6 +6,7 @@ import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
+import { useLibrary } from '@/hooks/useLibrary';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { fetchPublishedShorts, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { navigateTo } from '@/lib/router';
@@ -38,6 +39,11 @@ function ShortsLoading() {
 export function DiscoverShorts() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
   const { user } = useAuth();
+  const { watchlistIds, favouriteIds, progress } = useLibrary();
+  const titleAffinityIds = useMemo(
+    () => new Set([...watchlistIds, ...favouriteIds, ...progress.map((entry) => entry.title_id)]),
+    [watchlistIds, favouriteIds, progress],
+  );
   const { data, error, reload } = useAsyncData(fetchPublishedShorts, []);
   const { data: followedPublishers } = useAsyncData(
     () => user ? fetchFollowedPublishers(user.id) : Promise.resolve([] as string[]),
@@ -53,8 +59,8 @@ export function DiscoverShorts() {
     };
   }, [reload]);
   const shorts = useMemo(
-    () => rankPublishedShorts(data ?? [], followedPublishers ?? [], 18),
-    [data, followedPublishers],
+    () => rankPublishedShorts(data ?? [], followedPublishers ?? [], 18, undefined, titleAffinityIds),
+    [data, followedPublishers, titleAffinityIds],
   );
 
   useEffect(() => {
