@@ -77,7 +77,7 @@ export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
   const normalized = (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[];
   const playable = normalized.filter((clip) => {
     const url = typeof clip.video_url === 'string' ? clip.video_url.trim() : '';
-    const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(toEmbedUrl(url)));
+    const supported = Boolean(url) && isDirectVideoUrl(url);
     const duration = clip.duration_seconds;
     return supported && (duration === null || (duration > 0 && duration <= 90));
   });
@@ -86,7 +86,7 @@ export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
 
 export function isPlayableShort(clip: DiscoverClip): boolean {
   const url = clip.video_url?.trim() ?? '';
-  const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(toEmbedUrl(url)));
+  const supported = Boolean(url) && isDirectVideoUrl(url);
   const validDuration = clip.duration_seconds === null || (clip.duration_seconds > 0 && clip.duration_seconds <= 90);
   return clip.is_published && clip.kind === 'short' && supported && validDuration;
 }
