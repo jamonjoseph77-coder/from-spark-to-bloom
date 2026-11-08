@@ -271,9 +271,9 @@ export function HomePage() {
       <section id="home-movies" className="scroll-mt-28 space-y-10">
         <TmdbRow heading="Spotlight Picks" description="A Fresh Selection Of Films Worth Your Time." mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />
         <TmdbRow heading="Movies In Motion" description="Stories Finding New Audiences This Week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-        <TmdbRow heading="Adrenaline & Adventure" description="Fast-moving stories and big-screen excitement." mediaType="movie" list="trending" genreId={28} />
+        <TmdbRow heading="Action Movies" description="Fast-moving stories and big-screen excitement." mediaType="movie" list="trending" genreId={28} />
         <TmdbRow heading="A Little More Laughter" description="A lighter collection for your next movie night." mediaType="movie" list="popular" genreId={35} />
-        <TmdbRow heading="Worlds Beyond Imagination" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
+        <TmdbRow heading="Animated Movies" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
         {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Movies published in Cinema catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
       </section>
       <section id="home-series" className="scroll-mt-28 space-y-10">
