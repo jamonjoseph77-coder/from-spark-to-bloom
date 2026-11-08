@@ -158,10 +158,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const normalizedEmail = email.trim().toLowerCase();
     try {
       const { data, error } = await supabase.auth.signUp({
-      email: normalizedEmail,
-      password,
-      options: { emailRedirectTo: getAuthRedirectBaseUrl() },
-    });
+        email: normalizedEmail,
+        password,
+        options: { emailRedirectTo: getAuthRedirectBaseUrl() },
+      });
       if (error) return { error: describeAuthError(error), needsConfirmation: false };
       return { error: null, needsConfirmation: !data.session };
     } catch (error: unknown) {
@@ -173,10 +173,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const normalizedEmail = email.trim().toLowerCase();
     try {
       const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: normalizedEmail,
-      options: { emailRedirectTo: getAuthRedirectBaseUrl() },
-    });
+        type: 'signup',
+        email: normalizedEmail,
+        options: { emailRedirectTo: getAuthRedirectBaseUrl() },
+      });
       return error ? describeAuthError(error) : null;
     } catch (error: unknown) {
       return describeUnexpectedAuthError(error);
