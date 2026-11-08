@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { TitleType } from '@/lib/types';
-import { getYouTubeThumbnailUrl, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
+import { getYouTubeThumbnailUrl, isDirectVideoUrl, isHlsUrl } from '@/lib/media';
 
 export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured' | 'behind_the_scenes' | 'interview' | 'making_of' | 'deleted_scene' | 'cast_featurette' | 'production_diary';
 export interface ClipTitle { id: string; title: string; type: TitleType; playback_url?: string | null }
