@@ -236,7 +236,7 @@ export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverC
   const byId = new Map(clips.map((clip) => [clip.id, clip]));
   return savedIds.flatMap((id) => {
     const clip = byId.get(id);
-    return clip ? [clip] : [];
+    return clip?.kind === 'short' ? [clip] : [];
   });
 }
 
