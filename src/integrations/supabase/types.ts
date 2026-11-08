@@ -762,6 +762,32 @@ export type Database = {
           },
         ]
       }
+      series_follows: {
+        Row: {
+          followed_at: string
+          title_id: string
+          user_id: string
+        }
+        Insert: {
+          followed_at?: string
+          title_id: string
+          user_id: string
+        }
+        Update: {
+          followed_at?: string
+          title_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_follows_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       studio_accounts: {
         Row: {
           created_at: string
@@ -872,6 +898,7 @@ export type Database = {
           playback_url: string | null
           poster_url: string
           promotional_rights_confirmed: boolean
+          published_title_id: string | null
           release_year: number | null
           review_note: string
           reviewed_at: string | null
@@ -904,6 +931,7 @@ export type Database = {
           playback_url?: string | null
           poster_url: string
           promotional_rights_confirmed?: boolean
+          published_title_id?: string | null
           release_year?: number | null
           review_note?: string
           reviewed_at?: string | null
@@ -936,6 +964,7 @@ export type Database = {
           playback_url?: string | null
           poster_url?: string
           promotional_rights_confirmed?: boolean
+          published_title_id?: string | null
           release_year?: number | null
           review_note?: string
           reviewed_at?: string | null
@@ -955,6 +984,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "studio_title_submissions_published_title_id_fkey"
+            columns: ["published_title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "studio_title_submissions_studio_id_fkey"
             columns: ["studio_id"]
@@ -1284,8 +1320,8 @@ export type Database = {
       update_my_verified_studio_profile: {
         Args: {
           p_description: string
-          p_logo_url?: string | null
-          p_website_url?: string | null
+          p_logo_url?: string
+          p_website_url?: string
         }
         Returns: boolean
       }
