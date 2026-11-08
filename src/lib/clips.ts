@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { TitleType } from '@/lib/types';
-import { getYouTubeThumbnailUrl, isDirectVideoUrl, isHlsUrl } from '@/lib/media';
+import { getYouTubeThumbnailUrl, getYouTubeVideoId, isDirectVideoUrl, isHlsUrl } from '@/lib/media';
 
 export type ClipKind = 'trailer' | 'short' | 'clip' | 'featured' | 'behind_the_scenes' | 'interview' | 'making_of' | 'deleted_scene' | 'cast_featurette' | 'production_diary';
 export interface ClipTitle { id: string; title: string; type: TitleType; playback_url?: string | null }
@@ -77,7 +77,7 @@ export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
   const normalized = (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[];
   const playable = normalized.filter((clip) => {
     const url = typeof clip.video_url === 'string' ? clip.video_url.trim() : '';
-    const supported = Boolean(url) && isDirectVideoUrl(url);
+    const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(getYouTubeVideoId(url)));
     const duration = clip.duration_seconds;
     return supported && (duration === null || (duration > 0 && duration <= 90));
   });
@@ -86,7 +86,7 @@ export async function fetchPublishedShorts(): Promise<DiscoverClip[]> {
 
 export function isPlayableShort(clip: DiscoverClip): boolean {
   const url = clip.video_url?.trim() ?? '';
-  const supported = Boolean(url) && isDirectVideoUrl(url);
+  const supported = Boolean(url) && (isDirectVideoUrl(url) || Boolean(getYouTubeVideoId(url)));
   const validDuration = clip.duration_seconds === null || (clip.duration_seconds > 0 && clip.duration_seconds <= 90);
   return clip.is_published && clip.kind === 'short' && supported && validDuration;
 }
@@ -229,14 +229,26 @@ export async function setDiscoverClipSaved(clipId: string, userId: string, saved
 }
 
 export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverClip[]> {
-  const savedIds = readSavedShortIds(userId);
+  if (!userId) return [];
+  const savedIds = await fetchSavedDiscoverClipIds(userId);
   if (!savedIds.length) return [];
   const clips = await fetchPublishedClips();
   const byId = new Map(clips.map((clip) => [clip.id, clip]));
   return savedIds.flatMap((id) => {
     const clip = byId.get(id);
-    return clip ? [clip] : [];
-  }).reverse();
+    return clip?.kind === 'short' ? [clip] : [];
+  });
+}
+
+export async function fetchPublishedShortsAwaitingNativeSource(): Promise<DiscoverClip[]> {
+  const { data, error } = await supabase.from('discover_clips').select(CLIP_FEED_FIELDS)
+    .eq('is_published', true)
+    .eq('kind', 'short')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  const normalized = (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[];
+  return attachTitles(normalized.filter((clip) => !isDirectVideoUrl(clip.video_url) && !getYouTubeVideoId(clip.video_url)));
 }
 
 export async function fetchDownloadableClips(): Promise<DiscoverClip[]> {

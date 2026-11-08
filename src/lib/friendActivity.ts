@@ -4,6 +4,7 @@ import { loadFriendsSnapshot } from '@/lib/friends';
 export interface FriendWatchingItem {
   friendId: string;
   friendName: string;
+  friendAvatarUrl: string | null;
   titleId: string;
   titleName: string;
   posterUrl: string;
@@ -29,7 +30,10 @@ export async function loadFriendsActivity(userId: string): Promise<FriendsActivi
   const friendIds = friends.map((friend) => friend.otherUserId);
   const friendById = new Map(friends.map((friend) => [
     friend.otherUserId,
-    friend.profile?.display_name || friend.profile?.username || 'Cinema Member',
+    {
+      name: friend.profile?.display_name || friend.profile?.username || 'Cinema Member',
+      avatarUrl: friend.profile?.avatar_url ?? null,
+    },
   ]));
   const cutoff = new Date(Date.now() - 20 * 60 * 1000).toISOString();
 
@@ -65,7 +69,8 @@ export async function loadFriendsActivity(userId: string): Promise<FriendsActivi
     if (!title) return [];
     return [{
       friendId: entry.user_id,
-      friendName: friendById.get(entry.user_id) ?? 'Cinema Member',
+      friendName: friendById.get(entry.user_id)?.name ?? 'Cinema Member',
+      friendAvatarUrl: friendById.get(entry.user_id)?.avatarUrl ?? null,
       titleId: title.id,
       titleName: title.title,
       posterUrl: title.poster_url ?? '',
@@ -75,7 +80,7 @@ export async function loadFriendsActivity(userId: string): Promise<FriendsActivi
 
   const publishers = (followsResult.data ?? []).map((entry) => ({
     friendId: entry.user_id,
-    friendName: friendById.get(entry.user_id) ?? 'Cinema Member',
+    friendName: friendById.get(entry.user_id)?.name ?? 'Cinema Member',
     publisherName: entry.publisher_name,
   }));
 

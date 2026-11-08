@@ -18,13 +18,15 @@ export async function fetchProfileByUsername(username: string): Promise<Profile 
 export async function fetchDiscoverableProfileByDisplayName(displayName: string): Promise<Profile | null> {
   const clean = displayName.trim();
   if (!clean) return null;
+  const escaped = clean.replace(/[\\%_]/g, '\\$&');
   const { data, error } = await supabase.from('profiles').select('*')
     .eq('is_discoverable', true)
-    .ilike('display_name', clean)
-    .limit(1)
-    .maybeSingle();
+    .ilike('display_name', escaped)
+    .limit(2);
   if (error) throw error;
-  return (data ?? null) as Profile | null;
+  // A display name is not a unique identifier. Never attach the wrong
+  // member's avatar when two discoverable profiles share the same name.
+  return data?.length === 1 ? data[0] as Profile : null;
 }
 
 export async function fetchProfilesByIds(userIds: string[]): Promise<Profile[]> {

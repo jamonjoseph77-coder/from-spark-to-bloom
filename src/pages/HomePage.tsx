@@ -9,6 +9,7 @@ import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
@@ -58,7 +59,7 @@ function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loadin
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
           <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Your Friends Are Watching</p><p className="mt-1 text-xs text-slate-500">Only friends who have enabled watch activity sharing appear here.</p></div><Users className="h-4 w-4 text-cinema-200" /></div>
-          {social?.activity.watching.length ? <div className="mt-4 space-y-3">{social.activity.watching.slice(0, 5).map((item) => <a key={item.friendId + item.titleId} href={`/title/${item.titleId}`} className="flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-cinema-300/25"><span className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-ink-800">{item.posterUrl && <img src={item.posterUrl} alt="" className="h-full w-full object-cover" />}</span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold text-white">{item.titleName}</span><span className="mt-1 block truncate text-[11px] text-slate-400">{item.friendName} Is Watching</span></span><Play className="h-4 w-4 shrink-0 text-cinema-200" /></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When friends choose to share what they are currently watching, their recent activity will appear here for up to 20 minutes.</p>}
+          {social?.activity.watching.length ? <div className="mt-4 space-y-3">{social.activity.watching.slice(0, 5).map((item) => <a key={item.friendId + item.titleId} href={`/title/${item.titleId}`} className="flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-cinema-300/25"><span className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-ink-800">{item.posterUrl && <img src={item.posterUrl} alt="" className="h-full w-full object-cover" />}</span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold text-white">{item.titleName}</span><span className="mt-1 block truncate text-[11px] text-slate-400">{item.friendName} Is Watching</span></span><ProfileAvatar name={item.friendName} imageUrl={item.friendAvatarUrl} size="sm" previewable={false} /><Play className="h-4 w-4 shrink-0 text-cinema-200" /></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When friends choose to share what they are currently watching, their recent activity will appear here for up to 20 minutes.</p>}
         </section>
         <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
           <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Publishers In Your Circle</p><p className="mt-1 text-xs text-slate-500">Studios And Broadcasters Your Friends Track.</p></div><Clapperboard className="h-4 w-4 text-cinema-200" /></div>
@@ -270,9 +271,9 @@ export function HomePage() {
       <section id="home-movies" className="scroll-mt-28 space-y-10">
         <TmdbRow heading="Spotlight Picks" description="A Fresh Selection Of Films Worth Your Time." mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />
         <TmdbRow heading="Movies In Motion" description="Stories Finding New Audiences This Week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-        <TmdbRow heading="Adrenaline & Adventure" description="Fast-moving stories and big-screen excitement." mediaType="movie" list="trending" genreId={28} />
+        <TmdbRow heading="Action Movies" description="Fast-moving stories and big-screen excitement." mediaType="movie" list="trending" genreId={28} />
         <TmdbRow heading="A Little More Laughter" description="A lighter collection for your next movie night." mediaType="movie" list="popular" genreId={35} />
-        <TmdbRow heading="Worlds Beyond Imagination" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
+        <TmdbRow heading="Animated Movies" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
         {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Movies published in Cinema catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
       </section>
       <section id="home-series" className="scroll-mt-28 space-y-10">

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import { NotificationBell } from '@/components/layout/NotificationBell';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -52,6 +52,7 @@ export function TopBar() {
         </div>
       </form>
       <div className="ml-auto flex shrink-0 items-center gap-2">
+        <a href="/shorts" aria-label="Watch Cinema Shorts" title="Watch Cinema Shorts" className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[.04] text-slate-300 transition hover:border-sky-200/30 hover:bg-sky-300/10 hover:text-white lg:hidden"><Sparkles className="h-4 w-4" /></a>
         {user && <NotificationBell userId={user.id} />}
         {user ? (
           <a href="/profile" aria-label="Your profile" title={profile?.display_name || user.email || 'Your profile'} className="rounded-full ring-2 ring-cinema-400/30 transition hover:ring-cinema-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">
