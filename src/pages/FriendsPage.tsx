@@ -43,8 +43,8 @@ export function FriendsPage() {
         </div>
         <div className="relative mt-7 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/[.06] bg-[#26332b]/75 p-4"><Users className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Your circle</p><p className="mt-1 text-xs leading-5 text-slate-400">Find and connect with people by username.</p></div>
-          <div className="rounded-2xl bg-ink-950/45 p-4"><Sparkles className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Shared discoveries</p><p className="mt-1 text-xs leading-5 text-slate-400">Pass along titles and recommendations worth seeing.</p></div>
-          <div className="rounded-2xl bg-ink-950/45 p-4"><PartyPopper className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Watch together</p><p className="mt-1 text-xs leading-5 text-slate-400">Bring your circle into a shared watch party.</p></div>
+          <div className="rounded-2xl border border-white/[.06] bg-[#26332b]/75 p-4"><Sparkles className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Shared discoveries</p><p className="mt-1 text-xs leading-5 text-slate-400">Pass along titles and recommendations worth seeing.</p></div>
+          <div className="rounded-2xl border border-white/[.06] bg-[#26332b]/75 p-4"><PartyPopper className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Watch together</p><p className="mt-1 text-xs leading-5 text-slate-400">Bring your circle into a shared watch party.</p></div>
         </div>
       </header>
       <div className="flex items-start gap-2 rounded-2xl border border-[#91b7a2]/15 bg-[#1b241f]/85 p-4 text-xs leading-5 text-slate-300">
