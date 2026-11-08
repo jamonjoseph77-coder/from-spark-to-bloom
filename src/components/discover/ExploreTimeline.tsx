@@ -16,6 +16,18 @@ import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { LetterboxPostCard } from '@/pages/LetterboxPage';
 import { fetchVerifiedStudios } from '@/lib/studios';
 import { publisherHref } from '@/lib/publishers';
+import { fetchFollowedPublishers } from '@/lib/publisherFollows';
+import { loadFriendsSnapshot } from '@/lib/friends';
+
+type ExploreFilter = 'for-you' | 'following' | 'videos' | 'trailers' | 'community';
+
+const EXPLORE_FILTERS: { id: ExploreFilter; label: string }[] = [
+  { id: 'for-you', label: 'For You' },
+  { id: 'following', label: 'Following' },
+  { id: 'videos', label: 'Videos' },
+  { id: 'trailers', label: 'Trailers' },
+  { id: 'community', label: 'Community' },
+];
 
 type ExploreEntry =
   | { id: string; kind: 'post'; createdAt: number; post: LetterboxPost }
@@ -115,6 +127,9 @@ export function ExploreTimeline() {
   const { data, error, reload, loading } = useAsyncData(loadExploreData, []);
   const { data: titles } = useAsyncData(fetchPublishedTitles, []);
   const { data: verifiedStudios } = useAsyncData(() => fetchVerifiedStudios().catch(() => []), []);
+  const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([] as string[]), [user?.id]);
+  const { data: friends } = useAsyncData(() => user ? loadFriendsSnapshot(user.id).catch(() => ({ friends: [], incoming: [], outgoing: [], relations: new Map() })) : Promise.resolve(undefined), [user?.id]);
+  const [activeFilter, setActiveFilter] = useState<ExploreFilter>('for-you');
   const verifiedPublisherNames = useMemo(
     () => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLocaleLowerCase())),
     [verifiedStudios],
@@ -152,6 +167,21 @@ export function ExploreTimeline() {
     }));
     return [...posts, ...clips, ...trailers].sort((a, b) => b.createdAt - a.createdAt);
   }, [data]);
+
+  const visibleEntries = useMemo(() => {
+    if (activeFilter === 'videos') return entries.filter((entry) => entry.kind === 'clip');
+    if (activeFilter === 'trailers') return entries.filter((entry) => entry.kind === 'trailer');
+    if (activeFilter === 'community') return entries.filter((entry) => entry.kind === 'post');
+    if (activeFilter === 'following') {
+      const publisherSet = new Set((followedPublishers ?? []).map((name) => name.trim().toLocaleLowerCase()));
+      const friendSet = new Set((friends?.friends ?? []).map((friend) => friend.otherUserId));
+      return entries.filter((entry) =>
+        (entry.kind === 'clip' && publisherSet.has(entry.clip.publisher_name.trim().toLocaleLowerCase())) ||
+        (entry.kind === 'post' && friendSet.has(entry.post.author_id)),
+      );
+    }
+    return entries;
+  }, [activeFilter, entries, followedPublishers, friends]);
 
   async function publish(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -201,14 +231,20 @@ export function ExploreTimeline() {
         </div>
       </form>}
 
+      <nav aria-label="Explore video feed filters" className="mb-5 flex gap-2 overflow-x-auto border-b border-white/[.08] pb-3 [scrollbar-width:none]">
+        {EXPLORE_FILTERS.map((filter) => <button key={filter.id} type="button" onClick={() => setActiveFilter(filter.id)} aria-pressed={activeFilter === filter.id} className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200 ${activeFilter === filter.id ? 'border-cinema-200/35 bg-cinema-200/15 text-white shadow-[0_5px_20px_rgba(132,174,146,.1)]' : 'border-white/10 bg-white/[.025] text-slate-400 hover:border-white/20 hover:text-white'}`}>{filter.label}</button>)}
+      </nav>
+      {activeFilter === 'following' && !user && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Sign in to see videos from the studios you follow and posts from your friends. <a href="/sign-in" className="font-bold text-cinema-200 hover:text-white">Sign In</a></p>}
+      {activeFilter === 'following' && user && followedPublishers?.length === 0 && (friends?.friends.length ?? 0) === 0 && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Follow a studio or connect with friends to build your Following feed. <a href="/publishers" className="font-bold text-cinema-200 hover:text-white">Find Studios</a> · <a href="/friends" className="font-bold text-cinema-200 hover:text-white">Find Friends</a></p>}
+
       {loading && !data && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-6"><LoadingState label="Loading Cinema Explore" /></div>}
       {error && !data && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-5"><ErrorState onRetry={reload} description="Cinema Explore could not load right now. Your other Cinema destinations remain available." /></div>}
       {data?.postsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Community posts are temporarily unavailable. Publisher videos remain available.</p>}
       {data?.clipsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Publisher videos are temporarily unavailable. Community posts remain available.</p>}
-      {data && entries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title="Your Cinema Explore Starts Here" description="Official videos, creator posts and entertainment conversations will appear together as they are published." /></div>}
+      {data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title={activeFilter === 'following' ? 'Your Following Feed Is Ready' : 'Your Cinema Explore Starts Here'} description={activeFilter === 'following' ? 'New videos and conversations from the studios and friends you follow will appear here.' : 'Official videos, creator posts and entertainment conversations will appear together as they are published.'} /></div>}
 
-      {data && entries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
-        {entries.map((entry) => {
+      {data && visibleEntries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
+        {visibleEntries.map((entry) => {
           if (entry.kind === 'post') return <div key={entry.id} className="cinema-explore-post col-span-full overflow-hidden rounded-2xl border border-white/10 bg-[#0b0e10] shadow-[0_12px_36px_rgba(0,0,0,.16)]"><LetterboxPostCard post={entry.post} userId={user?.id} onChanged={() => void reload()} /></div>;
           if (entry.kind === 'clip') return <PublisherVideoPost key={entry.id} clip={entry.clip} verified={verifiedPublisherNames.has(entry.clip.publisher_name.trim().toLocaleLowerCase())} onOpenShort={openShort} onOpenVideo={setActiveVideo} />;
           return <OfficialTrailerPost key={entry.id} trailer={entry.trailer} onOpen={setActiveTrailer} />;
