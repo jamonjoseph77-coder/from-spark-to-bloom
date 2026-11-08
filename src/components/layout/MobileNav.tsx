@@ -21,7 +21,7 @@ const RIGHT_ITEMS = [
 export function MobileNav({ route }: MobileNavProps) {
   const activeKey = route.name === 'browse' && route.kind === 'movie' ? 'cinema' : navKeyOf(route);
   const cinemaActive = activeKey === 'cinema';
-  const homeContextActive = route.name === 'category' || (route.name === 'browse' && route.kind !== 'live');
+  const homeContextActive = route.name === 'category';
 
   const renderItems = (items: NavItem[]) => items.map((item) => {
     const active = item.key === activeKey || (item.key === 'home' && homeContextActive);
