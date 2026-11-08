@@ -1,0 +1,124 @@
+/* Cinema responsive polish: keep this a website, but make mobile browsing feel app-like.
+   The document remains the vertical scroll owner; no global fixed-height app viewport. */
+html {
+  min-height: 100%;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+body {
+  min-height: 100svh;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+#root {
+  min-height: 100svh;
+  height: auto !important;
+  overflow: visible !important;
+}
+.cinema-app-shell {
+  min-height: 100svh;
+  height: auto !important;
+  overflow: visible !important;
+}
+.cinema-app-shell > div {
+  min-height: 100svh;
+  height: auto !important;
+  overflow: visible !important;
+}
+.cinema-app-shell main {
+  min-height: 55svh;
+  overflow: visible !important;
+  touch-action: pan-y;
+}
+
+/* App-like polish without changing Cinema's navigation or page structure. */
+.cinema-topbar {
+  min-height: 4rem;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.cinema-global-search {
+  min-height: 2.9rem;
+  border-color: rgba(164, 185, 211, .18);
+  background: linear-gradient(120deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 8px 26px rgba(0,0,0,.16);
+}
+.cinema-search-submit {
+  color: #fff !important;
+  border-color: rgba(104, 176, 255, .46) !important;
+  background: linear-gradient(135deg, rgba(18, 104, 190, .9), rgba(19, 65, 133, .94)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 5px 16px rgba(0,75,160,.22);
+}
+.cinema-search-submit:hover {
+  background: linear-gradient(135deg, rgba(27, 132, 224, .98), rgba(23, 82, 163, .98)) !important;
+}
+
+/* Search uses real catalogue artwork as a subdued backdrop instead of empty black panels. */
+.cinema-search-hero {
+  isolation: isolate;
+  background-color: #090d13;
+  background-position: center 38%;
+  background-size: cover;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 50px rgba(0,0,0,.22);
+}
+.cinema-search-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, rgba(4,7,12,.96) 0%, rgba(4,7,12,.83) 55%, rgba(4,7,12,.58) 100%), linear-gradient(0deg, rgba(4,7,12,.55), transparent 70%);
+  backdrop-filter: saturate(.65);
+}
+.cinema-search-destination {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #0b1119 !important;
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 28px rgba(0,0,0,.18);
+}
+.cinema-search-destination::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, rgba(4,7,12,.94), rgba(4,7,12,.78) 62%, rgba(4,7,12,.6));
+}
+.cinema-search-destination:hover::before {
+  background: linear-gradient(100deg, rgba(4,7,12,.88), rgba(4,7,12,.68) 62%, rgba(4,7,12,.48));
+}
+.cinema-search-destination > span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Explicit, visible Cinema colour on Shorts' two primary actions. */
+.cinema-app-shell .cinema-short-watch-now {
+  color: #fff !important;
+  border: 1px solid rgba(255, 155, 205, .72) !important;
+  background: linear-gradient(110deg, #e83d87 0%, #8754d9 54%, #347fce 100%) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 18px rgba(190,70,180,.2), inset 0 1px 0 rgba(255,255,255,.24) !important;
+}
+.cinema-app-shell .cinema-short-track {
+  color: #fff !important;
+  border: 1px solid rgba(105, 205, 255, .72) !important;
+  background: linear-gradient(110deg, #087fb4 0%, #176ac4 52%, #394fae 100%) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 18px rgba(42,150,255,.2), inset 0 1px 0 rgba(255,255,255,.24) !important;
+}
+.cinema-app-shell .cinema-short-watch-now:hover,
+.cinema-app-shell .cinema-short-track:hover {
+  filter: brightness(1.12) saturate(1.12);
+}
+@media (max-width: 640px) {
+  .cinema-app-shell main { padding-bottom: max(5.5rem, calc(5rem + env(safe-area-inset-bottom))) !important; }
+  .cinema-search-hero { border-radius: 1.35rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
