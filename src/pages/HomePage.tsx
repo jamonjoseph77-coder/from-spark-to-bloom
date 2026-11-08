@@ -19,6 +19,7 @@ import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, type Discov
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
+import { fetchFollowedSeries } from '@/lib/followedSeries';
 import { loadFriendsActivity, type FriendsActivity } from '@/lib/friendActivity';
 import { buildRecommendations } from '@/lib/recommendations';
 import { groupByPublisher } from '@/lib/publishers';
@@ -171,9 +172,10 @@ export function HomePage() {
     };
   }, [reloadClips]);
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
+  const { data: followedSeries } = useAsyncData(() => user ? fetchFollowedSeries(user.id) : Promise.resolve([]), [user?.id]);
   const titleAffinityIds = useMemo(
-    () => new Set([...watchlistIds, ...favouriteIds, ...progress.map((entry) => entry.title_id)]),
-    [watchlistIds, favouriteIds, progress],
+    () => new Set([...watchlistIds, ...favouriteIds, ...progress.map((entry) => entry.title_id), ...(followedSeries ?? []).map((title) => title.id)]),
+    [watchlistIds, favouriteIds, progress, followedSeries],
   );
   const shorts = useMemo(
     () => rankPublishedShorts(
@@ -264,6 +266,7 @@ export function HomePage() {
         </div>}
       </section>
       <HomeCommunity social={social} loading={Boolean(user) && socialLoading} />
+      {user && followedSeries && followedSeries.length > 0 && <section className="cinema-followed-series-shelf space-y-4 rounded-[1.6rem] border border-white/10 p-4 sm:p-5"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-100/75">Keep The Story Close</p><h2 className="mt-1 text-xl font-extrabold text-white sm:text-2xl">Stories You’re Following</h2><p className="mt-1 text-sm text-slate-400">Your series, their next chapters, and the conversations around them.</p></div><TitleRow heading="Your Followed Series" titles={followedSeries} landscape action={<a href="/my-cinema" className="text-xs font-semibold text-sky-100 hover:text-white">My Cinema <ArrowRight className="inline h-3.5 w-3.5" /></a>} /></section>}
 
       <section className="cinema-home-lower-highlights space-y-4 rounded-[1.8rem] border border-white/10 p-4 sm:p-6"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Beyond The Screen</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Inside The Story</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Go closer with cast conversations, behind-the-scenes moments and the craft behind the stories.</p></div><a href="/discover" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Features <ArrowRight className="inline h-4 w-4" /></a></div><CinemaSpotlights /></section>
       <>{cinemaShelves?.live.length ? <TitleRow heading="Live TV On Cinema" description="Live channels and programmes published by Cinema broadcasters." titles={cinemaShelves.live} /> : <section className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Live TV On Cinema</h2><p className="mt-1 text-sm text-slate-400">Broadcaster channels and live programmes will appear in this Home shelf when they are published.</p></section>}{cinemaShelves?.news.length ? <section id="home-news" className="scroll-mt-28"><TitleRow heading="News & Current Affairs" description="News programmes and current-affairs content available in Cinema." titles={cinemaShelves.news} /></section> : <section id="home-news" className="scroll-mt-28"><div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">News & Current Affairs</h2><p className="mt-1 text-sm text-slate-400">Verified news channels and programmes will appear here when they are published in Cinema.</p></div></section>}{cinemaShelves?.sports.length ? <TitleRow heading="Sports On Cinema" description="Live coverage, sports programmes and highlights from Cinema publishers." titles={cinemaShelves.sports} /> : <section className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Sports On Cinema</h2><p className="mt-1 text-sm text-slate-400">Sports coverage, programmes and highlights will appear here as publishers add them.</p></section>}{cinemaShelves?.reality.length ? <section id="home-reality" className="scroll-mt-28"><TitleRow heading="Reality & Entertainment" description="Reality programmes and unscripted entertainment across Cinema." titles={cinemaShelves.reality} /></section> : <section id="home-reality" className="scroll-mt-28"><div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Reality & Entertainment</h2><p className="mt-1 text-sm text-slate-400">Reality programmes will appear here as publishers add them to Cinema.</p></div></section>}{cinemaShelves?.documentaries.length ? <section id="home-documentaries" className="scroll-mt-28"><TitleRow heading="Documentaries" description="Factual stories, real people and worlds worth exploring." titles={cinemaShelves.documentaries} /></section> : <section id="home-documentaries" className="scroll-mt-28"><div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Documentaries</h2><p className="mt-1 text-sm text-slate-400">Documentary titles will appear here when they are available in Cinema.</p></div></section>}</>
