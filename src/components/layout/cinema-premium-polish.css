@@ -127,32 +127,16 @@ body {
 }
 
 
-/* Calm, premium interaction states: remove the browser's blue tap flash.
-   Keyboard focus remains visible with a neutral, accessible outline. */
-.cinema-app-shell :where(button, a, [role="button"], input, select, textarea) {
+/* Only the global Search submit control gets a neutral tap/focus treatment.
+   Preserve the existing selected and focus colours everywhere else in Cinema. */
+.cinema-app-shell .cinema-search-submit {
   -webkit-tap-highlight-color: transparent;
 }
-.cinema-app-shell :where(button, a, [role="button"]):focus {
+.cinema-app-shell .cinema-search-submit:focus {
   outline: none;
 }
-.cinema-app-shell :where(button, a, [role="button"]):focus-visible {
-  outline: 2px solid rgba(226, 232, 240, .78) !important;
+.cinema-app-shell .cinema-search-submit:focus-visible {
+  outline: 2px solid rgba(226, 232, 240, .82) !important;
   outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(226, 232, 240, .08);
-}
-.cinema-app-shell :where(button, a, [role="button"]):active {
-  filter: brightness(.96);
-}
-.cinema-app-shell :where(input, select, textarea):focus-visible {
-  outline: 2px solid rgba(203, 213, 225, .7);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(203, 213, 225, .07);
-}
-
-/* Profile imagery should feel like a polished identity element, not a blue status badge. */
-.cinema-my-cinema [aria-label*="profile initials"],
-.cinema-app-shell [aria-label*="profile initials"] {
-  border-color: rgba(255,255,255,.24);
-  background-image: linear-gradient(145deg, #66716e, #303936 58%, #171d1b);
-  box-shadow: 0 12px 30px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.12);
+  box-shadow: 0 0 0 4px rgba(226, 232, 240, .1);
 }
