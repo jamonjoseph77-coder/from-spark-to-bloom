@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Compass, Home, Clapperboard, Trophy, TvMinimalPlay, Users, type LucideIcon } from 'lucide-react';
 import { navKeyOf } from '@/components/layout/navigation';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
+import { getAdaptiveDestination, recordAdaptiveVisit } from '@/components/layout/adaptiveNavigation';
 import type { Route } from '@/lib/router';
 
 interface MobileNavProps { route: Route }
@@ -21,6 +23,11 @@ const RIGHT_ITEMS = [
 export function MobileNav({ route }: MobileNavProps) {
   const activeKey = navKeyOf(route);
   const homeContextActive = route.name === 'category';
+  const [adaptiveDestination, setAdaptiveDestination] = useState(getAdaptiveDestination);
+
+  useEffect(() => {
+    setAdaptiveDestination(recordAdaptiveVisit(route));
+  }, [route]);
 
   const renderItems = (items: NavItem[]) => items.map((item) => {
     const active = item.key === activeKey || (item.key === 'home' && homeContextActive);
@@ -48,13 +55,13 @@ export function MobileNav({ route }: MobileNavProps) {
         </ul>
       </div>
       <a
-        href="/"
-        aria-label="Cinema Home"
-        title="Home"
+        href={adaptiveDestination.href}
+        aria-label={`Adaptive Cinema Shortcut. Open your most-used section: ${adaptiveDestination.label}`}
+        title={adaptiveDestination.label === 'Home' ? 'Cinema Home' : `Your Most-Used: ${adaptiveDestination.label}`}
         className="cinema-mobile-home-button absolute left-1/2 top-[-11px] flex h-[64px] w-[64px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
       >
         <CinemaLogo compact className="!h-[62px] !w-[62px] rounded-full !border-0 !bg-transparent !drop-shadow-none !shadow-none object-cover" />
-        <span className="sr-only">Cinema Home</span>
+        <span className="sr-only">Open {adaptiveDestination.label}</span>
       </a>
     </nav>
   );
