@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { ArrowLeft, ArrowUpRight, BookmarkCheck, BookmarkPlus, Clapperboard, Download, Eye, Heart, MessageCircle, RefreshCw, Search, Share2, Volume2, VolumeX } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/useToast';
 import { navigateTo } from '@/lib/router';
 import { fetchFollowedPublishers, followPublisher, unfollowPublisher } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchPublishedShorts, fetchSavedDiscoverClipIds, setDiscoverClipSaved, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
-import { getYouTubeVideoId, isDirectVideoUrl, isHlsUrl, toEmbedUrl } from '@/lib/media';
+import { isDirectVideoUrl, isHlsUrl } from '@/lib/media';
 import { addDiscoverContentComment, fetchDiscoverContentEngagement, toggleDiscoverContentLike, type DiscoverContentComment } from '@/lib/discoverEngagement';
 import { publisherHref } from '@/lib/publishers';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
@@ -64,7 +64,6 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   onLike: (clip: DiscoverClip, wasLiked: boolean) => Promise<void>; onEngagementLoaded: (clip: DiscoverClip, liked: boolean) => void; onSave: (clip: DiscoverClip) => void; onCompleted: (clip: DiscoverClip) => void; onAudioChange: (enabled: boolean) => void;
   onDownload: (clip: DiscoverClip) => void; downloadingClipId: string | null; onSignIn: () => void; onTrack: (clip: DiscoverClip) => void; tracked: boolean; tracking: boolean;
 }) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [publisherAvatarUrl, setPublisherAvatarUrl] = useState<string | null>(null);
   const [reactionCount, setReactionCount] = useState(0);
   const [likedByUser, setLikedByUser] = useState(false);
@@ -76,9 +75,9 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   const [commentOpen, setCommentOpen] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
+  const lastTouchTapRef = useRef<{ at: number; x: number; y: number } | null>(null);
+  const lastTouchDoubleTapAtRef = useRef(0);
   const { notify } = useToast();
-  const rawEmbed = !isDirectVideoUrl(clip.video_url) && active ? toEmbedUrl(clip.video_url, { autoplay: true, muted: !audioEnabled }) : null;
-  const embed = rawEmbed ? (getYouTubeVideoId(clip.video_url) ? rawEmbed + "&enablejsapi=1&origin=" + encodeURIComponent(window.location.origin) : rawEmbed + "&api=1&player_id=cinema-short-" + clip.id) : null;
 
   useEffect(() => {
     if (!active) return;
@@ -102,24 +101,10 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     return () => { current = false; };
   }, [active, clip, userId, onEngagementLoaded]);
 
-  function sendEmbeddedAudio(enabled: boolean) {
-    const frame = iframeRef.current?.contentWindow;
-    if (!frame) return;
-    if (getYouTubeVideoId(clip.video_url)) {
-      frame.postMessage(JSON.stringify({ event: "command", func: enabled ? "unMute" : "mute", args: [] }), "https://www.youtube.com");
-      if (enabled) frame.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "https://www.youtube.com");
-    } else if (/vimeo\.com/i.test(clip.video_url)) {
-      frame.postMessage(JSON.stringify({ method: "setVolume", value: enabled ? 1 : 0 }), "https://player.vimeo.com");
-      if (enabled) frame.postMessage(JSON.stringify({ method: "play" }), "https://player.vimeo.com");
-    }
-  }
   function toggleAudio() {
-    const next = !audioEnabled;
-    onAudioChange(next);
-    sendEmbeddedAudio(next);
-    window.setTimeout(() => sendEmbeddedAudio(next), 120);
-    window.setTimeout(() => sendEmbeddedAudio(next), 420);
+    onAudioChange(!audioEnabled);
   }
+
   async function handleLike() {
     if (!userId) { onSignIn(); return; }
     if (savingReaction || engagementLoading) return;
@@ -170,23 +155,44 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
       }
     }
   }
-  function handleVideoDoubleTap(event: MouseEvent<HTMLElement>) {
-    const target = event.target as HTMLElement;
+  function triggerDoubleTapLike(target: HTMLElement) {
     if (target.closest('button, a, input, textarea, form, section')) return;
     setShowDoubleTapHeart(true);
     window.setTimeout(() => setShowDoubleTapHeart(false), 720);
     if (!likedByUser) void handleLike();
   }
 
+  function handleVideoDoubleTap(event: MouseEvent<HTMLElement>) {
+    if (Date.now() - lastTouchDoubleTapAtRef.current < 500) return;
+    triggerDoubleTapLike(event.target as HTMLElement);
+  }
+
+  function handleVideoPointerUp(event: ReactPointerEvent<HTMLElement>) {
+    if (event.pointerType !== 'touch') return;
+    const target = event.target as HTMLElement;
+    if (target.closest('button, a, input, textarea, form, section')) {
+      lastTouchTapRef.current = null;
+      return;
+    }
+    const now = Date.now();
+    const previous = lastTouchTapRef.current;
+    const closeEnough = previous && Math.hypot(event.clientX - previous.x, event.clientY - previous.y) < 48;
+    if (previous && now - previous.at < 340 && closeEnough) {
+      lastTouchTapRef.current = null;
+      lastTouchDoubleTapAtRef.current = now;
+      triggerDoubleTapLike(target);
+    } else {
+      lastTouchTapRef.current = { at: now, x: event.clientX, y: event.clientY };
+    }
+  }
+
   const description = clip.description?.trim() || `${clip.publisher_name || 'This creator'} shares a short moment on Cinema.`;
 
   return (
-    <article onDoubleClick={handleVideoDoubleTap} className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none" aria-label="Cinema Short Video. Double-click To Like.">
+    <article onDoubleClick={handleVideoDoubleTap} onPointerUp={handleVideoPointerUp} className="relative isolate h-full min-h-0 w-full snap-start overflow-hidden border-0 bg-[#030508] shadow-none" aria-label="Cinema Short Video. Double-click To Like.">
       <div className="absolute inset-0 bg-[#030508]">
         {active && isDirectVideoUrl(clip.video_url) ? (
           <VideoPlayer key={clip.id} src={clip.video_url} title={clip.headline} poster={clip.poster_url || undefined} layout="portrait" autoPlay muted={!audioEnabled} showControls={false} showMuteToggle={false} onMutedChange={(muted) => onAudioChange(!muted)} onProgress={(progress) => { if (progress.completed) onCompleted(clip); }} />
-        ) : active && embed ? (
-          <iframe ref={iframeRef} src={embed} title={clip.headline} onLoad={() => { sendEmbeddedAudio(audioEnabled); window.setTimeout(() => sendEmbeddedAudio(audioEnabled), 180); window.setTimeout(() => sendEmbeddedAudio(audioEnabled), 650); }} className="pointer-events-none h-full w-full border-0 bg-black" loading="eager" allow="autoplay; accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
         ) : (
           <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full object-cover opacity-80" />
         )}
