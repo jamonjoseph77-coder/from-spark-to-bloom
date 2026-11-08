@@ -57,14 +57,14 @@ export function CinemaSpotlights() {
         />
       )}
       {features.length > 0 && (
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="cinema-story-feature-grid">
           {features.map((clip) => (
-            <article key={clip.id} className="group min-w-0 overflow-hidden rounded-[1.55rem] border border-[#91b7a2]/15 bg-[linear-gradient(145deg,#202923,#171e1a_68%,#121714)] p-3 shadow-[0_16px_42px_rgba(0,0,0,.18)] transition duration-300 hover:-translate-y-0.5 hover:border-[#91b7a2]/30">
+            <article key={clip.id} className="cinema-story-feature-card group min-w-0 overflow-hidden rounded-[1.55rem] border border-[#91b7a2]/15 bg-[linear-gradient(145deg,#202923,#171e1a_68%,#121714)] p-3 shadow-[0_16px_42px_rgba(0,0,0,.18)] transition duration-300 hover:-translate-y-0.5 hover:border-[#91b7a2]/30">
               <button
                 type="button"
                 onClick={() => setActive(clip)}
                 aria-label={`Watch ${featureLabel(clip.kind)}: ${clip.headline}`}
-                className="relative block aspect-video w-full overflow-hidden rounded-[1.15rem] bg-[#25332b] text-left ring-1 ring-white/10 transition hover:ring-[#a8cbb6]/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a8cbb6]"
+                className="cinema-story-feature-media relative block aspect-video w-full overflow-hidden rounded-[1.15rem] bg-[#25332b] text-left ring-1 ring-white/10 transition hover:ring-[#a8cbb6]/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a8cbb6]"
               >
                 <Artwork src={clip.poster_url} alt="" fallbackTitle={clip.headline} className="h-full w-full transition duration-500 group-hover:scale-[1.04]" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
@@ -81,7 +81,7 @@ export function CinemaSpotlights() {
                   <span className="mt-1 flex min-w-0 items-center gap-1.5 text-[11px] font-semibold text-slate-200"><span className="truncate">{clip.publisher_name || 'Cinema Publisher'}</span>{verifiedPublisherNames.has(clip.publisher_name.trim().toLocaleLowerCase()) && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-[#b9d2c2]" aria-label="Verified by Cinema" />}</span>
                 </span>
               </button>
-              <div className="mt-3 flex items-start gap-3 px-1">
+              <div className="cinema-story-feature-details mt-3 flex items-start gap-3 px-1">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#a8cbb6]/20 bg-[#a8cbb6]/10 text-[#b9d2c2]">
                   <Clapperboard className="h-4 w-4" />
                 </span>
@@ -92,10 +92,10 @@ export function CinemaSpotlights() {
                 <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-cinema-200" />
               </div>
               {verifiedPublisherNames.has(clip.publisher_name.trim().toLocaleLowerCase()) && (
-                <a href={publisherHref(clip.publisher_name)} className="mx-1 mt-3 flex items-center gap-2 rounded-xl border border-[#a8cbb6]/15 bg-[#26352c]/45 px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[#d2e4d8] transition hover:border-[#a8cbb6]/35 hover:bg-[#2d4033]"><BadgeCheck className="h-3.5 w-3.5" /> Verified Publisher Destination <ArrowUpRight className="ml-auto h-3.5 w-3.5" /></a>
+                <a href={publisherHref(clip.publisher_name)} className="cinema-story-feature-link mx-1 mt-3 flex items-center gap-2 rounded-xl border border-[#a8cbb6]/15 bg-[#26352c]/45 px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[#d2e4d8] transition hover:border-[#a8cbb6]/35 hover:bg-[#2d4033]"><BadgeCheck className="h-3.5 w-3.5" /> Verified Publisher Destination <ArrowUpRight className="ml-auto h-3.5 w-3.5" /></a>
               )}
               {clip.title && (
-                <a href={`/title/${clip.title.id}`} className="mx-1 mt-3 flex items-center justify-between gap-3 rounded-xl border border-[#a8cbb6]/15 bg-[#26352c]/65 px-3 py-2.5 text-xs font-bold text-[#d2e4d8] transition hover:border-[#a8cbb6]/35 hover:bg-[#2d4033]">
+                <a href={`/title/${clip.title.id}`} className="cinema-story-feature-link mx-1 mt-3 flex items-center justify-between gap-3 rounded-xl border border-[#a8cbb6]/15 bg-[#26352c]/65 px-3 py-2.5 text-xs font-bold text-[#d2e4d8] transition hover:border-[#a8cbb6]/35 hover:bg-[#2d4033]">
                   <span className="min-w-0"><span className="block text-[9px] font-extrabold uppercase tracking-[.15em] text-[#a8cbb6]">Related Full Title</span><span className="mt-0.5 block truncate">{clip.title.title}</span></span>
                   <ArrowUpRight className="h-4 w-4 shrink-0" />
                 </a>

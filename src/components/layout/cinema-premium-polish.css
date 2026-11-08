@@ -296,3 +296,47 @@ body {
     linear-gradient(130deg, rgba(27, 41, 34, .84), rgba(15, 23, 25, .9) 58%, rgba(26, 29, 41, .84));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 18px 42px rgba(0,0,0,.16);
 }
+
+
+/* Centre Cinema mark is a direct Home link: keep the logo, remove decorative rings. */
+.cinema-mobile-home-button,
+.cinema-mobile-home-button:hover,
+.cinema-mobile-home-button.is-active {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.cinema-mobile-home-button::before,
+.cinema-mobile-home-halo { display: none !important; content: none !important; }
+.cinema-mobile-home-button img {
+  border: 0 !important; background: transparent !important;
+  box-shadow: none !important; filter: none !important;
+}
+
+/* Refine the lower Home feature shelf through layout only; preserve its colours. */
+.cinema-home-lower-highlights { padding: clamp(1rem, 2.4vw, 1.6rem) !important; }
+.cinema-home-lower-highlights > div:first-child { gap: 1rem; padding: 0 .15rem .25rem; }
+.cinema-home-lower-highlights .cinema-story-feature-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.8rem, 1.6vw, 1.15rem); align-items: stretch;
+}
+.cinema-home-lower-highlights .cinema-story-feature-card {
+  min-width: 0; padding: .65rem; border-radius: 1.35rem;
+  display: flex; flex-direction: column; height: 100%;
+}
+.cinema-home-lower-highlights .cinema-story-feature-media {
+  aspect-ratio: 16 / 9; border-radius: 1.05rem; overflow: hidden;
+}
+.cinema-home-lower-highlights .cinema-story-feature-card > .cinema-story-feature-details {
+  flex: 1; padding: .25rem .2rem .1rem; align-items: flex-start;
+}
+.cinema-home-lower-highlights .cinema-story-feature-card .cinema-story-feature-link {
+  margin-top: .8rem; border-radius: .9rem;
+}
+@media (max-width: 900px) {
+  .cinema-home-lower-highlights .cinema-story-feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .cinema-home-lower-highlights .cinema-story-feature-grid { grid-template-columns: minmax(0, 1fr); gap: .85rem; }
+  .cinema-home-lower-highlights .cinema-story-feature-card { padding: .55rem; border-radius: 1.15rem; }
+}
