@@ -17,8 +17,8 @@ async function compressProfileImage(file: File): Promise<string> {
       element.onerror = () => reject(new Error('The selected image could not be opened.'));
       element.src = source;
     });
-    const sizes = [256, 224, 192, 160];
-    const qualities = [0.82, 0.74, 0.66, 0.58];
+    const sizes = [320, 288, 256, 224, 192];
+    const qualities = [0.84, 0.78, 0.72, 0.66, 0.60];
     let selected: Blob | null = null;
     for (const size of sizes) {
       const canvas = document.createElement('canvas');
@@ -31,7 +31,11 @@ async function compressProfileImage(file: File): Promise<string> {
       const height = image.naturalHeight * scale;
       context.drawImage(image, (size - width) / 2, (size - height) / 2, width, height);
       for (const quality of qualities) {
-        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', quality));
+        // Prefer WebP, but fall back to JPEG on browsers that do not encode WebP.
+        let blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', quality));
+        if (!blob || blob.type !== 'image/webp') {
+          blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+        }
         if (blob && (!selected || blob.size < selected.size)) selected = blob;
         if (blob && blob.size <= 120 * 1024) {
           selected = blob;
@@ -40,7 +44,7 @@ async function compressProfileImage(file: File): Promise<string> {
       }
       if (selected && selected.size <= 120 * 1024) break;
     }
-    if (!selected || selected.size > 120 * 1024) throw new Error('This image could not be reduced enough. Try another photo.');
+    if (!selected || selected.size > 120 * 1024) throw new Error('This image could not be reduced enough. Try a smaller or simpler photo.');
     return await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('The image could not be saved.'));
@@ -121,15 +125,16 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className={`${CARD} space-y-6`} noValidate>
-      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-ink-900/55 p-4">
+      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.018))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.05)]">
         <ProfileAvatar name={displayName || username || 'Cinema'} imageUrl={avatarUrl} size="lg" />
         <div className="min-w-0 flex-1">
           <label htmlFor="profile-picture" className={LABEL}>Profile Picture</label>
           <input id="profile-picture" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void handleAvatarChange(event)} className={`${INPUT} mt-2`} disabled={avatarBusy} />
-          <p className="mt-1 text-xs text-slate-500">JPG, PNG Or WebP · Up To 5 MB. Cinema Optimises Your Picture For Profiles.</p>
-          {avatarBusy && <p className="mt-1 text-xs text-sky-200">Preparing Your Picture...</p>}
+          <p className="mt-1 text-xs leading-5 text-slate-500">JPG, PNG Or WebP · Up To 5 MB. Cinema Crops And Optimises Your Picture For A Clear, Consistent Profile Display.</p>
+          {avatarBusy && <p className="mt-1 text-xs text-slate-200" role="status">Preparing Your Picture…</p>}
+          {!avatarBusy && avatarUrl && <p className="mt-1 text-xs text-emerald-200" role="status">Picture Ready — Save Changes To Publish It.</p>}
         </div>
-        {avatarUrl && <button type="button" onClick={() => setAvatarUrl('')} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-rose-300/30 hover:text-rose-200"><Trash2 className="h-3.5 w-3.5" /> Remove</button>}
+        {avatarUrl && <button type="button" onClick={() => setAvatarUrl('')} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-rose-300/30 hover:bg-rose-300/[.06] hover:text-rose-200"><Trash2 className="h-3.5 w-3.5" /> Remove</button>}
         {!avatarUrl && <span className="inline-flex items-center gap-2 text-xs text-slate-500"><ImagePlus className="h-4 w-4" /> Add A Photo</span>}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">

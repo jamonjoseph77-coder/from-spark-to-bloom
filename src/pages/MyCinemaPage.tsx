@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info } from 'lucide-react';
+import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info, Camera } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -61,9 +61,9 @@ export function MyCinemaPage() {
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(135deg,#121715,#090c0b_68%,#080a09)] p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <div className="flex shrink-0 items-center gap-3"><span className="grid h-16 w-16 place-items-center rounded-[1.35rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-cinema-300/20"><CinemaLogo compact /></span><a href="/profile" aria-label="View and edit your profile picture" title="View And Edit Your Profile"><ProfileAvatar name={profile?.display_name || profile?.username || user.email || "Cinema"} imageUrl={profile?.avatar_url} size="lg" previewable={false} /></a></div>
+          <div className="flex shrink-0 items-center gap-3"><span className="grid h-16 w-16 place-items-center rounded-[1.35rem] border border-white/15 bg-ink-950/70 shadow-xl shadow-black/30 ring-1 ring-white/10"><CinemaLogo compact /></span><a href="/profile" aria-label="Edit your Cinema profile and picture" title="Edit Your Cinema Profile" className="group relative rounded-full outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b100e]"><ProfileAvatar name={profile?.display_name || profile?.username || user.email || "Cinema"} imageUrl={profile?.avatar_url} size="lg" previewable={false} /><span className="absolute bottom-0 right-0 grid h-8 w-8 place-items-center rounded-full border-2 border-[#101715] bg-[#d9e0dc] text-[#17201c] shadow-lg transition group-hover:scale-105"><Camera className="h-3.5 w-3.5" /></span></a></div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-cinema-200">Your personal entertainment space</p>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-300">Your personal entertainment space</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>
             <p className="mt-1 text-sm font-semibold text-slate-200">{profile?.display_name ? `Welcome Back, ${profile.display_name}` : 'Your Cinema, Your Stories'}</p>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Your viewing journey, saved stories and favourites—kept together, ready whenever you are.</p>
@@ -74,7 +74,7 @@ export function MyCinemaPage() {
           </div>
         </div>
         {view && <div className="relative mt-7 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:max-w-xl sm:gap-3">
-          <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><Clock3 className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">In progress</span></div><p className="mt-2 text-2xl font-black text-white">{view.resume.length}</p></div>
+          <div className="rounded-2xl bg-white/[.045] p-3 sm:p-4"><div className="flex items-center gap-2 text-slate-200"><Clock3 className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">In progress</span></div><p className="mt-2 text-2xl font-black text-white">{view.resume.length}</p></div>
           <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><BookmarkCheck className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Watchlist</span></div><p className="mt-2 text-2xl font-black text-white">{view.watchlist.length}</p></div>
           <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><Heart className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Favourites</span></div><p className="mt-2 text-2xl font-black text-white">{view.favourites.length}</p></div>
         </div>}
