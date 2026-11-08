@@ -4,6 +4,7 @@ import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
+import { SportsHighlights } from '@/components/sports/SportsHighlights';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -114,8 +115,10 @@ export function SportsPage() {
           {sections.yourSports.length > 0 && <TitleRow heading="Your Sports" description="Sports titles saved to your Cinema watchlist or favourites." titles={sections.yourSports} />}
           {sections.startingSoon.length > 0 && <TitleRow heading="Starting Soon" description="Upcoming sports content with a published future date." titles={sections.startingSoon} />}
           {sections.channels.length > 0 && <section><div className="mb-3 flex items-end gap-3"><Tv className="h-5 w-5 text-sky-300" /><div><h2 className="text-xl font-extrabold text-white">Sports Channels</h2><p className="text-xs text-slate-400">Sports broadcasters and channels available in Cinema.</p></div></div><TitleGrid titles={sections.channels} /></section>}
-          <section id="sports-highlights" className="scroll-mt-24">
-            {sections.highlights.length > 0 ? <TitleRow heading="Highlights & Replays" description="Sports programmes and playable replays published in Cinema." titles={sections.highlights} /> : <div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h2 className="text-xl font-extrabold text-white">Highlights & Replays</h2><p className="mt-2 text-sm text-slate-400">Official highlights, match replays and sports features will appear here as publishers add them to Cinema.</p></div>}
+          <section id="sports-highlights" className="scroll-mt-24 space-y-6">
+            <div className="space-y-1"><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">The Best Moments</p><h2 className="text-2xl font-extrabold text-white">Highlights & Replays</h2><p className="text-sm text-slate-400">Catch up on sports programmes, official video features and playable replays published in Cinema.</p></div>
+            <SportsHighlights />
+            {sections.highlights.length > 0 ? <TitleRow heading="Sports Programmes & Replays" description="Playable sports titles available to watch in Cinema." titles={sections.highlights} /> : <div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h3 className="text-base font-bold text-white">More Match Moments Are On Their Way</h3><p className="mt-2 text-sm text-slate-400">Playable sports programmes and replays will appear here as verified publishers add them to Cinema.</p></div>}
           </section>
 
           <section id="sports-catalogue" className="space-y-4 scroll-mt-24">
