@@ -278,23 +278,32 @@ export function ShortsPage() {
   const shorts = useMemo(() => {
     const ranked = rankPublishedShorts((clips ?? []).filter(isPlayableShort), followedPublishers ?? [], 200);
     const affinity = signals.publisherAffinity;
-    const remaining = ranked.map((clip, index) => ({ clip, index }));
+    const seen = new Set<string>();
+    const remaining = ranked.filter((clip) => {
+      if (seen.has(clip.id)) return false;
+      seen.add(clip.id);
+      return true;
+    }).map((clip, index) => ({ clip, index }));
     const selected: DiscoverClip[] = [];
     const publisherCounts = new Map<string, number>();
 
-    // Blend local likes and completion signals into the existing freshness,
-    // follow, popularity and editorial ranking without sacrificing publisher variety.
+    // Personal relevance is blended with freshness, followed publishers and
+    // editorial ordering. A soft first-six creator cap prevents one publisher
+    // from taking over the opening run, but relaxes automatically for small feeds.
     while (remaining.length) {
-      let bestIndex = 0;
+      let bestIndex = -1;
       let bestScore = Number.NEGATIVE_INFINITY;
       remaining.forEach((entry, index) => {
         const publisher = entry.clip.publisher_name.trim().toLocaleLowerCase();
         const count = publisherCounts.get(publisher) ?? 0;
-        const diversity = count === 0 ? 0.42 : count === 1 ? 0 : -1.15 * count;
+        const openingDiversityCap = selected.length < 6 && count >= 2;
+        const alternatives = remaining.some((candidate) => candidate.clip.publisher_name.trim().toLocaleLowerCase() !== publisher);
+        if (openingDiversityCap && alternatives) return;
+        const diversity = count === 0 ? 0.55 : count === 1 ? 0.08 : -1.4 * count;
         const personal = (affinity[publisher] ?? 0) * 0.28
           + (signals.likedIds.includes(entry.clip.id) ? 0.5 : 0)
           + (entry.clip.title_id ? (signals.titleAffinity[entry.clip.title_id] ?? 0) * 0.32 : 0)
-          - (signals.completedIds.includes(entry.clip.id) ? 0.85 : 0);
+          - (signals.completedIds.includes(entry.clip.id) ? 1.1 : 0);
         const baseOrder = (ranked.length - entry.index) / Math.max(1, ranked.length) * 0.3;
         const score = diversity + personal + baseOrder;
         if (score > bestScore) {
@@ -302,6 +311,9 @@ export function ShortsPage() {
           bestIndex = index;
         }
       });
+      // If the feed only has one publisher, relax diversity instead of hiding
+      // the remaining approved Shorts.
+      if (bestIndex < 0) bestIndex = 0;
       const [chosen] = remaining.splice(bestIndex, 1);
       selected.push(chosen.clip);
       const publisher = chosen.clip.publisher_name.trim().toLocaleLowerCase();
