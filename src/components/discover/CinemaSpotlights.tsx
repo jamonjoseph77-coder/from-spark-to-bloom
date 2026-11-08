@@ -6,6 +6,8 @@ import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
+import { fetchVerifiedStudios } from '@/lib/studios';
+import { publisherHref } from '@/lib/publishers';
 
 const STORY_FEATURE_KINDS: DiscoverClip['kind'][] = [
   'featured',
@@ -33,6 +35,11 @@ function featureLabel(kind: DiscoverClip['kind']): string {
 export function CinemaSpotlights() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
   const { data: clips, error, reload } = useAsyncData(fetchPublishedClips, []);
+  const { data: verifiedStudios } = useAsyncData(() => fetchVerifiedStudios().catch(() => []), []);
+  const verifiedPublisherNames = useMemo(
+    () => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLocaleLowerCase())),
+    [verifiedStudios],
+  );
   const features = useMemo(
     () => (clips ?? []).filter((clip) => STORY_FEATURE_KINDS.includes(clip.kind)).slice(0, 12),
     [clips],
@@ -71,7 +78,7 @@ export function CinemaSpotlights() {
                 </span>
                 <span className="absolute bottom-3 left-3 right-3">
                   <span className="block line-clamp-2 text-left text-sm font-extrabold leading-snug text-white drop-shadow-lg">{clip.headline}</span>
-                  <span className="mt-1 block truncate text-[11px] font-semibold text-slate-200">{clip.publisher_name || 'Cinema Publisher'}</span>
+                  <span className="mt-1 flex min-w-0 items-center gap-1.5 text-[11px] font-semibold text-slate-200"><span className="truncate">{clip.publisher_name || 'Cinema Publisher'}</span>{verifiedPublisherNames.has(clip.publisher_name.trim().toLocaleLowerCase()) && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-[#b9d2c2]" aria-label="Verified by Cinema" />}</span>
                 </span>
               </button>
               <div className="mt-3 flex items-start gap-3 px-1">
@@ -84,6 +91,9 @@ export function CinemaSpotlights() {
                 </div>
                 <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-cinema-200" />
               </div>
+              {verifiedPublisherNames.has(clip.publisher_name.trim().toLocaleLowerCase()) && (
+                <a href={publisherHref(clip.publisher_name)} className="mx-1 mt-3 flex items-center gap-2 rounded-xl border border-[#a8cbb6]/15 bg-[#26352c]/45 px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[#d2e4d8] transition hover:border-[#a8cbb6]/35 hover:bg-[#2d4033]"><BadgeCheck className="h-3.5 w-3.5" /> Verified Publisher Destination <ArrowUpRight className="ml-auto h-3.5 w-3.5" /></a>
+              )}
               {clip.title && (
                 <a href={`/title/${clip.title.id}`} className="mx-1 mt-3 flex items-center justify-between gap-3 rounded-xl border border-[#a8cbb6]/15 bg-[#26352c]/65 px-3 py-2.5 text-xs font-bold text-[#d2e4d8] transition hover:border-[#a8cbb6]/35 hover:bg-[#2d4033]">
                   <span className="min-w-0"><span className="block text-[9px] font-extrabold uppercase tracking-[.15em] text-[#a8cbb6]">Related Full Title</span><span className="mt-0.5 block truncate">{clip.title.title}</span></span>
