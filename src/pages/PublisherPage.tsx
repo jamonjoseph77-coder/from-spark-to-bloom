@@ -27,7 +27,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
     [user?.id],
   );
   const [followBusy, setFollowBusy] = useState(false);
-  const { data: verifiedStudio } = useAsyncData(() => findVerifiedStudio(publisher).catch(() => null), [publisher]);
+  const { data: verifiedStudio, loading: studioLoading } = useAsyncData(() => findVerifiedStudio(publisher).catch(() => null), [publisher]);
 
   const profile = useMemo(() => (titles ? findPublisher(titles, publisher) : null), [titles, publisher]);
 
@@ -35,34 +35,38 @@ export function PublisherPage({ publisher }: { publisher: string }) {
     return <div className={PAGE_CONTAINER}>{error ? <ErrorState onRetry={reload} /> : <LoadingState />}</div>;
   }
 
-  if (!profile) {
+  if (!profile && studioLoading) {
+    return <div className={PAGE_CONTAINER}><LoadingState label="Opening Official Publisher Destination" /></div>;
+  }
+
+  if (!profile && !verifiedStudio) {
     return (
       <div className={PAGE_CONTAINER}>
         <EmptyState
           icon={<Megaphone className="h-7 w-7 text-cinema-300" />}
           title="Publisher not found"
-          description="This publisher has no published titles on Cinema yet."
-          action={
-            <a href="/publishers" className={BUTTON_SECONDARY}>
-              <ArrowLeft className="h-4 w-4" /> All publishers
-            </a>
-          }
+          description="This publisher has no published titles or verified official profile on Cinema yet."
+          action={<a href="/publishers" className={BUTTON_SECONDARY}><ArrowLeft className="h-4 w-4" /> All publishers</a>}
         />
       </div>
     );
   }
 
-  const cover = profile.titles.find((item) => item.backdrop_url)?.backdrop_url ?? '';
-  const isFollowing = follows.data?.includes(profile.name) ?? false;
+  const publisherName = profile?.name ?? verifiedStudio!.studio_name;
+  const publisherTitles = profile?.titles ?? [];
+  const upcomingTitles = profile?.upcoming ?? [];
+  const trailerTitles = profile?.trailers ?? [];
+  const cover = publisherTitles.find((item) => item.backdrop_url)?.backdrop_url ?? '';
+  const isFollowing = follows.data?.includes(publisherName) ?? false;
 
   async function toggleFollow() {
-    if (!user || !profile || followBusy) return;
+    if (!user || followBusy) return;
     setFollowBusy(true);
     try {
       if (isFollowing) {
-        await unfollowPublisher(user.id, profile.name);
+        await unfollowPublisher(user.id, publisherName);
       } else {
-        await followPublisher(user.id, profile.name);
+        await followPublisher(user.id, publisherName);
       }
       follows.reload();
     } catch {
@@ -76,7 +80,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
     <div className="mx-auto w-full animate-rise-in space-y-14 pb-10">
       <section className="relative isolate overflow-hidden border-b border-white/10 bg-ink-900">
         <div className="absolute inset-0">
-          <Artwork src={cover} alt="" fallbackTitle={profile.name} className="h-full w-full object-cover opacity-40" />
+          <Artwork src={cover} alt="" fallbackTitle={publisherName} className="h-full w-full object-cover opacity-40" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/30" />
         </div>
         <div className="relative mx-auto max-w-7xl space-y-5 px-4 pb-10 pt-8 sm:px-6 lg:px-10 lg:pt-12">
@@ -85,15 +89,13 @@ export function PublisherPage({ publisher }: { publisher: string }) {
           </a>
           <div className="flex items-end gap-5">
             <span className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-3xl border border-cinema-300/25 bg-cinema-600 text-3xl font-extrabold uppercase text-white shadow-2xl shadow-cinema-900/60 ring-2 ring-cinema-300/20 sm:h-24 sm:w-24">
-              {verifiedStudio?.logo_url ? <img src={verifiedStudio.logo_url} alt={`${profile.name} logo`} className="h-full w-full object-contain p-2" /> : profile.name.charAt(0)}
+              {verifiedStudio?.logo_url ? <img src={verifiedStudio.logo_url} alt={`${publisherName} logo`} className="h-full w-full object-contain p-2" /> : publisherName.charAt(0)}
             </span>
             <div className="min-w-0 space-y-2">
               <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-cinema-300">{verifiedStudio ? "Verified studio" : "Official publisher presence"}{verifiedStudio && <BadgeCheck className="h-4 w-4 fill-cinema-400/15 text-cinema-200" aria-label="Verified by Cinema" />}</p>
-              <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{profile.name}</h1>
+              <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">{publisherName}</h1>
               <p className="text-sm text-slate-300">
-                {profile.titles.length} {profile.titles.length === 1 ? 'title' : 'titles'}
-                {profile.upcoming.length > 0 ? ` · ${profile.upcoming.length} upcoming` : ''}
-                {profile.trailers.length > 0 ? ` · ${profile.trailers.length} with trailers` : ''}
+                {publisherTitles.length ? `${publisherTitles.length} ${publisherTitles.length === 1 ? 'title' : 'titles'}${upcomingTitles.length ? ` · ${upcomingTitles.length} upcoming` : ''}${trailerTitles.length ? ` · ${trailerTitles.length} with trailers` : ''}` : 'Official Cinema Destination · Catalogue Coming Soon'}
               </p>
               {verifiedStudio?.description && <p className="max-w-2xl text-sm leading-6 text-slate-300">{verifiedStudio.description}</p>}
               {verifiedStudio?.website_url && <a href={verifiedStudio.website_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold text-cinema-200 transition hover:text-white">Official website</a>}
@@ -120,23 +122,22 @@ export function PublisherPage({ publisher }: { publisher: string }) {
       </section>
 
       <div className="mx-auto w-full max-w-7xl space-y-14 px-4 sm:px-6 lg:px-10">
-        {profile.upcoming.length > 0 && <TitleRow heading="Upcoming releases" titles={profile.upcoming} />}
+        {upcomingTitles.length > 0 && <TitleRow heading="Upcoming Releases" titles={upcomingTitles} />}
 
-        {profile.trailers.length > 0 && (
+        {trailerTitles.length > 0 && (
           <section className="space-y-5">
-            <h2 className={SECTION_HEADING}>Trailers and previews</h2>
+            <h2 className={SECTION_HEADING}>Trailers And Previews</h2>
             <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
-              {profile.trailers.map((title) => (
-                <VideoCard key={title.id} title={title} onTrailer={setTrailerTitle} />
-              ))}
+              {trailerTitles.map((title) => <VideoCard key={title.id} title={title} onTrailer={setTrailerTitle} />)}
             </div>
           </section>
         )}
 
         <section className="space-y-5">
           <h2 className={SECTION_HEADING}>Catalogue</h2>
-          <TitleGrid titles={profile.titles} />
+          {publisherTitles.length ? <TitleGrid titles={publisherTitles} /> : <div className="rounded-3xl border border-[#91b7a2]/15 bg-[linear-gradient(135deg,#202a24,#171e1a)] p-6"><h2 className="text-lg font-extrabold text-white">More Stories Are On The Way</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">This verified organisation has an official destination on Cinema. Its catalogue and approved promotional content will appear here as they are made available.</p></div>}
         </section>
+        <p className="mx-auto max-w-7xl px-4 text-xs leading-5 text-slate-500 sm:px-6 lg:px-10">Cinema verification confirms the organisation identity only. Each title and video still requires its own applicable distribution or promotional permission.</p>
       </div>
 
       {trailerTitle && <VideoDialog {...titleTrailerSource(trailerTitle)} onClose={() => setTrailerTitle(null)} />}

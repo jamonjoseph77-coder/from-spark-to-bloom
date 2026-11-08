@@ -38,6 +38,9 @@ function toForm(clip: DiscoverClip | null): FormState {
 
 function buildInput(form: FormState): { input?: ClipInput; error?: string } {
   if (!form.headline.trim()) return { error: 'Give the clip a headline.' };
+  if (form.is_published && !form.publisher_name.trim()) {
+    return { error: 'Add the responsible publisher or creator before publishing this video.' };
+  }
   if (!form.video_url.trim() || !isHttpUrl(form.video_url)) {
     return { error: 'The video link must start with http:// or https://.' };
   }
@@ -123,8 +126,9 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
           </select>
         </div>
         <div>
-          <label htmlFor="clip-publisher" className={LABEL}>Publisher</label>
+          <label htmlFor="clip-publisher" className={LABEL}>Publisher / Rights Holder</label>
           <input id="clip-publisher" className={INPUT} value={form.publisher_name} onChange={(e) => update('publisher_name', e.target.value)} />
+          <p className="mt-1.5 text-xs leading-5 text-slate-500">Enter the organisation or creator responsible for supplying this asset. Cinema displays a verified badge only when this name matches an approved studio account.</p>
         </div>
       </div>
 

@@ -72,17 +72,29 @@ function StudioApplicationPanel({ userId }: { userId: string }) {
   );
 }
 
+type PublisherDirectoryEntry = ReturnType<typeof groupByPublisher>[number] & { verifiedStudio?: StudioAccount };
+
 export function PublishersPage() {
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
-  const { data: verifiedStudios } = useAsyncData(() => fetchVerifiedStudios().catch(() => []), []);
+  const { data: verifiedStudios, loading: studiosLoading } = useAsyncData(() => fetchVerifiedStudios().catch(() => []), []);
   const { user } = useAuth();
   const [query, setQuery] = useState('');
   const publishers = useMemo(() => groupByPublisher(titles ?? []), [titles]);
-  const verifiedNames = new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLowerCase()));
+  const directory = useMemo<PublisherDirectoryEntry[]>(() => {
+    const byName = new Map<string, PublisherDirectoryEntry>();
+    publishers.forEach((publisher) => byName.set(publisher.name.trim().toLowerCase(), { ...publisher }));
+    (verifiedStudios ?? []).forEach((studio) => {
+      const key = studio.studio_name.trim().toLowerCase();
+      const existing = byName.get(key);
+      if (existing) existing.verifiedStudio = studio;
+      else byName.set(key, { name: studio.studio_name, titles: [], upcoming: [], trailers: [], verifiedStudio: studio });
+    });
+    return [...byName.values()].sort((a, b) => Number(Boolean(b.verifiedStudio)) - Number(Boolean(a.verifiedStudio)) || a.name.localeCompare(b.name));
+  }, [publishers, verifiedStudios]);
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return needle ? publishers.filter((publisher) => publisher.name.toLowerCase().includes(needle)) : publishers;
-  }, [publishers, query]);
+    return needle ? directory.filter((publisher) => publisher.name.toLowerCase().includes(needle)) : directory;
+  }, [directory, query]);
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
@@ -94,13 +106,14 @@ export function PublishersPage() {
       </header>
       {user ? <StudioApplicationPanel userId={user.id} /> : <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-ink-900/70 p-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold text-white">Are you a studio, broadcaster or distributor?</p><p className="mt-1 text-sm text-slate-400">Sign in to submit your organisation for official verification.</p></div><a href="/sign-in" className={BUTTON_PRIMARY}>Sign in to apply</a></div>}
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
-      {titles && titles.length === 0 && <EmptyState icon={<Building2 className="h-7 w-7 text-cinema-300" />} title="Industry profiles are on their way" description="Studios and publishers appear here as their titles and official profiles are added to Cinema." />}
-      {titles && publishers.length > 0 && <>
+      {titles && titles.length === 0 && verifiedStudios && verifiedStudios.length === 0 && !studiosLoading && <EmptyState icon={<Building2 className="h-7 w-7 text-cinema-300" />} title="Industry profiles are on their way" description="Studios and publishers appear here as their titles and official profiles are added to Cinema." />}
+      {titles && directory.length > 0 && <>
         <div className="relative max-w-xl"><SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a studio, broadcaster or publisher" aria-label="Find a studio or publisher" className={`${INPUT} py-3 pl-11`} /></div>
         {visible.length === 0 ? <p className="text-sm text-slate-400">No profiles match “{query.trim()}”.</p> : <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{visible.map((publisher) => {
           const types = [...new Set(publisher.titles.map((item) => item.type))];
-          const verified = verifiedNames.has(publisher.name.trim().toLowerCase());
-          return <li key={publisher.name}><a href={publisherHref(publisher.name)} className="group flex h-full items-center gap-4 rounded-3xl border border-white/10 bg-gradient-to-br from-ink-800 to-ink-950 p-5 shadow-lg shadow-black/10 transition hover:-translate-y-1 hover:border-cinema-300/35"><span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-cinema-300/15 bg-cinema-500/15 text-2xl font-black uppercase text-cinema-100">{publisher.name.charAt(0)}</span><span className="min-w-0 flex-1"><span className="flex items-center gap-1.5"><span className="truncate text-base font-extrabold text-white">{publisher.name}</span>{verified && <BadgeCheck className="h-4 w-4 shrink-0 fill-cinema-400/15 text-cinema-300" aria-label="Verified studio" />}</span><span className="mt-1 block text-xs text-slate-400">{publisher.titles.length} {publisher.titles.length === 1 ? 'title' : 'titles'}{publisher.upcoming.length ? ` · ${publisher.upcoming.length} upcoming` : ''}</span><span className="mt-2 block truncate text-[10px] font-bold uppercase tracking-wider text-cinema-300">{types.map((type) => TITLE_TYPE_LABELS[type]).join(' · ')}</span></span><ArrowRight className="h-5 w-5 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cinema-300" /></a></li>;
+          const verified = Boolean(publisher.verifiedStudio);
+          const titleCount = publisher.titles.length;
+          return <li key={publisher.name}><a href={publisherHref(publisher.name)} className="group flex h-full items-center gap-4 rounded-3xl border border-[#91b7a2]/15 bg-[linear-gradient(135deg,#202a24,#171e1a_72%,#121714)] p-5 shadow-lg shadow-black/10 transition hover:-translate-y-1 hover:border-[#91b7a2]/35"><span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#a8cbb6]/20 bg-[#a8cbb6]/10 text-2xl font-black uppercase text-[#d2e4d8]">{publisher.verifiedStudio?.logo_url ? <img src={publisher.verifiedStudio.logo_url} alt="" className="h-full w-full object-contain p-2" /> : publisher.name.charAt(0)}</span><span className="min-w-0 flex-1"><span className="flex items-center gap-1.5"><span className="truncate text-base font-extrabold text-white">{publisher.name}</span>{verified && <BadgeCheck className="h-4 w-4 shrink-0 fill-[#a8cbb6]/15 text-[#b9d2c2]" aria-label="Verified by Cinema" />}</span><span className="mt-1 block text-xs text-slate-400">{titleCount ? `${titleCount} ${titleCount === 1 ? 'title' : 'titles'}${publisher.upcoming.length ? ` · ${publisher.upcoming.length} upcoming` : ''}` : 'Verified Official Profile · Catalogue Coming Soon'}</span><span className="mt-2 block truncate text-[10px] font-bold uppercase tracking-wider text-[#a8cbb6]">{types.length ? types.map((type) => TITLE_TYPE_LABELS[type]).join(' · ') : publisher.verifiedStudio?.website_url ? 'Official Organisation' : 'Cinema Publisher'}</span></span><ArrowRight className="h-5 w-5 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-[#b9d2c2]" /></a></li>;
         })}</ul>}
       </>}
       <div className="flex items-start gap-2 rounded-2xl border border-white/8 bg-ink-900/50 p-4 text-xs leading-5 text-slate-500"><Globe2 className="mt-0.5 h-4 w-4 shrink-0 text-cinema-300" /><p>Verification confirms the official organisation identity on Cinema. It does not, by itself, confirm that every title in a profile is licensed for viewing in every territory.</p></div>
