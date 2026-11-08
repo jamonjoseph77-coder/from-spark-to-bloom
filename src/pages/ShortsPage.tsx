@@ -76,6 +76,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
   const lastTouchTapRef = useRef<{ at: number; x: number; y: number } | null>(null);
+  const lastTouchDoubleTapAtRef = useRef(0);
   const { notify } = useToast();
 
   useEffect(() => {
@@ -162,6 +163,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
   }
 
   function handleVideoDoubleTap(event: MouseEvent<HTMLElement>) {
+    if (Date.now() - lastTouchDoubleTapAtRef.current < 500) return;
     triggerDoubleTapLike(event.target as HTMLElement);
   }
 
@@ -177,6 +179,7 @@ function ShortFeedItem({ clip, active, saved, saving, audioEnabled, userId, onLi
     const closeEnough = previous && Math.hypot(event.clientX - previous.x, event.clientY - previous.y) < 48;
     if (previous && now - previous.at < 340 && closeEnough) {
       lastTouchTapRef.current = null;
+      lastTouchDoubleTapAtRef.current = now;
       triggerDoubleTapLike(target);
     } else {
       lastTouchTapRef.current = { at: now, x: event.clientX, y: event.clientY };
