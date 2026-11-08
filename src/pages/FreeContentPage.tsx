@@ -9,7 +9,7 @@ import type { Title } from '@/lib/types';
 
 export function FreeContentPage() {
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
-  const freeTitles = useMemo(() => (titles ?? []).filter((title) => /(^|\\b)free(\\b|$)/i.test(title.availability ?? '')), [titles]);
+  const freeTitles = useMemo(() => (titles ?? []).filter((title) => /(^|\b)free(\b|$)/i.test(title.availability ?? '')), [titles]);
   const movies = useMemo(() => freeTitles.filter((title: Title) => title.type === 'movie'), [freeTitles]);
   const series = useMemo(() => freeTitles.filter((title: Title) => title.type === 'series'), [freeTitles]);
 
