@@ -14,7 +14,6 @@ body {
   overflow-y: auto !important;
   overscroll-behavior-y: auto;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
 }
 #root {
   min-height: 100svh;
@@ -34,7 +33,7 @@ body {
 .cinema-app-shell main {
   min-height: 55svh;
   overflow: visible !important;
-  touch-action: pan-y;
+  touch-action: auto;
 }
 
 /* App-like polish without changing Cinema's navigation or page structure. */
