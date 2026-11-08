@@ -229,14 +229,26 @@ export async function setDiscoverClipSaved(clipId: string, userId: string, saved
 }
 
 export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverClip[]> {
-  const savedIds = readSavedShortIds(userId);
+  if (!userId) return [];
+  const savedIds = await fetchSavedDiscoverClipIds(userId);
   if (!savedIds.length) return [];
   const clips = await fetchPublishedClips();
   const byId = new Map(clips.map((clip) => [clip.id, clip]));
   return savedIds.flatMap((id) => {
     const clip = byId.get(id);
     return clip ? [clip] : [];
-  }).reverse();
+  });
+}
+
+export async function fetchPublishedShortsAwaitingNativeSource(): Promise<DiscoverClip[]> {
+  const { data, error } = await supabase.from('discover_clips').select(CLIP_FEED_FIELDS)
+    .eq('is_published', true)
+    .eq('kind', 'short')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  const normalized = (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[];
+  return attachTitles(normalized.filter((clip) => !isDirectVideoUrl(clip.video_url)));
 }
 
 export async function fetchDownloadableClips(): Promise<DiscoverClip[]> {
