@@ -94,3 +94,59 @@ export async function reviewStudioTitleSubmission(
     .eq('id', submissionId);
   if (error) throw error;
 }
+
+export interface StudioSeriesEpisodeInput {
+  submission_id: string;
+  season_number: number;
+  episode_number: number;
+  episode_title: string;
+  synopsis?: string;
+  duration_minutes?: number | null;
+  poster_url?: string | null;
+  playback_url?: string | null;
+  release_at?: string | null;
+  delivery_status?: 'planned' | 'ready' | 'delivered';
+}
+
+export interface StudioSeriesEpisode extends StudioSeriesEpisodeInput {
+  id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+const EPISODE_FIELDS = 'id,submission_id,season_number,episode_number,episode_title,synopsis,duration_minutes,poster_url,playback_url,release_at,delivery_status,created_at,updated_at';
+
+export async function fetchStudioSeriesEpisodes(submissionId: string): Promise<StudioSeriesEpisode[]> {
+  if (!submissionId) return [];
+  const { data, error } = await supabase
+    .from('studio_title_submission_episodes')
+    .select(EPISODE_FIELDS)
+    .eq('submission_id', submissionId)
+    .order('season_number', { ascending: true })
+    .order('episode_number', { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as StudioSeriesEpisode[];
+}
+
+export async function addStudioSeriesEpisodes(episodes: StudioSeriesEpisodeInput[]): Promise<StudioSeriesEpisode[]> {
+  if (!episodes.length) return [];
+  const normalized = episodes.map((episode) => ({
+    ...episode,
+    episode_title: episode.episode_title.trim(),
+    synopsis: episode.synopsis?.trim() ?? '',
+    poster_url: episode.poster_url?.trim() || null,
+    playback_url: episode.playback_url?.trim() || null,
+  }));
+  if (normalized.some((episode) => !episode.episode_title || episode.season_number < 1 || episode.episode_number < 1)) {
+    throw new Error('Every episode needs a title and valid season and episode numbers.');
+  }
+  if (normalized.some((episode) => [episode.poster_url, episode.playback_url].some((url) => url && !url.startsWith('https://')))) {
+    throw new Error('Episode artwork and playback links must use HTTPS.');
+  }
+  const { data, error } = await supabase
+    .from('studio_title_submission_episodes')
+    .upsert(normalized, { onConflict: 'submission_id,season_number,episode_number' })
+    .select(EPISODE_FIELDS);
+  if (error) throw error;
+  return (data ?? []) as StudioSeriesEpisode[];
+}
