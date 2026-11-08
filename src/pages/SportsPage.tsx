@@ -46,6 +46,9 @@ export function SportsPage() {
     return { sports, liveNow, startingSoon, channels, highlights, yourSports, genres: genresOf(sports) };
   }, [titles, watchlistIds, favouriteIds]);
 
+  const headerArtwork = sections.sports.find((title) => title.backdrop_url || title.poster_url)
+    ?? (titles ?? []).find((title) => title.backdrop_url || title.poster_url);
+
   const visible = useMemo(
     () => sections.sports.filter((title) => (category === ALL_SPORTS || (title.genre ?? '').split(',').map((item) => item.trim()).includes(category)) && matchesQuery(title, query)),
     [sections.sports, category, query],
@@ -54,8 +57,8 @@ export function SportsPage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-sports space-y-9 pb-16`}>
       <header className="relative isolate overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#080c13] px-5 py-7 shadow-[0_22px_70px_rgba(0,0,0,.28)] sm:px-8 sm:py-9">
-        {(sections.sports[0]?.backdrop_url || sections.sports[0]?.poster_url) && <Artwork src={sections.sports[0].backdrop_url || sections.sports[0].poster_url} alt="" fallbackTitle="Sports" className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.24]" />}
-        {(sections.sports[0]?.backdrop_url || sections.sports[0]?.poster_url) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/48" />}
+        {headerArtwork && <Artwork src={headerArtwork.backdrop_url || headerArtwork.poster_url || ''} alt="" fallbackTitle="Sports" priority className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.32]" />}
+        {headerArtwork && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#030407]/90 via-[#030407]/62 to-[#030407]/30" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/45" />
         <div className="pointer-events-none absolute -right-16 -top-24 -z-10 h-72 w-72 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative z-10 max-w-3xl">
