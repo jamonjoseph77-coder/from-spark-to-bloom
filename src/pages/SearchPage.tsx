@@ -51,11 +51,17 @@ export function SearchPage({ query }: { query: string }) {
   const verifiedNames = useMemo(() => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLowerCase())), [verifiedStudios]);
   const suggestions = useMemo(() => genresOf(titles ?? []).slice(0, 10), [titles]);
   const trimmed = query.trim();
-  const featuredBackdrop = titles?.[0]?.backdrop_url || titles?.[0]?.poster_url;
+  const searchArtwork = [
+    'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80',
+    'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200&q=80',
+    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80',
+    'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80',
+  ];
+  const featuredBackdrop = titles?.[0]?.backdrop_url || titles?.[0]?.poster_url || searchArtwork[0];
   const destinationArtwork = (index: number) => {
     const title = titles?.[index];
-    const source = title?.backdrop_url || title?.poster_url;
-    return source ? `url("${source}")` : undefined;
+    const source = title?.backdrop_url || title?.poster_url || searchArtwork[index % searchArtwork.length];
+    return `url("${source}")`;
   };
 
   function clearSearch() {
@@ -116,8 +122,9 @@ export function SearchPage({ query }: { query: string }) {
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {destinations.map(({ href, label, detail, icon: Icon }, index) => (
-                <a key={href} href={href} style={{ backgroundImage: destinationArtwork(index) }} className="cinema-search-destination group flex min-h-36 items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:-translate-y-0.5 hover:border-cinema-400/35 hover:bg-white/[.06]">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-500/10 text-cinema-200 transition group-hover:bg-cinema-500/20"><Icon className="h-5 w-5" /></span>
+                <a key={href} href={href} style={{ backgroundImage: destinationArtwork(index) }} className="cinema-search-destination group relative isolate flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-cover bg-center p-4 transition hover:-translate-y-0.5 hover:border-cinema-400/35">
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#05090f]/95 via-[#07101b]/80 to-[#07101b]/45 transition group-hover:from-[#05090f]/90 group-hover:via-[#07101b]/70" />
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/20 bg-black/35 text-white shadow-lg backdrop-blur-sm transition group-hover:bg-black/45"><Icon className="h-5 w-5" /></span>
                   <span className="min-w-0">
                     <span className="block font-semibold text-white">{label}</span>
                     <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
