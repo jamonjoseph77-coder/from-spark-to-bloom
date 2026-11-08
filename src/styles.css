@@ -3382,3 +3382,92 @@ body {
     height: 1.65rem !important;
   }
 }
+
+
+/* Cinema Web-App Pass — restore natural document scrolling outside the
+   immersive Shorts route, while keeping mobile gestures reliable. */
+html {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: clip !important;
+  overflow-y: auto !important;
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: clip !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto !important;
+  touch-action: pan-y pinch-zoom;
+}
+#root {
+  height: auto !important;
+  min-height: 100svh !important;
+  overflow: visible !important;
+}
+.cinema-app-shell {
+  display: block;
+  width: 100%;
+  min-height: 100svh !important;
+  overflow: visible !important;
+  isolation: isolate;
+}
+.cinema-app-shell > .flex {
+  min-height: 100svh !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+.cinema-app-shell main {
+  min-height: 0;
+  overflow: visible;
+  overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.cinema-app-shell :where(section, article, .cinema-page-container) {
+  min-width: 0;
+}
+@supports (min-height: 100dvh) {
+  #root, .cinema-app-shell, .cinema-app-shell > .flex {
+    min-height: 100dvh !important;
+  }
+}
+/* Only the immersive Shorts route owns its own vertical scroll container. */
+body:has(.cinema-shorts-page),
+html:has(.cinema-shorts-page) {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+.cinema-shorts-page .cinema-shorts-feed {
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain !important;
+}
+/* High-contrast translucent action colours remain legible over any video. */
+.cinema-short-watch-now {
+  color: #fff !important;
+  border: 1px solid rgba(255, 151, 207, .78) !important;
+  background: linear-gradient(112deg, rgba(238, 48, 126, .48), rgba(151, 61, 224, .43) 54%, rgba(55, 119, 235, .42)) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(165%) !important;
+  backdrop-filter: blur(16px) saturate(165%) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.3), 0 0 18px rgba(192,67,205,.2), inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+.cinema-short-track {
+  color: #fff !important;
+  border: 1px solid rgba(105, 225, 255, .8) !important;
+  background: linear-gradient(130deg, rgba(8, 127, 197, .48), rgba(20, 87, 200, .42) 55%, rgba(53, 49, 168, .4)) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(165%) !important;
+  backdrop-filter: blur(16px) saturate(165%) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 17px rgba(42,173,255,.22), inset 0 1px 0 rgba(255,255,255,.24) !important;
+}
+.cinema-short-watch-now:hover, .cinema-short-track:hover {
+  filter: brightness(1.14) saturate(1.18);
+}
+@media (max-width: 767px) {
+  .cinema-app-shell > .flex {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .cinema-app-shell main {
+    padding-bottom: max(5rem, calc(4.5rem + env(safe-area-inset-bottom)));
+  }
+}
