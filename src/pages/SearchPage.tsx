@@ -65,7 +65,7 @@ export function SearchPage({ query }: { query: string }) {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-search-page space-y-9 pb-12`}>
-      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8" style={{ backgroundImage: 'linear-gradient(90deg, rgba(5, 10, 13, .94) 0%, rgba(5, 10, 13, .82) 55%, rgba(5, 10, 13, .72) 100%), url(https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1800&q=85)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8" style={{ backgroundImage: 'linear-gradient(90deg, rgba(5, 10, 13, .82) 0%, rgba(5, 10, 13, .60) 55%, rgba(5, 10, 13, .42) 100%), url(https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1800&q=85)', backgroundSize: 'cover', backgroundPosition: 'center 42%', backgroundColor: '#09110f' }}>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-cinema-300">Search Cinema</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-4xl">What Would You Like To Watch?</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Search Movies, Series, Genres, Studios And Publishers In One Place.</p>
@@ -109,7 +109,7 @@ export function SearchPage({ query }: { query: string }) {
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {destinations.map(({ href, label, detail, icon: Icon, image }) => (
-                <a key={href} href={href} className="cinema-search-destination group relative isolate flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0c141b] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-cinema-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"><span aria-hidden="true" className="absolute inset-0 -z-20 bg-cover bg-center opacity-35 transition duration-500 group-hover:scale-105 group-hover:opacity-50" style={{ backgroundImage: `url(${image})` }} /><span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-[#071018]/95 via-[#071018]/80 to-[#071018]/55 transition group-hover:from-[#071018]/90 group-hover:via-[#071018]/70 group-hover:to-[#071018]/45" />
+                <a key={href} href={href} style={{ backgroundImage: `linear-gradient(90deg, rgba(5, 12, 17, .76) 0%, rgba(5, 12, 17, .55) 58%, rgba(5, 12, 17, .38) 100%), url(${image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} className="cinema-search-destination group flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0c141b] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-cinema-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[.06] text-cinema-200 transition group-hover:border-cinema-300/25 group-hover:bg-cinema-500/15"><Icon className="h-5 w-5" /></span>
                   <span className="min-w-0">
                     <span className="block font-semibold text-white">{label}</span>
