@@ -18,10 +18,10 @@ const scopes: { id: SearchScope; label: string }[] = [
   { id: 'studios', label: 'Studios & Publishers' },
 ];
 const destinations = [
-  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass },
-  { href: '/friends', label: 'Friends', detail: 'People And Recommendations', icon: Users },
-  { href: '/publishers', label: 'Studios', detail: 'Official Industry Profiles', icon: Megaphone },
-  { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard }
+  { href: '/discover', label: 'Discover', detail: 'Trailers, Shorts And New Releases', icon: Compass, image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80' },
+  { href: '/friends', label: 'Friends', detail: 'People And Recommendations', icon: Users, image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80' },
+  { href: '/publishers', label: 'Studios', detail: 'Official Industry Profiles', icon: Megaphone, image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=80' },
+  { href: '/my-cinema', label: 'My Cinema', detail: 'Your Saved Entertainment', icon: Clapperboard, image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=900&q=80' }
 ];
 
 export function SearchPage({ query }: { query: string }) {
@@ -65,7 +65,7 @@ export function SearchPage({ query }: { query: string }) {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-search-page space-y-9 pb-12`}>
-      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8">
+      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8" style={{ backgroundImage: 'linear-gradient(90deg, rgba(5, 10, 13, .94) 0%, rgba(5, 10, 13, .82) 55%, rgba(5, 10, 13, .72) 100%), url(https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1800&q=85)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-cinema-300">Search Cinema</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-4xl">What Would You Like To Watch?</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Search Movies, Series, Genres, Studios And Publishers In One Place.</p>
@@ -108,8 +108,8 @@ export function SearchPage({ query }: { query: string }) {
           <div className="space-y-3">
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {destinations.map(({ href, label, detail, icon: Icon }, index) => (
-                <a key={href} href={href} className="cinema-search-destination group flex min-h-36 items-center gap-4 rounded-2xl border border-white/10 bg-[#0c141b] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-cinema-400/35 hover:bg-[#111d26] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
+              {destinations.map(({ href, label, detail, icon: Icon, image }) => (
+                <a key={href} href={href} className="cinema-search-destination group relative isolate flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0c141b] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-cinema-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300"><span aria-hidden="true" className="absolute inset-0 -z-20 bg-cover bg-center opacity-35 transition duration-500 group-hover:scale-105 group-hover:opacity-50" style={{ backgroundImage: `url(${image})` }} /><span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-[#071018]/95 via-[#071018]/80 to-[#071018]/55 transition group-hover:from-[#071018]/90 group-hover:via-[#071018]/70 group-hover:to-[#071018]/45" />
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[.06] text-cinema-200 transition group-hover:border-cinema-300/25 group-hover:bg-cinema-500/15"><Icon className="h-5 w-5" /></span>
                   <span className="min-w-0">
                     <span className="block font-semibold text-white">{label}</span>
