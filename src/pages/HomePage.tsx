@@ -171,13 +171,19 @@ export function HomePage() {
     };
   }, [reloadClips]);
   const { data: social, loading: socialLoading } = useAsyncData(() => user ? loadHomeSocial(user.id) : Promise.resolve(undefined), [user?.id]);
+  const titleAffinityIds = useMemo(
+    () => new Set([...watchlistIds, ...favouriteIds, ...progress.map((entry) => entry.title_id)]),
+    [watchlistIds, favouriteIds, progress],
+  );
   const shorts = useMemo(
     () => rankPublishedShorts(
       (publishedClips ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)),
       social?.follows ?? [],
       12,
+      undefined,
+      titleAffinityIds,
     ),
-    [publishedClips, social?.follows],
+    [publishedClips, social?.follows, titleAffinityIds],
   );
   const recommendations = useMemo(() => titles ? buildRecommendations(titles, progress, watchlistIds, favouriteIds, social?.follows ?? []) : { titles: [], reason: 'Discover stories from across Cinema.' }, [titles, progress, watchlistIds, favouriteIds, social?.follows]);
   const recommendedMovies = useMemo(() => titlesOfType(recommendations.titles, 'movie'), [recommendations.titles]);
