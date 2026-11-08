@@ -801,6 +801,169 @@ export type Database = {
         }
         Relationships: []
       }
+      studio_title_submission_episodes: {
+        Row: {
+          created_at: string
+          delivery_status: string
+          duration_minutes: number | null
+          episode_number: number
+          episode_title: string
+          id: string
+          playback_url: string | null
+          poster_url: string | null
+          release_at: string | null
+          season_number: number
+          submission_id: string
+          synopsis: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_status?: string
+          duration_minutes?: number | null
+          episode_number: number
+          episode_title: string
+          id?: string
+          playback_url?: string | null
+          poster_url?: string | null
+          release_at?: string | null
+          season_number: number
+          submission_id: string
+          synopsis?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          delivery_status?: string
+          duration_minutes?: number | null
+          episode_number?: number
+          episode_title?: string
+          id?: string
+          playback_url?: string | null
+          poster_url?: string | null
+          release_at?: string | null
+          season_number?: number
+          submission_id?: string
+          synopsis?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_title_submission_episodes_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "studio_title_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_title_submissions: {
+        Row: {
+          backdrop_url: string | null
+          content_type: string
+          created_at: string
+          delivery_notes: string
+          duration_minutes: number | null
+          genre: string
+          id: string
+          is_exclusive: boolean
+          languages: string[]
+          platforms: string[]
+          playback_url: string | null
+          poster_url: string
+          promotional_rights_confirmed: boolean
+          release_year: number | null
+          review_note: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          rights_basis: string
+          rights_end: string | null
+          rights_evidence_url: string | null
+          rights_holder: string
+          rights_start: string | null
+          status: string
+          studio_id: string
+          submitted_by: string
+          synopsis: string
+          territories: string[]
+          title: string
+          trailer_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          backdrop_url?: string | null
+          content_type: string
+          created_at?: string
+          delivery_notes?: string
+          duration_minutes?: number | null
+          genre?: string
+          id?: string
+          is_exclusive?: boolean
+          languages: string[]
+          platforms: string[]
+          playback_url?: string | null
+          poster_url: string
+          promotional_rights_confirmed?: boolean
+          release_year?: number | null
+          review_note?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rights_basis: string
+          rights_end?: string | null
+          rights_evidence_url?: string | null
+          rights_holder: string
+          rights_start?: string | null
+          status?: string
+          studio_id: string
+          submitted_by: string
+          synopsis: string
+          territories: string[]
+          title: string
+          trailer_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          backdrop_url?: string | null
+          content_type?: string
+          created_at?: string
+          delivery_notes?: string
+          duration_minutes?: number | null
+          genre?: string
+          id?: string
+          is_exclusive?: boolean
+          languages?: string[]
+          platforms?: string[]
+          playback_url?: string | null
+          poster_url?: string
+          promotional_rights_confirmed?: boolean
+          release_year?: number | null
+          review_note?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          rights_basis?: string
+          rights_end?: string | null
+          rights_evidence_url?: string | null
+          rights_holder?: string
+          rights_start?: string | null
+          status?: string
+          studio_id?: string
+          submitted_by?: string
+          synopsis?: string
+          territories?: string[]
+          title?: string
+          trailer_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_title_submissions_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "studio_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       titles: {
         Row: {
           availability: string
@@ -1088,22 +1251,32 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_discover_clip_engagement: {
+        Args: { p_clip_id: string }
+        Returns: {
+          liked_by_current_user: boolean
+          reaction_count: number
+        }[]
+      }
+      get_discover_content_engagement: {
+        Args: { p_content_key: string }
+        Returns: {
+          liked_by_current_user: boolean
+          reaction_count: number
+        }[]
+      }
+      get_letterbox_post_engagement: {
+        Args: { p_post_ids: string[] }
+        Returns: {
+          liked_by_current_user: boolean
+          post_id: string
+          reaction_count: number
+        }[]
+      }
       is_cinema_admin: { Args: never; Returns: boolean }
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
       join_watch_party: { Args: { p_invite_code: string }; Returns: string }
-      get_discover_content_engagement: {
-        Args: { p_content_key: string }
-        Returns: { reaction_count: number; liked_by_current_user: boolean }[]
-      }
-      get_discover_clip_engagement: {
-        Args: { p_clip_id: string }
-        Returns: { reaction_count: number; liked_by_current_user: boolean }[]
-      }
-      get_letterbox_post_engagement: {
-        Args: { p_post_ids: string[] }
-        Returns: { post_id: string; reaction_count: number; liked_by_current_user: boolean }[]
-      }
       record_discover_clip_view: {
         Args: { p_clip_id: string }
         Returns: number
