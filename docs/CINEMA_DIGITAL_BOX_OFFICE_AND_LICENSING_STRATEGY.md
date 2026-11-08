@@ -43,7 +43,7 @@ The title's Digital Box Office report should distinguish:
 5. **Cinema retained revenue:** the amount retained by Cinema after the agreed allocations and direct deductions.
 6. **Cinema contribution/profit:** retained revenue less the relevant operating costs. This is not the same as gross receipts.
 
-A view count, forecast, sponsor valuation, rate-card value or unsigned proposal must never be entered as cash revenue.
+A view count, forecast, sponsor valuation, rate-card value or unsigned proposal must never be entered as cash revenue. The Digital Box Office is not a rental or pay-per-view model, does not automatically charge viewers, and does not assign revenue to a title merely because it has views. The viewer-facing experience remains free of mandatory subscriptions and forced mid-roll interruptions; commercial income is pursued through approved partner and title-related activity.
 
 ### Illustrative title report (not a forecast)
 
@@ -232,7 +232,7 @@ Cinema's initial target market is Ghana and Nigeria, with a focus on viewers int
 
 ## 12. Commercial safeguards and launch gates
 
-Before accepting sponsor money or charging for any content window:
+Before accepting sponsor money or activating any sponsored content window:
 - Verify the company's contracting authority and obtain appropriate adult, legal and financial advice.
 - Confirm the rights-holder's written authority and the full scope of rights.
 - Use written sponsor and distribution contracts.
