@@ -94,7 +94,8 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
       reality: /reality|unscripted/i,
     };
     const candidates = (titles ?? []).filter((title: Title) => terms[slug.toLowerCase()]?.test(`${title.genre ?? ''} ${title.title} ${title.synopsis ?? ''}`));
-    const selected = candidates.find((title) => title.backdrop_url || title.poster_url);
+    const selected = candidates.find((title) => title.backdrop_url || title.poster_url)
+      ?? (titles ?? []).find((title) => title.backdrop_url || title.poster_url);
     return selected?.backdrop_url || selected?.poster_url || '';
   }, [titles, slug]);
   if (!category) {
@@ -115,8 +116,8 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
       <CinemaCategoryNav active={category.title} />
 
       <header className="cinema-category-hero relative isolate overflow-hidden rounded-[2rem] border border-sky-200/15 p-6 shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:p-10 lg:p-12">
-        {categoryArtwork && <Artwork src={categoryArtwork} alt="" fallbackTitle={category.title} className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.24]" />}
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/95 via-[#05080e]/80 to-[#05080e]/50" />
+        {categoryArtwork && <Artwork src={categoryArtwork} alt="" fallbackTitle={category.title} priority className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.34]" />}
+        {categoryArtwork && <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/88 via-[#05080e]/58 to-[#05080e]/28" />}
         <div className="cinema-category-hero__orb cinema-category-hero__orb--one" aria-hidden="true" />
         <div className="cinema-category-hero__orb cinema-category-hero__orb--two" aria-hidden="true" />
         <div className="relative z-10 max-w-3xl">
