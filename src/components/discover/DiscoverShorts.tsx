@@ -5,7 +5,9 @@ import { ContentEngagement } from '@/components/discover/ContentEngagement';
 import { ShortViewer } from '@/components/discover/ShortViewer';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { useAsyncData } from '@/hooks/useAsyncData';
-import { fetchPublishedShorts, isPlayableShort, type DiscoverClip } from '@/lib/clips';
+import { useAuth } from '@/hooks/useAuth';
+import { fetchFollowedPublishers } from '@/lib/publisherFollows';
+import { fetchPublishedShorts, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { navigateTo } from '@/lib/router';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 
@@ -35,7 +37,12 @@ function ShortsLoading() {
 
 export function DiscoverShorts() {
   const [active, setActive] = useState<DiscoverClip | null>(null);
+  const { user } = useAuth();
   const { data, error, reload } = useAsyncData(fetchPublishedShorts, []);
+  const { data: followedPublishers } = useAsyncData(
+    () => user ? fetchFollowedPublishers(user.id) : Promise.resolve([] as string[]),
+    [user?.id],
+  );
   useEffect(() => {
     const refreshWhenVisible = () => { if (document.visibilityState === 'visible') reload(); };
     window.addEventListener('focus', refreshWhenVisible);
@@ -46,9 +53,8 @@ export function DiscoverShorts() {
     };
   }, [reload]);
   const shorts = useMemo(
-    () => (data ?? []).filter((clip) => (clip.kind === 'short' || clip.kind === 'clip') && isPlayableShort(clip)).sort((a, b) => Date.parse(b.created_at ?? '') - Date.parse(a.created_at ?? ''))
-      .slice(0, 18),
-    [data],
+    () => rankPublishedShorts(data ?? [], followedPublishers ?? [], 18),
+    [data, followedPublishers],
   );
 
   useEffect(() => {
@@ -75,6 +81,7 @@ export function DiscoverShorts() {
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" onClick={reload} className="inline-flex items-center gap-1.5 rounded-full border border-sky-200/15 bg-sky-300/[.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-sky-100 transition hover:border-sky-200/35 hover:bg-sky-300/[.12]"><RefreshCw className="h-3 w-3" /> Refresh</button>
           <span className="rounded-full border border-white/15 bg-white/[.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-200">Up To 90 Seconds</span>
+          <a href="/shorts" className="rounded-full border border-white/20 bg-white/[.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-sky-200/45 hover:bg-white/[.08]">View All Shorts</a>
           <a href="/creator/shorts" className="rounded-full border border-white/20 bg-white/[.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:border-sky-200/45 hover:bg-white/[.08]">Submit A Short</a>
         </div>
       </div>
