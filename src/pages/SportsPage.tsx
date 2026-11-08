@@ -39,7 +39,15 @@ export function SportsPage() {
     const liveNow = [...sports.filter(isLiveChannel), ...liveChannels];
     const startingSoon = sports.filter((title) => Boolean(title.release_date && title.release_date > today));
     const channels = [...sports.filter(isSportsChannel), ...liveChannels];
-    const highlights = sports.filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url?.trim() || title.trailer_url?.trim()));
+    const highlights = sports
+      .filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url?.trim() || title.trailer_url?.trim()))
+      .sort((a, b) => {
+        const featured = Number(b.is_featured) - Number(a.is_featured);
+        if (featured !== 0) return featured;
+        const playable = Number(Boolean(b.playback_url?.trim())) - Number(Boolean(a.playback_url?.trim()));
+        if (playable !== 0) return playable;
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      });
     const yourSports = sports.filter((title) => watchlistIds.has(title.id) || favouriteIds.has(title.id));
     return { sports, liveNow, startingSoon, channels, highlights, yourSports, genres: genresOf(sports) };
   }, [titles, watchlistIds, favouriteIds]);
@@ -114,8 +122,31 @@ export function SportsPage() {
           {sections.yourSports.length > 0 && <TitleRow heading="Your Sports" description="Sports titles saved to your Cinema watchlist or favourites." titles={sections.yourSports} />}
           {sections.startingSoon.length > 0 && <TitleRow heading="Starting Soon" description="Upcoming sports content with a published future date." titles={sections.startingSoon} />}
           {sections.channels.length > 0 && <section><div className="mb-3 flex items-end gap-3"><Tv className="h-5 w-5 text-sky-300" /><div><h2 className="text-xl font-extrabold text-white">Sports Channels</h2><p className="text-xs text-slate-400">Sports broadcasters and channels available in Cinema.</p></div></div><TitleGrid titles={sections.channels} /></section>}
-          <section id="sports-highlights" className="scroll-mt-24">
-            {sections.highlights.length > 0 ? <TitleRow heading="Highlights & Replays" description="Sports programmes and playable replays published in Cinema." titles={sections.highlights} /> : <div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h2 className="text-xl font-extrabold text-white">Highlights & Replays</h2><p className="mt-2 text-sm text-slate-400">Official highlights, match replays and sports features will appear here as publishers add them to Cinema.</p></div>}
+          <section
+            id="sports-highlights"
+            className="cinema-sports-highlights relative isolate scroll-mt-24 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#080d15] p-4 shadow-[0_22px_64px_rgba(0,0,0,.24)] transition-shadow duration-500 sm:p-6"
+            style={sections.highlights[0]?.backdrop_url ? { backgroundImage: `linear-gradient(100deg, rgba(4,7,12,.97), rgba(4,7,12,.88) 58%, rgba(4,7,12,.72)), url("${sections.highlights[0].backdrop_url}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+            aria-label="Sports Highlights And Replays"
+          >
+            <div className="pointer-events-none absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full bg-sky-400/[.08] blur-3xl" />
+            {sections.highlights.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-sky-200">The Moments That Matter</p>
+                    <p className="mt-1 text-xs text-slate-400">Featured and recently updated playable sports stories, replays and highlights.</p>
+                  </div>
+                  <span className="rounded-full border border-sky-200/20 bg-sky-200/[.08] px-3 py-1.5 text-[10px] font-bold text-sky-100">{sections.highlights.length} Available</span>
+                </div>
+                <TitleRow heading="Highlights & Replays" description="Watch official sports moments and full replays published by Cinema." titles={sections.highlights} landscape />
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-5 backdrop-blur-sm">
+                <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-sky-200">The Moments That Matter</p>
+                <h2 className="mt-2 text-xl font-extrabold text-white">Highlights & Replays</h2>
+                <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">Official highlights, match replays and sports features will appear here as publishers add them to Cinema.</p>
+              </div>
+            )}
           </section>
 
           <section id="sports-catalogue" className="space-y-4 scroll-mt-24">
