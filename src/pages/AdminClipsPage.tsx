@@ -30,6 +30,7 @@ function AdminClipsManager() {
   const { data, error, reload } = useAsyncData(loadClipsData, []);
   const [editor, setEditor] = useState<EditorState>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
 
   async function togglePublished(clip: DiscoverClip) {
     if (!clip.is_published && !window.confirm('Only publish this video if the rights holder has authorised Cinema to distribute it. Have you confirmed permission for the intended territories and placements?')) return;
@@ -48,7 +49,7 @@ function AdminClipsManager() {
     if (decision === 'approved' && !window.confirm('Publish this creator video to the public Cinema Shorts feed? Confirm that the submitted rights declaration is valid.')) return;
     setBusyId(submission.id);
     try {
-      await reviewCreatorShort(submission, decision);
+      await reviewCreatorShort(submission, decision, reviewNotes[submission.id] ?? '');
       notify(decision === 'approved' ? 'Creator Short approved and published.' : 'Creator Short rejected.');
       reload();
     } catch {
@@ -102,7 +103,11 @@ function AdminClipsManager() {
                   <p className="font-semibold text-white">{submission.headline}</p>
                   <p className="text-xs text-slate-400">{submission.publisher_name} · {submission.duration_seconds ? `${submission.duration_seconds}s` : 'Duration Not Supplied'} · {new Date(submission.created_at).toLocaleDateString()}</p>
                   {submission.description && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{submission.description}</p>}
-                  <a className="mt-2 inline-block text-xs font-semibold text-cinema-200 underline" href={submission.preview_url ?? '#'} target="_blank" rel="noreferrer">Preview Submitted Video</a>
+                  {submission.title_id && <p className="mt-1 text-xs font-semibold text-sky-200">Linked Title: {data.titles.find((title) => title.id === submission.title_id)?.title ?? 'Title record unavailable'}</p>}
+                  {submission.preview_url && <video src={submission.preview_url} controls playsInline preload="metadata" className="mt-3 max-h-72 w-full max-w-sm rounded-xl border border-white/10 bg-black object-contain" aria-label={`Review preview: ${submission.headline}`} />}
+                  <a className="mt-2 inline-block text-xs font-semibold text-cinema-200 underline" href={submission.preview_url ?? '#'} target="_blank" rel="noreferrer">Open Full Preview</a>
+                  <label className="mt-3 block text-xs font-semibold text-slate-300" htmlFor={`review-note-${submission.id}`}>Review Note (Optional)</label>
+                  <textarea id={`review-note-${submission.id}`} value={reviewNotes[submission.id] ?? ''} onChange={(event) => setReviewNotes((current) => ({ ...current, [submission.id]: event.target.value }))} maxLength={500} rows={2} placeholder="Add a reason or feedback for the creator…" className="mt-1 w-full max-w-xl rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-xs text-white outline-none focus:border-sky-300/40" />
                 </div>
                 <div className="flex gap-2">
                   <button type="button" disabled={busyId === submission.id} onClick={() => void reviewSubmission(submission, 'approved')} className={BUTTON_PRIMARY}>Approve</button>
