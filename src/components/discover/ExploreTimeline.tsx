@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Clapperboard, MessageCircle, Play, Send } from 'lucide-react';
+import { BadgeCheck, Clapperboard, MessageCircle, Play, Send } from 'lucide-react';
 import { ClipCard } from '@/components/discover/ClipCard';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { VideoDialog } from '@/components/player/VideoDialog';
@@ -14,6 +14,8 @@ import { fetchPublishedTitles } from '@/lib/library';
 import { fetchDiscoverTrailers, tmdbImageUrl, type TmdbTrailer } from '@/lib/tmdb';
 import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { LetterboxPostCard } from '@/pages/LetterboxPage';
+import { fetchVerifiedStudios } from '@/lib/studios';
+import { publisherHref } from '@/lib/publishers';
 
 type ExploreEntry =
   | { id: string; kind: 'post'; createdAt: number; post: LetterboxPost }
@@ -55,8 +57,9 @@ async function loadExploreData(): Promise<ExploreData> {
   };
 }
 
-function PublisherVideoPost({ clip, onOpenShort, onOpenVideo }: {
+function PublisherVideoPost({ clip, verified, onOpenShort, onOpenVideo }: {
   clip: DiscoverClip;
+  verified: boolean;
   onOpenShort: (clip: DiscoverClip) => void;
   onOpenVideo: (clip: DiscoverClip) => void;
 }) {
@@ -67,10 +70,10 @@ function PublisherVideoPost({ clip, onOpenShort, onOpenVideo }: {
       <div className="mb-3 flex items-center gap-3">
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-[#18201f] text-sm font-black text-white">{publisher.slice(0, 1).toUpperCase()}</span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-extrabold text-white">{publisher}</p>
-          <p className="text-[11px] capitalize text-slate-500">{clip.kind.replace(/_/g, ' ')} · {clip.created_at ? new Date(clip.created_at).toLocaleDateString() : 'Cinema Video'}</p>
+          <p className="flex items-center gap-1.5 truncate text-sm font-extrabold text-white">{publisher}{verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-[#b9d2c2]" aria-label="Verified by Cinema" />}</p>
+          <p className="text-[11px] capitalize text-slate-500">{verified ? 'Verified Studio' : 'Publisher Video'} · {clip.kind.replace(/_/g, ' ')} · {clip.created_at ? new Date(clip.created_at).toLocaleDateString() : 'Cinema Video'}</p>
         </div>
-        <span className="rounded-full border border-white/10 bg-white/[.035] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-400">Video</span>
+        {verified ? <a href={publisherHref(publisher)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#a8cbb6]/25 bg-[#a8cbb6]/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-[#d2e4d8] transition hover:bg-[#a8cbb6]/20">Official Profile <BadgeCheck className="h-3 w-3" /></a> : <span className="rounded-full border border-white/10 bg-white/[.035] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-400">Video</span>}
       </div>
       {isShort ? (
         <div className="flex items-start gap-3 sm:gap-4">
@@ -111,6 +114,11 @@ export function ExploreTimeline() {
   const { notify } = useToast();
   const { data, error, reload, loading } = useAsyncData(loadExploreData, []);
   const { data: titles } = useAsyncData(fetchPublishedTitles, []);
+  const { data: verifiedStudios } = useAsyncData(() => fetchVerifiedStudios().catch(() => []), []);
+  const verifiedPublisherNames = useMemo(
+    () => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLocaleLowerCase())),
+    [verifiedStudios],
+  );
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
@@ -202,7 +210,7 @@ export function ExploreTimeline() {
       {data && entries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
         {entries.map((entry) => {
           if (entry.kind === 'post') return <div key={entry.id} className="cinema-explore-post col-span-full overflow-hidden rounded-2xl border border-white/10 bg-[#0b0e10] shadow-[0_12px_36px_rgba(0,0,0,.16)]"><LetterboxPostCard post={entry.post} userId={user?.id} onChanged={() => void reload()} /></div>;
-          if (entry.kind === 'clip') return <PublisherVideoPost key={entry.id} clip={entry.clip} onOpenShort={openShort} onOpenVideo={setActiveVideo} />;
+          if (entry.kind === 'clip') return <PublisherVideoPost key={entry.id} clip={entry.clip} verified={verifiedPublisherNames.has(entry.clip.publisher_name.trim().toLocaleLowerCase())} onOpenShort={openShort} onOpenVideo={setActiveVideo} />;
           return <OfficialTrailerPost key={entry.id} trailer={entry.trailer} onOpen={setActiveTrailer} />;
         })}
       </div>}
