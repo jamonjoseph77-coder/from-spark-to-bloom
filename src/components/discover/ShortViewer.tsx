@@ -242,7 +242,7 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                   {clip.title ? (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       <button type="button" onClick={openTitle} className="cinema-short-viewer__watch focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-                        <ArrowUpRight className="h-3.5 w-3.5" /> Watch Now
+                        <ArrowUpRight className="h-3.5 w-3.5" /> {clip.title.playback_url ? 'Watch Now' : 'View Title'}
                       </button>
                       <button type="button" onClick={() => void saveToLibrary()} disabled={!libraryReady || savingToLibrary} aria-pressed={inLibrary} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-[#0b1726]/80 px-3.5 py-2.5 text-xs font-bold text-white shadow-lg backdrop-blur-xl transition hover:border-sky-200/50 hover:bg-sky-200/10 disabled:opacity-55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-200">
                         {inLibrary ? <Check className="h-3.5 w-3.5 text-sky-200" /> : <BookmarkPlus className="h-3.5 w-3.5" />}
@@ -250,7 +250,10 @@ export function ShortViewer({ clip, onClose }: { clip: DiscoverClip; onClose: ()
                       </button>
                     </div>
                   ) : (
-                    <p className="mt-3 text-[11px] font-semibold text-slate-300">Full Title Details Are Not Available For This Short Yet.</p>
+                    <div className="mt-3 space-y-1.5">
+                      <p className="text-[11px] font-semibold text-slate-300">The Full Title Is Not Linked To This Short Yet.</p>
+                      <a href={`/search?q=${encodeURIComponent(clip.headline)}`} className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-100 underline decoration-sky-100/40 underline-offset-4 transition hover:text-white">Explore Related Titles <ArrowUpRight className="h-3 w-3" /></a>
+                    </div>
                   )}
                   {clip.download_allowed && direct && !isHlsUrl(clip.video_url) && <button type="button" onClick={() => void downloadShortVideo()} disabled={downloading} className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/55 px-3.5 py-2 text-xs font-bold text-white transition hover:border-cinema-200/50 hover:bg-white/10 disabled:opacity-50"><Download className="h-3.5 w-3.5" /> {downloading ? 'Preparing Download…' : 'Download Approved Video'}</button>}
                   {youtubeId && <a href={clip.video_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-[11px] font-bold text-slate-300 underline decoration-white/30 underline-offset-4 transition hover:text-white">View Original Publisher Video <ArrowUpRight className="h-3.5 w-3.5" /></a>}

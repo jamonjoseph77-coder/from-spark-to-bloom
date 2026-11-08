@@ -38,7 +38,10 @@ async function loadExploreData(): Promise<ExploreData> {
   const clips = clipsResult.status === 'fulfilled'
     ? clipsResult.value.filter((clip) => {
       const playable = Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url)));
-      if (clip.kind === 'short' || clip.kind === 'clip') return isPlayableShort(clip);
+      // Keep approved Shorts in the dedicated Shorts shelf so the same video
+      // is not repeated in both the vertical feed and the mixed Explore timeline.
+      if (clip.kind === 'short') return false;
+      if (clip.kind === 'clip') return isPlayableShort(clip);
       return playable;
     })
     : [];
