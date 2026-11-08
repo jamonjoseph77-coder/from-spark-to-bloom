@@ -20,20 +20,21 @@ export function ProfileAvatar({ name, size = 'md', imageUrl, previewable = true 
   const [previewOpen, setPreviewOpen] = useState(false);
   useEffect(() => setImageFailed(false), [source]);
   const label = name.trim() || 'Cinema member';
+  const initials = label.split(/\\s+/).filter(Boolean).slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase() || '?';
 
   return (
     <>
     <span
       role={source && !imageFailed ? undefined : "img"}
       aria-label={source && !imageFailed ? undefined : `${label}'s profile initials`}
-      className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-gradient-to-br from-cinema-500 to-cinema-800 font-extrabold uppercase text-white shadow-lg shadow-black/20 ring-2 ring-white/5 ${SIZES[size]}`}
+      className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-[linear-gradient(145deg,#69756f,#35413b_58%,#171d1a)] font-extrabold uppercase text-white shadow-lg shadow-black/20 ring-2 ring-white/5 ${SIZES[size]}`}
     >
       {source && !imageFailed ? (
         previewable ? <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); setPreviewOpen(true); }} aria-haspopup="dialog" aria-label={`View ${label}'s profile picture`} className="h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
           <img src={source} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setImageFailed(true)} className="h-full w-full object-cover" />
         </button> : <img src={source} alt={`${label}'s profile picture`} loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setImageFailed(true)} className="h-full w-full object-cover" />
       ) : (
-        <span aria-hidden="true">{label.charAt(0) || '?'}</span>
+        <span aria-hidden="true">{initials}</span>
       )}
     </span>
     {source && !imageFailed && previewOpen && <Modal label={`${label}'s profile picture`} onClose={() => setPreviewOpen(false)} compact>
