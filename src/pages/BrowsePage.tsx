@@ -28,11 +28,13 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
   const [sort, setSort] = useState<SortOption>('newest');
   const copy = COPY[kind];
   const ofType = useMemo(() => (titles ?? []).filter((title) => title.type === kind), [titles, kind]);
+  const headerArtwork = ofType.find((title) => title.backdrop_url || title.poster_url)
+    ?? (titles ?? []).find((title) => title.backdrop_url || title.poster_url);
   const genres = useMemo(() => genresOf(ofType), [ofType]);
   const visible = useMemo(() => sortTitles(ofType.filter((title) => (genre === ALL_GENRES || hasGenre(title, genre)) && matchesQuery(title, query)), sort), [ofType, genre, query, sort]);
 
   const HeroIcon = kind === 'sport' ? Trophy : kind === 'live' ? Radio : Newspaper;
-  const heroImage = ofType[0]?.backdrop_url || ofType[0]?.poster_url || '';
+  const heroImage = headerArtwork?.backdrop_url || headerArtwork?.poster_url || '';
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-browse-page space-y-8`}>
