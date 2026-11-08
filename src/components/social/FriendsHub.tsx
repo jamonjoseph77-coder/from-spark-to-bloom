@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Compass, MessageCircle, Share2, UserPlus, Users } from 'lucide-react';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-import { chipClass } from '@/components/ui/styles';
 import { FindPeople } from '@/components/social/FindPeople';
 import { FriendRequests, FriendsList } from '@/components/social/FriendsList';
 import { CircleActivity } from '@/components/social/CircleActivity';
