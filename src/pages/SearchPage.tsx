@@ -51,19 +51,6 @@ export function SearchPage({ query }: { query: string }) {
   const verifiedNames = useMemo(() => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLowerCase())), [verifiedStudios]);
   const suggestions = useMemo(() => genresOf(titles ?? []).slice(0, 10), [titles]);
   const trimmed = query.trim();
-  const searchArtwork = [
-    'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80',
-    'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200&q=80',
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80',
-    'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80',
-  ];
-  const featuredBackdrop = titles?.[0]?.backdrop_url || titles?.[0]?.poster_url || searchArtwork[0];
-  const destinationArtwork = (index: number) => {
-    const title = titles?.[index];
-    const source = title?.backdrop_url || title?.poster_url || searchArtwork[index % searchArtwork.length];
-    return `url("${source}")`;
-  };
-
   function clearSearch() {
     setDraft('');
     if (query.trim()) navigateTo('/search');
@@ -78,7 +65,7 @@ export function SearchPage({ query }: { query: string }) {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-search-page space-y-9 pb-12`}>
-      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8" style={{ backgroundImage: featuredBackdrop ? `url("${featuredBackdrop}")` : undefined }}>
+      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-cinema-300">Search Cinema</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-4xl">What Would You Like To Watch?</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Search Movies, Series, Genres, Studios And Publishers In One Place.</p>
@@ -122,9 +109,8 @@ export function SearchPage({ query }: { query: string }) {
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {destinations.map(({ href, label, detail, icon: Icon }, index) => (
-                <a key={href} href={href} style={{ backgroundImage: destinationArtwork(index) }} className="cinema-search-destination group relative isolate flex min-h-36 items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-cover bg-center p-4 transition hover:-translate-y-0.5 hover:border-cinema-400/35">
-                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#05090f]/95 via-[#07101b]/80 to-[#07101b]/45 transition group-hover:from-[#05090f]/90 group-hover:via-[#07101b]/70" />
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/20 bg-black/35 text-white shadow-lg backdrop-blur-sm transition group-hover:bg-black/45"><Icon className="h-5 w-5" /></span>
+                <a key={href} href={href} className="cinema-search-destination group flex min-h-36 items-center gap-4 rounded-2xl border border-white/10 bg-[#0c141b] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-cinema-400/35 hover:bg-[#111d26] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[.06] text-cinema-200 transition group-hover:border-cinema-300/25 group-hover:bg-cinema-500/15"><Icon className="h-5 w-5" /></span>
                   <span className="min-w-0">
                     <span className="block font-semibold text-white">{label}</span>
                     <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
