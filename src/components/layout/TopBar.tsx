@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Search, Sparkles } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { NotificationBell } from '@/components/layout/NotificationBell';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -45,14 +45,13 @@ export function TopBar() {
             type="submit"
             aria-label="Search"
             title="Search"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[.07] text-slate-200 transition hover:border-white/20 hover:bg-white/[.13] hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+            className="cinema-search-submit inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[.07] text-slate-200 transition hover:border-white/20 hover:bg-white/[.13] hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
           >
             <Search aria-hidden="true" className="h-4 w-4" />
           </button>
         </div>
       </form>
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <a href="/shorts" aria-label="Watch Cinema Shorts" title="Watch Cinema Shorts" className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-sky-200/20 bg-sky-300/[.08] px-3 text-xs font-bold text-sky-100 transition hover:border-sky-200/35 hover:bg-sky-300/[.14] lg:hidden"><Sparkles className="h-4 w-4" /><span>Shorts</span></a>
         {user && <NotificationBell userId={user.id} />}
         {user ? (
           <a href="/profile" aria-label="Your profile" title={profile?.display_name || user.email || 'Your profile'} className="rounded-full ring-2 ring-cinema-400/30 transition hover:ring-cinema-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">
