@@ -44,6 +44,8 @@ The intended journey is:
 ### Slice 1 — Connect Discovery and Shorts (in progress)
 
 - Give Discover a dedicated Shorts shelf.
+- Rank that shelf with the existing freshness/followed-publisher/diversity helper so the opening row is not just chronological and does not over-repeat one publisher.
+- Provide a direct View All Shorts route from the shelf.
 - Keep the mixed Explore timeline focused on posts, trailers and other publisher clips so Shorts are not duplicated.
 - Make the Short viewer's primary title action availability-aware: Watch Now only when a playback source is present; otherwise View Title.
 - When no Cinema title is linked, provide an Explore Related Titles route instead of a dead end.
