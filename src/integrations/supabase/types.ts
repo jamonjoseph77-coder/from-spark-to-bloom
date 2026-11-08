@@ -1281,6 +1281,14 @@ export type Database = {
         Args: { p_clip_id: string }
         Returns: number
       }
+      update_my_verified_studio_profile: {
+        Args: {
+          p_description: string
+          p_logo_url?: string
+          p_website_url?: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
