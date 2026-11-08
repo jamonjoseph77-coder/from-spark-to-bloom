@@ -89,3 +89,25 @@ export async function submitStudioApplication(input: StudioApplicationInput): Pr
   if (error) throw error;
   return data as StudioAccount;
 }
+
+export async function updateMyVerifiedStudioProfile(
+  ownerId: string,
+  input: Pick<StudioApplicationInput, 'description' | 'website_url' | 'logo_url'>,
+): Promise<void> {
+  if (!ownerId) throw new Error('Sign in to update this studio profile.');
+  if (input.description.trim().length < 20) throw new Error('Add a description of at least 20 characters.');
+  const { data, error } = await supabase
+    .from('studio_accounts')
+    .update({
+      description: input.description.trim(),
+      website_url: input.website_url,
+      logo_url: input.logo_url,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('owner_id', ownerId)
+    .eq('verification_status', 'verified')
+    .select('id')
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error('Only the verified studio account owner can edit this official profile.');
+}
