@@ -172,6 +172,7 @@ export function ExploreTimeline() {
     if (activeFilter === 'videos') return entries.filter((entry) => entry.kind === 'clip');
     if (activeFilter === 'trailers') return entries.filter((entry) => entry.kind === 'trailer');
     if (activeFilter === 'community') return entries.filter((entry) => entry.kind === 'post');
+    if (activeFilter === 'for-you') return entries.filter((entry) => entry.kind !== 'post');
     if (activeFilter === 'following') {
       const publisherSet = new Set((followedPublishers ?? []).map((name) => name.trim().toLocaleLowerCase()));
       const friendSet = new Set((friends?.friends ?? []).map((friend) => friend.otherUserId));
@@ -207,8 +208,8 @@ export function ExploreTimeline() {
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3 px-1">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[.2em] text-slate-500">Cinema · Discover</p>
-          <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Explore Stories, Videos & Conversations</h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Watch previews, discover publishers, share a thought and find the stories behind every screen.</p>
+          <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Cinema Video Feed</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Discover videos from studios and creators, official trailers and stories worth watching. Switch to Following to catch new uploads from your circle.</p>
         </div>
         <a href="/publishers" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:border-white/20 hover:bg-white/[.07] hover:text-white">Studios & Publishers <Clapperboard className="h-3.5 w-3.5" /></a>
       </header>
@@ -241,7 +242,7 @@ export function ExploreTimeline() {
       {error && !data && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-5"><ErrorState onRetry={reload} description="Cinema Explore could not load right now. Your other Cinema destinations remain available." /></div>}
       {data?.postsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Community posts are temporarily unavailable. Publisher videos remain available.</p>}
       {data?.clipsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Publisher videos are temporarily unavailable. Community posts remain available.</p>}
-      {data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title={activeFilter === 'following' ? 'Your Following Feed Is Ready' : 'Your Cinema Explore Starts Here'} description={activeFilter === 'following' ? 'New videos and conversations from the studios and friends you follow will appear here.' : 'Official videos, creator posts and entertainment conversations will appear together as they are published.'} /></div>}
+      {data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title={activeFilter === 'following' ? 'Your Following Feed Is Ready' : 'Your Video Home Is Getting Started'} description={activeFilter === 'following' ? 'New videos and conversations from the studios and friends you follow will appear here.' : 'Videos and official trailers from across Cinema will appear here as publishers and creators release them.'} /></div>}
 
       {data && visibleEntries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
         {visibleEntries.map((entry) => {
