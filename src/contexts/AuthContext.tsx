@@ -145,34 +145,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => { void refreshAdmin(); }, [refreshAdmin]);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return error ? describeAuthError(error) : null;
+    const normalizedEmail = email.trim().toLowerCase();
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
+      return error ? describeAuthError(error) : null;
+    } catch (error: unknown) {
+      return describeUnexpectedAuthError(error);
+    }
   }, []);
 
   const signUp = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
+    const normalizedEmail = email.trim().toLowerCase();
+    try {
+      const { data, error } = await supabase.auth.signUp({
+      email: normalizedEmail,
       password,
       options: { emailRedirectTo: getAuthRedirectBaseUrl() },
     });
-    if (error) return { error: describeAuthError(error), needsConfirmation: false };
-    return { error: null, needsConfirmation: !data.session };
+      if (error) return { error: describeAuthError(error), needsConfirmation: false };
+      return { error: null, needsConfirmation: !data.session };
+    } catch (error: unknown) {
+      return { error: describeUnexpectedAuthError(error), needsConfirmation: false };
+    }
   }, []);
 
   const resendSignupConfirmation = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.resend({
+    const normalizedEmail = email.trim().toLowerCase();
+    try {
+      const { error } = await supabase.auth.resend({
       type: 'signup',
-      email,
+      email: normalizedEmail,
       options: { emailRedirectTo: getAuthRedirectBaseUrl() },
     });
-    return error ? describeAuthError(error) : null;
+      return error ? describeAuthError(error) : null;
+    } catch (error: unknown) {
+      return describeUnexpectedAuthError(error);
+    }
   }, []);
 
   const signOut = useCallback(async () => { await supabase.auth.signOut(); }, []);
 
   const requestPasswordReset = useCallback(async (email: string) => {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
         redirectTo: `${getAuthRedirectBaseUrl()}/reset-password`,
       });
       return error ? describeAuthError(error) : null;
