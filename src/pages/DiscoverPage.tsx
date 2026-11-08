@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy, CalendarDays, Building2, BellPlus, BellRing, ArrowRight, UploadCloud } from 'lucide-react';
 import { ExploreTimeline } from '@/components/discover/ExploreTimeline';
+import { DiscoverShorts } from '@/components/discover/DiscoverShorts';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { LoadingState, ErrorState } from '@/components/ui/StatusViews';
