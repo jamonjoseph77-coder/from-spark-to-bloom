@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserRound, Users, Heart, Bookmark, ShieldCheck, MessageCircle, Film } from 'lucide-react';
+import { UserRound, Users, Heart, Bookmark, ShieldCheck, MessageCircle, Film, Eye, EyeOff, ArrowUpRight, Sparkles } from 'lucide-react';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { ProfileForm } from '@/components/social/ProfileForm';
 import { SignedOutGate } from '@/components/social/SignedOutGate';
@@ -16,21 +16,24 @@ function ProfileEditor({ userId }: { userId: string }) {
   if (error) return <ErrorState onRetry={reload} />;
   return (
     <div className="space-y-8">
-      <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-cinema-900/70 via-ink-900 to-ink-950 p-6 sm:p-8">
+      <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_8%,rgba(154,190,169,.13),transparent_38%),linear-gradient(135deg,#141b17,#0b100e_62%,#080b0a)] p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-12 -top-16 -z-10 h-56 w-56 rounded-full bg-cinema-400/10 blur-3xl" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <ProfileAvatar name={profile?.display_name ?? 'C'} imageUrl={profile?.avatar_url} size="lg" />
           <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase tracking-[0.18em] text-cinema-200">Your Cinema identity</p><h2 className="mt-1 truncate text-2xl font-black tracking-tight text-white">{profile?.display_name ?? 'Set up your profile'}</h2><p className="mt-1 text-sm text-slate-300">{profile ? `@${profile.username}` : 'Choose a name friends can recognise.'}</p>{profile?.bio && <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">{profile.bio}</p>}</div>
-          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300">{profile?.is_discoverable ? 'Discoverable' : 'Private in search'}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.06] px-3 py-1.5 text-xs font-semibold text-slate-200">{profile?.is_discoverable ? <Eye className="h-3.5 w-3.5 text-cinema-200" /> : <EyeOff className="h-3.5 w-3.5 text-slate-400" />}{profile?.is_discoverable ? 'Discoverable' : 'Private In Search'}</span>
+            {profile?.username && <a href={profile.is_discoverable ? `/profile?username=${encodeURIComponent(profile.username)}` : '/friends'} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-white/25 hover:text-white">{profile.is_discoverable ? 'Preview Profile' : 'Find Friends'} <ArrowUpRight className="h-3.5 w-3.5" /></a>}
+          </div>
         </div>
       </section>
-      <div className="grid gap-3 sm:grid-cols-3">
-        <a href="/friends" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/70 p-4 transition hover:border-cinema-400/30"><Users className="h-5 w-5 text-cinema-300" /><span className="text-sm font-semibold text-white">Friends</span></a>
-        <a href="/my-cinema" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/70 p-4 transition hover:border-cinema-400/30"><Bookmark className="h-5 w-5 text-cinema-300" /><span className="text-sm font-semibold text-white">My Cinema</span></a>
-        <a href="/watch-parties" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-900/70 p-4 transition hover:border-cinema-400/30"><Heart className="h-5 w-5 text-cinema-300" /><span className="text-sm font-semibold text-white">Watch together</span></a>
-      </div>
-      <section className="space-y-4"><div><h3 className="text-lg font-extrabold text-white">Profile details</h3><p className="mt-1 text-sm text-slate-400">Manage how people recognise you and control whether your profile appears in friend search.</p></div><ProfileForm key={profile?.updated_at ?? 'new'} userId={userId} profile={profile} onSaved={reload} /></section>
-      <p className="flex items-start gap-2 text-xs leading-5 text-slate-500"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-cinema-300" />Your profile visibility setting controls discovery in Cinema. Your account and private information remain managed through your sign-in settings.</p>
+      <section className="grid gap-3 sm:grid-cols-3" aria-label="Your Cinema shortcuts">
+        <a href="/friends" className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-0.5 hover:border-cinema-300/30"><span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[.045]"><Users className="h-5 w-5 text-cinema-200" /></span><span className="min-w-0"><span className="block text-sm font-bold text-white">Friends</span><span className="mt-0.5 block text-xs text-slate-500">Connect With Your Cinema Circle</span></span></a>
+        <a href="/my-cinema" className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-0.5 hover:border-cinema-300/30"><span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[.045]"><Bookmark className="h-5 w-5 text-cinema-200" /></span><span className="min-w-0"><span className="block text-sm font-bold text-white">My Cinema</span><span className="mt-0.5 block text-xs text-slate-500">Your Saved Stories And History</span></span></a>
+        <a href="/watch-parties" className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-0.5 hover:border-cinema-300/30"><span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[.045]"><Heart className="h-5 w-5 text-cinema-200" /></span><span className="min-w-0"><span className="block text-sm font-bold text-white">Watch Parties</span><span className="mt-0.5 block text-xs text-slate-500">Enjoy Stories Together</span></span></a>
+      </section>
+      <section className="space-y-4"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[.2em] text-cinema-200"><Sparkles className="h-3.5 w-3.5" /> Make It Yours</p><h3 className="mt-1 text-xl font-extrabold text-white">Profile Details</h3><p className="mt-1 max-w-2xl text-sm text-slate-400">Choose how people recognise you, write a short introduction and control what your Cinema circle can discover.</p></div><span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-[11px] font-semibold text-slate-400">Changes Are Private Until Saved</span></div><ProfileForm key={profile?.updated_at ?? 'new'} userId={userId} profile={profile} onSaved={reload} /></section>
+      <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[.025] p-4 text-xs leading-5 text-slate-400"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-cinema-200" /><p><strong className="text-slate-200">Your privacy matters.</strong> Your profile visibility setting controls discovery in Cinema. Watching activity stays private unless you choose to share it with accepted friends. Your sign-in and account security remain managed separately.</p></div>
     </div>
   );
 }
@@ -38,7 +41,7 @@ function ProfileEditor({ userId }: { userId: string }) {
 function PublicFriendProfile({ username }: { username: string }) {
   const { data, error, reload, loading } = useAsyncData(async () => {
     const profile = await fetchProfileByUsername(username);
-    if (!profile) return null;
+    if (!profile || !profile.is_discoverable) return null;
     const posts = await fetchLetterboxFeed(20, profile.user_id);
     return { profile, posts };
   }, [username]);

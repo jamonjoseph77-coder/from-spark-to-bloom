@@ -3,6 +3,7 @@ import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, P
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
+import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -20,7 +21,7 @@ import { fetchProfile } from '@/lib/profiles';
 export function MyCinemaPage() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { notify } = useToast();
-  const { data: profile, error: profileError, reload: reloadProfile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
+  const { data: profile, loading: profileLoading, error: profileError, reload: reloadProfile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [libraryQuery, setLibraryQuery] = useState('');
   const [libraryType, setLibraryType] = useState<TitleType | 'all'>('all');
@@ -57,7 +58,7 @@ export function MyCinemaPage() {
     };
   }, [view, libraryQuery, libraryType, librarySort]);
 
-  if (authLoading) return <div className={PAGE_CONTAINER}><LoadingState /></div>;
+  if (authLoading) return <div className={PAGE_CONTAINER}><LoadingState compact /></div>;
 
   if (!user) {
     return (
@@ -73,21 +74,22 @@ export function MyCinemaPage() {
   }
 
   return (
-    <div className={`${PAGE_CONTAINER} cinema-my-cinema space-y-12 pb-12`}>
+    <div className={`${PAGE_CONTAINER} cinema-my-cinema space-y-8 pb-12`}>
       {profileError && <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200/20 bg-amber-200/[.05] px-4 py-3 text-xs text-amber-100"><span>Your profile details could not be loaded. Your Cinema library is still available.</span><button type="button" onClick={reloadProfile} className="rounded-full border border-amber-100/25 px-3 py-1.5 font-bold hover:bg-white/5">Retry Profile</button></div>}
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(135deg,#121715,#090c0b_68%,#080a09)] p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <div className="flex shrink-0 items-center"><span className="relative grid h-[4.5rem] w-[4.5rem] place-items-center overflow-hidden rounded-full border border-white/20 bg-gradient-to-br from-white/[.12] via-[#18231e] to-[#080d0b] shadow-[0_14px_36px_rgba(0,0,0,.38)] ring-1 ring-white/[.06]">{profile?.avatar_url ? <img src={profile.avatar_url} alt="Your profile picture" className="h-full w-full rounded-full object-cover" /> : <UserRound className="h-8 w-8 text-slate-300" aria-hidden="true" />}<span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-[3px] border-[#101715] bg-cinema-300 shadow-[0_0_14px_rgba(130,190,160,.55)]" /></span></div>
+          <div className="flex shrink-0 items-center"><span className="relative grid h-[4.5rem] w-[4.5rem] place-items-center rounded-full border border-white/15 bg-white/[.035] shadow-[0_14px_36px_rgba(0,0,0,.38)] ring-1 ring-white/[.06]"><ProfileAvatar name={profile?.display_name || profile?.username || 'Cinema Member'} imageUrl={profile?.avatar_url} size="xl" previewable={false} /><span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-[3px] border-[#101715] bg-cinema-300 shadow-[0_0_14px_rgba(130,190,160,.55)]" /></span></div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-300">Your personal entertainment space</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>
-            <p className="mt-1 text-sm font-semibold text-slate-200">{profile?.display_name ? `Welcome Back, ${profile.display_name}` : 'Your Cinema, Your Stories'}</p>
+            <p className="mt-1 text-sm font-semibold text-slate-200">{profile?.display_name ? `Welcome Back, ${profile.display_name}` : profileLoading ? 'Preparing Your Cinema Profile…' : 'Your Cinema, Your Stories'}</p>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Your viewing journey, saved stories and favourites—kept together, ready whenever you are.</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <a href="/profile" className={BUTTON_PRIMARY}><Settings2 className="h-4 w-4" /> Edit Profile</a>
             <a href="/friends" className={BUTTON_SECONDARY}><Users className="h-4 w-4" /> Friends</a>
-            <a href="/watch-parties" className={BUTTON_SECONDARY}><PartyPopper className="h-4 w-4" /> Watch parties</a>
+            <a href="/watch-parties" className={BUTTON_SECONDARY}><PartyPopper className="h-4 w-4" /> Watch Parties</a>
           </div>
         </div>
         {view && <div className="relative mt-7 grid grid-cols-2 gap-2 border-t border-white/10 pt-5 sm:max-w-2xl sm:grid-cols-4 sm:gap-3">
@@ -104,7 +106,7 @@ export function MyCinemaPage() {
         <span className="inline-flex items-center gap-2 self-start rounded-full border border-white/15 bg-white/[.07] px-4 py-2.5 text-xs font-extrabold text-white transition group-hover:bg-sky-100/[.14] sm:self-center">View Downloads <ArrowRight className="h-4 w-4" /></span>
       </a>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-400">Signed in as {user.email}</p>
+        <p className="text-sm text-slate-400">{profile?.username ? `Your Cinema Account · @${profile.username}` : 'Your Personal Cinema Account'}</p>
         <div className="flex flex-wrap gap-2">
           {isAdmin && <a href="/admin" className={BUTTON_SECONDARY}><ShieldCheck className="h-4 w-4" /> Content manager</a>}
           <a href="/profile" className={BUTTON_SECONDARY}><Settings2 className="h-4 w-4" /> Profile & settings</a>
@@ -113,12 +115,14 @@ export function MyCinemaPage() {
         </div>
       </div>
 
+      {profile && (!profile.avatar_url || !profile.bio) && <section className="flex flex-col gap-4 rounded-2xl border border-cinema-200/15 bg-[linear-gradient(115deg,rgba(154,190,169,.09),rgba(255,255,255,.02))] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"><span className="flex min-w-0 items-center gap-3"><ProfileAvatar name={profile.display_name || profile.username || 'Cinema Member'} imageUrl={profile.avatar_url} size="md" previewable={false} /><span className="min-w-0"><span className="block text-sm font-bold text-white">Make Your Cinema Profile Yours</span><span className="mt-1 block text-xs leading-5 text-slate-400">{!profile.avatar_url ? 'Add a profile picture' : 'Add a short introduction'} so friends can recognise you around Cinema.</span></span></span><a href="/profile" className={BUTTON_SECONDARY + ' shrink-0'}><Settings2 className="h-4 w-4" /> Complete Profile</a></section>}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" aria-label="My Cinema shortcuts">
         <a href="#continue-watching" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><History className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Continue Watching</span><span className="mt-1 block text-[11px] text-slate-500">Pick up where you paused</span></a>
         <a href="#my-watchlist" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><BookmarkCheck className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watchlist</span><span className="mt-1 block text-[11px] text-slate-500">Saved for later</span></a>
         <a href="#my-saved-shorts" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-white/25"><BookmarkCheck className="h-5 w-5 text-slate-200" /><span className="mt-4 block text-sm font-bold text-white">Saved Shorts</span><span className="mt-1 block text-[11px] text-slate-400">Your Explore collection</span></a>
         <a href="#my-favourites" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Heart className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Favourites</span><span className="mt-1 block text-[11px] text-slate-500">Your top stories</span></a>
         <a href="/friends" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Users className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Friends</span><span className="mt-1 block text-[11px] text-slate-500">Your Cinema circle</span></a>
+        <a href="/profile" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-cinema-200/30"><UserRound className="h-5 w-5 text-cinema-200" /><span className="mt-4 block text-sm font-bold text-white">Your Profile</span><span className="mt-1 block text-[11px] text-slate-500">Your Cinema identity</span></a>
         <a href="/watch-parties" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><PartyPopper className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watch Parties</span><span className="mt-1 block text-[11px] text-slate-500">Experience together</span></a>
         <a href="/discover" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Compass className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Explore More</span><span className="mt-1 block text-[11px] text-slate-500">Find something new</span></a>
         <a href="/publishers" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Building2 className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white" >Track</span><span className="mt-1 block text-[11px] text-slate-500">Studios & publishers</span></a>
@@ -150,7 +154,7 @@ export function MyCinemaPage() {
             <button type="button" onClick={reloadDownloads} className={BUTTON_SECONDARY}><History className="h-4 w-4" /> Refresh</button>
           </div>
           {downloadsError && <ErrorState onRetry={reloadDownloads} description="Your permitted downloads could not be loaded right now." />}
-          {!downloadsError && !downloadableClips && <LoadingState label="Checking permitted downloads" />}
+          {!downloadsError && !downloadableClips && <LoadingState compact label="Checking Permitted Downloads" />}
           {!downloadsError && downloadableClips && downloadableClips.length === 0 && <div className={CARD + ' flex items-center gap-4'}><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-200/15 bg-sky-300/[.06] text-sky-100"><Download className="h-5 w-5" /></span><div><p className="font-semibold text-white">No downloads available yet</p><p className="mt-1 text-xs leading-5 text-slate-500">When a publisher permits a video to be saved, it will appear here. Cinema does not enable downloads for every title.</p></div></div>}
           {downloadableClips && downloadableClips.length > 0 && <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {downloadableClips.map((clip) => <article key={clip.id} className={CARD + ' flex min-w-0 items-center gap-3 p-3'}>
@@ -169,11 +173,11 @@ export function MyCinemaPage() {
         </section>
         <section id="my-watchlist" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>
-          {!ready ? <LoadingState label="Loading your list" /> : filteredView.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No watchlist titles match these filters.' : 'Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.'}</p> : <TitleGrid titles={filteredView.watchlist} />}
+          {!ready ? <LoadingState compact label="Loading Your Watchlist" /> : filteredView.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No watchlist titles match these filters.' : 'Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.'}</p> : <TitleGrid titles={filteredView.watchlist} />}
         </section>
         <section id="my-favourites" className="scroll-mt-24 space-y-5">
           <div><h2 className={SECTION_HEADING}>Your favourites</h2><p className="mt-1 text-sm text-slate-400">The stories that stay with you.</p></div>
-          {!ready ? <LoadingState label="Loading your favourites" /> : filteredView.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No favourite titles match these filters.' : 'Mark titles as favourites to keep the ones you love within reach.'}</p> : <TitleGrid titles={filteredView.favourites} />}
+          {!ready ? <LoadingState compact label="Loading Your Favourites" /> : filteredView.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No favourite titles match these filters.' : 'Mark titles as favourites to keep the ones you love within reach.'}</p> : <TitleGrid titles={filteredView.favourites} />}
         </section>
         <section id="my-publishers" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your publishers</h2><p className="mt-1 text-sm text-slate-400">Studios and broadcasters you choose to track.</p></div><a href="/publishers" className="text-sm font-semibold text-cinema-300 hover:text-white">Discover publishers</a></div>

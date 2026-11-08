@@ -5,6 +5,7 @@ const SIZES = {
   sm: 'h-9 w-9 text-xs',
   md: 'h-12 w-12 text-sm',
   lg: 'h-24 w-24 text-3xl',
+  xl: 'h-[4.5rem] w-[4.5rem] text-2xl',
 } as const;
 
 function safeAvatarSource(value?: string | null): string | null {

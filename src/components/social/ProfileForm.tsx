@@ -125,6 +125,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className={`${CARD} space-y-6`} noValidate>
+      <div className="flex flex-col gap-1 border-b border-white/10 pb-5"><p className="text-sm font-extrabold text-white">Your Profile Identity</p><p className="text-xs leading-5 text-slate-500">Your picture, name and username help friends recognise you across Cinema.</p></div>
       <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.018))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.05)]">
         <ProfileAvatar name={displayName || username || 'Cinema'} imageUrl={avatarUrl} size="lg" />
         <div className="min-w-0 flex-1">
@@ -154,7 +155,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
               placeholder="yourname"
             />
           </div>
-          <p className="mt-2 text-xs text-slate-500">Friends find you by this name.</p>
+          <p className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-500"><span>Friends Find You By This Name.</span><span className="tabular-nums">{username.length}/24</span></p>
         </div>
         <div>
           <label htmlFor="profile-display-name" className={LABEL}>
@@ -168,6 +169,7 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
             className={INPUT}
             placeholder="How you appear to others"
           />
+          <p className="mt-2 text-xs text-slate-500">This Is The Name Shown On Your Cinema Profile.</p>
         </div>
       </div>
 
@@ -186,7 +188,9 @@ export function ProfileForm({ userId, profile, onSaved }: ProfileFormProps) {
           rows={3}
           className={`${INPUT} resize-none`}
           placeholder="Tell people a little about what you enjoy watching."
+          aria-describedby="profile-bio-help"
         />
+        <p id="profile-bio-help" className="mt-2 text-xs leading-5 text-slate-500">A Short Introduction Helps Friends Know What Stories You Enjoy. {bio.length}/280 Characters.</p>
       </div>
 
       <label className="flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-white/10 bg-ink-900/60 p-4">
