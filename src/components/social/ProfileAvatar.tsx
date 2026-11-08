@@ -20,7 +20,7 @@ export function ProfileAvatar({ name, size = 'md', imageUrl, previewable = true 
   const [previewOpen, setPreviewOpen] = useState(false);
   useEffect(() => setImageFailed(false), [source]);
   const label = name.trim() || 'Cinema member';
-  const initials = label.split(/\\s+/).filter(Boolean).slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase() || '?';
+  const initials = label.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase() || '?';
 
   return (
     <>
