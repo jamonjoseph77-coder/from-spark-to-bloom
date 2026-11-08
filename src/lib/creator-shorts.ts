@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { getYouTubeThumbnailUrl, getYouTubeVideoId } from '@/lib/media';
 
 export interface CreatorShortSubmission {
   id: string;
@@ -6,7 +7,8 @@ export interface CreatorShortSubmission {
   headline: string;
   description: string;
   publisher_name: string;
-  video_path: string;
+  video_path: string | null;
+  video_url: string | null;
   poster_path: string | null;
   title_id: string | null;
   duration_seconds: number | null;
@@ -26,6 +28,8 @@ export async function fetchPendingCreatorShorts(): Promise<CreatorShortSubmissio
   if (error) throw error;
   const submissions = (data ?? []) as CreatorShortSubmission[];
   return Promise.all(submissions.map(async (submission) => {
+    if (submission.video_url) return { ...submission, preview_url: submission.video_url };
+    if (!submission.video_path) return { ...submission, preview_url: undefined };
     const { data: signed } = await supabase.storage
       .from('cinema-creator-submissions')
       .createSignedUrl(submission.video_path, 60 * 30);
@@ -71,8 +75,8 @@ export async function reviewCreatorShort(
     .maybeSingle();
   if (currentError) throw currentError;
   if (!current) throw new Error('This creator submission no longer exists.');
-  if (current.status === decision) return;
-  if (current.status !== 'pending') {
+  if (current.status === 'rejected' && decision === 'rejected') return;
+  if (current.status !== 'pending' && !(current.status === 'approved' && decision === 'approved')) {
     throw new Error('This creator submission has already been reviewed. Refresh the review queue.');
   }
 
@@ -80,17 +84,23 @@ export async function reviewCreatorShort(
     const copiedPaths: string[] = [];
     let clipPublished = false;
     try {
-      const { data: videoFile, error: videoDownloadError } = await supabase.storage
-        .from('cinema-creator-submissions')
-        .download(submission.video_path);
-      if (videoDownloadError || !videoFile) throw videoDownloadError ?? new Error('The submitted video could not be read.');
-      const { error: videoCopyError } = await supabase.storage
-        .from('cinema-shorts')
-        .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: true });
-      if (videoCopyError) throw videoCopyError;
-      copiedPaths.push(submission.video_path);
+      let videoUrl = submission.video_url?.trim() || '';
+      if (submission.video_path) {
+        const { data: videoFile, error: videoDownloadError } = await supabase.storage
+          .from('cinema-creator-submissions')
+          .download(submission.video_path);
+        if (videoDownloadError || !videoFile) throw videoDownloadError ?? new Error('The submitted video could not be read.');
+        const { error: videoCopyError } = await supabase.storage
+          .from('cinema-shorts')
+          .upload(submission.video_path, videoFile, { contentType: videoFile.type || 'video/mp4', upsert: true });
+        if (videoCopyError) throw videoCopyError;
+        copiedPaths.push(submission.video_path);
+        videoUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path).data.publicUrl;
+      } else if (!getYouTubeVideoId(videoUrl)) {
+        throw new Error('The approved submission has no supported video source.');
+      }
 
-      let posterUrl = '';
+      let posterUrl = getYouTubeThumbnailUrl(videoUrl) || '';
       if (submission.poster_path) {
         const { data: posterFile, error: posterDownloadError } = await supabase.storage
           .from('cinema-creator-submissions')
@@ -104,7 +114,6 @@ export async function reviewCreatorShort(
         posterUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.poster_path).data.publicUrl;
       }
 
-      const videoUrl = supabase.storage.from('cinema-shorts').getPublicUrl(submission.video_path).data.publicUrl;
       const { data: existingClip, error: existingClipError } = await supabase
         .from('discover_clips')
         .select('id')
@@ -142,27 +151,29 @@ export async function reviewCreatorShort(
     }
   }
 
-  const { data: updated, error } = await supabase
-    .from('creator_short_submissions')
-    .update({
-      status: decision,
-      review_note: reviewNote,
-      reviewed_at: new Date().toISOString(),
-    })
-    .eq('id', submission.id)
-    .eq('status', 'pending')
-    .select('id')
-    .maybeSingle();
-  if (error) throw error;
-  if (!updated) {
-    const { data: latest, error: latestError } = await supabase
+  if (current.status === 'pending') {
+    const { data: updated, error } = await supabase
       .from('creator_short_submissions')
-      .select('status')
+      .update({
+        status: decision,
+        review_note: reviewNote,
+        reviewed_at: new Date().toISOString(),
+      })
       .eq('id', submission.id)
+      .eq('status', 'pending')
+      .select('id')
       .maybeSingle();
-    if (latestError) throw latestError;
-    if (latest?.status !== decision) {
-      throw new Error('The creator submission changed during review. Refresh the queue before trying again.');
+    if (error) throw error;
+    if (!updated) {
+      const { data: latest, error: latestError } = await supabase
+        .from('creator_short_submissions')
+        .select('status')
+        .eq('id', submission.id)
+        .maybeSingle();
+      if (latestError) throw latestError;
+      if (latest?.status !== decision) {
+        throw new Error('The creator submission changed during review. Refresh the queue before trying again.');
+      }
     }
   }
 }
