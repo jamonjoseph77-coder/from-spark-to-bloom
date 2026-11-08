@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info, Search, X, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info, Search, X, SlidersHorizontal, UserRound } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -78,7 +78,7 @@ export function MyCinemaPage() {
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(ellipse_at_85%_10%,rgba(205,218,210,.07),transparent_38%),linear-gradient(135deg,#121715,#090c0b_68%,#080a09)] p-6 shadow-2xl shadow-black/20 sm:p-8">
         <div className="absolute -right-10 -top-16 -z-10 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <div className="flex shrink-0 items-center"><span className="relative grid h-[4.5rem] w-[4.5rem] place-items-center rounded-[1.45rem] border border-white/15 bg-gradient-to-br from-white/[.12] via-[#18231e] to-[#080d0b] shadow-[0_14px_36px_rgba(0,0,0,.38)] ring-1 ring-white/[.06]"><span className="absolute inset-1 rounded-[1.1rem] border border-white/[.07]" /><CinemaLogo compact /><span className="absolute -bottom-1.5 -right-1.5 h-3.5 w-3.5 rounded-full border-[3px] border-[#101715] bg-cinema-300 shadow-[0_0_14px_rgba(130,190,160,.55)]" /></span></div>
+          <div className="flex shrink-0 items-center"><span className="relative grid h-[4.5rem] w-[4.5rem] place-items-center overflow-hidden rounded-full border border-white/20 bg-gradient-to-br from-white/[.12] via-[#18231e] to-[#080d0b] shadow-[0_14px_36px_rgba(0,0,0,.38)] ring-1 ring-white/[.06]">{profile?.avatar_url ? <img src={profile.avatar_url} alt="Your profile picture" className="h-full w-full rounded-full object-cover" /> : <UserRound className="h-8 w-8 text-slate-300" aria-hidden="true" />}<span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-[3px] border-[#101715] bg-cinema-300 shadow-[0_0_14px_rgba(130,190,160,.55)]" /></span></div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-slate-300">Your personal entertainment space</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">My Cinema</h1>
