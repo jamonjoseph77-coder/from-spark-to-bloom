@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BookmarkCheck, Play } from 'lucide-react';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { ShortViewer } from '@/components/discover/ShortViewer';
@@ -9,6 +9,18 @@ import { fetchSavedDiscoverClips, type DiscoverClip } from '@/lib/clips';
 export function SavedShortsShelf({ userId }: { userId: string }) {
   const { data: clips, error, loading, reload } = useAsyncData(() => fetchSavedDiscoverClips(userId), [userId]);
   const [activeShort, setActiveShort] = useState<DiscoverClip | null>(null);
+
+  useEffect(() => {
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') reload();
+    };
+    window.addEventListener('focus', refreshWhenVisible);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      window.removeEventListener('focus', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
+  }, [reload]);
 
   return (
     <section id="my-saved-shorts" className="scroll-mt-24 space-y-5">
@@ -31,7 +43,21 @@ export function SavedShortsShelf({ userId }: { userId: string }) {
       )}
       {clips && clips.length > 0 && (
         <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
-          {clips.map((clip) => <ShortCard key={clip.id} clip={clip} onOpen={setActiveShort} />)}
+          {clips.map((clip) => (
+            <div key={clip.id} className="w-[min(42vw,168px)] shrink-0 space-y-2">
+              <ShortCard clip={clip} onOpen={setActiveShort} />
+              {clip.title && (
+                <a
+                  href={`/title/${clip.title.id}`}
+                  className="block rounded-xl border border-[#91b7a2]/20 bg-[#1b2922]/75 px-3 py-2.5 text-[11px] font-bold leading-4 text-[#c8e0d1] transition hover:border-[#91b7a2]/45 hover:bg-[#23372c]"
+                >
+                  <span className="block text-[9px] font-extrabold uppercase tracking-[.14em] text-[#91b7a2]">Related Full Title</span>
+                  <span className="mt-1 block line-clamp-2">{clip.title.title}</span>
+                  <span className="mt-1 block text-white/75">View Title →</span>
+                </a>
+              )}
+            </div>
+          ))}
         </div>
       )}
       {activeShort && <ShortViewer clip={activeShort} onClose={() => { setActiveShort(null); reload(); }} />}
