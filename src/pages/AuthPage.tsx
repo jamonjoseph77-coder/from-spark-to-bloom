@@ -82,7 +82,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       setError(`Please wait ${cooldownSeconds} seconds before requesting another reset email.`);
       return;
     }
-    const trimmedEmail = email.trim();
+    const trimmedEmail = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       setError('Enter A Valid Email Address.');
       return;
