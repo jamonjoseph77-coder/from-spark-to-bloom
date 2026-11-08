@@ -41,12 +41,16 @@ function buildInput(form: FormState): { input?: ClipInput; error?: string } {
   if (!form.video_url.trim() || !isHttpUrl(form.video_url)) {
     return { error: 'The video link must start with http:// or https://.' };
   }
+  if (form.kind === 'short' && !isDirectVideoUrl(form.video_url.trim())) {
+    return { error: 'Cinema Shorts must use a direct MP4, WebM, MOV or HLS video link. YouTube embeds are not used in the full-screen Shorts player.' };
+  }
   if (!isDirectVideoUrl(form.video_url.trim()) && !toEmbedUrl(form.video_url.trim())) {
-    return { error: 'Use a direct MP4/HLS video link or a supported public YouTube video link.' };
+    return { error: 'Use a direct MP4/HLS video link or a supported public YouTube video link for non-Short content.' };
   }
   if (form.poster_url.trim() && !isHttpUrl(form.poster_url)) return { error: 'The poster link must start with http:// or https://.' };
   const duration = form.duration_seconds.trim() === '' ? null : Number(form.duration_seconds);
   const order = Number(form.sort_order || '0');
+  if (form.kind === 'short' && duration === null) return { error: 'Add the verified video duration before publishing a Short.' };
   if (duration !== null && (!Number.isInteger(duration) || duration < 1)) {
     return { error: 'Duration must be a positive whole number of seconds.' };
   }
@@ -138,7 +142,7 @@ export function ClipForm({ clip, titles, onSaved }: ClipFormProps) {
         <div className="sm:col-span-2">
           <label htmlFor="clip-video" className={LABEL}>Video link</label>
           <input id="clip-video" type="url" className={INPUT} placeholder="https://" value={form.video_url} onChange={(e) => update('video_url', e.target.value)} required />
-          <p className="mt-1.5 text-xs text-slate-500">Paste a direct MP4 or HLS link, or a public YouTube Shorts / YouTube video URL. YouTube thumbnails are filled in automatically when no poster is supplied. Only publish videos Cinema has permission to display.</p>
+          <p className="mt-1.5 text-xs text-slate-500">For Cinema Shorts, use a direct MP4, WebM, MOV or HLS video link so playback stays native, full-screen and free of third-party player chrome. YouTube links remain available for other promotional video types. Only publish videos Cinema has permission to display.</p>
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="clip-poster" className={LABEL}>Poster image link <span className="font-normal text-slate-500">(Optional)</span></label>
