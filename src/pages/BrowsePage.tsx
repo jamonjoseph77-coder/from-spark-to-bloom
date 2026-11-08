@@ -38,7 +38,8 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
     <div className={`${PAGE_CONTAINER} cinema-browse-page space-y-8`}>
       <CinemaCategoryNav active={copy.heading} />
       <header className="cinema-category-live-hero relative isolate overflow-hidden rounded-[1.8rem] border border-sky-200/20 p-6 shadow-[0_28px_90px_rgba(0,0,0,.35)] sm:p-10 lg:p-12">
-        {heroImage && <Artwork src={heroImage} alt="" fallbackTitle={copy.heading} className="absolute inset-0 h-full w-full object-cover opacity-25" />}
+        {heroImage && <Artwork src={heroImage} alt="" fallbackTitle={copy.heading} className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.25]" />}
+        {heroImage && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/95 via-[#05080e]/78 to-[#05080e]/48" />}
         <div className="cinema-category-hero__orb cinema-category-hero__orb--one" aria-hidden="true" />
         <div className="cinema-category-hero__orb cinema-category-hero__orb--two" aria-hidden="true" />
         <div className="relative z-10 max-w-3xl">

@@ -12,6 +12,7 @@ import { useLibrary } from '@/hooks/useLibrary';
 import { fetchPublishedTitles } from '@/lib/library';
 import { genresOf, matchesQuery } from '@/lib/catalogue';
 import type { Title } from '@/lib/types';
+import { Artwork } from '@/components/ui/Artwork';
 
 const ALL_SPORTS = 'All Sports';
 
@@ -53,10 +54,11 @@ export function SportsPage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-sports space-y-9 pb-16`}>
       <header className="relative isolate overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#080c13] px-5 py-7 shadow-[0_22px_70px_rgba(0,0,0,.28)] sm:px-8 sm:py-9">
-        <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600&q=90" alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.22]" />
+        {(sections.sports[0]?.backdrop_url || sections.sports[0]?.poster_url) && <Artwork src={sections.sports[0].backdrop_url || sections.sports[0].poster_url} alt="" fallbackTitle="Sports" className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.24]" />}
+        {(sections.sports[0]?.backdrop_url || sections.sports[0]?.poster_url) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/48" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/45" />
         <div className="pointer-events-none absolute -right-16 -top-24 -z-10 h-72 w-72 rounded-full bg-white/[.035] blur-3xl" />
-        <div className="max-w-3xl">
+        <div className="relative z-10 max-w-3xl">
           <p className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.24em] text-slate-200"><Trophy className="h-4 w-4 text-slate-200" /> The Sports Destination</p>
           <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">Your Sports. All In Cinema.</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">Follow the competitions, channels and moments that matter. Move from live coverage to highlights and replays in one place.</p>
@@ -65,7 +67,7 @@ export function SportsPage() {
             <a href="#sports-highlights" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/30 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-sm">Highlights & Replays</a>
           </div>
         </div>
-        <div className="mt-7 flex flex-wrap gap-5 border-t border-white/10 pt-4 text-xs text-slate-300">
+        <div className="relative z-10 mt-7 flex flex-wrap gap-5 border-t border-white/10 pt-4 text-xs text-slate-300">
           <span className="inline-flex items-center gap-2"><Radio className="h-4 w-4 text-sky-300" /> Live Coverage</span>
           <span className="inline-flex items-center gap-2"><CalendarClock className="h-4 w-4 text-sky-300" /> Upcoming Events</span>
           <span className="inline-flex items-center gap-2"><Activity className="h-4 w-4 text-sky-300" /> Highlights & Replays</span>
