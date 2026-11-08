@@ -116,13 +116,19 @@ export async function reviewCreatorShort(
 
       const { data: existingClip, error: existingClipError } = await supabase
         .from('discover_clips')
-        .select('id')
+        .select('id,is_published')
         .eq('video_url', videoUrl)
         .limit(1)
         .maybeSingle();
       if (existingClipError) throw existingClipError;
 
       if (existingClip) {
+        if (!existingClip.is_published) {
+          const { error: publishExistingError } = await supabase.from('discover_clips')
+            .update({ is_published: true, updated_at: new Date().toISOString() })
+            .eq('id', existingClip.id);
+          if (publishExistingError) throw publishExistingError;
+        }
         clipPublished = true;
       } else {
         const { error: clipError } = await supabase.from('discover_clips').insert({
