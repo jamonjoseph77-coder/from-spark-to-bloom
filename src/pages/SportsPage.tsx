@@ -12,6 +12,7 @@ import { useLibrary } from '@/hooks/useLibrary';
 import { fetchPublishedTitles } from '@/lib/library';
 import { genresOf, matchesQuery } from '@/lib/catalogue';
 import type { Title } from '@/lib/types';
+import { Artwork } from '@/components/ui/Artwork';
 
 const ALL_SPORTS = 'All Sports';
 
@@ -53,7 +54,8 @@ export function SportsPage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-sports space-y-9 pb-16`}>
       <header className="relative isolate overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#080c13] px-5 py-7 shadow-[0_22px_70px_rgba(0,0,0,.28)] sm:px-8 sm:py-9">
-        <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1600&q=90" alt="" loading="lazy" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.22]" />
+        {(sections.sports[0]?.backdrop_url || sections.sports[0]?.poster_url) && <Artwork src={sections.sports[0].backdrop_url || sections.sports[0].poster_url} alt="" fallbackTitle="Sports" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-[.24]" />}
+        {(sections.sports[0]?.backdrop_url || sections.sports[0]?.poster_url) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/48" />}
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030407]/95 via-[#030407]/80 to-[#030407]/45" />
         <div className="pointer-events-none absolute -right-16 -top-24 -z-10 h-72 w-72 rounded-full bg-white/[.035] blur-3xl" />
         <div className="max-w-3xl">
