@@ -66,7 +66,7 @@ export function SearchPage({ query }: { query: string }) {
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-search-page space-y-9 pb-12`}>
-      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8">
+      <header className="cinema-search-hero relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8" style={{ backgroundImage: titles?.[0]?.backdrop_url || titles?.[0]?.poster_url ? `url("${titles[0].backdrop_url || titles[0].poster_url}")` : undefined }}>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-cinema-300">Search Cinema</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-4xl">What Would You Like To Watch?</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Search Movies, Series, Genres, Studios And Publishers In One Place.</p>
@@ -109,8 +109,8 @@ export function SearchPage({ query }: { query: string }) {
           <div className="space-y-3">
             <p className={LABEL}>Explore Cinema</p>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {destinations.map(({ href, label, detail, icon: Icon }) => (
-                <a key={href} href={href} className="cinema-search-destination group flex min-h-36 items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:-translate-y-0.5 hover:border-cinema-400/35 hover:bg-white/[.06]">
+              {destinations.map(({ href, label, detail, icon: Icon }, index) => (
+                <a key={href} href={href} style={{ backgroundImage: titles?.[index]?.backdrop_url || titles?.[index]?.poster_url ? `url("${titles[index].backdrop_url || titles[index].poster_url}")` : undefined }} className="cinema-search-destination group flex min-h-36 items-center gap-4 rounded-2xl border border-white/10 bg-white/[.035] p-4 transition hover:-translate-y-0.5 hover:border-cinema-400/35 hover:bg-white/[.06]">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cinema-300/15 bg-cinema-500/10 text-cinema-200 transition group-hover:bg-cinema-500/20"><Icon className="h-5 w-5" /></span>
                   <span className="min-w-0">
                     <span className="block font-semibold text-white">{label}</span>
