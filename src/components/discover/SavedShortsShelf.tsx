@@ -30,15 +30,15 @@ export function SavedShortsShelf({ userId }: { userId: string }) {
           <h2 className="text-xl font-extrabold text-white sm:text-2xl">Saved Shorts</h2>
           <p className="mt-1 text-sm text-slate-400">Short-form videos you have saved from Explore and Cinema Shorts.</p>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-300/30 bg-blue-500/15 px-3 py-2 text-xs font-semibold text-blue-100">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[#a8cbb6]/25 bg-[#a8cbb6]/10 px-3 py-2 text-xs font-semibold text-[#d2e4d8]">
           <BookmarkCheck className="h-4 w-4" /> {clips?.length ?? 0} Saved
         </span>
       </div>
       {loading && !clips && <LoadingState label="Loading your saved Shorts" />}
       {error && <ErrorState onRetry={reload} description="Your saved Shorts could not be loaded right now." />}
       {!loading && !error && clips?.length === 0 && (
-        <div className="rounded-3xl border border-blue-300/25 bg-[linear-gradient(120deg,#102e58,#0b1c35_58%,#080d17)] p-5 shadow-[0_16px_48px_rgba(20,90,200,.14)]">
-          <EmptyState icon={<Play className="h-7 w-7 text-blue-200" />} title="Your Saved Shorts Will Appear Here" description="Save a short-form video from Explore or the Shorts player to keep it in My Cinema." />
+        <div className="rounded-3xl border border-[#91b7a2]/20 bg-[radial-gradient(ellipse_at_90%_0%,rgba(116,164,137,.14),transparent_44%),linear-gradient(125deg,#202a24,#151d19_58%,#121815)] p-5 shadow-[0_16px_48px_rgba(0,0,0,.16)]">
+          <EmptyState icon={<Play className="h-7 w-7 text-[#b9d2c2]" />} title="Your Saved Shorts Will Appear Here" description="Save a short-form video from Explore or the Shorts player to keep it in My Cinema." />
         </div>
       )}
       {clips && clips.length > 0 && (
