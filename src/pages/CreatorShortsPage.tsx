@@ -14,7 +14,6 @@ function readVideoDuration(file: File): Promise<number> {
   const objectUrl = URL.createObjectURL(file);
   return new Promise((resolve, reject) => {
     const probe = document.createElement('video');
-    let timeout: number;
     const finish = (error?: Error, seconds?: number) => {
       window.clearTimeout(timeout);
       probe.onloadedmetadata = null;
@@ -24,7 +23,7 @@ function readVideoDuration(file: File): Promise<number> {
       if (error) reject(error);
       else resolve(seconds ?? 0);
     };
-    timeout = window.setTimeout(() => finish(new Error('The video length could not be checked. Please try an MP4 file.')), 15_000);
+    const timeout = window.setTimeout(() => finish(new Error('The video length could not be checked. Please try an MP4 file.')), 15_000);
     probe.preload = 'metadata';
     probe.onloadedmetadata = () => {
       const seconds = probe.duration;
