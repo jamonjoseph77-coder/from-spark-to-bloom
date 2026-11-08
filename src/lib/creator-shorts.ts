@@ -19,6 +19,18 @@ export interface CreatorShortSubmission {
   preview_url?: string;
 }
 
+export async function fetchMyCreatorShortSubmissions(userId: string): Promise<CreatorShortSubmission[]> {
+  if (!userId) return [];
+  const { data, error } = await supabase
+    .from('creator_short_submissions')
+    .select('id,user_id,headline,description,publisher_name,title_id,duration_seconds,status,review_note,created_at,reviewed_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(30);
+  if (error) throw error;
+  return (data ?? []) as CreatorShortSubmission[];
+}
+
 export async function fetchPendingCreatorShorts(): Promise<CreatorShortSubmission[]> {
   const { data, error } = await supabase
     .from('creator_short_submissions')
