@@ -8,9 +8,9 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
-import { matchesQuery, resumeItems, sortTitles, TITLE_TYPES, TITLE_TYPE_LABELS, type SortOption } from '@/lib/catalogue';
+import { matchesQuery, resumeItems, sortTitles, type SortOption } from '@/lib/catalogue';
+import { TITLE_TYPES, TITLE_TYPE_LABELS, type TitleType } from '@/lib/types';
 import { fetchPublishedTitles } from '@/lib/library';
-import type { TitleType } from '@/lib/types';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchDownloadableClips } from '@/lib/clips';
 import { SavedShortsShelf } from '@/components/discover/SavedShortsShelf';
