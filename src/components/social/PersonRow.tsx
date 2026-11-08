@@ -5,7 +5,7 @@ import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 export function PersonRow({ profile, children }: { profile: Profile | null; children?: ReactNode }) {
   const name = profile?.display_name ?? 'Cinema member';
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-ink-850/70 p-4 transition hover:border-white/20 sm:flex-row sm:items-center sm:justify-between">
+    <li className="flex flex-col gap-4 rounded-2xl border border-[#91b7a2]/12 bg-[linear-gradient(125deg,#202a24,#171f1b_72%,#151b18)] p-4 shadow-[0_10px_30px_rgba(0,0,0,.12)] transition hover:border-[#91b7a2]/30 hover:shadow-[0_14px_34px_rgba(0,0,0,.18)] sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-4">
         <ProfileAvatar name={name} imageUrl={profile?.avatar_url} />
         <div className="min-w-0">

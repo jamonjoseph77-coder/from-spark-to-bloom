@@ -35,7 +35,7 @@ export function CircleActivity({ friendIds }: CircleActivityProps) {
     return (
       <EmptyState
         icon={<Sparkles className="h-7 w-7 text-cinema-300" />}
-        title="Your circle is ready for its first story"
+        title="Your Circle Is Ready For Its First Story"
         description="When your friends share a public recommendation, review or title discussion, you will find it here."
       />
     );
@@ -46,8 +46,8 @@ export function CircleActivity({ friendIds }: CircleActivityProps) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[.2em] text-cinema-300">From your people</p>
-          <h2 className="mt-1 text-xl font-extrabold text-white">Your circle's activity</h2>
-          <p className="mt-1 text-sm text-slate-400">Public recommendations and conversations shared by your friends.</p>
+          <h2 className="mt-1 text-xl font-extrabold text-white">Shared By Your Circle</h2>
+          <p className="mt-1 text-sm text-slate-400">Recommendations and conversations your friends have chosen to share.</p>
         </div>
         <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs text-slate-400">{activity.length} recent posts</span>
       </div>

@@ -29,7 +29,7 @@ export function FriendsPage() {
   const { user, loading } = useAuth();
   return (
     <div className={`${PAGE_CONTAINER} space-y-9 pb-12`}>
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-cinema-400/20 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cinema-500/20 via-ink-900 to-ink-950 p-6 shadow-2xl shadow-black/20 sm:p-9">
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-[#91b7a2]/20 bg-[radial-gradient(ellipse_at_88%_8%,rgba(116,164,137,.18),transparent_38%),radial-gradient(ellipse_at_8%_100%,rgba(71,126,151,.12),transparent_42%),linear-gradient(130deg,#202a24,#151d19_60%,#111714)] p-6 shadow-2xl shadow-black/20 sm:p-9">
         <div className="pointer-events-none absolute -right-12 -top-16 -z-10 h-64 w-64 rounded-full bg-cinema-400/15 blur-3xl" />
         <div className="relative">
           <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-cinema-200"><Users className="h-4 w-4" /> Your people on Cinema</p>
@@ -42,12 +42,12 @@ export function FriendsPage() {
           </div>
         </div>
         <div className="relative mt-7 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-3">
-          <div className="rounded-2xl bg-ink-950/45 p-4"><Users className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Your circle</p><p className="mt-1 text-xs leading-5 text-slate-400">Find and connect with people by username.</p></div>
-          <div className="rounded-2xl bg-ink-950/45 p-4"><Sparkles className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Shared discoveries</p><p className="mt-1 text-xs leading-5 text-slate-400">Pass along titles and recommendations worth seeing.</p></div>
-          <div className="rounded-2xl bg-ink-950/45 p-4"><PartyPopper className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Watch together</p><p className="mt-1 text-xs leading-5 text-slate-400">Bring your circle into a shared watch party.</p></div>
+          <div className="rounded-2xl border border-white/[.06] bg-[#26332b]/75 p-4"><Users className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Your circle</p><p className="mt-1 text-xs leading-5 text-slate-400">Find and connect with people by username.</p></div>
+          <div className="rounded-2xl border border-white/[.06] bg-[#26332b]/75 p-4"><Sparkles className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Shared discoveries</p><p className="mt-1 text-xs leading-5 text-slate-400">Pass along titles and recommendations worth seeing.</p></div>
+          <div className="rounded-2xl border border-white/[.06] bg-[#26332b]/75 p-4"><PartyPopper className="h-5 w-5 text-cinema-200" /><p className="mt-3 text-sm font-bold text-white">Watch together</p><p className="mt-1 text-xs leading-5 text-slate-400">Bring your circle into a shared watch party.</p></div>
         </div>
       </header>
-      <div className="flex items-start gap-2 rounded-2xl border border-white/8 bg-ink-900/55 p-4 text-xs leading-5 text-slate-400">
+      <div className="flex items-start gap-2 rounded-2xl border border-[#91b7a2]/15 bg-[#1b241f]/85 p-4 text-xs leading-5 text-slate-300">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-cinema-300" />
         <p>Cinema connections are built around entertainment. You control your profile visibility, and you can manage friend requests and remove connections. This space is for discovery and shared viewing—not private messaging.</p>
       </div>

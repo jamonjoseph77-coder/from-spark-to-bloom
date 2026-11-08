@@ -102,11 +102,28 @@ export function rankPublishedShorts(
   followedPublishers: string[] = [],
   limit = 12,
   now = Date.now(),
+  titleAffinityIds: ReadonlySet<string> = new Set(),
 ): DiscoverClip[] {
   if (limit <= 0) return [];
   const followed = new Set(followedPublishers.map((name) => name.trim().toLocaleLowerCase()).filter(Boolean));
-  const ranked = clips
-    .filter(isPlayableShort)
+  const seenSources = new Set<string>();
+  const uniqueClips = clips.filter((clip) => {
+    if (!isPlayableShort(clip)) return false;
+    const youtubeId = getYouTubeVideoId(clip.video_url);
+    let sourceKey = youtubeId ? `youtube:${youtubeId}` : clip.video_url.trim().toLocaleLowerCase();
+    if (!youtubeId) {
+      try {
+        const source = new URL(clip.video_url);
+        sourceKey = `${source.origin}${source.pathname}`.toLocaleLowerCase();
+      } catch {
+        // The playable-source validator handles malformed URLs; retain a stable fallback key.
+      }
+    }
+    if (seenSources.has(sourceKey)) return false;
+    seenSources.add(sourceKey);
+    return true;
+  });
+  const ranked = uniqueClips
     .map((clip, index) => {
       const publisher = clip.publisher_name.trim().toLocaleLowerCase();
       const createdAt = clip.created_at ? new Date(clip.created_at).getTime() : Number.NaN;
@@ -115,23 +132,28 @@ export function rankPublishedShorts(
       const popularity = Math.log1p(Math.max(0, clip.views_count ?? 0)) / 4;
       const editorial = 1 / (1 + Math.max(0, clip.sort_order || 0) * 0.12);
       const followedBoost = publisher && followed.has(publisher) ? 2.5 : 0;
+      const titleAffinityBoost = clip.title_id && titleAffinityIds.has(clip.title_id) ? 2 : 0;
       return {
         clip,
         publisher,
         index,
-        score: freshness * 3.2 + popularity * 0.65 + editorial * 0.8 + followedBoost,
+        score: freshness * 3.2 + popularity * 0.65 + editorial * 0.8 + followedBoost + titleAffinityBoost,
       };
     })
     .sort((a, b) => b.score - a.score || a.index - b.index);
 
   const selected: DiscoverClip[] = [];
   const publisherCounts = new Map<string, number>();
+  const distinctPublishers = new Set(ranked.map((entry) => entry.publisher).filter(Boolean)).size;
+  const publisherCap = distinctPublishers >= 4 ? Math.max(2, Math.ceil(limit / Math.min(distinctPublishers, 6))) : limit;
   const remaining = [...ranked];
   while (selected.length < limit && remaining.length) {
+    const hasPublisherBelowCap = remaining.some((entry) => !entry.publisher || (publisherCounts.get(entry.publisher) ?? 0) < publisherCap);
     let bestIndex = 0;
     let bestScore = Number.NEGATIVE_INFINITY;
     remaining.forEach((entry, index) => {
       const count = publisherCounts.get(entry.publisher) ?? 0;
+      if (hasPublisherBelowCap && entry.publisher && count >= publisherCap) return;
       const diversityAdjustment = count === 0 ? 0.75 : count === 1 ? 0 : -2.5 * count;
       const adjusted = entry.score + diversityAdjustment;
       if (adjusted > bestScore) {
@@ -141,7 +163,7 @@ export function rankPublishedShorts(
     });
     const [chosen] = remaining.splice(bestIndex, 1);
     selected.push(chosen.clip);
-    publisherCounts.set(chosen.publisher, (publisherCounts.get(chosen.publisher) ?? 0) + 1);
+    if (chosen.publisher) publisherCounts.set(chosen.publisher, (publisherCounts.get(chosen.publisher) ?? 0) + 1);
   }
   return selected;
 }
@@ -185,8 +207,9 @@ export async function recordDiscoverClipView(clipId: string): Promise<number> {
 export async function fetchSavedDiscoverClipIds(userId: string): Promise<string[]> {
   if (!userId) return [];
   const { data, error } = await supabase.from('discover_clip_saves')
-    .select('clip_id')
-    .eq('user_id', userId);
+    .select('clip_id,created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
   if (error) throw error;
   const savedIds = new Set((data ?? []).map((row) => row.clip_id));
 
@@ -232,7 +255,18 @@ export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverC
   if (!userId) return [];
   const savedIds = await fetchSavedDiscoverClipIds(userId);
   if (!savedIds.length) return [];
-  const clips = await fetchPublishedClips();
+
+  // Query the saved records directly instead of relying on the latest 120-item
+  // public feed. Older saved Shorts must remain available in My Cinema.
+  const { data, error } = await supabase.from('discover_clips')
+    .select(CLIP_FEED_FIELDS)
+    .in('id', savedIds)
+    .eq('is_published', true);
+  if (error) throw error;
+
+  const clips = await attachTitles(
+    (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[],
+  );
   const byId = new Map(clips.map((clip) => [clip.id, clip]));
   return savedIds.flatMap((id) => {
     const clip = byId.get(id);
