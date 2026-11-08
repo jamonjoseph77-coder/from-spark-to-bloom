@@ -78,7 +78,8 @@ export async function fetchUserTitleIds(table: UserListTable, userId: string): P
 }
 
 export async function addUserTitle(table: UserListTable, userId: string, titleId: string): Promise<void> {
-  const { error } = await supabase.from(table).insert({ user_id: userId, title_id: titleId });
+  const { error } = await supabase.from(table)
+    .upsert({ user_id: userId, title_id: titleId }, { onConflict: 'user_id,title_id', ignoreDuplicates: true });
   if (error) throw error;
 }
 
