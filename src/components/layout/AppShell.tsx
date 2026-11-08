@@ -4,6 +4,7 @@ import { TopBar } from '@/components/layout/TopBar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
 import type { Route } from '@/lib/router';
+import './cinema-premium-polish.css';
 
 interface AppShellProps { route: Route; children: ReactNode }
 
