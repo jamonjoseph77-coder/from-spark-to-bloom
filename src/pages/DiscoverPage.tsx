@@ -181,6 +181,7 @@ export function DiscoverPage() {
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-200"><Sparkles className="h-3.5 w-3.5 text-cinema-300" /> Watch. Discover. Talk.</span>
             <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-semibold text-slate-400">Official video + community conversation</span>
+            <a href="/shorts" className="inline-flex items-center gap-2 rounded-full border border-sky-200/30 bg-sky-300/[.10] px-3.5 py-2 text-xs font-bold text-sky-100 transition hover:bg-sky-300/[.16]"><Sparkles className="h-3.5 w-3.5" /> Watch Shorts</a>
             <a href="/creator/shorts" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/[.07] px-3.5 py-2 text-xs font-bold text-white transition hover:border-white/50 hover:bg-white/[.12]"><UploadCloud className="h-3.5 w-3.5" /> Post A Video</a>
           </div>
         </div>
@@ -214,9 +215,9 @@ export function DiscoverPage() {
         <TmdbRow heading="Trending series" description="Series creating a buzz." mediaType="tv" list="trending" />
         <TmdbRow heading="Popular movies" description="More films to add to your watchlist." mediaType="movie" list="popular" />
         <TmdbRow heading="Popular series" description="Discover your next series." mediaType="tv" list="popular" />
-        <TmdbRow heading="Action & Adventure" description="Big journeys, bold heroes and high-energy stories." mediaType="movie" list="trending" genreId={28} />
+        <TmdbRow heading="Action Movies" description="Big journeys, bold heroes and high-energy stories." mediaType="movie" list="trending" genreId={28} />
         <TmdbRow heading="Comedy Picks" description="Find something lighter to enjoy." mediaType="movie" list="popular" genreId={35} />
-        <TmdbRow heading="Animation & Family Stories" description="Animated worlds and stories for every age." mediaType="movie" list="popular" genreId={16} />
+        <TmdbRow heading="Animated Movies" description="Animated worlds and stories for every age." mediaType="movie" list="popular" genreId={16} />
         <TmdbRow heading="Documentaries" description="Explore real people, places and ideas." mediaType="movie" list="popular" genreId={99} />
         <TmdbRow heading="Drama Series" description="Character-led stories worth discovering." mediaType="tv" list="popular" genreId={18} />
       </section>
