@@ -41,7 +41,7 @@ function ProfileEditor({ userId }: { userId: string }) {
 function PublicFriendProfile({ username }: { username: string }) {
   const { data, error, reload, loading } = useAsyncData(async () => {
     const profile = await fetchProfileByUsername(username);
-    if (!profile) return null;
+    if (!profile || !profile.is_discoverable) return null;
     const posts = await fetchLetterboxFeed(20, profile.user_id);
     return { profile, posts };
   }, [username]);
