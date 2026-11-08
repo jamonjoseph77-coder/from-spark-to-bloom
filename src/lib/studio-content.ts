@@ -32,6 +32,7 @@ export interface StudioTitleSubmissionInput {
 
 export interface StudioTitleSubmission extends StudioTitleSubmissionInput {
   id: string;
+  published_title_id: string | null;
   status: StudioTitleSubmissionStatus;
   review_note: string;
   reviewed_at: string | null;
@@ -40,7 +41,7 @@ export interface StudioTitleSubmission extends StudioTitleSubmissionInput {
   updated_at: string;
 }
 
-const SUBMISSION_FIELDS = 'id,studio_id,submitted_by,content_type,title,synopsis,genre,release_year,duration_minutes,poster_url,backdrop_url,trailer_url,playback_url,rights_holder,rights_basis,territories,languages,platforms,rights_start,rights_end,is_exclusive,promotional_rights_confirmed,rights_evidence_url,delivery_notes,status,review_note,reviewed_at,reviewed_by,created_at,updated_at';
+const SUBMISSION_FIELDS = 'id,studio_id,submitted_by,content_type,title,synopsis,genre,release_year,duration_minutes,poster_url,backdrop_url,trailer_url,playback_url,rights_holder,rights_basis,territories,languages,platforms,rights_start,rights_end,is_exclusive,promotional_rights_confirmed,rights_evidence_url,delivery_notes,published_title_id,status,review_note,reviewed_at,reviewed_by,created_at,updated_at';
 
 export async function submitStudioTitle(input: StudioTitleSubmissionInput): Promise<StudioTitleSubmission> {
   const { data, error } = await supabase
@@ -92,6 +93,16 @@ export async function reviewStudioTitleSubmission(
       updated_at: new Date().toISOString(),
     })
     .eq('id', submissionId);
+  if (error) throw error;
+}
+
+export async function linkStudioSubmissionToTitle(submissionId: string, titleId: string | null): Promise<void> {
+  const { error } = await supabase
+    .from('studio_title_submissions')
+    .update({ published_title_id: titleId, updated_at: new Date().toISOString() })
+    .eq('id', submissionId)
+    .eq('content_type', 'series')
+    .eq('status', 'approved');
   if (error) throw error;
 }
 

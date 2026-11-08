@@ -4,6 +4,7 @@ import {
   Play, Radio, Share2, Users, MessageCircle,
 } from 'lucide-react';
 import { EpisodeList } from '@/components/title/EpisodeList';
+import { SeriesFollowPanel } from '@/components/title/SeriesFollowPanel';
 import { TitleActions } from '@/components/title/TitleActions';
 import { VideoDialog } from '@/components/player/VideoDialog';
 import { ShortCard } from '@/components/discover/ShortCard';
@@ -134,6 +135,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
       </section>
 
       <div className={`${PAGE_CONTAINER} !pt-5 sm:!pt-6`}>
+        {title.type === 'series' && <div className="mb-5"><SeriesFollowPanel titleId={title.id} title={title.title} /></div>}
         <section className="rounded-2xl border border-white/10 bg-ink-900/60 p-4 sm:p-5" aria-label="React to this title">
           <p className="mb-3 text-xs font-bold text-slate-300">Your Reaction</p>
           <ContentEngagement contentKey={`title:${title.id}`} title={title.title} href={window.location.href} imageUrl={title.poster_url} />

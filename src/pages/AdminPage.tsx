@@ -11,7 +11,7 @@ import { deleteTitle, fetchAllTitles, fetchTitleDetail, setTitleFlags } from '@/
 import { navigateTo } from '@/lib/router';
 import { TITLE_TYPE_LABELS, type Title } from '@/lib/types';
 import { fetchStudioApplications, setStudioVerificationStatus } from '@/lib/studios';
-import { fetchStudioTitleSubmissionsForReview, reviewStudioTitleSubmission, type StudioTitleSubmission } from '@/lib/studio-content';
+import { fetchStudioTitleSubmissionsForReview, linkStudioSubmissionToTitle, reviewStudioTitleSubmission, type StudioTitleSubmission } from '@/lib/studio-content';
 
 function AdminPageHeader({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
@@ -80,7 +80,21 @@ function StudioVerificationQueue() {
 function StudioTitleReviewQueue() {
   const { notify } = useToast();
   const { data: submissions, error, reload } = useAsyncData(fetchStudioTitleSubmissionsForReview, []);
+  const { data: catalogueTitles } = useAsyncData(fetchAllTitles, []);
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  async function connectSeries(item: StudioTitleSubmission, titleId: string) {
+    setBusyId(item.id);
+    try {
+      await linkStudioSubmissionToTitle(item.id, titleId || null);
+      notify(titleId ? 'Series calendar connected to the published Cinema title.' : 'Series calendar disconnected from the catalogue title.');
+      reload();
+    } catch {
+      notify('Cinema could not connect this series calendar. Check that the submission is approved and the catalogue title is published.', 'error');
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   async function review(item: StudioTitleSubmission, status: 'changes_requested' | 'approved' | 'rejected') {
     const promptText = status === 'approved'
@@ -122,7 +136,7 @@ function StudioTitleReviewQueue() {
         <div className="mt-3 flex flex-wrap gap-2 text-xs">{item.poster_url && <a className="text-[#c7ddcf] underline" href={item.poster_url} target="_blank" rel="noreferrer">Poster</a>}{item.backdrop_url && <a className="text-[#c7ddcf] underline" href={item.backdrop_url} target="_blank" rel="noreferrer">Backdrop</a>}{item.trailer_url && <a className="text-[#c7ddcf] underline" href={item.trailer_url} target="_blank" rel="noreferrer">Trailer</a>}{item.playback_url && <a className="text-[#c7ddcf] underline" href={item.playback_url} target="_blank" rel="noreferrer">Playback Source</a>}{item.rights_evidence_url && <a className="text-amber-200 underline" href={item.rights_evidence_url} target="_blank" rel="noreferrer">Rights Evidence</a>}</div>
         {item.delivery_notes && <p className="mt-3 rounded-xl border border-white/8 bg-white/[.025] p-3 text-xs leading-5 text-slate-300">Delivery notes: {item.delivery_notes}</p>}
         {item.promotional_rights_confirmed && <p className="mt-2 text-xs text-[#c7ddcf]">Promotional materials permission declared.</p>}
-        {item.review_note && <p className="mt-3 rounded-xl border border-sky-200/10 bg-sky-200/[.04] p-3 text-xs leading-5 text-sky-100">Previous Cinema note: {item.review_note}</p>}
+        {item.review_note && <p className="mt-3 rounded-xl border border-sky-200/10 bg-sky-200/[.04] p-3 text-xs leading-5 text-sky-100">Previous Cinema note: {item.review_note}</p>}{item.content_type === 'series' && <div className="mt-4 rounded-xl border border-sky-200/10 bg-sky-200/[.035] p-3"><label className="block text-xs font-bold text-sky-100">Connect To A Published Cinema Series</label>{item.status === 'approved' ? <select aria-label={'Connect ' + item.title + ' to a published Cinema series'} value={item.published_title_id ?? ''} disabled={busyId === item.id || !catalogueTitles} onChange={(event) => void connectSeries(item, event.target.value)} className="mt-2 w-full rounded-xl border border-white/15 bg-[#101720] px-3 py-2.5 text-sm text-white outline-none focus:border-sky-200/45"><option value="">Not connected</option>{(catalogueTitles ?? []).filter((title) => title.type === 'series' && title.is_published).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select> : <p className="mt-1 text-xs leading-5 text-slate-400">Approve the submission first. Then connect it to the matching published series so viewers can follow it and see its release calendar.</p>}<p className="mt-2 text-[10px] leading-4 text-slate-500">Only connect the studio schedule to the correct published catalogue title. This does not publish the submission or change its rights status.</p></div>}
         <div className="mt-4 flex flex-wrap gap-2"><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'approved')} className={BUTTON_PRIMARY}>Approve For Preparation</button><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'changes_requested')} className={BUTTON_GHOST}>Request Changes</button><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'rejected')} className={`${BUTTON_GHOST} text-rose-200`}>Reject</button></div>
       </li>)}</ul>}
       <p className="text-xs leading-5 text-slate-500">Approval confirms that this submission may move to the next internal distribution-preparation step. It does not automatically publish a title, verify the submitted rights, or create a distribution contract.</p>
