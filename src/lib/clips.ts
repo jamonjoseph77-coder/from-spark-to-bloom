@@ -185,8 +185,9 @@ export async function recordDiscoverClipView(clipId: string): Promise<number> {
 export async function fetchSavedDiscoverClipIds(userId: string): Promise<string[]> {
   if (!userId) return [];
   const { data, error } = await supabase.from('discover_clip_saves')
-    .select('clip_id')
-    .eq('user_id', userId);
+    .select('clip_id,created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
   if (error) throw error;
   const savedIds = new Set((data ?? []).map((row) => row.clip_id));
 
@@ -232,7 +233,18 @@ export async function fetchSavedDiscoverClips(userId: string): Promise<DiscoverC
   if (!userId) return [];
   const savedIds = await fetchSavedDiscoverClipIds(userId);
   if (!savedIds.length) return [];
-  const clips = await fetchPublishedClips();
+
+  // Query the saved records directly instead of relying on the latest 120-item
+  // public feed. Older saved Shorts must remain available in My Cinema.
+  const { data, error } = await supabase.from('discover_clips')
+    .select(CLIP_FEED_FIELDS)
+    .in('id', savedIds)
+    .eq('is_published', true);
+  if (error) throw error;
+
+  const clips = await attachTitles(
+    (data ?? []).map((clip) => normalizeClip(clip as Record<string, unknown>)) as Omit<DiscoverClip, 'title'>[],
+  );
   const byId = new Map(clips.map((clip) => [clip.id, clip]));
   return savedIds.flatMap((id) => {
     const clip = byId.get(id);
