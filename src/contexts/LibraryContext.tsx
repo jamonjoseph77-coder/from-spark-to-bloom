@@ -48,6 +48,10 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       return;
     }
     let active = true;
+    // Clear the previous account's private library immediately on account changes.
+    setWatchlistIds(new Set());
+    setFavouriteIds(new Set());
+    setProgress([]);
     setReady(false);
     Promise.all([
       fetchUserTitleIds('watchlist_items', userId),

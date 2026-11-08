@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info, Camera } from 'lucide-react';
+import { ArrowRight, BookmarkCheck, Clock3, Heart, LogOut, ShieldCheck, Users, PartyPopper, MessageSquareText, Settings2, Building2, History, Compass, Radio, Film, Download, Info, Camera, Search, X, SlidersHorizontal } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
@@ -8,7 +8,8 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER, SECTION_HEADING
 import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
-import { resumeItems } from '@/lib/catalogue';
+import { matchesQuery, resumeItems, sortTitles, type SortOption } from '@/lib/catalogue';
+import { TITLE_TYPES, TITLE_TYPE_LABELS, type TitleType } from '@/lib/types';
 import { fetchPublishedTitles } from '@/lib/library';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { downloadPermittedClip, fetchDownloadableClips } from '@/lib/clips';
@@ -22,6 +23,9 @@ export function MyCinemaPage() {
   const { notify } = useToast();
   const { data: profile, error: profileError, reload: reloadProfile } = useAsyncData(() => user ? fetchProfile(user.id) : Promise.resolve(null), [user?.id]);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [libraryQuery, setLibraryQuery] = useState('');
+  const [libraryType, setLibraryType] = useState<TitleType | 'all'>('all');
+  const [librarySort, setLibrarySort] = useState<SortOption>('newest');
   const { data: downloadableClips, error: downloadsError, reload: reloadDownloads } = useAsyncData(fetchDownloadableClips, []);
   const { watchlistIds, favouriteIds, progress, ready } = useLibrary();
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
@@ -39,6 +43,20 @@ export function MyCinemaPage() {
       favourites: titles.filter((title) => favouriteIds.has(title.id)),
     };
   }, [titles, progress, watchlistIds, favouriteIds]);
+
+  const filteredView = useMemo(() => {
+    if (!view) return null;
+    const keep = (title: (typeof view.recent)[number]) =>
+      (libraryType === 'all' || title.type === libraryType) && matchesQuery(title, libraryQuery);
+    const sorted = (items: typeof view.recent) => sortTitles(items.filter(keep), librarySort);
+    const resume = view.resume.filter((item) => keep(item.title));
+    return {
+      resume,
+      recent: sorted(view.recent),
+      watchlist: sorted(view.watchlist),
+      favourites: sorted(view.favourites),
+    };
+  }, [view, libraryQuery, libraryType, librarySort]);
 
   if (authLoading) return <div className={PAGE_CONTAINER}><LoadingState /></div>;
 
@@ -73,10 +91,11 @@ export function MyCinemaPage() {
             <a href="/watch-parties" className={BUTTON_SECONDARY}><PartyPopper className="h-4 w-4" /> Watch parties</a>
           </div>
         </div>
-        {view && <div className="relative mt-7 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:max-w-xl sm:gap-3">
+        {view && <div className="relative mt-7 grid grid-cols-2 gap-2 border-t border-white/10 pt-5 sm:max-w-2xl sm:grid-cols-4 sm:gap-3">
           <div className="rounded-2xl bg-white/[.045] p-3 sm:p-4"><div className="flex items-center gap-2 text-slate-200"><Clock3 className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">In progress</span></div><p className="mt-2 text-2xl font-black text-white">{view.resume.length}</p></div>
-          <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><BookmarkCheck className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Watchlist</span></div><p className="mt-2 text-2xl font-black text-white">{view.watchlist.length}</p></div>
-          <div className="rounded-2xl bg-ink-950/45 p-3 sm:p-4"><div className="flex items-center gap-2 text-cinema-200"><Heart className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Favourites</span></div><p className="mt-2 text-2xl font-black text-white">{view.favourites.length}</p></div>
+          <div className="rounded-2xl bg-white/[.045] p-3 sm:p-4"><div className="flex items-center gap-2 text-slate-200"><BookmarkCheck className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Watchlist</span></div><p className="mt-2 text-2xl font-black text-white">{view.watchlist.length}</p></div>
+          <div className="rounded-2xl bg-white/[.045] p-3 sm:p-4"><div className="flex items-center gap-2 text-slate-200"><Heart className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Favourites</span></div><p className="mt-2 text-2xl font-black text-white">{view.favourites.length}</p></div>
+          <div className="rounded-2xl bg-white/[.045] p-3 sm:p-4"><div className="flex items-center gap-2 text-slate-200"><History className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-wider sm:text-xs">Recently Watched</span></div><p className="mt-2 text-2xl font-black text-white">{view.recent.length}</p></div>
         </div>}
       </header>
 
@@ -98,7 +117,7 @@ export function MyCinemaPage() {
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" aria-label="My Cinema shortcuts">
         <a href="#continue-watching" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><History className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Continue Watching</span><span className="mt-1 block text-[11px] text-slate-500">Pick up where you paused</span></a>
         <a href="#my-watchlist" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><BookmarkCheck className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watchlist</span><span className="mt-1 block text-[11px] text-slate-500">Saved for later</span></a>
-        <a href="#my-saved-shorts" className="group rounded-2xl border border-blue-300/25 bg-gradient-to-br from-blue-950/70 to-ink-950 p-4 transition hover:-translate-y-1 hover:border-blue-200/50"><BookmarkCheck className="h-5 w-5 text-blue-200" /><span className="mt-4 block text-sm font-bold text-white">Saved Shorts</span><span className="mt-1 block text-[11px] text-slate-400">Your Explore collection</span></a>
+        <a href="#my-saved-shorts" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-white/25"><BookmarkCheck className="h-5 w-5 text-slate-200" /><span className="mt-4 block text-sm font-bold text-white">Saved Shorts</span><span className="mt-1 block text-[11px] text-slate-400">Your Explore collection</span></a>
         <a href="#my-favourites" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Heart className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Favourites</span><span className="mt-1 block text-[11px] text-slate-500">Your top stories</span></a>
         <a href="/friends" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><Users className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Friends</span><span className="mt-1 block text-[11px] text-slate-500">Your Cinema circle</span></a>
         <a href="/watch-parties" className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/[.055] to-white/[.015] p-4 transition hover:-translate-y-1 hover:border-sky-200/30"><PartyPopper className="h-5 w-5 text-sky-200" /><span className="mt-4 block text-sm font-bold text-white">Watch Parties</span><span className="mt-1 block text-[11px] text-slate-500">Experience together</span></a>
@@ -113,6 +132,19 @@ export function MyCinemaPage() {
       {view && <nav aria-label="My Cinema sections" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {[{ href: '#continue-watching', label: 'Continue watching' }, { href: '#recently-watched', label: 'Recently watched' }, { href: '#my-watchlist', label: 'Watchlist' }, { href: '#my-saved-shorts', label: 'Saved Shorts' }, { href: '#my-favourites', label: 'Favourites' }, { href: '#my-downloads', label: 'Downloads' }, { href: '#my-publishers', label: 'Publishers' }].map((item) => <a key={item.href} href={item.href} className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-cinema-300/40 hover:bg-cinema-400/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-300">{item.label}</a>)}
       </nav>}
+      {view && <section aria-label="Organise your library" className="rounded-[1.6rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.012))] p-4 shadow-[0_14px_40px_rgba(0,0,0,.16)] sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div><p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-slate-300"><SlidersHorizontal className="h-3.5 w-3.5" /> Your Library</p><h2 className="mt-1 text-lg font-extrabold text-white">Find Something You Saved</h2><p className="mt-1 text-xs text-slate-400">Search and organise your watchlist, favourites and viewing history.</p></div>
+          <div className="flex w-full gap-2 lg:max-w-md">
+            <label className="relative min-w-0 flex-1"><span className="sr-only">Search your library</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /><input value={libraryQuery} onChange={(event) => setLibraryQuery(event.target.value)} placeholder="Search your saved titles…" className="h-11 w-full rounded-xl border border-white/10 bg-black/25 pl-10 pr-10 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-white/30 focus:ring-2 focus:ring-white/10" />{libraryQuery && <button type="button" onClick={() => setLibraryQuery('')} aria-label="Clear library search" className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-slate-400 hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>}</label>
+            <label className="sr-only" htmlFor="my-cinema-sort">Sort your library</label><select id="my-cinema-sort" value={librarySort} onChange={(event) => setLibrarySort(event.target.value as SortOption)} className="h-11 max-w-[130px] rounded-xl border border-white/10 bg-[#121715] px-3 text-xs font-semibold text-slate-200 outline-none focus:border-white/30"><option value="newest">Recently Added</option><option value="title">Title A–Z</option><option value="year">Release Year</option></select>
+          </div>
+        </div>
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Filter library by content type">
+          <button type="button" aria-pressed={libraryType === 'all'} onClick={() => setLibraryType('all')} className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-bold transition ${libraryType === 'all' ? 'border-white/35 bg-white/15 text-white' : 'border-white/10 bg-white/[.025] text-slate-400 hover:text-white'}`}>All Content</button>
+          {TITLE_TYPES.map((type) => <button key={type} type="button" aria-pressed={libraryType === type} onClick={() => setLibraryType(type)} className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-bold transition ${libraryType === type ? 'border-white/35 bg-white/15 text-white' : 'border-white/10 bg-white/[.025] text-slate-400 hover:text-white'}`}>{TITLE_TYPE_LABELS[type]}</button>)}
+        </div>
+      </section>}
         <section id="my-downloads" className="scroll-mt-24 space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Available Offline</p><h2 className={SECTION_HEADING}>Downloads</h2><p className="mt-1 max-w-2xl text-sm text-slate-400">Only individual videos that their rights holders have explicitly approved for download appear here. Full movies and series need separate download permission and are not downloadable unless Cinema displays that approval.</p></div>
@@ -130,19 +162,19 @@ export function MyCinemaPage() {
         </section>
         <SavedShortsShelf userId={user.id} />
       {!view && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
-      {view && <>
-        <div id="continue-watching" className="scroll-mt-24"><ContinueWatchingRow items={view.resume} /></div>
+      {view && filteredView && <>
+        <div id="continue-watching" className="scroll-mt-24">{filteredView.resume.length ? <ContinueWatchingRow items={filteredView.resume} /> : <section className="space-y-3"><h2 className={SECTION_HEADING}>Continue Watching</h2><p className={CARD + ' text-sm text-slate-400'}>{libraryQuery || libraryType !== 'all' ? 'No in-progress titles match these filters.' : 'When you pause a title, you can pick it up here.'}</p></section>}</div>
         <section id="recently-watched" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Recently Watched</h2><p className="mt-1 text-sm text-slate-400">Your latest viewing activity, all in one place.</p></div></div>
-          {view.recent.length ? <TitleGrid titles={view.recent} /> : <p className={`${CARD} text-sm text-slate-400`}>Titles you watch will appear here, so you can easily return to your recent viewing.</p>}
+          {filteredView.recent.length ? <TitleGrid titles={filteredView.recent} /> : <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No recent titles match these filters.' : 'Titles you watch will appear here, so you can easily return to your recent viewing.'}</p>}
         </section>
         <section id="my-watchlist" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your watchlist</h2><p className="mt-1 text-sm text-slate-400">Stories you want to come back to.</p></div><a href="/search" className="text-sm font-semibold text-cinema-300 hover:text-white">Find more</a></div>
-          {!ready ? <LoadingState label="Loading your list" /> : view.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.</p> : <TitleGrid titles={view.watchlist} />}
+          {!ready ? <LoadingState label="Loading your list" /> : filteredView.watchlist.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No watchlist titles match these filters.' : 'Titles you add with the watchlist button will appear here. Browse Cinema to start building your list.'}</p> : <TitleGrid titles={filteredView.watchlist} />}
         </section>
         <section id="my-favourites" className="scroll-mt-24 space-y-5">
           <div><h2 className={SECTION_HEADING}>Your favourites</h2><p className="mt-1 text-sm text-slate-400">The stories that stay with you.</p></div>
-          {!ready ? <LoadingState label="Loading your favourites" /> : view.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>Mark titles as favourites to keep the ones you love within reach.</p> : <TitleGrid titles={view.favourites} />}
+          {!ready ? <LoadingState label="Loading your favourites" /> : filteredView.favourites.length === 0 ? <p className={`${CARD} text-sm text-slate-400`}>{libraryQuery || libraryType !== 'all' ? 'No favourite titles match these filters.' : 'Mark titles as favourites to keep the ones you love within reach.'}</p> : <TitleGrid titles={filteredView.favourites} />}
         </section>
         <section id="my-publishers" className="scroll-mt-24 space-y-5">
           <div className="flex items-end justify-between gap-4"><div><h2 className={SECTION_HEADING}>Your publishers</h2><p className="mt-1 text-sm text-slate-400">Studios and broadcasters you choose to track.</p></div><a href="/publishers" className="text-sm font-semibold text-cinema-300 hover:text-white">Discover publishers</a></div>
