@@ -1,15 +1,12 @@
-import { Film, Home, MonitorPlay, Newspaper, Sparkles, Users } from 'lucide-react';
+import { Film, Newspaper, Sparkles, Users } from 'lucide-react';
 
 const DESTINATIONS = [
-  { label: 'Home', href: '/', icon: Home },
   { label: 'Movies', href: '/movies', icon: Film },
-  { label: 'Series', href: '/series', icon: MonitorPlay },
   { label: 'Shorts', href: '/shorts', icon: Sparkles },
   { label: 'News', href: '/news', icon: Newspaper },
   { label: 'Documentaries', href: '/category/documentaries', icon: Users },
   { label: 'Animation', href: '/category/animation', icon: Sparkles },
   { label: 'Family', href: '/category/family', icon: Film },
-  { label: 'Reality', href: '/category/reality', icon: Users },
 ];
 
 export function CinemaCategoryNav({ active }: { active: string }) {
