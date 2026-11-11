@@ -52,10 +52,15 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
   return (
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
       <CinemaCategoryNav active={heading} />
-      <header className="cinema-category-live-hero relative isolate flex flex-col gap-3 overflow-hidden rounded-[1.7rem] border border-sky-200/15 p-6 sm:p-8">
-        <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">Explore Cinema</p>
-        <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">{heading}</h1>
-        <p className="max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">Explore real titles, discover official trailers and find the stories you want to experience. Availability to watch on Cinema depends on distribution rights.</p>
+      <header className="cinema-category-live-hero relative isolate flex min-h-[13rem] flex-col justify-center gap-3 overflow-hidden rounded-[1.7rem] border border-sky-200/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,.3)] sm:min-h-[16rem] sm:p-8">
+        {featuredImage && <Artwork src={featuredImage} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.38]" />}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/90 via-[#05080e]/68 to-[#05080e]/38" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#05080e]/65 via-transparent to-[#05080e]/20" />
+        <div className="relative z-10">
+          <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-200">Explore Cinema</p>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-white drop-shadow-lg sm:text-5xl">{heading}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-200/90 sm:text-base">Explore real titles, discover official trailers and find the stories you want to experience. Availability to watch on Cinema depends on distribution rights.</p>
+        </div>
       </header>
 
       <YourNextWatch titleTypes={[mediaType === 'movie' ? 'movie' : 'series']} categoryLabel={heading} fallbackMediaType={mediaType} fallbackGenreId={genreId || undefined} />
