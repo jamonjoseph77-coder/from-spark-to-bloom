@@ -48,12 +48,17 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
   const featuredImage = featured
     ? tmdbImageUrl(featured.backdropPath, 'w1280') || tmdbImageUrl(featured.posterPath, 'w500')
     : '';
+  // Do not let one title without artwork leave the whole Explore category header blank.
+  const categoryBackdropTitle = items.data?.find((item) => item.backdropPath || item.posterPath);
+  const categoryBackdrop = categoryBackdropTitle
+    ? tmdbImageUrl(categoryBackdropTitle.backdropPath, 'w1280') || tmdbImageUrl(categoryBackdropTitle.posterPath, 'w500')
+    : '';
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
       <CinemaCategoryNav active={heading} />
       <header className="cinema-category-live-hero relative isolate flex min-h-[13rem] flex-col justify-center gap-3 overflow-hidden rounded-[1.7rem] border border-sky-200/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,.3)] sm:min-h-[16rem] sm:p-8">
-        {featuredImage && <Artwork src={featuredImage} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.38]" />}
+        {categoryBackdrop && <Artwork src={categoryBackdrop} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.38]" /> }
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/90 via-[#05080e]/68 to-[#05080e]/38" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#05080e]/65 via-transparent to-[#05080e]/20" />
         <div className="relative z-10">
