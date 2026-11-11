@@ -48,19 +48,19 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
   const featuredImage = featured
     ? tmdbImageUrl(featured.backdropPath, 'w1280') || tmdbImageUrl(featured.posterPath, 'w500')
     : '';
-  // Do not let one title without artwork leave the whole Explore category header blank.
-  const categoryBackdropTitle = items.data?.find((item) => item.backdropPath || item.posterPath);
+  // Use a different title's wide backdrop for the category banner, not the spotlight artwork.
+  const categoryBackdropTitle = items.data?.slice(1).find((item) => item.backdropPath);
   const categoryBackdrop = categoryBackdropTitle
-    ? tmdbImageUrl(categoryBackdropTitle.backdropPath, 'w1280') || tmdbImageUrl(categoryBackdropTitle.posterPath, 'w500')
+    ? tmdbImageUrl(categoryBackdropTitle.backdropPath, 'w1280')
     : '';
 
   return (
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
       <CinemaCategoryNav active={heading} />
       <header className="cinema-category-live-hero relative isolate flex min-h-[13rem] flex-col justify-center gap-3 overflow-hidden rounded-[1.7rem] border border-sky-200/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,.3)] sm:min-h-[16rem] sm:p-8">
-        {categoryBackdrop && <Artwork src={categoryBackdrop} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.38]" /> }
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/90 via-[#05080e]/68 to-[#05080e]/38" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#05080e]/65 via-transparent to-[#05080e]/20" />
+        {categoryBackdrop && <Artwork src={categoryBackdrop} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.46]" />}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/85 via-[#05080e]/55 to-[#05080e]/25" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#05080e]/55 via-transparent to-[#05080e]/10" />
         <div className="relative z-10">
           <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-200">Explore Cinema</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight text-white drop-shadow-lg sm:text-5xl">{heading}</h1>
