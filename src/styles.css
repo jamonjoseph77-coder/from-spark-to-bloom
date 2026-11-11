@@ -3539,3 +3539,15 @@ html:has(.cinema-shorts-page) {
     min-height: 3.05rem !important;
   }
 }
+
+
+/* Keep the vertical Shorts rail fully below the upper video area. */
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions {
+  top: auto !important;
+  transform: none !important;
+  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 8rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.cinema-shorts-page .cinema-short-overlay > .cinema-short-actions::-webkit-scrollbar { display: none; }
