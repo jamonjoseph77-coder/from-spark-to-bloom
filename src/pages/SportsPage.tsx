@@ -41,7 +41,15 @@ export function SportsPage() {
     const liveNow = [...sports.filter(isLiveChannel), ...liveChannels];
     const startingSoon = sports.filter((title) => Boolean(title.release_date && title.release_date > today));
     const channels = [...sports.filter(isSportsChannel), ...liveChannels];
-    const highlights = sports.filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url?.trim() || title.trailer_url?.trim()));
+    const highlights = sports
+      .filter((title) => !isLiveChannel(title) && !isSportsChannel(title) && Boolean(title.playback_url?.trim() || title.trailer_url?.trim()))
+      .sort((a, b) => {
+        const featured = Number(b.is_featured) - Number(a.is_featured);
+        if (featured !== 0) return featured;
+        const playable = Number(Boolean(b.playback_url?.trim())) - Number(Boolean(a.playback_url?.trim()));
+        if (playable !== 0) return playable;
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      });
     const yourSports = sports.filter((title) => watchlistIds.has(title.id) || favouriteIds.has(title.id));
     return { sports, liveNow, startingSoon, channels, highlights, yourSports, genres: genresOf(sports) };
   }, [titles, watchlistIds, favouriteIds]);
@@ -120,7 +128,16 @@ export function SportsPage() {
           {sections.yourSports.length > 0 && <TitleRow heading="Your Sports" description="Sports titles saved to your Cinema watchlist or favourites." titles={sections.yourSports} />}
           {sections.startingSoon.length > 0 && <TitleRow heading="Starting Soon" description="Upcoming sports content with a published future date." titles={sections.startingSoon} />}
           {sections.channels.length > 0 && <section><div className="mb-3 flex items-end gap-3"><Tv className="h-5 w-5 text-sky-300" /><div><h2 className="text-xl font-extrabold text-white">Sports Channels</h2><p className="text-xs text-slate-400">Sports broadcasters and channels available in Cinema.</p></div></div><TitleGrid titles={sections.channels} /></section>}
-          <section id="sports-highlights" className="scroll-mt-24 space-y-6">
+          <section
+            id="sports-highlights"
+            className="cinema-sports-highlights relative isolate scroll-mt-24 space-y-6 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#080d15] p-4 shadow-[0_22px_64px_rgba(0,0,0,.24)] sm:p-6"
+            style={sections.highlights[0]?.backdrop_url ? {
+              backgroundImage: `linear-gradient(100deg, rgba(4,7,12,.97), rgba(4,7,12,.88) 58%, rgba(4,7,12,.72)), url("${sections.highlights[0].backdrop_url}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            } : undefined}
+            aria-label="Sports Highlights And Replays"
+          >
             <div className="space-y-1"><p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200">The Best Moments</p><h2 className="text-2xl font-extrabold text-white">Highlights & Replays</h2><p className="text-sm text-slate-400">Catch up on sports programmes, official video features and playable replays published in Cinema.</p></div>
             <SportsHighlights />
             {sections.highlights.length > 0 ? <TitleRow heading="Sports Programmes & Replays" description="Playable sports titles available to watch in Cinema." titles={sections.highlights} /> : <div className="rounded-2xl border border-white/10 bg-white/[.02] p-5"><h3 className="text-base font-bold text-white">More Match Moments Are On Their Way</h3><p className="mt-2 text-sm text-slate-400">Playable sports programmes and replays will appear here as verified publishers add them to Cinema.</p></div>}
