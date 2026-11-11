@@ -34,9 +34,9 @@ export function MobileNav({ route }: MobileNavProps) {
     const Icon = item.icon;
     return (
       <li key={item.key} className="flex h-full min-w-0 flex-1 items-center justify-center">
-        <a href={item.href} aria-current={active ? 'page' : undefined} className={`cinema-mobile-nav-item relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${active ? 'text-[#f1f4f8]' : 'text-[#aeb8c4] hover:text-[#f1f4f8]'}`}>
+        <a href={item.href} aria-current={active ? 'page' : undefined} className={`cinema-mobile-nav-item relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 py-1 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${active ? 'text-[#f1f4f8]' : 'text-[#aeb8c4] hover:text-[#f1f4f8]'}`}>
           <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={active ? 2.3 : 1.8} />
-          <span className="max-w-full truncate whitespace-nowrap text-[9px] font-semibold leading-none">{item.label}</span>
+          <span className="w-full whitespace-normal text-[9px] font-semibold leading-[1.05]">{item.label}</span>
           {active && <span className="absolute bottom-0 h-0.5 w-5 rounded-full bg-[#168cff]" />}
         </a>
       </li>
@@ -45,7 +45,7 @@ export function MobileNav({ route }: MobileNavProps) {
 
   return (
     <nav aria-label="Primary" className="cinema-mobile-nav fixed inset-x-2 bottom-1 z-40 rounded-[1.45rem] border border-white/[.14] pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl lg:hidden">
-      <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center px-1">
+      <div className="mx-auto grid h-[76px] max-w-xl grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] items-center px-1">
         <ul className="flex h-full min-w-0 items-center justify-around">
           {renderItems(LEFT_ITEMS)}
         </ul>
@@ -58,9 +58,9 @@ export function MobileNav({ route }: MobileNavProps) {
         href={adaptiveDestination.href}
         aria-label={`Adaptive Cinema Shortcut. Open your most-used section: ${adaptiveDestination.label}`}
         title={adaptiveDestination.label === 'Home' ? 'Cinema Home' : `Your Most-Used: ${adaptiveDestination.label}`}
-        className="cinema-mobile-home-button absolute left-1/2 top-[-11px] flex h-[64px] w-[64px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
+        className="cinema-mobile-home-button absolute left-1/2 top-[-11px] flex h-[60px] w-[60px] -translate-x-1/2 items-center justify-center rounded-full transition duration-200 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/70"
       >
-        <CinemaLogo compact className="!h-[62px] !w-[62px] rounded-full !border-0 !bg-transparent !drop-shadow-none !shadow-none object-cover" />
+        <CinemaLogo compact className="!h-[58px] !w-[58px] rounded-full !border-0 !bg-transparent !drop-shadow-none !shadow-none object-cover" />
         <span className="sr-only">Open {adaptiveDestination.label}</span>
       </a>
     </nav>

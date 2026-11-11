@@ -205,10 +205,13 @@ export function HomePage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(190,205,196,.07),transparent_62%)]" aria-hidden="true" />
+      <section className="cinema-home-intro -mb-5 space-y-1 px-1 sm:mb-0" aria-label="Welcome to Cinema">
+        <p className="text-[10px] font-bold uppercase tracking-[.24em] text-cinema-300">Experience The World Of Stories</p>
+        <p className="max-w-2xl text-sm leading-6 text-slate-300">From the stories shaping today to the films, series and live moments you love — discover it all in Cinema.</p>
+      </section>
       <nav className="cinema-home-categories -mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
         {[
           ['Movies', '/movies'],
-          ['Series', '/series'],
           ['Shorts', '/shorts'],
           ['News', '/news'],
           ['Documentaries', '/category/documentaries'],
