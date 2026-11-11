@@ -17,6 +17,11 @@ const ALL_CHANNELS = 'All Channels';
 export function LiveTVPage() {
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
   const channels = useMemo(() => (titles ?? []).filter((title) => title.type === 'live'), [titles]);
+  const headerArtwork = useMemo(
+    () => channels.find((channel) => channel.backdrop_url || channel.poster_url)
+      ?? (titles ?? []).find((title) => title.backdrop_url || title.poster_url),
+    [channels, titles],
+  );
   const playable = useMemo(() => channels.filter((channel) => channel.playback_url.trim().length > 0), [channels]);
   const genres = useMemo(() => genresOf(channels), [channels]);
   const [query, setQuery] = useState('');
@@ -42,8 +47,8 @@ export function LiveTVPage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-live-tv space-y-7`}>
       <header className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#141a17] via-[#0b0f0d] to-[#080b09] p-5 shadow-[0_24px_70px_rgba(0,0,0,.28)] sm:p-8">
-        {(channels[0]?.backdrop_url || channels[0]?.poster_url) && <Artwork src={channels[0].backdrop_url || channels[0].poster_url} alt="" fallbackTitle="Live TV" className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.23]" />}
-        {(channels[0]?.backdrop_url || channels[0]?.poster_url) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#070b09]/95 via-[#070b09]/80 to-[#070b09]/48" />}
+        {headerArtwork && <Artwork src={headerArtwork.backdrop_url || headerArtwork.poster_url || ""} alt="" fallbackTitle="Live TV" priority className="absolute inset-0 z-0 h-full w-full object-cover opacity-[.32]" />}
+        {headerArtwork && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#070b09]/88 via-[#070b09]/58 to-[#070b09]/28" />}
         <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-white/[.035] blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-72 rounded-full bg-slate-200/[.07] blur-3xl" />
         <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
