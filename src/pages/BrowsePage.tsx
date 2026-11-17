@@ -13,17 +13,15 @@ import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 
-type BrowseKind = TitleType;
-const COPY: Record<BrowseKind, { heading: string; intro: string; empty: string }> = {
-  movie: { heading: 'Movies', intro: 'Movies published and ready to watch on Cinema.', empty: 'Movies will appear here when they are published and ready to watch on Cinema.' },
-  series: { heading: 'Series', intro: 'Series published and ready to watch on Cinema.', empty: 'Series will appear here when they are published and ready to watch on Cinema.' },
+type LocalBrowseKind = Exclude<TitleType, 'movie' | 'series'>;
+const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: string }> = {
   sport: { heading: 'Sports', intro: 'Matches, Highlights And Sports Programmes.', empty: 'Sports Fixtures, Highlights And Replays Will Appear Here When Verified Feeds And Publisher Content Are Connected.' },
   live: { heading: 'Live TV', intro: 'Television, Live Events And Programmes.', empty: 'Live Channels And Programme Schedules Will Appear Here When Broadcaster Feeds Are Connected.' },
   news: { heading: 'News', intro: 'News, Documentaries And Current Affairs.', empty: 'News Programmes Will Appear Here As Verified Publishers Make Them Available.' },
 };
 const ALL_GENRES = 'All';
 
-export function BrowsePage({ kind }: { kind: BrowseKind }) {
+export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, [kind]);
   const [query, setQuery] = useState('');
   const [genre, setGenre] = useState(ALL_GENRES);
@@ -33,7 +31,7 @@ export function BrowsePage({ kind }: { kind: BrowseKind }) {
   const genres = useMemo(() => genresOf(ofType), [ofType]);
   const visible = useMemo(() => sortTitles(ofType.filter((title) => (genre === ALL_GENRES || hasGenre(title, genre)) && matchesQuery(title, query)), sort), [ofType, genre, query, sort]);
 
-  const HeroIcon = kind === 'movie' || kind === 'series' ? Clapperboard : kind === 'sport' ? Trophy : kind === 'live' ? Radio : Newspaper;
+  const HeroIcon = kind === 'sport' ? Trophy : kind === 'live' ? Radio : Newspaper;
   const headerArtwork = ofType.find((title) => title.backdrop_url || title.poster_url)
     ?? (titles ?? []).find((title) => title.backdrop_url || title.poster_url);
   const heroImage = headerArtwork?.backdrop_url || headerArtwork?.poster_url || '';
