@@ -88,10 +88,10 @@ function StudioTitleReviewQueue() {
     setBusyId(item.id);
     try {
       await linkStudioSubmissionToTitle(item.id, titleId || null);
-      notify(titleId ? 'Series calendar connected to the published Cinema title.' : 'Series calendar disconnected from the catalogue title.');
+      notify(titleId ? 'Series calendar connected to the Cinema catalogue title.' : 'Series calendar disconnected from the catalogue title.');
       reload();
     } catch {
-      notify('Cinema could not connect this series calendar. Check that the submission is approved and the catalogue title is published.', 'error');
+      notify('Cinema could not connect this series calendar. Check that the submission is approved and the catalogue title exists.', 'error');
     } finally {
       setBusyId(null);
     }
