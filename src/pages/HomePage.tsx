@@ -5,8 +5,6 @@ import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSp
 import { ShortCard } from '@/components/discover/ShortCard';
 import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
 import { TitleRow } from '@/components/catalogue/TitleRow';
-import { TmdbHero } from '@/components/tmdb/TmdbHero';
-import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
@@ -172,7 +170,6 @@ export function HomePage() {
           <a key={label} href={href} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{label}</a>
         ))}
       </nav>
-      <TmdbHero />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
@@ -224,21 +221,14 @@ export function HomePage() {
       <>{cinemaShelves?.live.length ? <TitleRow heading="Live TV On Cinema" description="Live channels and programmes published by Cinema broadcasters." titles={cinemaShelves.live} /> : <section className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">Live TV On Cinema</h2><p className="mt-1 text-sm text-slate-400">Broadcaster channels and live programmes will appear in this Home shelf when they are published.</p></section>}{cinemaShelves?.news.length ? <section id="home-news" className="scroll-mt-28"><TitleRow heading="News & Current Affairs" description="News programmes and current-affairs content available in Cinema." titles={cinemaShelves.news} /></section> : <section id="home-news" className="scroll-mt-28"><div className="cinema-home-empty rounded-2xl border border-white/10 p-5"><h2 className="text-xl font-extrabold text-white">News & Current Affairs</h2><p className="mt-1 text-sm text-slate-400">Verified news channels and programmes will appear here when they are published in Cinema.</p></div></section>}{cinemaShelves?.sports.length ? <TitleRow heading="Sports On Cinema" description="Live coverage, sports programmes and highlights from Cinema publishers." titles={cinemaShelves.sports} /> : null}{cinemaShelves?.reality.length ? <section id="home-reality" className="scroll-mt-28"><TitleRow heading="Reality & Entertainment" description="Reality programmes and unscripted entertainment across Cinema." titles={cinemaShelves.reality} /></section> : null}{cinemaShelves?.documentaries.length ? <section id="home-documentaries" className="scroll-mt-28"><TitleRow heading="Documentaries" description="Factual stories, real people and worlds worth exploring." titles={cinemaShelves.documentaries} /></section> : null}</>
       {cinemaShelves?.resume.length ? <section className="cinema-shelf"><div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Pick Up Where You Left Off</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Back in Cinema</h2><p className="mt-1 text-sm text-slate-400">Your Stories Are Right Where You Left Them.</p></div><a href="/my-cinema" className="text-sm font-semibold text-cinema-200 hover:text-white">My Cinema <ArrowRight className="inline h-4 w-4" /></a></div><ContinueWatchingRow items={cinemaShelves.resume} /></section> : null}
       <PublisherDestinations titles={titles ?? []} />
-      <section id="home-movies" className="scroll-mt-28 space-y-10">
-        <TmdbRow heading="Spotlight Picks" description="A Fresh Selection Of Films Worth Your Time." mediaType="movie" list="popular" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />
-        <TmdbRow heading="Movies In Motion" description="Stories Finding New Audiences This Week." mediaType="movie" list="trending" action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-        <TmdbRow heading="Action Movies" description="Fast-moving stories and big-screen excitement." mediaType="movie" list="trending" genreId={28} />
-        <TmdbRow heading="A Little More Laughter" description="A lighter collection for your next movie night." mediaType="movie" list="popular" genreId={35} />
-        <TmdbRow heading="Animated Movies" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
-        {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Movies published in Cinema catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
+      <section id="home-movies" className="scroll-mt-28 space-y-5">
+        <div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Available To Watch</p><h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">Movies On Cinema</h2><p className="mt-1 text-sm text-slate-400">Titles published in Cinema’s catalogue.</p></div>
+        {cinemaShelves?.movies.length ? <TitleRow heading="Movies Available On Cinema" titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} /> : <div className="cinema-home-empty rounded-2xl border border-white/10 p-5 text-sm text-slate-300">New movies will appear here when they are ready to watch on Cinema.</div>}
       </section>
-      <section id="home-series" className="scroll-mt-28 space-y-10">
-        <TmdbRow heading="Series Everyone Is Exploring" description="Find Your Next Episode-Worthy Story." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />
-        <TmdbRow heading="Series Worth Settling Into" mediaType="tv" list="popular" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
-        <TmdbRow heading="Character-Led Stories" description="Series led by memorable characters and stories." mediaType="tv" list="popular" genreId={18} />
-        {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
+      <section id="home-series" className="scroll-mt-28 space-y-5">
+        <div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-cinema-300">Continue The Story</p><h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">Series On Cinema</h2><p className="mt-1 text-sm text-slate-400">Series published in Cinema’s catalogue.</p></div>
+        {cinemaShelves?.series.length ? <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} /> : <div className="cinema-home-empty rounded-2xl border border-white/10 p-5 text-sm text-slate-300">New series will appear here when they are ready to watch on Cinema.</div>}
       </section>
-      {cinemaShelves && <section id="home-coming-soon" className="scroll-mt-28"><TitleRow heading="Coming Soon" description="Upcoming titles already announced in Cinema." titles={cinemaShelves.comingSoon} />{cinemaShelves.comingSoon.length === 0 && <p className="cinema-home-empty rounded-2xl border border-white/10 p-5 text-sm text-slate-300">New announcements will appear here as upcoming titles are added to Cinema.</p>}</section>}
       <p className="text-center text-[11px] text-slate-500">A little extra to explore: <a href="/free" className="font-semibold text-cinema-200 transition hover:text-white">Free Movies &amp; Series</a>.</p>
       {!titles && (titlesError ? <ErrorState onRetry={reloadTitles} /> : <LoadingState label="Loading Your Cinema Catalogue" />)}
       <section className="grid gap-4 md:grid-cols-2">
