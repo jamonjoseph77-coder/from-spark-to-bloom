@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { BrowsePage } from '@/pages/BrowsePage';
+import { TmdbBrowsePage } from '@/pages/TmdbBrowsePage';
 
 export const Route = createFileRoute('/series')({
   head: () => ({
@@ -16,5 +16,5 @@ export const Route = createFileRoute('/series')({
 });
 
 function Page() {
-  return <BrowsePage kind="series" />;
+  return <TmdbBrowsePage mediaType="tv" />;
 }
