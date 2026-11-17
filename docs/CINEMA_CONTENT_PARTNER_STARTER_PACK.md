@@ -6,18 +6,71 @@ _Status: internal working document. This is an outreach and diligence pack, not 
 
 ## 1. The first objective
 
-Build a small, reliable launch catalogue of **10–20 complete, authorised and watchable programmes**. Prioritise quality, clear rights and dependable playback over a large catalogue of posters, metadata or trailers.
+Build towards a **40–100 title launch catalogue** of complete, authorised and watchable programmes. The number is a target, not a claim that Cinema already has these titles. Count a title only after its rights are documented, the full programme is playable on Cinema, and its territory/classification checks are complete. Prioritise actual viewing over posters, metadata pages or trailers.
 
-Initial focus:
-- Ghanaian independent films and short films.
-- Ghanaian and Nigerian series and factual programmes.
-- Documentaries and cultural programming.
-- Original creator programmes and interviews.
-- Broadcaster or sports-content partnerships only where the partner can grant the required digital rights.
+Initial catalogue mix target (adjust to what is actually cleared):
+- 15–25 Ghanaian, Nigerian and wider African films/series.
+- 10–20 documentaries, factual programmes and cultural stories.
+- 10–20 short films and animation.
+- 5–15 original creator programmes, interviews and explainers.
+- 0–20 open-licensed or public-domain films, only after item-level Ghana rights checks.
+
+Do not fill gaps with fake availability, trailers presented as full films, scraped streams or unlicensed TV/sports feeds.
 
 Do not promise guaranteed views, revenue, audience size, exclusivity or a launch date before Cinema can substantiate it.
 
-## 2. What Cinema is offering
+
+## 2. Free and low-friction content routes — reduce cold-email dependence
+
+Cinema should not depend on sending hundreds of cold emails. Build a rights-cleared pipeline from four lanes:
+
+1. **Creator self-submission:** Make the existing Publisher submission route easy to find. Invite filmmakers, schools, film clubs, student creators, churches/community media, documentary makers and production collectives to submit work they own or control. A submission is not automatically approved; retain rights evidence and adult review.
+2. **Open-licensed films:** Start with catalogues where the creator has explicitly granted reuse rights. The Studio's OS Video catalogue lists 20 downloadable open films and labels each item with its licence; it includes Blender open films and a CC0 feature. Review each title's exact licence, attribution, share-alike and territory implications before onboarding: https://www.thestudio.io/osvideo/.
+3. **Public-domain candidates:** Wikimedia Commons and Internet Archive have film collections, but a website label or uploader declaration is not enough. Copyright is territorial, restorations/soundtracks may have separate rights, and Archive.org says it cannot guarantee uploader-supplied rights claims. Check every title for Ghana (and any other launch territory), exact edition, soundtrack, subtitles and source file before use: https://commons.wikimedia.org/wiki/Category:Films_in_the_public_domain and https://archivesupport.zendesk.com/hc/en-us/articles/360014759692-Rights.
+4. **Distributor catalogues:** Use one catalogue request to a distributor rather than contacting every filmmaker individually. Okada Media describes itself as a pan-African film sales/distribution company with a catalogue available for licensing: https://www.okadamedia.com/. This is a licensing route, not free content or a confirmed partnership. Other possible catalogues include Alternativa Distribution (https://alternativa.film/distribution) and Organized Khaoz (https://organizedkhaozgh.com/).
+
+### Open-film candidate slate to inspect first
+
+The Studio's OS Video page lists the following open titles and downloadable masters. This is a **candidate list, not a claim that Cinema has already acquired or published them**. Before adding each one, capture the actual source file, exact licence page/version, required credit, territory review, age/classification review, checksum, and successful Cinema playback test.
+
+| Candidate | Format / length shown by source | Licence shown by source |
+|---|---:|---|
+| Biscuit: From Stray Dog to Superhero | 60 sec | CC BY 4.0 |
+| Steamboat Willie | 7 min 41 sec | Public domain claim on source; verify Ghana status |
+| Elephants Dream | 11 min | CC BY 2.5 |
+| Big Buck Bunny | 9 min 56 sec | CC BY 3.0 |
+| Sintel | 14 min 48 sec | CC BY 3.0 |
+| Sita Sings the Blues | 82 min | CC0 claim on source; inspect underlying music/edition notes |
+| Tears of Steel | 12 min 14 sec | CC BY 3.0 |
+| Cosmos Laundromat | 12 min 10 sec | CC BY 3.0 |
+| Caminandes: Llama Drama | 1 min 30 sec | CC BY 3.0 |
+| Caminandes: Gran Dillama | 2 min 26 sec | CC BY-SA 3.0 |
+| Caminandes 3: Llamigos | 2 min 30 sec | CC BY 3.0 |
+| Glass Half | 3 min 13 sec | CC BY 3.0 |
+| Agent 327: Operation Barbershop | 3 min 51 sec | CC BY 3.0 |
+| Hero | 3 min 57 sec | CC BY 3.0 |
+| The Daily Dweebs | 1 min | CC BY 3.0 |
+| Spring | 7 min 44 sec | CC BY 3.0 |
+| Coffee Run | 3 min 4 sec | CC BY 3.0 |
+| Sprite Fright | 10 min 30 sec | CC BY 3.0; review suitability/classification |
+| Charge | 4 min 23 sec | CC BY 3.0 |
+| Wing It! | 3 min 58 sec | CC BY 3.0 |
+
+The IndieFilm Network's public library currently lists 70 independent films and labels items as Creative Commons, public domain or IFN-licensed. It is a **discovery lead only**: the source page's country breakdown does not show Ghanaian titles, and IFN-licensed items are not automatically sublicensable to Cinema. Check each item and contact the rights holder/IFN only where the licence does not already grant the required reuse: https://www.theindiefilmnetwork.com/films.
+
+**Important distinction:** free-to-watch does not mean free-to-rehost, embed, redistribute or commercially use. YouTube/Vimeo/third-party players may only be embedded where the rights holder and platform terms allow the intended Cinema experience. Prefer a creator-authorised MP4/HLS master or a licence-compliant direct source. Do not mirror or hotlink files in a way that violates the source terms.
+
+## 3. How to reach 40–100 without mass cold-emailing
+
+- Publish one clear creator call on Cinema's website and approved social channels: “Have a film, series, documentary or original programme you own? Submit it to Cinema.”
+- Ask schools, universities, film clubs, youth media programmes and community arts groups to share the submission page; they can distribute one link instead of handling individual title enquiries.
+- Invite creators to submit a whole slate through one form, not one email per title.
+- Offer a simple non-exclusive pilot with no upfront fee promised; explain the actual benefits Cinema can deliver (a watch page, proper credits, audience reporting when available, and promotion only where agreed).
+- Use one distributor catalogue request to ask for a list of titles, territories, rights windows, technical formats and minimum commercial terms.
+- Create a referral route so a filmmaker can invite another rights holder. Do not pay referral fees unless an adult-reviewed written programme exists.
+- Keep a weekly rights-and-playback review queue. Do not publish unverified submissions just to reach the number.
+
+## 4. What Cinema is offering
 
 Cinema is building a digital entertainment home where viewers can discover and watch stories across movies, series, documentaries and other authorised programming.
 
@@ -31,7 +84,7 @@ For an initial content partner, propose a **small, non-exclusive pilot**:
 
 Commercial terms should be discussed title by title. Cinema should not promise an upfront licence fee or revenue share until the business has agreed funding, delivery costs, reporting rules and payment responsibilities in writing.
 
-## 3. First outreach email
+## 5. First outreach email
 
 **Subject:** Content Distribution Partnership Enquiry — Cinema
 
@@ -52,11 +105,11 @@ Cinema — Experience the World of Stories
 
 *Before sending: have a trusted adult/teacher review and co-sign the outreach. Do not share personal contact details, identity documents, passwords or private account information.*
 
-## 4. Short first-contact message
+## 6. Short first-contact message
 
 Hello. I’m working on Cinema, a digital entertainment platform focused on bringing stories and authorised programmes together in one destination. I’m reaching out to ask who handles your content licensing or digital distribution enquiries. We would like to explore a small, non-exclusive pilot for selected titles. Thank you.
 
-## 5. Partner discovery list
+## 7. Partner discovery list
 
 These are starting points for a supervised business enquiry, not confirmed partners or endorsements.
 
@@ -70,7 +123,7 @@ These are starting points for a supervised business enquiry, not confirmed partn
 | AMCOD (Nigeria) | Industry association for movie content owners, producers and distributors, listed in the NFVCB directory. | moviecontentowners@gmail.com · https://nfvcb.gov.ng/associations |
 | Film Distributors Association of Nigeria | Industry association listed by NFVCB; ask the association to confirm the current licensing contact. | https://nfvcb.gov.ng/associations |
 
-## 6. Rights checklist — do not publish until complete
+## 8. Rights checklist — do not publish until complete
 
 For every title, record and verify:
 
@@ -88,7 +141,7 @@ For every title, record and verify:
 
 A submission form or checkbox is not independent proof of rights. A trailer, public web link or YouTube upload does not prove Cinema has permission to stream the full programme.
 
-## 7. Regulatory checks before launch
+## 9. Regulatory checks before launch
 
 **Ghana:** The National Film Authority publishes licensing categories that include VOD streaming platforms/film libraries and states that films intended for public exhibition online require classification. Cinema must obtain current, qualified guidance on which licences and classification steps apply to its exact operating model before making titles available to the public. Official starting points: https://nfa.gov.gh/apply-for-film-license/ and https://nfa.gov.gh/film-classification-procedure/.
 
@@ -96,7 +149,7 @@ A submission form or checkbox is not independent proof of rights. A trailer, pub
 
 These are regulatory flags, not legal advice. Requirements and fees can change. A trusted adult and a qualified Ghanaian/Nigerian legal or regulatory adviser must verify the current position before any public launch, agreement or payment.
 
-## 8. First-pilot acceptance test
+## 10. First-pilot acceptance test
 
 A title is ready only when all are true:
 
@@ -110,7 +163,7 @@ A title is ready only when all are true:
 - [ ] Sponsor/advertising permissions explicitly agreed or marked not permitted.
 - [ ] Launch approval recorded by an authorised Cinema reviewer.
 
-## 9. What Cinema should measure in the pilot
+## 11. What Cinema should measure in the pilot
 
 Report only metrics Cinema actually captures and can explain:
 - Title page visits.
@@ -123,7 +176,7 @@ Report only metrics Cinema actually captures and can explain:
 
 Do not sell personal viewer data. Do not present impressions, views or projected sponsor value as money earned. Any revenue share, fee or sponsorship payment must be defined in a signed agreement and recorded only when actually due or received.
 
-## 10. Immediate sequence
+## 12. Immediate sequence
 
 1. Ask a trusted adult/teacher to review this pack and help supervise all external contact.
 2. Confirm Cinema's regulatory position with the Ghana NFA before public exhibition.
