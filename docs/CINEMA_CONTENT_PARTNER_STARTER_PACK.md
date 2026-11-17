@@ -348,3 +348,58 @@ The Ghana National Film Authority says VOD streaming platforms / film libraries 
 - https://nfa.gov.gh/apply-for-film-license/
 - https://nfa.gov.gh/2025/04/12/national-film-authority-re-echoes-film-classification-requirement-film-producer-licence-mandatory-for-classification-from-may-1-2025/
 - https://nfa.gov.gh/register-your-content/
+
+
+## 18. Expanded Ghana partner route and outreach preparation
+
+Additional official leads researched:
+- **TD Afrique Films** — Ghana-headquartered film/TV production company; public contact enquiries@tdafilms.com; https://www.tdafilms.com/contact/
+- **Revele Films** — Ghanaian film/TV producer; public contact info@revelefilms.com; public slate includes Home Sweet Home New Generation, A Letter to God, Osofagus, Dirty Pretty Secrets, Accra Medic and Ahenfie; https://www.revelefilms.com/
+- **Okada Media** — African film sales/distribution company with a catalogue and title licensing route; https://www.okadamedia.com/distribution/ . Its public submission form is intended for rights holders submitting their own completed productions for distribution consideration, not a general buyer enquiry. Use the official contact channel to ask about platform licensing and catalogue availability; do not submit Cinema as if it owns film rights.
+- **RAIYA** — Ghanaian production/distribution company; public work includes film, documentary, short-form and streaming-related production capabilities; https://raiya.org/
+
+### Additional titles surfaced for future rights enquiries
+
+Organized Khaoz public slate includes:
+- Detor: The Rise of a Warrior Hunter
+- Captain's Corner
+- Café Love
+- Therapy
+- Blackmail
+- Long Goodbye
+- 3 Hungry Birds
+- CID Jon Two
+- 14:32
+
+Some are already available through third-party platforms or YouTube. That means Cinema must ask which territories/windows/platform rights remain available; an existing release does not prove that the producer can grant a new licence.
+
+Okada Media's public distribution catalogue includes titles such as:
+- 40 Sticks
+- A Grand Little Lie
+- All the Colours of the World are Between Black and White
+- Almost Somali
+- Atoka
+- Binti
+- Black Dollar
+- Disconnect
+- Dynamite
+- For Maria Ebun Pataki
+- Married to Work
+- Nyara: The Kidnapping
+- Price of Love
+- Sincerely Daisy
+- The Christmas Run
+
+These are catalogue examples only. The distributor's public catalogue does not itself show that a Ghana/West Africa licence is available to Cinema; ask about rights availability and minimum commercial terms.
+
+### Outreach status update
+
+Draft enquiry messages are prepared for:
+- Onyx Vision Studio
+- SpotDetail
+- Organized Khaoz
+- TD Afrique Films
+- Revele Films
+- France 24 distribution
+
+They are saved as drafts only and have not been sent. No contact has agreed to a meeting, partnership, licence or revenue share. Okada Media's official submission page is not the correct form for Cinema to use as a buyer; a licensing enquiry should be made through its official contact route after adult review.
