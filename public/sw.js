@@ -1,5 +1,3 @@
-const CACHE_NAME = "cinema-shell-v1";
-
 // Keep navigation and authenticated API/media requests network-first.
 // This worker enables installation without caching private account data,
 // playback URLs, or licensed media on a shared device.
