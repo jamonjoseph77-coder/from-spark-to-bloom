@@ -60,11 +60,14 @@ export function toEmbedUrl(value: string, options: { autoplay?: boolean; muted?:
     const muted = options.muted ? '1' : '0';
     if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) {
       const id = parsed.searchParams.get('v') || parsed.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/)?.[1];
-      return id ? `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}&controls=0&disablekb=1&modestbranding=1&iv_load_policy=3` : null;
+      if (!id) return null;
+      const embedHost = host.includes('youtube-nocookie.com') ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
+      // Keep YouTube's standard controls and keyboard functionality intact.
+      return `${embedHost}/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}`;
     }
     if (host === 'youtu.be') {
       const id = parsed.pathname.slice(1).split('/')[0];
-      return id && /^[\w-]{6,}$/.test(id) ? `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}&controls=0&disablekb=1&modestbranding=1&iv_load_policy=3` : null;
+      return id && /^[\w-]{6,}$/.test(id) ? `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&autoplay=${autoplay}&mute=${muted}` : null;
     }
     if (host === 'vimeo.com' || host === 'www.vimeo.com' || host === 'player.vimeo.com') {
       const id = parsed.pathname.split('/').filter(Boolean).pop();
