@@ -403,3 +403,99 @@ Draft enquiry messages are prepared for:
 - France 24 distribution
 
 They are saved as drafts only and have not been sent. No contact has agreed to a meeting, partnership, licence or revenue share. Okada Media's official submission page is not the correct form for Cinema to use as a buyer; a licensing enquiry should be made through its official contact route after adult review.
+
+
+## 19. Multi-format catalogue strategy — stories beyond feature films
+
+Cinema must not build its catalogue around feature films alone. Treat the product as a broad digital entertainment home, with each format having its own supply route, rights checklist, refresh rhythm and playback type.
+
+### Content lanes to build in parallel
+
+| Lane | What belongs here | Best initial supply route | Freshness target |
+|---|---|---|---|
+| TV series & episodic entertainment | Drama, comedy, telenovelas, youth/family series, factual series | Producers, distributors, broadcasters and dubbed-programme distributors | New episode/season additions as rights and delivery allow; catalogue reviewed monthly |
+| Documentaries & factual | Ghanaian culture/history, nature, science, business, people, investigations and explainers | Documentary producers, universities, NGOs, public institutions and authorised distributors | New releases and topical collections reviewed weekly; evergreen catalogue monthly |
+| News & current affairs | Licensed live news channels, authorised clips, explainers and news programmes | Broadcasters and news syndication desks | Daily feed checks only after written distribution/embedding rights; otherwise link to official publisher |
+| Sports | Licensed live channels, federation/league content, interviews, analysis and official highlights | Rights holders, federations, clubs, broadcasters and authorised sports distributors | Event-led schedule; rights windows and blackout rules checked for every competition |
+| Live television | Full linear channels with schedule/EPG, including local and international channels | Broadcasters, channel aggregators and authorised FAST/linear channel distributors | Continuous delivery monitoring, EPG updates and monthly carriage review |
+| Shorts & creator programmes | Short films, comedy sketches, interviews, creator series, educational explainers and behind-the-scenes stories | Direct creator submissions and verified production collectives | Weekly creator intake; publish only after review |
+| Animation, kids & family | Animation shorts/series, educational programmes and family-safe factual content | Animation studios, educational producers and rights-cleared libraries | Monthly catalogue review; age classification and child-safety checks before publication |
+| Culture, music & events | Performances, festivals, food, travel, arts, heritage and event coverage | Event organisers, cultural institutions, artists and production companies | Event calendar reviewed weekly; performance/music rights checked separately |
+
+These are operating targets, not promises that every lane will be live on day one. A category should appear as playable only when Cinema has a real, authorised source and the product can deliver it reliably.
+
+### Catalogue balance — first planning mix
+
+For a first 40–100 programme target, use a balanced working mix rather than treating every entry as a feature film:
+
+- 20–25% series and episodic programmes.
+- 15–20% documentaries and factual programmes.
+- 15–20% short-form and creator programmes.
+- 10–15% sports-related programmes and authorised highlights.
+- 10–15% news/current-affairs and live-channel programming.
+- 10–15% animation, family, culture and educational programmes.
+- Remaining slots for feature films and special/event programming.
+
+Percentages are planning guidance and may overlap for hybrid formats. Do not count individual episodes as separate titles if that would inflate the catalogue; report both programme/series count and episode count.
+
+### Freshness rules — what “up to date” means
+
+1. **News:** only describe a feed as live/current when it is an authorised, working broadcaster feed. Record last successful check and feed owner. A news article or clip must show its original publication date and source.
+2. **Sports:** show event date, competition, rights owner and whether the item is live, replay, highlights or analysis. Never promise a live match based only on a public YouTube clip or a channel listing.
+3. **Series:** show season and episode number, original release date and Cinema availability date. Avoid presenting a season as complete when episodes are missing.
+4. **Documentaries/factual:** distinguish newly released from evergreen. Add a “recently added” date only when it is genuinely new to Cinema.
+5. **Shorts/creator programmes:** use creator-supplied release date and a regular weekly intake/review process.
+6. **Live channels:** monitor stream health and EPG/schedule accuracy; remove or mark unavailable when the authorised feed fails or rights expire.
+
+Every content record should have: format, original release date, Cinema-added date, source/rights holder, territory, permitted platform, licence start/end, freshness/last-checked date, content rating, playback type, last successful playback test and expiry/removal action.
+
+## 20. Additional multi-format partner and supply routes
+
+The following are newly researched discovery routes. They are not partners, licences, available feeds or confirmed commercial offers. Contact details and catalogue claims should be rechecked before any outreach.
+
+| Organisation | Relevant supply lane | What the public source confirms | Cinema enquiry / caution |
+|---|---|---|---|
+| Broadcast Media Africa — Content Hub | Series, documentaries, reality, kids and films; wider African audiovisual catalogue | Its Content Hub presents itself as an African B2B marketplace for discovering, connecting, licensing and using audiovisual content, with catalogue search by title, genre and country. | https://contenthub.broadcastmediaafrica.com/ — ask about buyer registration, catalogue access, Ghana rights and whether low/no-upfront pilot terms exist. A marketplace listing is not a licence. |
+| MultiChoice Studios | African series, documentaries and films | Its public FAQ describes a content sales/distribution arm and a catalogue of approximately 73,000 hours; content licensing cost depends on the rights required. | https://www.multichoicestudios.com/ — ask for buyer/distributor onboarding and a catalogue of titles available for Ghana. Do not assume the entire catalogue or live sports rights are included. |
+| taGhana | Ghanaian culture, places, people, photography and film | Its official contact page says it tells Ghana’s stories through locally created photography and film and accepts licensing enquiries for Ghanaian images and films. | info@taghana.com · +233 245 111 212 · https://taghana.com/contact — potential source for short factual/cultural films and visual stories; ask about full audiovisual works, runtime and platform rights. |
+| inGenius Africa | TV series, documentaries, commercials and media production | Accra Chamber of Commerce lists its capabilities in TV/film production, series, documentaries, acquisition and distribution. | info@ingeniusafrica.com · +233 248 920 979 / +233 244 715 526 · https://accrachamber.org/ingenius-africa/ — ask for completed catalogue and rights-controlled titles; directory listing is not proof of availability. |
+| Klearvision | Dubbed series/telenovelas and content distribution | Its official site says it dubs English programming into Akan/Twi, Hausa, Ga and Swahili and distributes dubbed programming through partner TV stations, digital platforms and streaming services. | https://www.klearvisiongh.com/ — ask whether it represents/licences any completed dubbed programmes or only provides localisation/distribution services. Dubbing rights and underlying programme rights must both be clear. |
+| View Africa Television (VATV) | TV channels, OTT/IPTV and possible content collaboration | Its official site describes DTT, DTH, FTA, OTT and IPTV services and publishes a Ghana office and a content-acquisition department contact. | content@viewatv.com; Ghana office +233 54 716 4376; vatv.ghana@viewtv.com; https://www.viewatv.com/contact/ — ask about channel carriage, content licensing, approved integration and Ghana rights. Do not treat its channel list as permission to relay feeds. |
+| SoFast | FAST channels, local channels, news, sports, documentaries, series and VOD | Its catalogue page advertises a large rights-cleared channel and VOD aggregation offer with territory-specific licensing and technical delivery. | https://www.sofast.tv/catalogue/ — potentially broad but likely a commercial supplier, not a free-content route. Ask for Ghana availability, minimum fees, contract term and technical costs before spending time on integration. |
+| FAST Channels TV | FAST linear channels across news, sports, documentaries, lifestyle and entertainment | Its distribution page describes channel licensing for OTT/IPTV operators and says territory, rights and commercial terms vary by channel. | https://fastchannels.tv/fast-channel-distribution — discovery route only; ask for Ghana-specific channel list and total cost. Not a free supply assumption. |
+| Zacu Entertainment | African originals, films, series and documentaries | Its site describes a pan-African slate and invites co-production/distribution partnerships and story pitches. | content@zacuentertainment.com / info@zacuentertainment.com · https://zacuentertainment.com/ — ask about completed titles and rights windows, not only future projects. |
+
+### Supplier priority — practical order
+
+1. **Start with direct Ghanaian creators and producers** for shorts, documentaries, interviews, factual programmes and episodic series. These are easier to assess title by title and can create a distinct local catalogue.
+2. **Approach catalogue marketplaces and established distributors** for breadth across series, documentaries and African programmes. Request catalogue exports and Ghana rights availability before selecting titles.
+3. **Ask broadcasters and channel aggregators about live/linear channels** as a separate technical and commercial workstream. Do not build a Cinema live-TV page around unlicensed public streams.
+4. **Use dubbing/localisation suppliers** only when Cinema has the underlying programme rights or the supplier can prove it has authority to license both the programme and dubbed version.
+5. **Use open-licensed/public-domain candidates as a supplement**, not as the main catalogue strategy. They can help fill animation, education and evergreen documentary shelves, but every item still needs exact rights review.
+
+### What to request from every supplier
+
+Ask for one current catalogue spreadsheet or portal export containing: title/programme, format, genre, country, language, runtime/episode count, original release date, synopsis, rating, available territories, platform rights, live/VOD status, licence window, exclusivity, technical delivery method, captions/subtitles, artwork, commercial terms and contact for rights verification.
+
+For live channels, additionally request: authorised stream protocol/delivery method, EPG, uptime/SLA, blackout rules, geo-blocking, ad-insertion responsibilities, channel branding requirements, monitoring process and termination procedure.
+
+For news and sports, require explicit rights scope for live transmission, clips/highlights, archive footage, event/competition, territory, dates and sponsor/advertising treatment. Do not assume a general “content partnership” covers all these rights.
+
+### No-money constraint — commercial filter
+
+Cinema should first ask whether a supplier will consider a small non-exclusive pilot with no upfront minimum guarantee, a deferred licence fee, a clearly defined revenue share, a free official embed, or a limited promotional collaboration. These are negotiation questions, not entitlements. If the answer is no or the supplier requires unaffordable minimum guarantees, record the route as “not currently viable” and move on. Do not sign a fee, promise payments, or commit Cinema to a minimum guarantee without adult-led review and a confirmed funding plan.
+
+## 21. Current research references
+
+- BMA Content Hub catalogue: https://contenthub.broadcastmediaafrica.com/
+- MultiChoice Studios FAQ: https://www.multichoicestudios.com/faq
+- taGhana licensing/contact: https://taghana.com/contact
+- inGenius Africa profile: https://accrachamber.org/ingenius-africa/
+- Klearvision content distribution and localisation: https://www.klearvisiongh.com/
+- VATV content acquisition contact: https://www.viewatv.com/contact/
+- SoFast catalogue: https://www.sofast.tv/catalogue/
+- FAST Channels TV distribution: https://fastchannels.tv/fast-channel-distribution
+- Zacu Entertainment partnerships: https://zacuentertainment.com/
+- Ghana National Film Authority licensing: https://nfa.gov.gh/apply-for-film-license/
+
+Research date: 17 November 2026. Catalogue size, contact details, rights availability, technical terms, prices and territories can change. Reconfirm directly before relying on any listing.
