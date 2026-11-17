@@ -6,7 +6,7 @@ import { AdminGate } from '@/components/admin/AdminGate';
 import { TitleForm } from '@/components/admin/TitleForm';
 import { SeasonManager } from '@/components/admin/SeasonManager';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-import { BUTTON_GHOST, BUTTON_PRIMARY, CARD, PAGE_CONTAINER } from '@/components/ui/styles';
+import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER } from '@/components/ui/styles';
 import { deleteTitle, fetchAllTitles, fetchTitleDetail, hasPlayableTitleSource, saveTitle, setTitleFlags } from '@/lib/library';
 import { navigateTo } from '@/lib/router';
 import { TITLE_TYPE_LABELS, type Title, type TitleInput } from '@/lib/types';
