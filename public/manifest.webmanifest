@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "Cinema — Experience the World of Stories",
+  "short_name": "Cinema",
+  "description": "Discover and experience the world of stories with Cinema.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#030407",
+  "theme_color": "#03070d",
+  "icons": [
+    {
+      "src": "/cinema-icon.png",
+      "type": "image/png",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}
