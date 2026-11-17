@@ -38,6 +38,7 @@ type ExploreEntry =
 interface ExploreData {
   posts: LetterboxPost[];
   clips: DiscoverClip[];
+  allClips: DiscoverClip[];
   trailers: TmdbTrailer[];
   postsUnavailable: boolean;
   clipsUnavailable: boolean;
@@ -50,20 +51,20 @@ async function loadExploreData(): Promise<ExploreData> {
     fetchDiscoverTrailers(2),
   ]);
   const posts = postsResult.status === 'fulfilled' ? postsResult.value : [];
-  const clips = clipsResult.status === 'fulfilled'
-    ? clipsResult.value.filter((clip) => {
+  const allClips = clipsResult.status === 'fulfilled' ? clipsResult.value : [];
+  const clips = allClips.filter((clip) => {
       const playable = Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url)));
       // Keep approved Shorts in the dedicated Shorts shelf so the same video
       // is not repeated in both the vertical feed and the mixed Explore timeline.
       if (clip.kind === 'short') return false;
       if (clip.kind === 'clip') return isPlayableShort(clip);
       return playable;
-    })
-    : [];
+    });
   const trailers = trailersResult.status === 'fulfilled' ? trailersResult.value : [];
   return {
     posts,
     clips,
+    allClips,
     trailers,
     postsUnavailable: postsResult.status === 'rejected',
     clipsUnavailable: clipsResult.status === 'rejected',
@@ -170,13 +171,13 @@ export function ExploreTimeline() {
       return created;
     };
     (titles ?? []).forEach((title) => { const channel = ensure(title.publisher ?? ''); if (channel) channel.titleCount += 1; });
-    (data?.clips ?? []).forEach((clip) => { const channel = ensure(clip.publisher_name ?? ''); if (channel) channel.videoCount += 1; });
+    (data?.allClips ?? []).forEach((clip) => { const channel = ensure(clip.publisher_name ?? ''); if (channel) channel.videoCount += 1; });
     (verifiedStudios ?? []).forEach((studio) => {
       const channel = ensure(studio.studio_name);
       if (channel) { channel.verified = true; channel.logoUrl = studio.logo_url; }
     });
     return [...byName.values()].sort((a,b) => Number(b.verified)-Number(a.verified) || (b.titleCount+b.videoCount)-(a.titleCount+a.videoCount) || a.name.localeCompare(b.name));
-  }, [titles, data?.clips, verifiedStudios]);
+  }, [titles, data?.allClips, verifiedStudios]);
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
