@@ -257,3 +257,17 @@ Official technical and policy references:
 **Cinema product decision:** classify these items as `external_platform_embed`, not `cinema_hosted`. Store the canonical YouTube video/channel identifiers, official source URL, rights-holder verification notes, embed-enabled check date, Made for Kids status, age/suitability review, territory notes and last playback test. Keep YouTube playback visually and technically distinct from Cinema-hosted licensed titles. Do not count an embed as a title with Cinema-controlled playback or as a Cinema monetised title.
 
 **Broadcasters and live feeds:** the same principle applies to Al Jazeera, DW, France 24, Africanews and local TV stations. A public live page is evidence that the broadcaster offers a stream to viewers, not proof that Cinema may syndicate, repackage, monetise or embed it in its own app. Obtain the broadcaster's written permission or published syndication licence for Cinema's exact platforms, territories, ad/sponsor treatment and usage window before integration. Until then, link to the official live page rather than re-streaming or presenting it as a Cinema channel.
+
+
+## 16. Specific official-channel and broadcaster leads to evaluate
+
+These are concrete public sources for supervised discovery. They are not Cinema partners, rights grants, or approved catalogue entries.
+
+| Lead | What is publicly verifiable | What Cinema must do next |
+|---|---|---|
+| IBAKATV (Nigeria) — official YouTube channel | YouTube identifies the channel as verified and its channel description presents it as a destination for Nollywood films and series: https://www.youtube.com/@ibakatv1 | Review individual uploads only. Confirm the channel controls the exact film, that embedding is enabled, that the video is playable in Ghana, and that Cinema's use complies with YouTube policy. For a direct distribution deal, ask the actual rights holder for a separate written licence. |
+| Africanews Live TV | Africanews maintains an official live-TV page and describes its channel as a 24/7 service: https://www.africanews.com/live/ | This confirms a public official viewing destination, not a right for Cinema to syndicate or repackage the live channel. Request written digital distribution/embedding permission for web, mobile and TV, Ghana territory, and any sponsorship treatment. |
+| France 24 distribution | France 24's official Ghana viewing information lists its distribution contact as distribution@france24.com: https://howtowatch.france24.com/en/country/ghana/ | An adult-supervised enquiry can ask whether a digital platform may obtain an authorised live feed or embed/syndication licence in Ghana. Do not treat the public live stream as a grant. |
+| Official sports highlights | Official CAF, FIFA, federation and club channels publish selected highlights and clips on their own platforms. | Use the original official player only where embedding is enabled and platform rules permit it. For Cinema-hosted clips, match footage or live event coverage, obtain a separate rights grant from the relevant competition/rights holder. |
+
+**First practical pilot mix:** pursue one or two locally controlled film titles through a direct non-exclusive pilot, while separately testing a small number of official-platform embeds as clearly labelled external playback. Keep live news and sports feeds in a rights-enquiry queue until the relevant broadcaster or competition grants written permission. This avoids mistaking a link or a public video for a licensed Cinema catalogue.
