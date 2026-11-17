@@ -578,3 +578,33 @@ No unverified title should be marked "available". Use "lead identified", "catalo
 - Africa Creative Content: https://africacreativecontent.tv/contact/
 
 All entries are prospect leads, not confirmed suppliers. Reconfirm public contact details and rights availability before relying on them.
+
+
+## 24. Additional non-film-only distribution prospects
+
+These additional organisations broaden the supplier map toward documentaries, factual programmes, animation, midforms and short-form works. They are prospect leads only; no content is acquired.
+
+| Organisation | Publicly described catalogue / role | Official route | Best Cinema enquiry |
+|---|---|---|---|
+| Afrika Bizizi Distribution | African narrative fiction, documentaries and animation distributed to cinemas, television and streaming platforms. | contact@afrikabizizidistribution.com · https://www.afrikabizizidistribution.com/About/ | Request a current buyer catalogue and Ghana/West African OTT rights availability. |
+| Quintus Studios / Quintus Distribution | Represents hundreds of hours of factual content and offers midforms, shorts, co-productions and pre-sales. | anouk.vandijk@quintusstudios.com · https://www.quintusstudios.com/quintus-distribution | Ask for factual/documentary catalogue, Ghana rights, platform rights, licence windows and buyer onboarding. |
+| MultiChoice Studios | Content sales/distribution arm with a large catalogue of African originals, series, documentaries, shorts and films. | https://www.multichoicestudios.com/faq | Ask how a young digital platform can qualify as a content buyer/distributor; its FAQ says registered broadcasters/distributors receive enhanced catalogue access and prices depend on rights required. |
+| True Continent | African documentary aggregator and sales agency; its public filmmaker page describes non-exclusive submissions and sales to broadcasters/institutions. | https://truecontinent.com/filmmakers | Potential rights-holder/aggregator route; verify whether it is currently operational and whether it can license catalogue titles to third-party platforms. |
+| Africa Live Network | Publicly invites partnership and content submissions for African films, documentaries, series, podcasts and live events. | partners@africalivenetwork.tv · info@africalivenetwork.tv · https://africalivenetwork.tv/home/Contact | Ask whether it owns/represents finished programmes for licensing or is primarily a publisher/platform seeking submissions. |
+
+### Important qualification checks
+
+- MultiChoice Studios' public FAQ describes buyer access and rights-dependent costs. Cinema must ask about eligibility and commercial terms; do not assume the catalogue is free or immediately accessible.
+- True Continent's public site says its streaming platform is planned for 2027. Treat it as a potential sales/aggregation contact, not as a currently operating content library.
+- Africa Live Network's public page invites submissions and partnerships, but its business model and rights authority for any specific work must be confirmed.
+- Afrika Bizizi Distribution's catalogue and territory rights must be checked title by title.
+- Quintus catalogue descriptions are not a guarantee that any particular title is available in Ghana.
+
+### Outreach status addendum — 17 November 2026
+
+Additional drafts created for adult review:
+- Afrika Bizizi Distribution — African documentary, animation and series licensing.
+- Quintus Studios — factual, documentary and short-form catalogue.
+- TD Afrique Films — alternate contact shown on its official site (enquiries@tdafilm.com) after the footer address (enquiries@tdafilms.com) returned SMTP 550 5.1.1.
+
+These are drafts only. No additional messages were sent.
