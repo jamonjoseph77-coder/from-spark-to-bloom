@@ -101,7 +101,6 @@ export async function linkStudioSubmissionToTitle(submissionId: string, titleId:
     .from('studio_title_submissions')
     .update({ published_title_id: titleId, updated_at: new Date().toISOString() })
     .eq('id', submissionId)
-    .eq('content_type', 'series')
     .eq('status', 'approved');
   if (error) throw error;
 }
