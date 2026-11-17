@@ -230,3 +230,30 @@ Public discovery sources:
 A notable example for a possible local pilot is *Quiet*, a Ghanaian short listed by Onyx Vision Studio and featured by TNC Africa. Its director and producer credits appear in public film listings, but Cinema must confirm the current rights holder and all relevant permissions directly before considering it. This is a **specific licensing enquiry lead**, not an acquired title.
 
 All enquiries, meetings, agreements and delivery of private materials must be supervised by a trusted adult. Do not send personal identification documents, private addresses, passwords or sensitive information.
+
+
+## 15. YouTube embeds — useful discovery and viewing, not Cinema's monetisation engine
+
+Official YouTube embeds may be a low-cost way to make selected creator-authorised videos playable while Cinema builds its own licensed catalogue. This is a separate delivery lane from hosting an authorised MP4/HLS master. Do not treat every public YouTube upload as a rights grant: verify the uploader/channel is the rights holder or authorised distributor, confirm embedding is enabled, and check whether the exact film's rights and territory permit the intended use.
+
+**Important commercial limitation:** YouTube's published help page says only YouTube and the video owner earn revenue from ads on embedded videos; the third-party site/app embedding the player does not receive a share. A creator may receive YouTube revenue under their own monetisation arrangements, but Cinema must not promise that YouTube embed views will fund Cinema or create a Cinema-to-creator revenue split. Source: https://support.google.com/youtube/answer/132596.
+
+**Player and policy requirements to design around:**
+- Use the official YouTube embedded player / IFrame Player API; do not download, rehost, extract, strip ads from, or alter YouTube audiovisual content.
+- Keep the player and its normal controls, branding, metadata and ad experience intact. Do not place Cinema UI over player controls or make the experience misleadingly look like a native Cinema-hosted film.
+- Do not charge viewers to watch a YouTube-embedded video or add a video-specific gate beyond pressing play. Do not incentivise or reward views, likes, shares or subscriptions.
+- Ensure the embed has the required visible player size, correct HTTP Referer context and API identity; a missing Referer can cause playback error 153.
+- Check Made for Kids status and apply the required data-collection/privacy handling. If Cinema is designed for children, complete YouTube's required child-directed-app designation before embedding.
+- Age-restricted videos may not play on third-party sites. Keep a fallback link to the official YouTube page where permitted.
+- Avoid autoplay by default; if later enabled, follow YouTube's visibility and single-autoplay-player requirements.
+- Do not sell sponsorships or promotions placed on/within YouTube audiovisual content or the YouTube player without YouTube's prior written approval. A separate Cinema sponsorship around the title needs careful separation from the player and rights-holder permission; do not imply it is allowed without checking policy.
+
+Official technical and policy references:
+- YouTube API Services Developer Policies: https://developers.google.com/youtube/terms/developer-policies
+- Developer policy compliance guide: https://developers.google.com/youtube/terms/developer-policies-guide
+- Embedded player and IFrame API parameters: https://developers.google.com/youtube/player_parameters
+- Official embed help and age-restriction / Referer notes: https://support.google.com/youtube/answer/171780
+
+**Cinema product decision:** classify these items as `external_platform_embed`, not `cinema_hosted`. Store the canonical YouTube video/channel identifiers, official source URL, rights-holder verification notes, embed-enabled check date, Made for Kids status, age/suitability review, territory notes and last playback test. Keep YouTube playback visually and technically distinct from Cinema-hosted licensed titles. Do not count an embed as a title with Cinema-controlled playback or as a Cinema monetised title.
+
+**Broadcasters and live feeds:** the same principle applies to Al Jazeera, DW, France 24, Africanews and local TV stations. A public live page is evidence that the broadcaster offers a stream to viewers, not proof that Cinema may syndicate, repackage, monetise or embed it in its own app. Obtain the broadcaster's written permission or published syndication licence for Cinema's exact platforms, territories, ad/sponsor treatment and usage window before integration. Until then, link to the official live page rather than re-streaming or presenting it as a Cinema channel.
