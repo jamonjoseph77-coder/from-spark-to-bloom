@@ -499,3 +499,82 @@ Cinema should first ask whether a supplier will consider a small non-exclusive p
 - Ghana National Film Authority licensing: https://nfa.gov.gh/apply-for-film-license/
 
 Research date: 17 November 2026. Catalogue size, contact details, rights availability, technical terms, prices and territories can change. Reconfirm directly before relying on any listing.
+
+
+## 22. Expanded Ghana broadcaster and production outreach map
+
+The National Communications Authority (NCA) Q2 2026 authorised-stations register is now the starting index for Ghana TV-channel prospecting. It records 170 authorised TV operators and 124 currently broadcasting. Authorisation is not proof that a station has an OTT feed, is willing to distribute on Cinema, or owns all programmes it airs.
+
+### Broadcaster targets — approach rights/programming teams, not just general reception
+
+| Target | Verified public route | Potential Cinema discussion | Caution |
+|---|---|---|---|
+| Ghana Broadcasting Corporation (GBC) — GTV, GTV 24, GTV Sports Plus, GTV Life | https://gbcghanaonline.com/ (use official corporate contact route) | Channel carriage, selected programmes, archives, documentaries and public-interest content | Separate channel carriage from individual programme licensing; clarify archive rights and sports rights. |
+| TV3 / Media General | https://www.mediageneralgh.com/ | Entertainment, current affairs, series, reality/factual programmes, news clips and possible channel partnership | Request a named content-acquisition/OTT contact and exact rights package. |
+| Metro TV | https://metrotvonline.com/ | News, current affairs, talk shows and factual programmes | News clips, live simulcasts and archive footage each need specific rights. |
+| Channel One TV | https://channelonenewsonline.com/contact/ | Current affairs, news programmes, interviews and selected archive packages | Public contact page lists commercial enquiry routes; ask to be directed to content licensing/programming. |
+| Max TV / iMax Media Group | https://max.com.gh/contact-us/ · +233 20 862 3010 / +233 20 862 3389 · info@imaxmediagroupgh.com | Sports, entertainment, telenovela, lifestyle, live TV and radio-related programming | Its site has sports, entertainment and live TV sections, but this does not grant Cinema carriage or programme rights. |
+| View Africa Television (VATV) | content@viewatv.com · vatv.ghana@viewtv.com · +233 54 716 4376 · https://www.viewatv.com/contact/ | Channel distribution, authorised feeds, content licensing and technical integration | Ask for written confirmation of channel ownership/representation, territory, feed protocol, EPG and pricing. |
+| GN Media — GN TV and radio brands | https://thegnmedia.com/pages/contact-form/ · +233 55 962 1711 / +233 24 964 7491 | News, talk, culture, radio simulcasts and programmes | Request correct programming/licensing contact; radio rights differ from TV rights. |
+| Rivers TV | info@riverstelevision.com · +233 24 402 0902 · https://www.riverstelevision.com/ | Pan-African programmes, culture, interviews, current affairs and creator partnerships | Public site describes Accra-based channel; request current schedule, catalogue and rights scope. |
+| Farm House Productions | info@farmhousegh.com · +233 302 78 12 38 / +233 302 961968/9 · https://farmhousegh.com/ | TV series, factual programmes, youth/family formats and completed productions | Public portfolio includes YOLO, Talented Kidz, Inspector Bediako and Heroes of Change; do not assume rights are available or owned by Farm House today. |
+| Africa Creative Content | quintin@africacreativecontent.tv · +27 74 2307298 / +234 70 66486200 · https://africacreativecontent.tv/contact/ | African factual, documentaries and unscripted formats | Public contact lists Ghana, Nigeria and South Africa offices; verify catalogue ownership and Ghana availability. |
+
+### Additional production-company targets
+
+| Company | Public route | Best-fit enquiry |
+|---|---|---|
+| NKACC | production@nkacc.com · +233 242 260 46 / +233 500 006 468 · https://www.nkacc.com/ | Completed documentaries, factual stories, branded content and possible production partnerships. Ask separately about existing finished titles and new commissioned work. |
+| i60 Productions | film@i60productions.com · +233 244 621 051 · https://i60productions.com/ | Scripted/unscripted TV, short films and corporate documentaries; ask for completed work it can license or introduce to rights holders. |
+| APAG Studios | info@apagstudios.com · +233 20 377 4521 · https://www.apagstudios.com/ | Documentaries, TV production and finished short-form factual stories. |
+| Farm House Productions | info@farmhousegh.com · https://farmhousegh.com/ | Episodic and factual catalogue, including youth, family and reality formats. |
+| inGenius Africa | info@ingeniusafrica.com · +233 248 920 979 / +233 244 715 526 · https://accrachamber.org/ingenius-africa/ | TV series, documentaries, business drama and acquisition/distribution introductions. |
+| iMax Media Group | info@imaxmediagroupgh.com · +233 55 846 2088 · https://www.imaxmediagroupgh.com/ | Channel programming, sports/current-affairs production and branded programme formats. |
+
+### NCA register — operational use
+
+Use the official Q2 2026 list at https://nca.org.gh/wp-content/uploads/2026/08/Authorised-TV-Station-Q2-2026.pdf as the verified station universe, not random channel lists. It identifies station names, company names, authorisation categories and on-air/not-on-air status. Start with stations marked ON AIR and ask each operator for:
+- the person responsible for content acquisition, programming or digital distribution;
+- whether it owns, commissions, represents or merely broadcasts each proposed programme;
+- whether it can grant a Ghana-only OTT/VOD licence, live simulcast, catch-up window or archive licence;
+- whether the station itself can grant rights or must refer Cinema to the programme producer/distributor;
+- feed availability, encoding, captions, EPG, geo-restrictions, ad rules, uptime and technical integration;
+- costs, minimum guarantees, rev-share possibilities and contract term.
+
+Do not mass-contact every one of the 170 entries. Prioritise operating stations with relevant programming and a credible contact route. Keep a record of the source date and verify current operation before approaching.
+
+### Response and follow-up process
+
+No outreach method can force an independent organisation to respond. Cinema can improve response odds and accountability without harassment:
+1. Use the correct named department (content acquisition/programming/licensing), not unrelated customer support.
+2. Send a short tailored request with 3–5 precise questions and a one-page Cinema overview.
+3. Where an official phone/WhatsApp or contact form is published, ask for the correct decision-maker and permission to send the catalogue request. Do not repeatedly call personal numbers or message staff outside their published business channel.
+4. Log each contact, date, route, response, referral, follow-up date and status: Not contacted / Sent / Acknowledged / Referred / Catalogue received / Rights review / Terms discussion / Declined / No response.
+5. One polite follow-up after 5–7 business days; a final follow-up after a further 7–10 business days if appropriate. Then pause and move to another supplier.
+6. A response is not a partnership. A catalogue is not a licence. A verbal indication is not permission to publish.
+
+### Content acquisition status board — minimum fields
+
+Maintain one row per supplier and one row per programme. Supplier fields: organisation, country, content lanes, public source URL, named department/contact, contact method, first contact date, follow-up date, response state, adult-review state and next action.
+
+Programme fields: programme/title, format, season/episode count, release date, source/rights holder, rights evidence, territory, platform rights, live/VOD/catch-up scope, licence window, language, subtitles/captions, rating/classification, authorised master/feed, playback test, commercial terms and expiry/removal date.
+
+No unverified title should be marked "available". Use "lead identified", "catalogue requested", "rights under review", "licensed", "playback verified" and "published" as separate states.
+
+## 23. Research references added 17 November 2026
+
+- NCA authorised TV broadcasting stations Q2 2026: https://nca.org.gh/television/
+- NCA Q2 2026 register PDF: https://nca.org.gh/wp-content/uploads/2026/08/Authorised-TV-Station-Q2-2026.pdf
+- Max TV contact: https://max.com.gh/contact-us/
+- Channel One TV contact: https://channelonenewsonline.com/contact/
+- iMax Media Group: https://www.imaxmediagroupgh.com/
+- View Africa TV contact and distribution: https://www.viewatv.com/contact/ and https://www.viewatv.com/technology/
+- GN Media contact: https://thegnmedia.com/pages/contact-form/
+- Rivers TV: https://www.riverstelevision.com/
+- Farm House Productions: https://farmhousegh.com/
+- NKACC: https://www.nkacc.com/
+- i60 Productions: https://i60productions.com/
+- APAG Studios: https://www.apagstudios.com/
+- Africa Creative Content: https://africacreativecontent.tv/contact/
+
+All entries are prospect leads, not confirmed suppliers. Reconfirm public contact details and rights availability before relying on them.
