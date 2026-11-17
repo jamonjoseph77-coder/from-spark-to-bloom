@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { useToast } from '@/hooks/useToast';
 import { INPUT, LABEL, BUTTON_PRIMARY, CARD } from '@/components/ui/styles';
-import { isHttpUrl } from '@/lib/media';
-import { saveTitle } from '@/lib/library';
+import { isDirectVideoUrl, isHttpUrl } from '@/lib/media';
+import { fetchTitleDetail, saveTitle } from '@/lib/library';
 import { TITLE_TYPES, TITLE_TYPE_LABELS, type Title, type TitleInput, type TitleType } from '@/lib/types';
 
 interface FormState {
@@ -113,6 +113,28 @@ export function TitleForm({ initial, onSaved }: { initial: Title | null; onSaved
     if (!built.input) {
       setError(built.error ?? 'Please check the form.');
       return;
+    }
+    if (form.is_published) {
+      if (form.type === 'series') {
+        if (!initial?.id) {
+          setError('Save this series as a draft first, add at least one episode with a direct MP4 or HLS playback link, then publish it.');
+          return;
+        }
+        try {
+          const detail = await fetchTitleDetail(initial.id);
+          const hasPlayableEpisode = detail.seasons.some((season) => season.episodes.some((episode) => isDirectVideoUrl(episode.playback_url)));
+          if (!hasPlayableEpisode) {
+            setError('Add at least one playable episode using a direct MP4 or HLS (.m3u8) link before publishing this series.');
+            return;
+          }
+        } catch {
+          setError('Cinema could not verify this series playback. Check its episodes and try again.');
+          return;
+        }
+      } else if (!isDirectVideoUrl(form.playback_url)) {
+        setError('Add a direct MP4 or HLS (.m3u8) playback link before publishing. A trailer or YouTube link is not a full playback source.');
+        return;
+      }
     }
     setError(null);
     setBusy(true);

@@ -6,10 +6,10 @@ import { AdminGate } from '@/components/admin/AdminGate';
 import { TitleForm } from '@/components/admin/TitleForm';
 import { SeasonManager } from '@/components/admin/SeasonManager';
 import { ErrorState, LoadingState } from '@/components/ui/StatusViews';
-import { BUTTON_GHOST, BUTTON_PRIMARY, CARD, PAGE_CONTAINER } from '@/components/ui/styles';
-import { deleteTitle, fetchAllTitles, fetchTitleDetail, setTitleFlags } from '@/lib/library';
+import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PAGE_CONTAINER } from '@/components/ui/styles';
+import { deleteTitle, fetchAllTitles, fetchTitleDetail, hasPlayableTitleSource, saveTitle, setTitleFlags } from '@/lib/library';
 import { navigateTo } from '@/lib/router';
-import { TITLE_TYPE_LABELS, type Title } from '@/lib/types';
+import { TITLE_TYPE_LABELS, type Title, type TitleInput } from '@/lib/types';
 import { fetchStudioApplications, setStudioVerificationStatus } from '@/lib/studios';
 import { fetchStudioTitleSubmissionsForReview, linkStudioSubmissionToTitle, reviewStudioTitleSubmission, type StudioTitleSubmission } from '@/lib/studio-content';
 
@@ -80,17 +80,58 @@ function StudioVerificationQueue() {
 function StudioTitleReviewQueue() {
   const { notify } = useToast();
   const { data: submissions, error, reload } = useAsyncData(fetchStudioTitleSubmissionsForReview, []);
-  const { data: catalogueTitles } = useAsyncData(fetchAllTitles, []);
+  const { data: catalogueTitles, reload: reloadCatalogueTitles } = useAsyncData(fetchAllTitles, []);
+  const { data: studioAccounts } = useAsyncData(fetchStudioApplications, []);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   async function connectSeries(item: StudioTitleSubmission, titleId: string) {
     setBusyId(item.id);
     try {
       await linkStudioSubmissionToTitle(item.id, titleId || null);
-      notify(titleId ? 'Series calendar connected to the published Cinema title.' : 'Series calendar disconnected from the catalogue title.');
+      notify(titleId ? 'Series calendar connected to the Cinema catalogue title.' : 'Series calendar disconnected from the catalogue title.');
       reload();
     } catch {
-      notify('Cinema could not connect this series calendar. Check that the submission is approved and the catalogue title is published.', 'error');
+      notify('Cinema could not connect this series calendar. Check that the submission is approved and the catalogue title exists.', 'error');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function prepareDraftTitle(item: StudioTitleSubmission) {
+    if (item.status !== 'approved' || item.published_title_id || busyId) return;
+    const studioName = studioAccounts?.find((studio) => studio.id === item.studio_id)?.studio_name ?? item.rights_holder;
+    const draftInput: TitleInput = {
+      type: item.content_type,
+      title: item.title,
+      synopsis: item.synopsis,
+      genre: item.genre,
+      release_year: item.release_year,
+      release_date: null,
+      duration_minutes: item.duration_minutes,
+      publisher: studioName,
+      poster_url: item.poster_url,
+      backdrop_url: item.backdrop_url ?? '',
+      trailer_url: item.trailer_url ?? '',
+      playback_url: item.playback_url ?? '',
+      subtitle_url: '',
+      availability: '',
+      is_featured: false,
+      is_published: false,
+    };
+    setBusyId(item.id);
+    try {
+      const draft = await saveTitle(draftInput, null);
+      try {
+        await linkStudioSubmissionToTitle(item.id, draft.id);
+      } catch (linkError) {
+        await deleteTitle(draft.id).catch(() => undefined);
+        throw linkError;
+      }
+      notify('Draft catalogue title created. Verify its direct playback source, add playable series episodes where needed, and publish only after rights and playback checks.');
+      reload();
+      reloadCatalogueTitles();
+    } catch {
+      notify('Cinema could not prepare this draft title. Refresh the submission and try again.', 'error');
     } finally {
       setBusyId(null);
     }
@@ -136,8 +177,8 @@ function StudioTitleReviewQueue() {
         <div className="mt-3 flex flex-wrap gap-2 text-xs">{item.poster_url && <a className="text-[#c7ddcf] underline" href={item.poster_url} target="_blank" rel="noreferrer">Poster</a>}{item.backdrop_url && <a className="text-[#c7ddcf] underline" href={item.backdrop_url} target="_blank" rel="noreferrer">Backdrop</a>}{item.trailer_url && <a className="text-[#c7ddcf] underline" href={item.trailer_url} target="_blank" rel="noreferrer">Trailer</a>}{item.playback_url && <a className="text-[#c7ddcf] underline" href={item.playback_url} target="_blank" rel="noreferrer">Playback Source</a>}{item.rights_evidence_url && <a className="text-amber-200 underline" href={item.rights_evidence_url} target="_blank" rel="noreferrer">Rights Evidence</a>}</div>
         {item.delivery_notes && <p className="mt-3 rounded-xl border border-white/8 bg-white/[.025] p-3 text-xs leading-5 text-slate-300">Delivery notes: {item.delivery_notes}</p>}
         {item.promotional_rights_confirmed && <p className="mt-2 text-xs text-[#c7ddcf]">Promotional materials permission declared.</p>}
-        {item.review_note && <p className="mt-3 rounded-xl border border-sky-200/10 bg-sky-200/[.04] p-3 text-xs leading-5 text-sky-100">Previous Cinema note: {item.review_note}</p>}{item.content_type === 'series' && <div className="mt-4 rounded-xl border border-sky-200/10 bg-sky-200/[.035] p-3"><label className="block text-xs font-bold text-sky-100">Connect To A Published Cinema Series</label>{item.status === 'approved' ? <select aria-label={'Connect ' + item.title + ' to a published Cinema series'} value={item.published_title_id ?? ''} disabled={busyId === item.id || !catalogueTitles} onChange={(event) => void connectSeries(item, event.target.value)} className="mt-2 w-full rounded-xl border border-white/15 bg-[#101720] px-3 py-2.5 text-sm text-white outline-none focus:border-sky-200/45"><option value="">Not connected</option>{(catalogueTitles ?? []).filter((title) => title.type === 'series' && title.is_published).map((title) => <option key={title.id} value={title.id}>{title.title}</option>)}</select> : <p className="mt-1 text-xs leading-5 text-slate-400">Approve the submission first. Then connect it to the matching published series so viewers can follow it and see its release calendar.</p>}<p className="mt-2 text-[10px] leading-4 text-slate-500">Only connect the studio schedule to the correct published catalogue title. This does not publish the submission or change its rights status.</p></div>}
-        <div className="mt-4 flex flex-wrap gap-2"><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'approved')} className={BUTTON_PRIMARY}>Approve For Preparation</button><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'changes_requested')} className={BUTTON_GHOST}>Request Changes</button><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'rejected')} className={`${BUTTON_GHOST} text-rose-200`}>Reject</button></div>
+        {item.review_note && <p className="mt-3 rounded-xl border border-sky-200/10 bg-sky-200/[.04] p-3 text-xs leading-5 text-sky-100">Previous Cinema note: {item.review_note}</p>}{item.content_type === 'series' && <div className="mt-4 rounded-xl border border-sky-200/10 bg-sky-200/[.035] p-3"><label className="block text-xs font-bold text-sky-100">Connect To A Cinema Series</label>{item.status === 'approved' ? <select aria-label={'Connect ' + item.title + ' to a Cinema series'} value={item.published_title_id ?? ''} disabled={busyId === item.id || !catalogueTitles} onChange={(event) => void connectSeries(item, event.target.value)} className="mt-2 w-full rounded-xl border border-white/15 bg-[#101720] px-3 py-2.5 text-sm text-white outline-none focus:border-sky-200/45"><option value="">Not connected</option>{(catalogueTitles ?? []).filter((title) => title.type === 'series').map((title) => <option key={title.id} value={title.id}>{title.title}{title.is_published ? '' : ' · Draft'}</option>)}</select> : <p className="mt-1 text-xs leading-5 text-slate-400">Approve the submission first. Then connect it to the matching Cinema series so its release calendar can be managed.</p>}<p className="mt-2 text-[10px] leading-4 text-slate-500">A draft remains private until an administrator verifies playable episodes and publishes the series.</p></div>}
+        <div className="mt-4 flex flex-wrap gap-2">{item.status === 'approved' && (item.published_title_id ? <a href={`/admin/title/${item.published_title_id}`} className={BUTTON_SECONDARY}>Open Prepared Catalogue Title</a> : <button type="button" disabled={busyId === item.id || !catalogueTitles} onClick={() => void prepareDraftTitle(item)} className={BUTTON_PRIMARY}>Prepare Draft Catalogue Title</button>)}<button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'approved')} className={BUTTON_PRIMARY}>Approve For Preparation</button><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'changes_requested')} className={BUTTON_GHOST}>Request Changes</button><button type="button" disabled={busyId === item.id} onClick={() => void review(item, 'rejected')} className={`${BUTTON_GHOST} text-rose-200`}>Reject</button></div>
       </li>)}</ul>}
       <p className="text-xs leading-5 text-slate-500">Approval confirms that this submission may move to the next internal distribution-preparation step. It does not automatically publish a title, verify the submitted rights, or create a distribution contract.</p>
     </section>
@@ -150,6 +191,20 @@ export function AdminTitleList() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   async function toggle(title: Title, flag: 'is_published' | 'is_featured') {
+    if (flag === 'is_published' && !title.is_published) {
+      try {
+        const ready = await hasPlayableTitleSource(title);
+        if (!ready) {
+          notify(title.type === 'series'
+            ? 'Add at least one episode with a direct MP4 or HLS playback source before publishing this series.'
+            : 'Add a direct MP4 or HLS playback source before publishing this title. A trailer is not a playback source.', 'error');
+          return;
+        }
+      } catch {
+        notify('Cinema could not verify this title playback. Check its source and try again.', 'error');
+        return;
+      }
+    }
     setBusyId(title.id);
     try {
       await setTitleFlags(title.id, { [flag]: !title[flag] });

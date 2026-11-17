@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { isDirectVideoUrl } from '@/lib/media';
 import type {
   EpisodeInput,
   ProgressEntry,
@@ -69,6 +70,12 @@ export async function fetchTitleDetail(titleId: string): Promise<TitleDetail> {
     title: (titleResult.data ?? null) as Title | null,
     seasons: (seasonResult.data ?? []) as SeasonWithEpisodes[],
   };
+}
+
+export async function hasPlayableTitleSource(title: Pick<Title, 'id' | 'type' | 'playback_url'>): Promise<boolean> {
+  if (title.type !== 'series') return isDirectVideoUrl(title.playback_url);
+  const detail = await fetchTitleDetail(title.id);
+  return detail.seasons.some((season) => season.episodes.some((episode) => isDirectVideoUrl(episode.playback_url)));
 }
 
 export async function fetchUserTitleIds(table: UserListTable, userId: string): Promise<string[]> {
