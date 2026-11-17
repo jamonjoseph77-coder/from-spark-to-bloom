@@ -57,7 +57,7 @@ async function loadExploreData(): Promise<ExploreData> {
       // Keep approved Shorts in the dedicated Shorts shelf so the same video
       // is not repeated in both the vertical feed and the mixed Explore timeline.
       if (clip.kind === 'short') return false;
-      if (clip.kind === 'clip') return isPlayableShort(clip);
+      if (clip.kind === 'clip') return playable;
       return playable;
     });
   const trailers = trailersResult.status === 'fulfilled' ? trailersResult.value : [];
