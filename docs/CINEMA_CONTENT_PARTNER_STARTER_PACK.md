@@ -185,3 +185,26 @@ Do not sell personal viewer data. Do not present impressions, views or projected
 5. Choose one to three titles for a non-exclusive pilot.
 6. Verify rights, classification, delivery and playback before publishing.
 7. Only after the pilot has real audience evidence, approach a brand with a specific, measurable sponsorship proposal.
+
+
+## 13. Additional open-film discovery leads
+
+A second catalogue review found more potentially suitable animation, comedy and factual-story candidates in the Indie Film Network library. These are **discovery leads only**. The IFN catalogue displays the following titles and licence labels, but Cinema has not received the source files, verified the original rights-holder identity, or completed a Ghana-specific legal and technical review.
+
+| Candidate | Source-listed format / length | Source-listed licence |
+|---|---|---|
+| Tag Team | Comedy / 2D–3D hybrid · 7 min · 2024 | CC BY 3.0 |
+| Breakfast at the Bodega | Comedy / drama · 14 min · 2022 | CC BY 3.0 |
+| Yo te quiero! | Stop-motion animation · 8 min · 2014 | CC BY 3.0 |
+| Wing It! | 2D–3D hybrid animation · 4 min · 2023 | CC BY 4.0 |
+| Nature of Australia | Nature / wildlife documentary · 4 min · 2023 | CC BY 3.0 |
+| Beyond the Dunes | Nature / wildlife documentary · 7 min · 2026 | CC BY-SA 4.0 |
+| Panopticon | Documentary · 57 min · 2012 | CC BY 3.0 |
+| Paywall: The Business of Scholarship | Documentary · 65 min · 2018 | CC BY 4.0 |
+| Mage Porob | Documentary · 41 min · 2019 | CC BY-SA 4.0 |
+
+Source catalogue: https://www.theindiefilmnetwork.com/films. IFN explains that its Creative Commons titles are shown under the exact item-level licence displayed on each film page, while its separately labelled “IFN licensed” titles are shown under written agreements with their rights holders: https://www.theindiefilmnetwork.com/about.
+
+For Cinema, capture the original creator/rights-holder credit and exact licence deed for each selected work, confirm the licence applies to the exact audiovisual edition and all embedded music/performances, preserve required attribution and notices, and comply with ShareAlike conditions where applicable. Obtain the file from an authorised source and check the source site's terms before downloading or hosting. A CC label is a promising rights lead, not a completed Cinema approval.
+
+Prioritise the animation, comedy and nature-documentary candidates for an initial all-ages review. Do not publish any title until content suitability, Ghana territory, classification, file integrity, playback and rights checks are complete.
