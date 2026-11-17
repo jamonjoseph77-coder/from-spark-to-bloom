@@ -100,7 +100,7 @@ export function VisitorLandingPage() {
             <h2 className="mt-2 text-xl font-extrabold text-white sm:text-2xl">Have A Story To Bring To Cinema?</h2>
             <p className="mt-2 text-sm leading-6 text-slate-300">Filmmakers, studios, producers, distributors and authorised creators can apply to bring their work to Cinema. Every submission is reviewed before publication.</p>
           </div>
-          <a href="/sign-up" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl border border-sky-200/25 bg-sky-300/10 px-5 text-sm font-extrabold text-white transition hover:bg-sky-300/20">Join Cinema To Submit <ArrowRight className="h-4 w-4" /></a>
+          <a href="/publishers" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl border border-sky-200/25 bg-sky-300/10 px-5 text-sm font-extrabold text-white transition hover:bg-sky-300/20">Apply As A Creator <ArrowRight className="h-4 w-4" /></a>
         </div>
       </section>
 
