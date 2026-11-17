@@ -51,7 +51,8 @@ describe('Cinema media URL validation', () => {
     expect(toEmbedUrl('https://vimeo.com/123456')).toContain('player.vimeo.com/video/123456');
     expect(toEmbedUrl('https://evilvimeo.com/123456')).toBeNull();
     expect(toEmbedUrl('http://youtu.be/abcdefgh')).toBeNull();
-  });});
+  });
+});
 
 describe('Cinema Shorts eligibility', () => {
   const short = {
