@@ -271,3 +271,80 @@ These are concrete public sources for supervised discovery. They are not Cinema 
 | Official sports highlights | Official CAF, FIFA, federation and club channels publish selected highlights and clips on their own platforms. | Use the original official player only where embedding is enabled and platform rules permit it. For Cinema-hosted clips, match footage or live event coverage, obtain a separate rights grant from the relevant competition/rights holder. |
 
 **First practical pilot mix:** pursue one or two locally controlled film titles through a direct non-exclusive pilot, while separately testing a small number of official-platform embeds as clearly labelled external playback. Keep live news and sports feeds in a rights-enquiry queue until the relevant broadcaster or competition grants written permission. This avoids mistaking a link or a public video for a licensed Cinema catalogue.
+
+
+## 17. Ghana-first title-level content pipeline — researched 17 November 2026
+
+This is a research register, not a licensed or playable Cinema catalogue. Public film pages establish that a title is presented by the producer/studio; they do not establish Cinema's right to embed, host, monetise or distribute it. No title below is approved for Cinema playback.
+
+### A. Onyx Vision Studio — direct rights enquiry lead
+
+Official portfolio: https://onyxvisionstudio.com/  
+Public contact: melvin@onyxvisionstudio.com; onyxvisionstudio@gmail.com
+
+| Title / project | Publicly stated status | Cinema next step | Current Cinema status |
+|---|---|---|---|
+| Quiet | Listed as a selected work; story follows a deaf boy in Ashaiman | Ask who controls worldwide and Ghana digital rights; request screener, classification and approved player/master | Candidate — rights not verified |
+| Shadows of Ambition | Listed among selected/cinematic works | Ask whether completed and available for third-party distribution; confirm exact edition and rights chain | Candidate — availability/rights unverified |
+| Plastic Man | Documentary about a Ghanaian recycling activist | Ask for completed version, underlying music/archive clearances, rights holder and Ghana classification | Candidate — availability/rights unverified |
+| Simtso | Listed as dance-film work; site also places it in future slate | Confirm whether completed/released or still in development; do not treat as deliverable yet | Development/availability unclear |
+| Crown & Counsel | Listed in forthcoming TV slate | Not a current library title; revisit only when completed and licensable | Future pipeline only |
+| Cocoa Kingdom | Listed in forthcoming series slate | Not a current library title; revisit only when completed and licensable | Future pipeline only |
+
+Source portfolio pages: https://onyxvisionstudio.com/ and https://onyxvisionstudio.com/about-film-production
+
+### B. SpotDetail — strongest visible short-film shortlist
+
+Official film library: https://spotdetailgh.com/films  
+Public contact: info@spotdetailgh.com
+
+SpotDetail describes its own films as free to watch on its site. That is not a licence for Cinema. The following eight titles appear in its public library:
+
+| Title | Public details | Cinema next step | Current Cinema status |
+|---|---|---|---|
+| Bride Price | 2025 short; directed by Enuk Souer and Faiba Bernard; produced by Ernest Boadi and Ruby Quaye | Ask SpotDetail and both named directors/producers who controls digital distribution rights and whether the title is available | Candidate — rights not verified |
+| Blind on Both Ends | 20-minute short; director/writer Enuk Souer; BlackStar International Film Festival 2025 selection | Request screener, rights holder confirmation and classification | Candidate — rights not verified |
+| Dancing Flames | 35-minute short; director/writer Enuk Souer | Request screener, rights holder confirmation and classification | Candidate — rights not verified |
+| GOAL | Short film; director/writer Enuk Souer | Request runtime, screener, rights holder confirmation and classification | Candidate — rights not verified |
+| Hold Your Breath | Listed short film | Request runtime, credits, screener and rights status | Candidate — details/rights unverified |
+| Seven Not One | Listed short film | Request runtime, credits, screener and rights status | Candidate — details/rights unverified |
+| Hug Someone | Listed short film | Request runtime, credits, screener and rights status | Candidate — details/rights unverified |
+| Anaa Julor Morbor | Listed short; 8 minutes | Request screener, rights holder confirmation and classification | Candidate — rights not verified |
+
+Title pages: https://spotdetailgh.com/films/bride-price ; https://spotdetailgh.com/films/blind-on-both-ends ; https://spotdetailgh.com/films/dancing-flames ; https://spotdetailgh.com/films/goal
+
+### C. Additional Ghanaian production and distribution leads
+
+| Organisation | Publicly listed work / capability | Why it is worth approaching | Current status |
+|---|---|---|---|
+| Organized Khaoz (Accra) — https://organizedkhaozgh.com/ | Released titles include Detor: The Rise of a Warrior Hunter, Captain's Corner, Café Love, Therapy, Blackmail, Long Goodbye, 3 Hungry Birds, CID Jon Two and 14:32. Some titles are already distributed on third-party services or YouTube. | Ask about exact titles for which it controls remaining Ghana/African digital rights, especially short-form catalogue titles. Do not assume exclusivity or that an existing platform licence permits Cinema too. | Discovery lead — no agreement |
+| Revele Films (Ghana) — https://www.revelefilms.com/ | Public slate includes Home Sweet Home New Generation, A Letter to God, Osofagus, Dirty Pretty Secrets, Accra Medic and Ahenfie; site describes a substantial TV/film catalogue. | Potential source of episodic series and drama. Ask which completed programmes are available for additional digital territories/platforms and who controls rights. | Discovery lead — no agreement |
+| Okada Media — https://www.okadamedia.com/ | Pan-African film sales/distribution company with a curated licensing catalogue. Publicly lists titles including All the Colours of the World are Between Black and White, Disconnect, Price of Love, Sincerely Daisy, 40 Sticks, Nyara: The Kidnapping, Atoka and For Maria Ebun Pataki. | Strong route for a properly licensed African catalogue rather than cold-contacting every filmmaker. Request current catalogue, Ghana rights availability, minimum guarantees and low/no-upfront pilot options. | Distributor lead — no agreement |
+| RAIYA — https://raiya.org/ | Ghanaian film/media production and distribution company; publicly describes feature, short-form, documentary and co-production activity. | Ask for completed catalogue and rights available for additional digital distribution. | Discovery lead — no agreement |
+| TD Afrique Films — https://www.tdafilms.com/ | Ghana-headquartered film/TV production company with international network and scripted/non-scripted slate. | Ask for completed titles and any rights-controlled catalogue suitable for a Ghana-first pilot. | Discovery lead — no agreement |
+
+Organized Khaoz's website lists a distribution/licensing contact: organoized@organizedkhaozgh.com. SpotDetail contact page lists info@spotdetailgh.com. Onyx Vision's official site lists the addresses above. Use adult-supervised contact only.
+
+### D. Pilot selection and acceptance gates
+
+Do not select a title because it has the best poster or is free to watch. Score candidates only after receiving the relevant information:
+
+1. Rights: named rights holder, signed authority, exact work/edition, chain of title, music/performance/archive clearances.
+2. Scope: explicit Cinema permission for Ghana, web, mobile and smart-TV; hosting versus approved embed; promotional clips/artwork; sponsor use if applicable; term, renewal and takedown.
+3. Commercial terms: no-upfront pilot if offered; clear revenue definition, reporting, payment timing, deductions, audit rights and termination. No blanket 50/50 or 70/30 promises.
+4. Delivery: authorised master or approved player, captions/subtitles, artwork, synopsis, credits, runtime, audio quality and playback test.
+5. Compliance: NFA registration/classification and applicable platform/operator licensing verified before public exhibition; suitability rating and audience restrictions recorded.
+6. Release: adult reviewer signs off on rights evidence and agreement; admin approval is distinct from publication; only then can a title be scheduled.
+
+Suggested first pilot: 3–5 completed Ghanaian shorts from one or two rights holders, not a large bulk upload. This is a target for negotiation, not an acquired slate. Prefer direct authorised masters for Cinema-hosted playback; use approved third-party embeds only as a clearly labelled external playback type and only when the rights and platform terms allow it.
+
+### E. Outreach status
+
+Draft enquiry emails have been prepared for Onyx Vision Studio, SpotDetail, Organized Khaoz and France 24. They are drafts only; none has been sent. Adult review is required before any external message is sent. No partner, licence, revenue share or title acquisition is confirmed.
+
+### F. Ghana regulatory release gate
+
+The Ghana National Film Authority says VOD streaming platforms / film libraries are within its licensing categories, and its 2025 notice states that films intended for public exhibition in Ghana—including shorts, trailers, series and documentaries online—must be classified. Confirm the exact licence and title-specific requirements directly with the NFA before launch or public exhibition:
+- https://nfa.gov.gh/apply-for-film-license/
+- https://nfa.gov.gh/2025/04/12/national-film-authority-re-echoes-film-classification-requirement-film-producer-licence-mandatory-for-classification-from-may-1-2025/
+- https://nfa.gov.gh/register-your-content/
