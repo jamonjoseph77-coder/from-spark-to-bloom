@@ -208,3 +208,25 @@ Source catalogue: https://www.theindiefilmnetwork.com/films. IFN explains that i
 For Cinema, capture the original creator/rights-holder credit and exact licence deed for each selected work, confirm the licence applies to the exact audiovisual edition and all embedded music/performances, preserve required attribution and notices, and comply with ShareAlike conditions where applicable. Obtain the file from an authorised source and check the source site's terms before downloading or hosting. A CC label is a promising rights lead, not a completed Cinema approval.
 
 Prioritise the animation, comedy and nature-documentary candidates for an initial all-ages review. Do not publish any title until content suitability, Ghana territory, classification, file integrity, playback and rights checks are complete.
+
+
+## 14. Ghana-first creator and production-company discovery leads
+
+The following are stronger local relationship leads than generic free-film directories. They are **not confirmed Cinema partners**, and none of their films should be copied, embedded or published without written permission for Cinema's exact use.
+
+| Organisation / lead | What the public source shows | Safe next step |
+|---|---|---|
+| Onyx Vision Studio (Accra) — *Quiet* and other selected works | The studio's official site presents a Ghanaian film and documentary portfolio and lists *Quiet* among selected works. It provides an official collaboration/enquiry route. | Adult-supervised enquiry asking which titles the studio controls and whether any are available for a small, non-exclusive Cinema pilot. Confirm music, performer and distribution rights as well as producer authority. |
+| TNC Africa — short-film community | Its official Short Films page lists nine posts and describes a platform highlighting emerging African filmmakers. | Ask whether TNC can circulate Cinema's creator application to filmmakers. Each filmmaker/rightsholder must submit their own title and authority evidence; TNC's showcase does not itself grant Cinema distribution rights. |
+| SpotDetail (Accra) — film library | Its official film page lists eight short films and says its own films are free to watch. Its About page describes a production studio and says the films are supported by people choosing to support them. | Ask whether the company owns or controls any titles and would consider a written distribution/sponsorship pilot. “Free to watch” is not permission to rehost, redistribute, commercially sponsor or embed on Cinema. |
+
+Public discovery sources:
+- Onyx Vision Studio portfolio and enquiry route: https://onyxvisionstudio.com/
+- TNC Africa short-film page: https://tnc.africa/category/short-films
+- SpotDetail film catalogue: https://spotdetailgh.com/films
+- SpotDetail company information: https://spotdetailgh.com/about
+- SpotDetail contact page: https://spotdetailgh.com/contact
+
+A notable example for a possible local pilot is *Quiet*, a Ghanaian short listed by Onyx Vision Studio and featured by TNC Africa. Its director and producer credits appear in public film listings, but Cinema must confirm the current rights holder and all relevant permissions directly before considering it. This is a **specific licensing enquiry lead**, not an acquired title.
+
+All enquiries, meetings, agreements and delivery of private materials must be supervised by a trusted adult. Do not send personal identification documents, private addresses, passwords or sensitive information.
