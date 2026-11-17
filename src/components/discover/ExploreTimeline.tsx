@@ -19,7 +19,7 @@ import { publisherHref } from '@/lib/publishers';
 import { fetchFollowedPublishers } from '@/lib/publisherFollows';
 import { loadFriendsSnapshot } from '@/lib/friends';
 
-type ExploreFilter = 'for-you' | 'following' | 'videos' | 'trailers' | 'community';
+type ExploreFilter = 'for-you' | 'following' | 'videos' | 'trailers' | 'community' | 'channels';
 
 const EXPLORE_FILTERS: { id: ExploreFilter; label: string }[] = [
   { id: 'for-you', label: 'For You' },
@@ -27,6 +27,7 @@ const EXPLORE_FILTERS: { id: ExploreFilter; label: string }[] = [
   { id: 'videos', label: 'Videos' },
   { id: 'trailers', label: 'Trailers' },
   { id: 'community', label: 'Community' },
+  { id: 'channels', label: 'Channels' },
 ];
 
 type ExploreEntry =
@@ -121,6 +122,28 @@ function OfficialTrailerPost({ trailer, onOpen }: { trailer: TmdbTrailer; onOpen
   );
 }
 
+interface ExploreChannel {
+  name: string;
+  logoUrl: string | null;
+  verified: boolean;
+  titleCount: number;
+  videoCount: number;
+}
+
+function ExploreChannelCard({ channel }: { channel: ExploreChannel }) {
+  return (
+    <a href={publisherHref(channel.name)} className="group flex min-w-[220px] max-w-[260px] items-center gap-3 rounded-2xl border border-white/10 bg-[#0b0e10] p-3 transition hover:border-cinema-300/35 hover:bg-[#101516] sm:min-w-[245px]" aria-label={`Open ${channel.name} channel`}>
+      <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10 bg-[#18201f] text-base font-black text-white">
+        {channel.logoUrl ? <img src={channel.logoUrl} alt="" loading="lazy" className="h-full w-full object-cover" /> : channel.name.slice(0, 1).toUpperCase()}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex min-w-0 items-center gap-1.5"><span className="truncate text-sm font-extrabold text-white group-hover:text-cinema-100">{channel.name}</span>{channel.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-cinema-200" aria-label="Verified by Cinema" />}</span>
+        <span className="mt-1 block truncate text-[11px] text-slate-400">{channel.titleCount} {channel.titleCount === 1 ? 'title' : 'titles'} · {channel.videoCount} {channel.videoCount === 1 ? 'video' : 'videos'}</span>
+        <span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-cinema-200">{channel.verified ? 'Verified Channel' : 'Publisher Channel'}</span>
+      </span>
+    </a>
+  );
+}
 export function ExploreTimeline() {
   const { user } = useAuth();
   const { notify } = useToast();
@@ -134,6 +157,26 @@ export function ExploreTimeline() {
     () => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLocaleLowerCase())),
     [verifiedStudios],
   );
+  const channels = useMemo<ExploreChannel[]>(() => {
+    const byName = new Map<string, ExploreChannel>();
+    const ensure = (rawName: string) => {
+      const name = rawName.trim();
+      if (!name) return null;
+      const key = name.toLocaleLowerCase();
+      const existing = byName.get(key);
+      if (existing) return existing;
+      const created: ExploreChannel = { name, logoUrl: null, verified: false, titleCount: 0, videoCount: 0 };
+      byName.set(key, created);
+      return created;
+    };
+    (titles ?? []).forEach((title) => { const channel = ensure(title.publisher ?? ''); if (channel) channel.titleCount += 1; });
+    (data?.clips ?? []).forEach((clip) => { const channel = ensure(clip.publisher_name ?? ''); if (channel) channel.videoCount += 1; });
+    (verifiedStudios ?? []).forEach((studio) => {
+      const channel = ensure(studio.studio_name);
+      if (channel) { channel.verified = true; channel.logoUrl = studio.logo_url; }
+    });
+    return [...byName.values()].sort((a,b) => Number(b.verified)-Number(a.verified) || (b.titleCount+b.videoCount)-(a.titleCount+a.videoCount) || a.name.localeCompare(b.name));
+  }, [titles, data?.clips, verifiedStudios]);
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
@@ -169,6 +212,7 @@ export function ExploreTimeline() {
   }, [data]);
 
   const visibleEntries = useMemo(() => {
+    if (activeFilter === 'channels') return [];
     if (activeFilter === 'videos') return entries.filter((entry) => entry.kind === 'clip');
     if (activeFilter === 'trailers') return entries.filter((entry) => entry.kind === 'trailer');
     if (activeFilter === 'community') return entries.filter((entry) => entry.kind === 'post');
@@ -214,6 +258,11 @@ export function ExploreTimeline() {
         <a href="/publishers" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:border-white/20 hover:bg-white/[.07] hover:text-white">Studios & Publishers <Clapperboard className="h-3.5 w-3.5" /></a>
       </header>
 
+      <section className="mb-5 space-y-3" aria-labelledby="explore-channels-heading">
+        <div className="flex flex-wrap items-end justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Creators · Studios · Broadcasters</p><h3 id="explore-channels-heading" className="mt-1 text-lg font-extrabold text-white">Channels On Cinema</h3><p className="mt-1 text-xs text-slate-400">Discover publishers, open their channel pages and explore their available stories.</p></div><a href="/publishers" className="text-xs font-bold text-cinema-200 transition hover:text-white">All Channels <Clapperboard className="ml-1 inline h-3.5 w-3.5" /></a></div>
+        {channels.length > 0 ? <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{channels.slice(0,12).map((channel) => <ExploreChannelCard key={channel.name.toLocaleLowerCase()} channel={channel} />)}</div> : <p className="rounded-xl border border-dashed border-white/10 px-4 py-3 text-xs text-slate-500">Publisher channels will appear here as verified profiles and published content become available.</p>}
+      </section>
+
       {user && <form onSubmit={(event) => void publish(event)} className="mb-5 rounded-2xl border border-white/10 bg-[#0b0e10] p-4 shadow-[0_12px_36px_rgba(0,0,0,.16)] sm:p-5">
         <div className="flex gap-3">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-[#18201f] text-sm font-black text-white">{(user.email?.slice(0, 1) || 'C').toUpperCase()}</span>
@@ -242,7 +291,8 @@ export function ExploreTimeline() {
       {error && !data && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-5"><ErrorState onRetry={reload} description="Cinema Explore could not load right now. Your other Cinema destinations remain available." /></div>}
       {data?.postsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Community posts are temporarily unavailable. Publisher videos remain available.</p>}
       {data?.clipsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Publisher videos are temporarily unavailable. Community posts remain available.</p>}
-      {data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title={activeFilter === 'following' ? 'Your Following Feed Is Ready' : 'Your Video Home Is Getting Started'} description={activeFilter === 'following' ? 'New videos and conversations from the studios and friends you follow will appear here.' : 'Videos and official trailers from across Cinema will appear here as publishers and creators release them.'} /></div>}
+      {activeFilter === 'channels' && <section className="mb-5 space-y-4" aria-label="All Cinema channels"><div><h3 className="text-lg font-extrabold text-white">Explore Channels</h3><p className="mt-1 text-xs text-slate-400">Official profiles are marked as verified. Other publisher channels are identified from their published Cinema content.</p></div>{channels.length > 0 ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{channels.map((channel) => <ExploreChannelCard key={channel.name.toLocaleLowerCase()} channel={channel} />)}</div> : <EmptyState icon={<Clapperboard className="h-7 w-7 text-slate-300" />} title="Channels Are On Their Way" description="Channels will appear when verified organisations or publishers have content available on Cinema." />}</section>}
+      {activeFilter !== 'channels' && data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title={activeFilter === 'following' ? 'Your Following Feed Is Ready' : 'Your Video Home Is Getting Started'} description={activeFilter === 'following' ? 'New videos and conversations from the studios and friends you follow will appear here.' : 'Videos and official trailers from across Cinema will appear here as publishers and creators release them.'} /></div>}
 
       {data && visibleEntries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
         {visibleEntries.map((entry) => {
