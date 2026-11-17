@@ -61,10 +61,10 @@ export function PublisherPage({ publisher }: { publisher: string }) {
   const publisherTitles = profile?.titles ?? [];
   const upcomingTitles = profile?.upcoming ?? [];
   const trailerTitles = profile?.trailers ?? [];
-  const publisherClips = useMemo(() => (clips ?? []).filter((clip) =>
+  const publisherClips = (clips ?? []).filter((clip) =>
     clip.publisher_name.trim().toLocaleLowerCase() === publisherName.trim().toLocaleLowerCase() &&
     Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url))),
-  ), [clips, publisherName]);
+  );
   const cover = publisherTitles.find((item) => item.backdrop_url)?.backdrop_url ?? publisherClips[0]?.poster_url ?? '';
   const isFollowing = follows.data?.includes(publisherName) ?? false;
 
