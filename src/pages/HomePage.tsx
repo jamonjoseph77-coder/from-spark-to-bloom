@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Clapperboard, Compass, MessageCircle, Newspaper, Play, Radio, Users } from 'lucide-react';
+import { ArrowRight, Clapperboard, Compass, Film, MessageCircle, Newspaper, Play, Radio, Sparkles, Users, WandSparkles } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { ShortCard } from '@/components/discover/ShortCard';
@@ -160,18 +160,36 @@ export function HomePage() {
   return (
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
       <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(190,205,196,.07),transparent_62%)]" aria-hidden="true" />
-      <nav className="cinema-home-categories -mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
-        {[
-          ['Movies', '/movies'],
-          ['Shorts', '/shorts'],
-          ['News', '/news'],
-          ['Documentaries', '/category/documentaries'],
-          ['Animation', '/category/animation'],
-          ['Family', '/category/family'],
-        ].map(([label, href]) => (
-          <a key={label} href={href} className="cinema-home-category shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-offset-4">{label}</a>
-        ))}
-      </nav>
+      <section className="cinema-home-category-section space-y-3" aria-labelledby="home-category-heading">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Explore Cinema</p>
+            <h2 id="home-category-heading" className="mt-1 text-lg font-extrabold tracking-tight text-white sm:text-xl">Find Your Kind Of Story</h2>
+          </div>
+          <span className="hidden text-[11px] font-medium text-slate-500 sm:block">Choose A Destination</span>
+        </div>
+        <nav className="cinema-home-categories -mx-4 grid auto-cols-[minmax(8.7rem,1fr)] grid-flow-col gap-2.5 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid-flow-row sm:grid-cols-3 sm:px-0 lg:grid-cols-6 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
+          {[
+            { label: 'Movies', href: '/movies', detail: 'Films And Series', icon: Film },
+            { label: 'Shorts', href: '/shorts', detail: 'Quick Stories', icon: Play },
+            { label: 'News', href: '/news', detail: 'Stories Today', icon: Newspaper },
+            { label: 'Documentaries', href: '/category/documentaries', detail: 'Real-World Stories', icon: Clapperboard },
+            { label: 'Animation', href: '/category/animation', detail: 'Worlds Of Imagination', icon: WandSparkles },
+            { label: 'Family', href: '/category/family', detail: 'Stories Together', icon: Users },
+          ].map(({ label, href, detail, icon: Icon }) => (
+            <a key={label} href={href} className="cinema-home-category group relative flex min-h-[5.2rem] min-w-0 items-center gap-3 overflow-hidden rounded-2xl border px-3.5 py-3 text-left transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300">
+              <span aria-hidden="true" className="cinema-home-category__icon grid h-10 w-10 shrink-0 place-items-center rounded-xl border text-cinema-100 transition duration-300 group-hover:scale-105">
+                <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={1.8} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-xs font-extrabold tracking-wide text-white">{label}</span>
+                <span className="mt-1 block truncate text-[10px] font-medium text-slate-400">{detail}</span>
+              </span>
+              <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-cinema-200" />
+            </a>
+          ))}
+        </nav>
+      </section>
       <TmdbHero />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
