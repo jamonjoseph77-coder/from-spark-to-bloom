@@ -3551,3 +3551,50 @@ html:has(.cinema-shorts-page) {
   scrollbar-width: none;
 }
 .cinema-shorts-page .cinema-short-overlay > .cinema-short-actions::-webkit-scrollbar { display: none; }
+
+
+/* HOME CATEGORY DESTINATIONS — restrained, cinematic and mobile-first. */
+.cinema-app-shell .cinema-home-category {
+  position: relative;
+  color: #f5f8ff;
+  border-color: rgba(150, 185, 225, .16);
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(8,124,255,.12), transparent 58%),
+    linear-gradient(145deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 10px 28px rgba(0,0,0,.14);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.cinema-app-shell .cinema-home-category::after {
+  content: "";
+  position: absolute;
+  inset: auto 14px 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,229,255,.42), transparent);
+  opacity: .55;
+  transition: opacity .25s ease;
+}
+.cinema-app-shell .cinema-home-category__icon {
+  border-color: rgba(90,175,255,.2);
+  background: linear-gradient(145deg, rgba(8,124,255,.2), rgba(0,229,255,.055));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 5px 18px rgba(0,0,0,.18);
+}
+.cinema-app-shell .cinema-home-category:hover,
+.cinema-app-shell .cinema-home-category:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(0,229,255,.38);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(8,124,255,.2), transparent 62%),
+    linear-gradient(145deg, rgba(255,255,255,.09), rgba(8,124,255,.045));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 12px 30px rgba(0,90,190,.14);
+}
+.cinema-app-shell .cinema-home-category:hover::after,
+.cinema-app-shell .cinema-home-category:focus-visible::after { opacity: 1; }
+@media (max-width: 639px) {
+  .cinema-home-category-section { margin-left: 0; margin-right: 0; }
+  .cinema-home-categories { scroll-padding-inline: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-app-shell .cinema-home-category,
+  .cinema-app-shell .cinema-home-category__icon { transition: none !important; }
+}
