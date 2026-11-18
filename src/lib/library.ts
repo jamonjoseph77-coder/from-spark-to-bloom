@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { isDirectVideoUrl } from '@/lib/media';
+import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import type {
   EpisodeInput,
   ProgressEntry,
@@ -43,6 +43,44 @@ export async function fetchPublishedTitles(): Promise<Title[]> {
     if (publishedTitlesCache?.promise === promise) publishedTitlesCache = null;
     throw error;
   }
+}
+
+function hasSupportedPlaybackSource(value: string | null | undefined): boolean {
+  const source = value?.trim() ?? '';
+  return Boolean(source) && (isDirectVideoUrl(source) || Boolean(toEmbedUrl(source)));
+}
+
+/**
+ * Returns published catalogue titles with a playback source supported by Cinema's player.
+ * Series are included only when at least one episode has a supported source.
+ */
+export async function fetchPublishedPlayableTitles(): Promise<Title[]> {
+  const titles = await fetchPublishedTitles();
+  const playableNonSeries = titles.filter(
+    (title) => title.type !== 'series' && hasSupportedPlaybackSource(title.playback_url),
+  );
+  const series = titles.filter((title) => title.type === 'series');
+  if (series.length === 0) return playableNonSeries;
+
+  const seriesIds = series.map((title) => title.id);
+  const { data, error } = await supabase
+    .from('seasons')
+    .select('title_id, episodes(playback_url)')
+    .in('title_id', seriesIds);
+  if (error) throw error;
+
+  const playableSeriesIds = new Set(
+    (data ?? [])
+      .filter((season: { title_id: string; episodes?: { playback_url: string | null }[] | null }) =>
+        season.episodes?.some((episode) => hasSupportedPlaybackSource(episode.playback_url)),
+      )
+      .map((season: { title_id: string }) => season.title_id),
+  );
+
+  return [
+    ...playableNonSeries,
+    ...series.filter((title) => playableSeriesIds.has(title.id)),
+  ];
 }
 
 export async function fetchAllTitles(): Promise<Title[]> {
