@@ -52,7 +52,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
         {backLabel}
       </a>
 
-      <section className="relative isolate overflow-hidden rounded-3xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/40">
+      <section className="relative isolate -mx-4 overflow-hidden border-y border-white/10 bg-ink-900 shadow-2xl shadow-black/40 sm:-mx-6 lg:-mx-8">
         <Artwork src={backdrop} alt="" fallbackTitle={data.title} className="absolute inset-0 h-full w-full object-cover object-top opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/85 to-ink-950/40" />
         <div className="relative grid gap-8 p-6 sm:p-10 md:grid-cols-[minmax(0,15rem)_1fr] md:items-end">
@@ -91,45 +91,50 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
             {data.overview || 'No description has been provided for this title yet.'}
           </p>
           {data.status && <p className="text-sm text-slate-500">Status: {data.status}</p>}
-          {(() => {
-            const tmdbExtras = data.videos.filter((video) => video.type !== 'Trailer' && ['Featurette', 'Clip', 'Behind the Scenes'].includes(video.type)).map((video) => ({
-              id: `tmdb-${video.id}`,
-              key: video.key,
-              name: video.name,
-              kind: video.type,
-            }));
-            const seen = new Set(tmdbExtras.map((video) => video.key));
-            const kinoExtras = (kinoVideos ?? []).flatMap((video: KinoCheckVideo) => {
-              const kind = video.categories.includes('Featurette') ? 'Featurette' : video.categories.includes('Clip') ? 'Clip' : '';
-              if (!kind || seen.has(video.youtubeVideoId) || video.categories.includes('Trailer')) return [];
-              seen.add(video.youtubeVideoId);
-              return [{ id: `kino-${video.id}`, key: video.youtubeVideoId, name: video.title, kind }];
-            });
-            const extras = uniqueVideos([...tmdbExtras, ...kinoExtras], (video) => `https://www.youtube.com/watch?v=${video.key}`);
-            return extras.length > 0 ? (
-              <section className="space-y-4 border-t border-white/10 pt-6">
-                <div>
-                  <h2 className="text-xl font-extrabold tracking-tight text-white">Featurettes and clips</h2>
-                  <p className="mt-1 text-sm text-slate-400">Official promotional videos matched to this title.</p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {extras.map((video) => (
-                    <article key={video.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-ink-850/70 p-3">
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-sky-200">{video.kind}</p>
-                        <p className="mt-1 line-clamp-2 text-sm font-semibold text-white">{video.name}</p>
-                      </div>
-                      <button type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} ${video.kind.toLowerCase()}`, heading: `${video.kind}: ${data.title}` })} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:bg-white/10">
-                        <Play className="h-3.5 w-3.5 fill-current" /> Watch {video.kind.toLowerCase()}
-                      </button>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ) : null;
-          })()}
-
         </section>
+
+        {(() => {
+          const tmdbExtras = data.videos.filter((video) => video.type !== 'Trailer' && ['Featurette', 'Clip', 'Behind the Scenes'].includes(video.type)).map((video) => ({
+            id: `tmdb-${video.id}`,
+            key: video.key,
+            name: video.name,
+            kind: video.type,
+          }));
+          const seen = new Set(tmdbExtras.map((video) => video.key));
+          const kinoExtras = (kinoVideos ?? []).flatMap((video: KinoCheckVideo) => {
+            const kind = video.categories.includes('Featurette') ? 'Featurette' : video.categories.includes('Clip') ? 'Clip' : '';
+            if (!kind || seen.has(video.youtubeVideoId) || video.categories.includes('Trailer')) return [];
+            seen.add(video.youtubeVideoId);
+            return [{ id: `kino-${video.id}`, key: video.youtubeVideoId, name: video.title, kind }];
+          });
+          const extras = uniqueVideos([...tmdbExtras, ...kinoExtras], (video) => `https://www.youtube.com/watch?v=${video.key}`);
+          return extras.length > 0 ? (
+            <section className="space-y-5 border-t border-white/10 pt-7" aria-label="Third-party promotional videos">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[.2em] text-sky-200/75">From YouTube</p>
+                  <h2 className="text-xl font-extrabold tracking-tight text-white">Featurettes & Extra Videos</h2>
+                  <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Promotional videos from their original YouTube publishers. These are external videos, not Cinema-produced programmes or user channels.</p>
+                </div>
+                <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-300">External Videos</span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {extras.map((video) => (
+                  <article key={video.id} className="flex min-w-0 flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-ink-900/65 p-4 transition hover:border-sky-200/20 sm:flex-row sm:items-center">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-sky-200">{video.kind} · YouTube</p>
+                      <p className="mt-1 whitespace-normal break-words text-sm font-semibold leading-6 text-white">{video.name}</p>
+                      <p className="mt-1 text-[11px] text-slate-500">Provided by the original video publisher</p>
+                    </div>
+                    <button type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} ${video.kind.toLowerCase()}`, heading: `${video.kind}: ${data.title}` })} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-white/15 bg-white/[.06] px-4 py-2.5 text-xs font-semibold text-slate-100 transition hover:border-sky-200/30 hover:bg-sky-300/10 sm:self-auto">
+                      <Play className="h-3.5 w-3.5 fill-current" /> Watch on Cinema
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null;
+        })()}
 
         <aside className="h-fit space-y-3 rounded-2xl border border-white/10 bg-ink-850/70 p-6">
           <p className="text-sm font-semibold text-white">Not available to watch on Cinema yet</p>
