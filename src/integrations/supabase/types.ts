@@ -29,51 +29,6 @@ export type Database = {
         }
         Relationships: []
       }
-      content: {
-        Row: {
-          artwork_url: string | null
-          content_type: string
-          created_at: string
-          genre: string | null
-          id: string
-          is_published: boolean
-          publisher_name: string | null
-          release_year: number | null
-          synopsis: string | null
-          title: string
-          trailer_url: string | null
-          updated_at: string
-        }
-        Insert: {
-          artwork_url?: string | null
-          content_type: string
-          created_at?: string
-          genre?: string | null
-          id?: string
-          is_published?: boolean
-          publisher_name?: string | null
-          release_year?: number | null
-          synopsis?: string | null
-          title: string
-          trailer_url?: string | null
-          updated_at?: string
-        }
-        Update: {
-          artwork_url?: string | null
-          content_type?: string
-          created_at?: string
-          genre?: string | null
-          id?: string
-          is_published?: boolean
-          publisher_name?: string | null
-          release_year?: number | null
-          synopsis?: string | null
-          title?: string
-          trailer_url?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       creator_short_submissions: {
         Row: {
           created_at: string
@@ -88,8 +43,7 @@ export type Database = {
           status: string
           title_id: string | null
           user_id: string
-          video_path: string | null
-          video_url: string | null
+          video_path: string
         }
         Insert: {
           created_at?: string
@@ -104,8 +58,7 @@ export type Database = {
           status?: string
           title_id?: string | null
           user_id: string
-          video_path?: string | null
-          video_url?: string | null
+          video_path: string
         }
         Update: {
           created_at?: string
@@ -120,8 +73,7 @@ export type Database = {
           status?: string
           title_id?: string | null
           user_id?: string
-          video_path?: string | null
-          video_url?: string | null
+          video_path?: string
         }
         Relationships: [
           {
@@ -133,101 +85,10 @@ export type Database = {
           },
         ]
       }
-      discover_clip_comments: {
-        Row: {
-          author_id: string
-          body: string
-          clip_id: string
-          created_at: string
-          id: string
-          status: string
-        }
-        Insert: {
-          author_id: string
-          body: string
-          clip_id: string
-          created_at?: string
-          id?: string
-          status?: string
-        }
-        Update: {
-          author_id?: string
-          body?: string
-          clip_id?: string
-          created_at?: string
-          id?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "discover_clip_comments_clip_id_fkey"
-            columns: ["clip_id"]
-            isOneToOne: false
-            referencedRelation: "discover_clips"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      discover_clip_reactions: {
-        Row: {
-          clip_id: string
-          created_at: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          clip_id: string
-          created_at?: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          clip_id?: string
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "discover_clip_reactions_clip_id_fkey"
-            columns: ["clip_id"]
-            isOneToOne: false
-            referencedRelation: "discover_clips"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      discover_clip_saves: {
-        Row: {
-          clip_id: string
-          created_at: string
-          user_id: string
-        }
-        Insert: {
-          clip_id: string
-          created_at?: string
-          user_id: string
-        }
-        Update: {
-          clip_id?: string
-          created_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "discover_clip_saves_clip_id_fkey"
-            columns: ["clip_id"]
-            isOneToOne: false
-            referencedRelation: "discover_clips"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       discover_clips: {
         Row: {
           created_at: string
           description: string
-          download_allowed: boolean
           duration_seconds: number | null
           headline: string
           id: string
@@ -239,29 +100,25 @@ export type Database = {
           title_id: string | null
           updated_at: string
           video_url: string
-          views_count: number
         }
         Insert: {
           created_at?: string
           description?: string
-          download_allowed?: boolean
           duration_seconds?: number | null
-          headline?: string
+          headline: string
           id?: string
           is_published?: boolean
-          kind?: string
+          kind: string
           poster_url?: string
           publisher_name?: string
           sort_order?: number
           title_id?: string | null
           updated_at?: string
-          video_url?: string
-          views_count?: number
+          video_url: string
         }
         Update: {
           created_at?: string
           description?: string
-          download_allowed?: boolean
           duration_seconds?: number | null
           headline?: string
           id?: string
@@ -273,7 +130,6 @@ export type Database = {
           title_id?: string | null
           updated_at?: string
           video_url?: string
-          views_count?: number
         }
         Relationships: [
           {
@@ -284,90 +140,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      discover_content_comments: {
-        Row: {
-          author_id: string
-          body: string
-          content_key: string
-          created_at: string
-          id: string
-          status: string
-        }
-        Insert: {
-          author_id: string
-          body: string
-          content_key: string
-          created_at?: string
-          id?: string
-          status?: string
-        }
-        Update: {
-          author_id?: string
-          body?: string
-          content_key?: string
-          created_at?: string
-          id?: string
-          status?: string
-        }
-        Relationships: []
-      }
-      discover_content_reactions: {
-        Row: {
-          content_key: string
-          created_at: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          content_key: string
-          created_at?: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          content_key?: string
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      discover_content_shares: {
-        Row: {
-          content_key: string
-          content_title: string
-          content_url: string
-          created_at: string
-          id: string
-          image_url: string
-          message: string
-          recipient_id: string
-          sender_id: string
-        }
-        Insert: {
-          content_key: string
-          content_title: string
-          content_url: string
-          created_at?: string
-          id?: string
-          image_url?: string
-          message?: string
-          recipient_id: string
-          sender_id: string
-        }
-        Update: {
-          content_key?: string
-          content_title?: string
-          content_url?: string
-          created_at?: string
-          id?: string
-          image_url?: string
-          message?: string
-          recipient_id?: string
-          sender_id?: string
-        }
-        Relationships: []
       }
       episodes: {
         Row: {
@@ -415,34 +187,21 @@ export type Database = {
       }
       favourites: {
         Row: {
-          added_at: string
-          content_id: string | null
           created_at: string
           title_id: string
           user_id: string
         }
         Insert: {
-          added_at?: string
-          content_id?: string | null
           created_at?: string
           title_id: string
           user_id?: string
         }
         Update: {
-          added_at?: string
-          content_id?: string | null
           created_at?: string
           title_id?: string
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "favourites_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "content"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "favourites_title_id_fkey"
             columns: ["title_id"]
@@ -628,37 +387,28 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           bio: string
           created_at: string
           display_name: string
-          id: string
           is_discoverable: boolean
-          share_watching_activity: boolean
           updated_at: string
           user_id: string
           username: string
         }
         Insert: {
-          avatar_url?: string | null
           bio?: string
           created_at?: string
-          display_name?: string
-          id: string
+          display_name: string
           is_discoverable?: boolean
-          share_watching_activity?: boolean
           updated_at?: string
-          user_id: string
-          username?: string
+          user_id?: string
+          username: string
         }
         Update: {
-          avatar_url?: string | null
           bio?: string
           created_at?: string
           display_name?: string
-          id?: string
           is_discoverable?: boolean
-          share_watching_activity?: boolean
           updated_at?: string
           user_id?: string
           username?: string
@@ -668,65 +418,18 @@ export type Database = {
       publisher_follows: {
         Row: {
           created_at: string
-          followed_at: string
-          publisher_id: string | null
           publisher_name: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          followed_at?: string
-          publisher_id?: string | null
           publisher_name: string
           user_id?: string
         }
         Update: {
           created_at?: string
-          followed_at?: string
-          publisher_id?: string | null
           publisher_name?: string
           user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "publisher_follows_publisher_id_fkey"
-            columns: ["publisher_id"]
-            isOneToOne: false
-            referencedRelation: "publishers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      publishers: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          is_verified: boolean
-          logo_url: string | null
-          name: string
-          publisher_type: string
-          website_url: string | null
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_verified?: boolean
-          logo_url?: string | null
-          name: string
-          publisher_type: string
-          website_url?: string | null
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_verified?: boolean
-          logo_url?: string | null
-          name?: string
-          publisher_type?: string
-          website_url?: string | null
         }
         Relationships: []
       }
@@ -755,32 +458,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "seasons_title_id_fkey"
-            columns: ["title_id"]
-            isOneToOne: false
-            referencedRelation: "titles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      series_follows: {
-        Row: {
-          followed_at: string
-          title_id: string
-          user_id: string
-        }
-        Insert: {
-          followed_at?: string
-          title_id: string
-          user_id: string
-        }
-        Update: {
-          followed_at?: string
-          title_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "series_follows_title_id_fkey"
             columns: ["title_id"]
             isOneToOne: false
             referencedRelation: "titles"
@@ -826,179 +503,6 @@ export type Database = {
           website_url?: string | null
         }
         Relationships: []
-      }
-      studio_title_submission_episodes: {
-        Row: {
-          created_at: string
-          delivery_status: string
-          duration_minutes: number | null
-          episode_number: number
-          episode_title: string
-          id: string
-          playback_url: string | null
-          poster_url: string | null
-          release_at: string | null
-          season_number: number
-          submission_id: string
-          synopsis: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          delivery_status?: string
-          duration_minutes?: number | null
-          episode_number: number
-          episode_title: string
-          id?: string
-          playback_url?: string | null
-          poster_url?: string | null
-          release_at?: string | null
-          season_number: number
-          submission_id: string
-          synopsis?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          delivery_status?: string
-          duration_minutes?: number | null
-          episode_number?: number
-          episode_title?: string
-          id?: string
-          playback_url?: string | null
-          poster_url?: string | null
-          release_at?: string | null
-          season_number?: number
-          submission_id?: string
-          synopsis?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "studio_title_submission_episodes_submission_id_fkey"
-            columns: ["submission_id"]
-            isOneToOne: false
-            referencedRelation: "studio_title_submissions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      studio_title_submissions: {
-        Row: {
-          backdrop_url: string | null
-          content_type: string
-          created_at: string
-          delivery_notes: string
-          duration_minutes: number | null
-          genre: string
-          id: string
-          is_exclusive: boolean
-          languages: string[]
-          platforms: string[]
-          playback_url: string | null
-          poster_url: string
-          promotional_rights_confirmed: boolean
-          published_title_id: string | null
-          release_year: number | null
-          review_note: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          rights_basis: string
-          rights_end: string | null
-          rights_evidence_url: string | null
-          rights_holder: string
-          rights_start: string | null
-          status: string
-          studio_id: string
-          submitted_by: string
-          synopsis: string
-          territories: string[]
-          title: string
-          trailer_url: string | null
-          updated_at: string
-        }
-        Insert: {
-          backdrop_url?: string | null
-          content_type: string
-          created_at?: string
-          delivery_notes?: string
-          duration_minutes?: number | null
-          genre?: string
-          id?: string
-          is_exclusive?: boolean
-          languages: string[]
-          platforms: string[]
-          playback_url?: string | null
-          poster_url: string
-          promotional_rights_confirmed?: boolean
-          published_title_id?: string | null
-          release_year?: number | null
-          review_note?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          rights_basis: string
-          rights_end?: string | null
-          rights_evidence_url?: string | null
-          rights_holder: string
-          rights_start?: string | null
-          status?: string
-          studio_id: string
-          submitted_by: string
-          synopsis: string
-          territories: string[]
-          title: string
-          trailer_url?: string | null
-          updated_at?: string
-        }
-        Update: {
-          backdrop_url?: string | null
-          content_type?: string
-          created_at?: string
-          delivery_notes?: string
-          duration_minutes?: number | null
-          genre?: string
-          id?: string
-          is_exclusive?: boolean
-          languages?: string[]
-          platforms?: string[]
-          playback_url?: string | null
-          poster_url?: string
-          promotional_rights_confirmed?: boolean
-          published_title_id?: string | null
-          release_year?: number | null
-          review_note?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          rights_basis?: string
-          rights_end?: string | null
-          rights_evidence_url?: string | null
-          rights_holder?: string
-          rights_start?: string | null
-          status?: string
-          studio_id?: string
-          submitted_by?: string
-          synopsis?: string
-          territories?: string[]
-          title?: string
-          trailer_url?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "studio_title_submissions_published_title_id_fkey"
-            columns: ["published_title_id"]
-            isOneToOne: false
-            referencedRelation: "titles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "studio_title_submissions_studio_id_fkey"
-            columns: ["studio_id"]
-            isOneToOne: false
-            referencedRelation: "studio_accounts"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       titles: {
         Row: {
@@ -1191,7 +695,7 @@ export type Database = {
           position_seconds?: number
           title_id: string
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           completed?: boolean
@@ -1204,43 +708,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "watch_progress_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "content"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "watch_progress_title_id_fkey"
             columns: ["title_id"]
             isOneToOne: false
             referencedRelation: "titles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      watchlist: {
-        Row: {
-          added_at: string
-          content_id: string
-          user_id: string
-        }
-        Insert: {
-          added_at?: string
-          content_id: string
-          user_id: string
-        }
-        Update: {
-          added_at?: string
-          content_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "watchlist_content_id_fkey"
-            columns: ["content_id"]
-            isOneToOne: false
-            referencedRelation: "content"
             referencedColumns: ["id"]
           },
         ]
@@ -1287,44 +758,11 @@ export type Database = {
         }
         Returns: undefined
       }
-      get_discover_clip_engagement: {
-        Args: { p_clip_id: string }
-        Returns: {
-          liked_by_current_user: boolean
-          reaction_count: number
-        }[]
-      }
-      get_discover_content_engagement: {
-        Args: { p_content_key: string }
-        Returns: {
-          liked_by_current_user: boolean
-          reaction_count: number
-        }[]
-      }
-      get_letterbox_post_engagement: {
-        Args: { p_post_ids: string[] }
-        Returns: {
-          liked_by_current_user: boolean
-          post_id: string
-          reaction_count: number
-        }[]
-      }
+      claim_first_admin: { Args: never; Returns: boolean }
       is_cinema_admin: { Args: never; Returns: boolean }
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
       join_watch_party: { Args: { p_invite_code: string }; Returns: string }
-      record_discover_clip_view: {
-        Args: { p_clip_id: string }
-        Returns: number
-      }
-      update_my_verified_studio_profile: {
-        Args: {
-          p_description: string
-          p_logo_url?: string | null
-          p_website_url?: string | null
-        }
-        Returns: boolean
-      }
     }
     Enums: {
       [_ in never]: never
