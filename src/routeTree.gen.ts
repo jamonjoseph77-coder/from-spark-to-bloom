@@ -10,10 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as BoxOfficeRouteImport } from './routes/box-office'
-import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FreeRouteImport } from './routes/free'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as LiveTvRouteImport } from './routes/live-tv'
 import { Route as MoviesRouteImport } from './routes/movies'
@@ -30,6 +31,7 @@ import { Route as SportsRouteImport } from './routes/sports'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminClipsRouteImport } from './routes/admin.clips'
 import { Route as AdminNewRouteImport } from './routes/admin.new'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as CreatorShortsRouteImport } from './routes/creator.shorts'
 import { Route as PublishersIndexRouteImport } from './routes/publishers.index'
 import { Route as PublishersPublisherRouteImport } from './routes/publishers.$publisher'
@@ -45,14 +47,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoxOfficeRoute = BoxOfficeRouteImport.update({
   id: '/box-office',
   path: '/box-office',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategorySlugRoute = CategorySlugRouteImport.update({
-  id: '/category/$slug',
-  path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiscoverRoute = DiscoverRouteImport.update({
@@ -63,6 +65,11 @@ const DiscoverRoute = DiscoverRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreeRoute = FreeRouteImport.update({
+  id: '/free',
+  path: '/free',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FriendsRoute = FriendsRouteImport.update({
@@ -145,6 +152,11 @@ const AdminNewRoute = AdminNewRouteImport.update({
   path: '/admin/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CreatorShortsRoute = CreatorShortsRouteImport.update({
   id: '/creator/shorts',
   path: '/creator/shorts',
@@ -193,10 +205,11 @@ const TmdbMediaTypeIdRoute = TmdbMediaTypeIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/box-office': typeof BoxOfficeRoute
-  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/free': typeof FreeRoute
   '/friends': typeof FriendsRoute
   '/live-tv': typeof LiveTvRoute
   '/movies': typeof MoviesRoute
@@ -212,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/sports': typeof SportsRoute
   '/admin/clips': typeof AdminClipsRoute
   '/admin/new': typeof AdminNewRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/creator/shorts': typeof CreatorShortsRoute
   '/publishers/$publisher': typeof PublishersPublisherRoute
   '/title/$id': typeof TitleIdRoute
@@ -225,10 +239,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/box-office': typeof BoxOfficeRoute
-  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/free': typeof FreeRoute
   '/friends': typeof FriendsRoute
   '/live-tv': typeof LiveTvRoute
   '/movies': typeof MoviesRoute
@@ -238,11 +253,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/series': typeof SeriesRoute
+  '/shorts': typeof ShortsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sports': typeof SportsRoute
   '/admin/clips': typeof AdminClipsRoute
   '/admin/new': typeof AdminNewRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/creator/shorts': typeof CreatorShortsRoute
   '/publishers/$publisher': typeof PublishersPublisherRoute
   '/title/$id': typeof TitleIdRoute
@@ -257,10 +274,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/box-office': typeof BoxOfficeRoute
-  '/category/$slug': typeof CategorySlugRoute
   '/discover': typeof DiscoverRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/free': typeof FreeRoute
   '/friends': typeof FriendsRoute
   '/live-tv': typeof LiveTvRoute
   '/movies': typeof MoviesRoute
@@ -270,11 +288,13 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/series': typeof SeriesRoute
+  '/shorts': typeof ShortsRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sports': typeof SportsRoute
   '/admin/clips': typeof AdminClipsRoute
   '/admin/new': typeof AdminNewRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/creator/shorts': typeof CreatorShortsRoute
   '/publishers/$publisher': typeof PublishersPublisherRoute
   '/title/$id': typeof TitleIdRoute
@@ -290,10 +310,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/box-office'
-    | '/category/$slug'
     | '/discover'
     | '/forgot-password'
+    | '/free'
     | '/friends'
     | '/live-tv'
     | '/movies'
@@ -309,6 +330,7 @@ export interface FileRouteTypes {
     | '/sports'
     | '/admin/clips'
     | '/admin/new'
+    | '/category/$slug'
     | '/creator/shorts'
     | '/publishers/$publisher'
     | '/title/$id'
@@ -322,10 +344,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/box-office'
-    | '/category/$slug'
     | '/discover'
     | '/forgot-password'
+    | '/free'
     | '/friends'
     | '/live-tv'
     | '/movies'
@@ -335,11 +358,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/series'
+    | '/shorts'
     | '/sign-in'
     | '/sign-up'
     | '/sports'
     | '/admin/clips'
     | '/admin/new'
+    | '/category/$slug'
     | '/creator/shorts'
     | '/publishers/$publisher'
     | '/title/$id'
@@ -353,9 +378,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/box-office'
     | '/discover'
     | '/forgot-password'
+    | '/free'
     | '/friends'
     | '/live-tv'
     | '/movies'
@@ -365,11 +392,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/series'
+    | '/shorts'
     | '/sign-in'
     | '/sign-up'
     | '/sports'
     | '/admin/clips'
     | '/admin/new'
+    | '/category/$slug'
     | '/creator/shorts'
     | '/publishers/$publisher'
     | '/title/$id'
@@ -384,10 +413,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   BoxOfficeRoute: typeof BoxOfficeRoute
-  CategorySlugRoute: typeof CategorySlugRoute
   DiscoverRoute: typeof DiscoverRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  FreeRoute: typeof FreeRoute
   FriendsRoute: typeof FriendsRoute
   LiveTvRoute: typeof LiveTvRoute
   MoviesRoute: typeof MoviesRoute
@@ -403,6 +433,7 @@ export interface RootRouteChildren {
   SportsRoute: typeof SportsRoute
   AdminClipsRoute: typeof AdminClipsRoute
   AdminNewRoute: typeof AdminNewRoute
+  CategorySlugRoute: typeof CategorySlugRoute
   CreatorShortsRoute: typeof CreatorShortsRoute
   PublishersPublisherRoute: typeof PublishersPublisherRoute
   TitleIdRoute: typeof TitleIdRoute
@@ -424,18 +455,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/box-office': {
       id: '/box-office'
       path: '/box-office'
       fullPath: '/box-office'
       preLoaderRoute: typeof BoxOfficeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/category/$slug': {
-      id: '/category/$slug'
-      path: '/category/$slug'
-      fullPath: '/category/$slug'
-      preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/discover': {
@@ -450,6 +481,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free': {
+      id: '/free'
+      path: '/free'
+      fullPath: '/free'
+      preLoaderRoute: typeof FreeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/friends': {
@@ -564,6 +602,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/creator/shorts': {
       id: '/creator/shorts'
       path: '/creator/shorts'
@@ -632,10 +677,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   BoxOfficeRoute: BoxOfficeRoute,
-  CategorySlugRoute: CategorySlugRoute,
   DiscoverRoute: DiscoverRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  FreeRoute: FreeRoute,
   FriendsRoute: FriendsRoute,
   LiveTvRoute: LiveTvRoute,
   MoviesRoute: MoviesRoute,
@@ -651,6 +697,7 @@ const rootRouteChildren: RootRouteChildren = {
   SportsRoute: SportsRoute,
   AdminClipsRoute: AdminClipsRoute,
   AdminNewRoute: AdminNewRoute,
+  CategorySlugRoute: CategorySlugRoute,
   CreatorShortsRoute: CreatorShortsRoute,
   PublishersPublisherRoute: PublishersPublisherRoute,
   TitleIdRoute: TitleIdRoute,
