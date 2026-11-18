@@ -127,7 +127,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
                       <p className="mt-1 text-[11px] text-slate-500">Provided by the original video publisher</p>
                     </div>
                     <button type="button" onClick={() => setActiveVideo({ url: `https://www.youtube.com/watch?v=${video.key}`, label: `${data.title} ${video.kind.toLowerCase()}`, heading: `${video.kind}: ${data.title}` })} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-white/15 bg-white/[.06] px-4 py-2.5 text-xs font-semibold text-slate-100 transition hover:border-sky-200/30 hover:bg-sky-300/10 sm:self-auto">
-                      <Play className="h-3.5 w-3.5 fill-current" /> Watch on Cinema
+                      <Play className="h-3.5 w-3.5 fill-current" /> Play YouTube Video
                     </button>
                   </article>
                 ))}
