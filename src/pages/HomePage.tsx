@@ -60,7 +60,7 @@ function HomeCommunity({ social, loading }: { social?: HomeSocial | null; loadin
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
           <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Your Friends Are Watching</p><p className="mt-1 text-xs text-slate-500">Only friends who have enabled watch activity sharing appear here.</p></div><Users className="h-4 w-4 text-cinema-200" /></div>
-          {social?.activity.watching.length ? <div className="mt-4 space-y-3">{social.activity.watching.slice(0, 5).map((item) => <a key={item.friendId + item.titleId} href={`/title/${item.titleId}`} className="flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-cinema-300/25"><span className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-ink-800">{item.posterUrl && <img src={item.posterUrl} alt="" className="h-full w-full object-cover" />}</span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold text-white">{item.titleName}</span><span className="mt-1 block truncate text-[11px] text-slate-400">{item.friendName} Is Watching</span></span><ProfileAvatar name={item.friendName} imageUrl={item.friendAvatarUrl} size="sm" previewable={false} /><Play className="h-4 w-4 shrink-0 text-cinema-200" /></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When friends choose to share what they are currently watching, their recent activity will appear here for up to 20 minutes.</p>}
+          {social?.activity.watching.length ? <div className="mt-4 space-y-3">{social.activity.watching.slice(0, 5).map((item) => <a key={item.friendId + item.titleId} href={`/title/${item.titleId}`} className="flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[.025] p-2.5 transition hover:border-cinema-300/25"><span className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-ink-800">{item.posterUrl && <img src={item.posterUrl} alt="" className="h-full w-full object-cover" />}</span><span className="flex shrink-0 items-center"><span className="block truncate text-xs font-bold text-white">{item.titleName}</span><span className="mt-1 block truncate text-[11px] text-slate-400">{item.friendName} Is Watching</span></span><ProfileAvatar name={item.friendName} imageUrl={item.friendAvatarUrl} size="sm" previewable={false} /><Play className="h-4 w-4 shrink-0 text-cinema-200" /></a>)}</div> : <p className="mt-4 text-xs leading-5 text-slate-500">When friends choose to share what they are currently watching, their recent activity will appear here for up to 20 minutes.</p>}
         </section>
         <section className="rounded-2xl border border-white/10 bg-ink-900/65 p-4">
           <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-bold text-white">Publishers In Your Circle</p><p className="mt-1 text-xs text-slate-500">Studios And Broadcasters Your Friends Track.</p></div><Clapperboard className="h-4 w-4 text-cinema-200" /></div>
@@ -168,7 +168,7 @@ export function HomePage() {
           </div>
           <span className="hidden text-[11px] font-medium text-slate-500 sm:block">Choose A Destination</span>
         </div>
-        <nav className="cinema-home-categories grid grid-cols-2 gap-2.5 pb-1 sm:grid-cols-3 lg:grid-cols-6" aria-label="Explore Home Categories">
+        <nav className="cinema-home-categories -mx-4 flex w-max max-w-none gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:w-full sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
           {[
             { label: 'Movies', href: '/movies', detail: 'Films And Series', icon: Film },
             { label: 'Shorts', href: '/shorts', detail: 'Quick Stories', icon: Play },
@@ -177,13 +177,13 @@ export function HomePage() {
             { label: 'Animation', href: '/category/animation', detail: 'Worlds Of Imagination', icon: WandSparkles },
             { label: 'Family', href: '/category/family', detail: 'Stories Together', icon: Users },
           ].map(({ label, href, detail, icon: Icon }) => (
-            <a key={label} href={href} className="cinema-home-category group relative flex min-h-[6rem] min-w-0 items-center gap-2.5 overflow-hidden rounded-2xl border px-2.5 py-3 text-left transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300 sm:gap-3 sm:px-3.5">
-              <span aria-hidden="true" className="cinema-home-category__icon grid h-10 w-10 shrink-0 place-items-center rounded-xl border text-cinema-100 transition duration-300 group-hover:scale-105">
+            <a key={label} href={href} className="cinema-home-category group relative flex min-h-11 w-max max-w-none shrink-0 items-center gap-2 overflow-visible rounded-full border px-3.5 py-2 text-left transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300 sm:min-h-10 sm:px-3">
+              <span aria-hidden="true" className="cinema-home-category__icon grid h-7 w-7 shrink-0 place-items-center rounded-full border text-cinema-100 transition duration-300 group-hover:scale-105">
                 <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={1.8} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block whitespace-normal break-words text-[12px] font-extrabold leading-tight tracking-normal text-white sm:text-sm">{label}</span>
-                <span className="mt-1 block whitespace-normal text-[10px] font-medium leading-snug text-slate-400">{detail}</span>
+                <span className="whitespace-nowrap text-xs font-extrabold leading-none tracking-wide text-white sm:text-[13px]">{label}</span>
+                
               </span>
               <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-cinema-200" />
             </a>
