@@ -168,7 +168,7 @@ export function HomePage() {
           </div>
           <span className="hidden text-[11px] font-medium text-slate-500 sm:block">Choose A Destination</span>
         </div>
-        <nav className="cinema-home-categories -mx-4 grid auto-cols-[minmax(8.7rem,1fr)] grid-flow-col gap-2.5 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid-flow-row sm:grid-cols-3 sm:px-0 lg:grid-cols-6 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
+        <nav className="cinema-home-categories grid grid-cols-2 gap-2.5 pb-1 sm:grid-cols-3 lg:grid-cols-6" aria-label="Explore Home Categories">
           {[
             { label: 'Movies', href: '/movies', detail: 'Films And Series', icon: Film },
             { label: 'Shorts', href: '/shorts', detail: 'Quick Stories', icon: Play },
@@ -177,13 +177,13 @@ export function HomePage() {
             { label: 'Animation', href: '/category/animation', detail: 'Worlds Of Imagination', icon: WandSparkles },
             { label: 'Family', href: '/category/family', detail: 'Stories Together', icon: Users },
           ].map(({ label, href, detail, icon: Icon }) => (
-            <a key={label} href={href} className="cinema-home-category group relative flex min-h-[5.2rem] min-w-0 items-center gap-3 overflow-hidden rounded-2xl border px-3.5 py-3 text-left transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300">
+            <a key={label} href={href} className="cinema-home-category group relative flex min-h-[6rem] min-w-0 items-center gap-2.5 overflow-hidden rounded-2xl border px-2.5 py-3 text-left transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cinema-300 sm:gap-3 sm:px-3.5">
               <span aria-hidden="true" className="cinema-home-category__icon grid h-10 w-10 shrink-0 place-items-center rounded-xl border text-cinema-100 transition duration-300 group-hover:scale-105">
                 <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={1.8} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-xs font-extrabold tracking-wide text-white">{label}</span>
-                <span className="mt-1 block truncate text-[10px] font-medium text-slate-400">{detail}</span>
+                <span className="block whitespace-normal break-words text-[12px] font-extrabold leading-tight tracking-normal text-white sm:text-sm">{label}</span>
+                <span className="mt-1 block whitespace-normal text-[10px] font-medium leading-snug text-slate-400">{detail}</span>
               </span>
               <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-cinema-200" />
             </a>
