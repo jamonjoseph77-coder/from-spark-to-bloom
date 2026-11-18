@@ -168,7 +168,7 @@ export function HomePage() {
           </div>
           <span className="hidden text-[11px] font-medium text-slate-500 sm:block">Choose A Destination</span>
         </div>
-        <nav className="cinema-home-categories -mx-4 flex w-max max-w-none gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:w-full sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden" aria-label="Explore Home Categories">
+        <nav className="cinema-home-categories -mx-4 flex w-full min-w-0 max-w-full flex-nowrap gap-2 overflow-x-auto overscroll-x-contain px-4 pb-2 touch-pan-x [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0" aria-label="Explore Home Categories">
           {[
             { label: 'Movies', href: '/movies', detail: 'Films And Series', icon: Film },
             { label: 'Shorts', href: '/shorts', detail: 'Quick Stories', icon: Play },
