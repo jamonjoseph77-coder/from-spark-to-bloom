@@ -19,12 +19,13 @@ const valid = {
 describe("Cinema → Marketplace event contract", () => {
   it("normalises consented events and drops all unapproved identity fields", () => {
     const event = normaliseMarketplaceViewerEvent(valid, now);
-    expect(event?.territory).toBe("GH");
+    expect(event?.territory).toBe("ZZ");
     expect(event).not.toHaveProperty("userId");
     expect(event).not.toHaveProperty("email");
     expect(event?.source).toBe("cinema_web");
   });
-  it("rejects events without explicit consent or canonical UUIDs", () => {
+  it("ignores caller-supplied territory and rejects events without explicit consent or canonical UUIDs", () => {
+    expect(normaliseMarketplaceViewerEvent({ ...valid, territory: "NG" }, now)?.territory).toBe("ZZ");
     expect(normaliseMarketplaceViewerEvent({ ...valid, consentState: "unknown" }, now)).toBeNull();
     expect(normaliseMarketplaceViewerEvent({ ...valid, titleId: "tmdb:123" }, now)).toBeNull();
   });
