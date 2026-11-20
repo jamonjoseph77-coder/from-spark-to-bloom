@@ -12,7 +12,7 @@ function cookieHeader(request: Request, value: string, maxAge = MAX_AGE) {
 
 async function readBoundedBody(request: Request): Promise<{ ok: true; text: string } | { ok: false; status: 400 | 413; error: string }> {
   const declaredLength = request.headers.get("content-length");
-  if (declaredLength && (!/^\\d+$/.test(declaredLength) || Number(declaredLength) > MAX_BODY_BYTES)) {
+  if (declaredLength && (!/^\d+$/.test(declaredLength) || Number(declaredLength) > MAX_BODY_BYTES)) {
     return { ok: false, status: 413, error: "request_too_large" };
   }
   if (!request.body) return { ok: false, status: 400, error: "request_body_required" };
