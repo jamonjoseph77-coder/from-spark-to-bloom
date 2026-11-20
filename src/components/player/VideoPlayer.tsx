@@ -23,6 +23,7 @@ interface VideoPlayerProps {
   onMutedChange?: (muted: boolean) => void;
   layout?: 'landscape' | 'portrait';
   onProgress?: (progress: PlaybackProgress) => void;
+  onPlaybackStateChange?: (state: 'playing' | 'paused' | 'ended') => void;
 }
 
 interface QualityLevel {
@@ -45,6 +46,7 @@ export function VideoPlayer({
   const hlsRef = useRef<Hls | null>(null);
   const startAtRef = useRef(startAt);
   const onProgressRef = useRef(onProgress);
+  const onPlaybackStateChangeRef = useRef(onPlaybackStateChange);
   const lastSavedRef = useRef(0);
   const playRequestedRef = useRef(false);
   const [status, setStatus] = useState<PlayerStatus>('loading');
@@ -57,6 +59,7 @@ export function VideoPlayer({
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
+  useEffect(() => { onPlaybackStateChangeRef.current = onPlaybackStateChange; }, [onPlaybackStateChange]);
   useEffect(() => { startAtRef.current = startAt; }, [startAt]);
   useEffect(() => {
     const video = videoRef.current;
@@ -272,7 +275,7 @@ export function VideoPlayer({
           controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
-          onPlay={() => { playRequestedRef.current = true; hlsRef.current?.startLoad(); }}
+          onPlay={() => { playRequestedRef.current = true; hlsRef.current?.startLoad(); onPlaybackStateChangeRef.current?.('playing'); }}
           muted={isMuted}
           preload={autoPlay ? 'auto' : 'metadata'}
           poster={poster || undefined}
@@ -303,8 +306,12 @@ export function VideoPlayer({
           onPause={(event) => {
             setStatus('ready');
             reportProgress(event.currentTarget, false);
+            onPlaybackStateChangeRef.current?.(event.currentTarget.ended ? 'ended' : 'paused');
           }}
-          onEnded={(event) => reportProgress(event.currentTarget, true)}
+          onEnded={(event) => {
+            reportProgress(event.currentTarget, true);
+            onPlaybackStateChangeRef.current?.('ended');
+          }}
           onError={handleVideoError}
         >
           {subtitleUrl && <track kind="subtitles" src={subtitleUrl} srcLang="en" label="Subtitles" />}
