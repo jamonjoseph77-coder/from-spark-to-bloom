@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { isDirectVideoUrl } from '@/lib/media';
 import { isPlayableMediaSource, filterPlayableCatalogueTitles, type PlayableCatalogueSeason } from '@/lib/playable-catalogue';
 import type {
   EpisodeInput,
