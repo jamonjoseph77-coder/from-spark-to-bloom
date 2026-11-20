@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { normaliseMarketplaceViewerEvent } from "@/lib/marketplace-events";
 import { readAnalyticsConsent } from "@/lib/analytics-consent";
+import { resolveMarketplaceForwardingConfig } from "@/lib/marketplace-forwarding-config";
 
 const MAX_BODY_BYTES = 8 * 1024;
-const MARKETPLACE_EVENTS_URL = "https://cinema-presence-marketplace.lovable.app/api/marketplace/events";
-const ALLOWED_ORIGINS = new Set(["https://from-spark-to-bloom.lovable.app"]);
 
 async function readBoundedBody(request: Request): Promise<string | null> {
   if (!request.body) return null;
@@ -35,15 +34,17 @@ async function readBoundedBody(request: Request): Promise<string | null> {
 export const Route = createFileRoute("/api/marketplace-events")({
   server: { handlers: {
     POST: async ({ request }) => {
+      const config = resolveMarketplaceForwardingConfig(process.env);
+      if (!config) return Response.json({ error: "event_forwarding_not_configured" }, { status: 503, headers: { "Cache-Control": "no-store" } });
       const origin = request.headers.get("origin") ?? "";
-      if (!ALLOWED_ORIGINS.has(origin)) {
+      if (!config.allowedOrigins.includes(origin)) {
         return Response.json({ error: "origin_not_allowed" }, { status: 403, headers: { "Cache-Control": "no-store" } });
       }
       if (!(request.headers.get("content-type") ?? "").toLowerCase().includes("application/json")) {
         return Response.json({ error: "application_json_required" }, { status: 415 });
       }
-      const token = process.env.CINEMA_MARKETPLACE_ANALYTICS_TOKEN;
-      if (!token || token.length < 32 || token.length > 512) {
+      const token = config.token;
+      if (!token) {
         return Response.json({ error: "event_forwarding_not_configured" }, { status: 503, headers: { "Cache-Control": "no-store" } });
       }
       const consent = await readAnalyticsConsent(request.headers.get("cookie"), token);
@@ -66,7 +67,7 @@ export const Route = createFileRoute("/api/marketplace-events")({
           .from("titles").select("id").eq("id", event.titleId).eq("is_published", true).maybeSingle();
         if (titleError || !title) return Response.json({ error: "published_title_not_found" }, { status: 404 });
 
-        const upstream = await fetch(MARKETPLACE_EVENTS_URL, {
+        const upstream = await fetch(config.eventsUrl, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
           body: JSON.stringify(event),
