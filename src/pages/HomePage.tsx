@@ -3,6 +3,7 @@ import { ArrowRight, Clapperboard, Compass, Film, MessageCircle, Newspaper, Play
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { ShortCard } from '@/components/discover/ShortCard';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
@@ -191,6 +192,7 @@ export function HomePage() {
         </nav>
       </section>
       <TmdbHero />
+      <CinemaPresence collectionId="home" placement="home_shelf" />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
