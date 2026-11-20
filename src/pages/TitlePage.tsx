@@ -107,8 +107,12 @@ export function TitlePage({ titleId }: { titleId: string }) {
           </a>
           {!title.is_published && <p className="mb-4 inline-flex rounded-md bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Draft · visible to administrators only</p>}
           <div className="grid items-end gap-7 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10 lg:grid-cols-[minmax(220px,300px)_minmax(0,1fr)]">
-            <div className="mx-auto w-36 sm:w-44 md:mx-0 md:w-full">
+            <div className="relative mx-auto w-36 sm:w-44 md:mx-0 md:w-full">
               <Artwork src={title.poster_url} alt={`${title.title} poster`} fallbackTitle={title.title} className="aspect-[2/3] w-full rounded-2xl border border-white/15 shadow-[0_28px_90px_rgba(0,0,0,.65)] ring-1 ring-sky-200/10 sm:rounded-3xl" />
+              {title.is_published && (
+                <CinemaPresence key={`${title.id}:poster-ribbon`} titleId={title.id} placement="poster_ribbon"
+                  className="absolute inset-x-2 bottom-2 z-10 !mt-0 !max-w-none" />
+              )}
             </div>
             <div className="max-w-3xl space-y-5 pb-1">
               <div className="flex flex-wrap items-center gap-2">
