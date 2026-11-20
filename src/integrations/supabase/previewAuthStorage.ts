@@ -141,15 +141,15 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
     setItem: (key, value) => {
       fallbackStorage.setItem(key, value);
       return request('lovable-preview-auth:set', key, value).then((res) => {
-        if (res?.ok && res.value !== null && localStorage.getItem(key) === value) {
-          if (res.value === '') localStorage.removeItem(key);
-          else localStorage.setItem(key, res.value);
+        if (res?.ok && res.value !== null && fallbackStorage.getItem(key) === value) {
+          if (res.value === '') fallbackStorage.removeItem(key);
+          else fallbackStorage.setItem(key, res.value);
         }
       });
     },
     removeItem: (key) => {
       const local = readLocal(key);
-      localStorage.removeItem(key);
+      fallbackStorage.removeItem(key);
       return request('lovable-preview-auth:remove', key, local ?? undefined).then(() => {});
     },
   };
