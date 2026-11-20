@@ -64,6 +64,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
           <div className="space-y-5">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">{facts.join(' · ')}</p>
             <h1 className="max-w-4xl text-4xl font-black leading-[1.02] tracking-[-.045em] text-white [text-wrap:balance] sm:text-5xl lg:text-6xl">{data.title}</h1>
+            <div className="cinema-presence-slot mt-3 max-w-xl" data-cinema-presence data-title-id={canonicalTitle?.id || `tmdb-${mediaType}-${id}`} data-tmdb-id={id} data-genre={data.genres[0] || ""} data-placement="poster_ribbon" data-territory="GHA" aria-label="TMDB title sponsorship" />
             {data.tagline && <p className="text-base italic text-slate-300">{data.tagline}</p>}
             <div className="flex flex-wrap items-center gap-3">
               {canonicalTitle && <a href={`/title/${canonicalTitle.id}`} className="inline-flex items-center gap-2 rounded-full border border-sky-200/25 bg-sky-300/10 px-4 py-2 text-sm font-semibold text-sky-100 transition hover:border-sky-200/40 hover:bg-sky-300/15">Open This Title In Cinema</a>}

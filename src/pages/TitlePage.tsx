@@ -117,6 +117,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
                 {runtime && <><span className="text-slate-600">·</span><span className="inline-flex items-center gap-1 text-xs text-slate-300"><Clock3 className="h-3.5 w-3.5" />{runtime}</span></>}
               </div>
               <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-.045em] text-white [text-wrap:balance] drop-shadow-lg sm:text-5xl lg:text-6xl">{title.title}</h1>
+              <div className="cinema-presence-slot mt-3 max-w-xl" data-cinema-presence data-title-id={title.id} data-genre={title.genre || ""} data-placement="title_badge" data-territory="GHA" aria-label="Title sponsorship" />
               <p className="line-clamp-2 max-w-2xl text-sm leading-7 text-slate-200/90 sm:text-base">{title.synopsis || 'More information about this title will be available soon.'}</p>
               <div className="flex flex-wrap items-center gap-2.5 pt-2">
                 {primary}
