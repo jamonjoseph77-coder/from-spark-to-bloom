@@ -55,3 +55,21 @@ Each response must include generated_at, period_start, period_end, source, event
 5. Validate counts against controlled test sessions before enabling brand-facing metrics.
 
 Until steps 1–4 are implemented and validated, Marketplace must show "Awaiting Verified Cinema Data" rather than invented or proxy performance metrics.
+
+
+## Implemented first phase
+
+A read-only server route is added at `/api/marketplace-performance`. It requires the server-side `CINEMA_MARKETPLACE_ANALYTICS_TOKEN` bearer secret and uses the existing server-only Supabase admin client to read existing records. It returns aggregate saved-progress indicators only and suppresses title cohorts below five engaged accounts. It does not expose individual viewer rows.
+
+The route does not create or update database tables, policies, titles, user records or watch-progress records. It is not a full playback analytics feed. The endpoint's `metricType` explicitly identifies the response as saved progress state, not playback events.
+
+Before the endpoint can serve Marketplace requests, configure the token in official Cinema hosting and the matching server-side token plus endpoint URL in Marketplace hosting. The token must never be exposed to browser code or committed to the repository.
+
+Full performance metrics remain pending:
+- playback starts and qualified views;
+- cumulative watch time from playback heartbeats;
+- repeat sessions;
+- country-level aggregates;
+- sponsored placement impressions and clicks.
+
+Those require player and placement event instrumentation plus an approved persistence and retention design. Do not infer them from saved progress.
