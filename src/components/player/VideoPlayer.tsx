@@ -24,6 +24,8 @@ interface VideoPlayerProps {
   layout?: 'landscape' | 'portrait';
   onProgress?: (progress: PlaybackProgress) => void;
   onPlaybackStateChange?: (state: 'playing' | 'paused' | 'ended') => void;
+  pausePresenceTitleId?: string;
+  showPausePresence?: boolean;
 }
 
 interface QualityLevel {
@@ -316,6 +318,14 @@ export function VideoPlayer({
         >
           {subtitleUrl && <track kind="subtitles" src={subtitleUrl} srcLang="en" label="Subtitles" />}
         </video>
+
+        {showPausePresence && pausePresenceTitleId && status !== 'error' && (
+          <div className="pointer-events-none absolute inset-x-4 bottom-20 z-30 flex justify-center">
+            <div className="pointer-events-auto w-full max-w-xl">
+              <CinemaPresence key={`${pausePresenceTitleId}:pause-overlay`} titleId={pausePresenceTitleId} placement="pause_frame" />
+            </div>
+          </div>
+        )}
 
         {showMuteToggle && status !== 'error' && (
           <button
