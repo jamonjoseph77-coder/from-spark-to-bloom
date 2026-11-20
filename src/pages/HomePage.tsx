@@ -4,6 +4,7 @@ import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow'
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { TmdbHero } from '@/components/tmdb/TmdbHero';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
@@ -191,6 +192,7 @@ export function HomePage() {
         </nav>
       </section>
       <TmdbHero />
+      <CinemaPresence key="home" collectionId="home" placement="home_shelf" />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
