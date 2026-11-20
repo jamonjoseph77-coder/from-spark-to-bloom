@@ -58,7 +58,7 @@ export function TmdbBrowsePage({ mediaType }: { mediaType: TmdbMediaType }) {
     <div className={`${PAGE_CONTAINER} space-y-8 pb-12`}>
       <CinemaCategoryNav active={heading} />
       <header className="cinema-category-live-hero relative isolate flex min-h-[13rem] flex-col justify-center gap-3 overflow-hidden rounded-[1.7rem] border border-sky-200/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,.3)] sm:min-h-[16rem] sm:p-8">
-        {categoryBackdrop && <Artwork src={categoryBackdrop} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.46]" />}
+        {categoryBackdrop && <Artwork src={categoryBackdrop} alt="" fallbackTitle={heading} className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[.56]" />}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#05080e]/85 via-[#05080e]/55 to-[#05080e]/25" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[#05080e]/55 via-transparent to-[#05080e]/10" />
         <div className="relative z-10">
