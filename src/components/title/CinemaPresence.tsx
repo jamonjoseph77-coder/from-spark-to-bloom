@@ -9,7 +9,7 @@ export function CinemaPresence({
   titleId?: string; collectionId?: string; placement?: Placement; territory?: string;
 }) {
   const slotRef = useRef<HTMLDivElement>(null);
-  const targetKey = titleId || collectionId || '';
+  const targetKey = titleId && collectionId ? '' : titleId || collectionId || '';
 
   useEffect(() => {
     if (!targetKey || !slotRef.current) return;
