@@ -1,13 +1,15 @@
 import { ArrowUpRight, Star } from 'lucide-react';
 import { Artwork } from '@/components/ui/Artwork';
 import { tmdbImageUrl, tmdbYear, type TmdbItem } from '@/lib/tmdb';
-import { canonicalCinemaHref } from '@/lib/canonicalTitle';
+import { canonicalCinemaHref, findCanonicalCinemaTitle } from '@/lib/canonicalTitle';
 import type { Title } from '@/lib/types';
 
 export function TmdbCard({ item, landscape = false, localTitles = [] }: { item: TmdbItem; landscape?: boolean; localTitles?: Title[] }) {
   const typeLabel = item.mediaType === 'movie' ? 'Movie' : 'Series';
   const year = tmdbYear(item);
   const href = canonicalCinemaHref(item, localTitles);
+  const canonicalTitle = findCanonicalCinemaTitle(item, localTitles);
+  const presenceTitleId = canonicalTitle?.id || `tmdb-${item.mediaType}-${item.id}`;
   const image = landscape
     ? tmdbImageUrl(item.backdropPath, 'w780') || tmdbImageUrl(item.posterPath, 'w342')
     : tmdbImageUrl(item.posterPath, 'w342');
@@ -26,6 +28,7 @@ export function TmdbCard({ item, landscape = false, localTitles = [] }: { item: 
         <p className="mt-1 truncate text-xs text-slate-400">{typeLabel}{year ? ` · ${year}` : ''}</p>
       </div>
     </a>
+      <div className="cinema-presence-slot mt-2" data-cinema-presence data-title-id={presenceTitleId} data-tmdb-id={item.id} data-placement="poster_ribbon" data-territory="GHA" aria-label="TMDB poster sponsorship" />
     </div>
   );
 }
