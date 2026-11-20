@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Search } from 'lucide-react';
+import { Search, ShieldCheck } from 'lucide-react';
 import { NotificationBell } from '@/components/layout/NotificationBell';
 import { ProfileAvatar } from '@/components/social/ProfileAvatar';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -52,6 +52,13 @@ export function TopBar() {
         </div>
       </form>
       <div className="ml-auto flex shrink-0 items-center gap-2">
+        {user && (
+          <button type="button" aria-label="Privacy choices" title="Privacy choices"
+            onClick={() => window.dispatchEvent(new Event("cinema:open-privacy-choices"))}
+            className="grid h-9 w-9 place-items-center rounded-full text-slate-400 transition hover:bg-white/10 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/40">
+            <ShieldCheck className="h-4 w-4" />
+          </button>
+        )}
         {user && <NotificationBell userId={user.id} />}
         {user ? (
           <a href="/profile" aria-label="Your profile" title={profile?.display_name || user.email || 'Your profile'} className="rounded-full ring-2 ring-cinema-400/30 transition hover:ring-cinema-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200">

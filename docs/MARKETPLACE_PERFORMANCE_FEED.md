@@ -80,3 +80,12 @@ Those require player and placement event instrumentation plus an approved persis
 The official Cinema server forwarder accepts the short-lived opaque `trackingToken` returned by Marketplace `GET /api/ads/serve` for each eligible placement. For placement event types, the forwarder also carries the matching campaign ID, placement ID and optional collection ID. The Marketplace receiver verifies the HMAC-signed token, expiry, allowed Cinema origin, campaign ID, title/collection scope and placement before storing the event. Caller-supplied campaign IDs alone are not proof that a placement was actually served.
 
 The tracking token is an impression-scoped signed proof, not the Marketplace server credential. The separate `CINEMA_MARKETPLACE_ANALYTICS_TOKEN` remains server-only and is never sent to browser code. No browser event producers are enabled by this change.
+
+
+## Explicit measurement consent
+
+The official Cinema app now exposes a Privacy Choices dialog. Optional Marketplace measurement remains disabled until the user explicitly allows it. The choice is stored in a signed, HttpOnly, SameSite cookie; browser JavaScript cannot read or forge the grant. Rejecting measurement stores a denial state and the forwarding endpoint refuses events unless a valid signed grant is present.
+
+The grant cookie is HMAC-signed with the server-only `CINEMA_MARKETPLACE_ANALYTICS_TOKEN`. That secret must be at least 32 characters and remain only in server hosting configuration. The browser never receives it. Users can change their choice from the Privacy Choices control in the Cinema top bar.
+
+This consent interface does not enable event producers. Before activation, configure host-level rate limiting, verify the Marketplace Firestore TTL policy, confirm the production origin allowlist, and complete controlled end-to-end tests. No viewer identity or individual viewing history is sent to Marketplace.
