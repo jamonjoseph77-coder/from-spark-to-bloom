@@ -124,6 +124,8 @@ export type Database = {
           created_at?: string
           description?: string
           duration_seconds?: number | null
+          download_allowed?: boolean
+          views_count?: number
           headline?: string
           id?: string
           is_published?: boolean
@@ -445,6 +447,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          id: string
           bio: string
           avatar_url: string | null
           share_watching_activity: boolean
@@ -456,6 +459,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          id?: string
           bio?: string
           avatar_url?: string | null
           share_watching_activity?: boolean
@@ -467,7 +471,10 @@ export type Database = {
           username: string
         }
         Update: {
+          id?: string
           bio?: string
+          avatar_url?: string | null
+          share_watching_activity?: boolean
           created_at?: string
           display_name?: string
           is_discoverable?: boolean
