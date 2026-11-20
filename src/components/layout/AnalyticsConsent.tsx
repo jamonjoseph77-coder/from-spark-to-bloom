@@ -17,7 +17,10 @@ export function AnalyticsConsent() {
       if (!response.ok) throw new Error("Could not read privacy preferences.");
       const result = await response.json() as { state?: AnalyticsConsentState };
       if (active && ["granted", "denied", "unknown"].includes(String(result.state))) {
-        setState(result.state as AnalyticsConsentState);
+        const next = result.state as AnalyticsConsentState;
+        document.documentElement.dataset.cinemaAnalyticsConsent = next;
+        window.dispatchEvent(new CustomEvent("cinema:analytics-consent-changed", { detail: { state: next } }));
+        setState(next);
       }
     }).catch(() => {
       if (active) setState("unknown");
@@ -48,6 +51,8 @@ export function AnalyticsConsent() {
           ? "Optional measurement is not configured yet. You can still reject it."
           : "Your privacy choice could not be saved. Please try again.");
       }
+      document.documentElement.dataset.cinemaAnalyticsConsent = next;
+      window.dispatchEvent(new CustomEvent("cinema:analytics-consent-changed", { detail: { state: next } }));
       setState(next);
       setOpen(false);
     } catch (caught) {

@@ -89,3 +89,15 @@ The official Cinema app now exposes a Privacy Choices dialog. Optional Marketpla
 The grant cookie is HMAC-signed with the server-only `CINEMA_MARKETPLACE_ANALYTICS_TOKEN`. That secret must be at least 32 characters and remain only in server hosting configuration. The browser never receives it. Users can change their choice from the Privacy Choices control in the Cinema top bar.
 
 This consent interface does not enable event producers. Before activation, configure host-level rate limiting, verify the Marketplace Firestore TTL policy, confirm the production origin allowlist, and complete controlled end-to-end tests. No viewer identity or individual viewing history is sent to Marketplace.
+
+
+## Consent-gated placement viewability forwarding
+
+The official Cinema Presence renderer must not send viewability beacons directly to the Marketplace. Direct browser beacons at `/api/ads/events` are disabled. For title-scoped placements, the renderer now posts the event and short-lived serving proof to Cinema's same-origin `/api/marketplace-events` endpoint. That endpoint verifies the signed HttpOnly consent cookie, published canonical title and event contract before forwarding server-to-server with the Marketplace bearer token. Collection-only placements may render, but are not measured through this title-scoped event contract.
+
+Configure these values only in official Cinema server hosting:
+- `CINEMA_MARKETPLACE_ANALYTICS_TOKEN`: strong server-only bearer token shared with Marketplace.
+- `CINEMA_MARKETPLACE_EVENTS_URL`: exact HTTPS Marketplace `/api/marketplace/events` endpoint.
+- `CINEMA_MARKETPLACE_ALLOWED_ORIGINS`: comma-separated exact HTTPS Cinema origins.
+
+The endpoint and origins fail closed when missing or invalid. The token must never appear in browser code, HTML, local storage or repository files. The user-facing consent state is exposed to the renderer only as a UI signal; the HttpOnly signed cookie is the actual server-side authorisation gate.
