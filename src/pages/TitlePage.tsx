@@ -125,9 +125,11 @@ export function TitlePage({ titleId }: { titleId: string }) {
                 <TitleActions title={title} />
                 <button type="button" onClick={() => void shareTitle()} className={BUTTON_SECONDARY}><Share2 className="h-4 w-4" /> Share</button>
               </div>
-              {title.is_published && (title.release_date && Number.isFinite(Date.parse(title.release_date)) && Date.parse(title.release_date) >= Date.now()
-                ? <CinemaPresence key={`${title.id}:premiere`} titleId={title.id} placement="premiere_feature" />
-                : <CinemaPresence key={title.id} titleId={title.id} />)}
+              {title.is_published && (title.type === 'live'
+                ? <CinemaPresence key={`${title.id}:showtime`} titleId={title.id} placement="showtime_card" />
+                : title.release_date && Number.isFinite(Date.parse(title.release_date)) && Date.parse(title.release_date) >= Date.now()
+                  ? <CinemaPresence key={`${title.id}:premiere`} titleId={title.id} placement="premiere_feature" />
+                  : <CinemaPresence key={title.id} titleId={title.id} />)}
               {title.publisher && (
                 <a href={publisherHref(title.publisher)} className="inline-flex items-center gap-2 pt-1 text-sm font-semibold text-slate-300 transition hover:text-white">
                   <Building2 className="h-4 w-4 text-sky-200" /> {title.publisher} <ChevronRight className="h-4 w-4 text-slate-500" />
