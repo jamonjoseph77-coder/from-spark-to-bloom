@@ -33,6 +33,8 @@ function findCurrentEpisode(seasons: SeasonWithEpisodes[], title: Title, episode
 
 export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: string | null }) {
   const { user } = useAuth();
+  const [playbackState, setPlaybackState] = useState<'idle' | 'playing' | 'paused' | 'ended'>('idle');
+  useEffect(() => { setPlaybackState('idle'); }, [titleId, episodeId]);
   const { progress, saveProgress } = useLibrary();
   const { data, error, reload } = useAsyncData(() => fetchTitleDetail(titleId), [titleId]);
 
@@ -70,8 +72,6 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
   const directSource = isDirectVideoUrl(source);
   const embedSource = directSource ? null : toEmbedUrl(source);
   const contentId = episode?.id ?? title.id;
-  const [playbackState, setPlaybackState] = useState<'idle' | 'playing' | 'paused' | 'ended'>('idle');
-  useEffect(() => { setPlaybackState('idle'); }, [contentId]);
   const saved = progress.find((entry) => entry.content_id === contentId);
   const startAt = saved && !saved.completed ? saved.position_seconds : 0;
   const subtitle = episode ? undefined : title.subtitle_url || undefined;
