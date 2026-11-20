@@ -13,19 +13,36 @@ export function CinemaPresence({
 
   useEffect(() => {
     if (!targetKey || !slotRef.current) return;
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[data-cinema-presence-loader="true"]',
-    );
-    if (existing) return;
+    let cancelled = false;
+    let retryTimer: number | undefined;
 
-    const script = document.createElement('script');
-    script.src = PRESENCE_SCRIPT_URL;
-    script.async = true;
-    script.dataset.cinemaPresenceLoader = 'true';
-    script.referrerPolicy = 'strict-origin-when-cross-origin';
-    document.head.appendChild(script);
+    const loadScript = (attempt: number) => {
+      if (cancelled) return;
+      const existing = document.querySelector<HTMLScriptElement>(
+        'script[data-cinema-presence-loader="true"]',
+      );
+      if (existing && existing.dataset.cinemaPresenceFailed !== 'true') return;
+      existing?.remove();
 
+      const script = document.createElement('script');
+      script.src = PRESENCE_SCRIPT_URL;
+      script.async = true;
+      script.dataset.cinemaPresenceLoader = 'true';
+      script.referrerPolicy = 'strict-origin-when-cross-origin';
+      script.onerror = () => {
+        script.dataset.cinemaPresenceFailed = 'true';
+        script.remove();
+        if (!cancelled && attempt === 0) {
+          retryTimer = window.setTimeout(() => loadScript(1), 1200);
+        }
+      };
+      document.head.appendChild(script);
+    };
+
+    loadScript(0);
     return () => {
+      cancelled = true;
+      if (retryTimer !== undefined) window.clearTimeout(retryTimer);
       slotRef.current?.replaceChildren();
     };
   }, [targetKey]);
