@@ -27,6 +27,7 @@ interface VideoPlayerProps {
   onPlaybackStateChange?: (state: 'playing' | 'paused' | 'ended') => void;
   pausePresenceTitleId?: string;
   showPausePresence?: boolean;
+  analyticsTitleId?: string;
 }
 
 interface QualityLevel {
@@ -43,7 +44,7 @@ const PLAYBACK_ERROR = 'This Video Could Not Be Played. The Link May Be Offline,
 
 export function VideoPlayer({
   src, title, subtitleUrl, startAt = 0, poster, isLive = false,
-  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress, onPlaybackStateChange, pausePresenceTitleId, showPausePresence = false,
+  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress, onPlaybackStateChange, pausePresenceTitleId, showPausePresence = false, analyticsTitleId,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -52,6 +53,8 @@ export function VideoPlayer({
   const onPlaybackStateChangeRef = useRef(onPlaybackStateChange);
   const lastSavedRef = useRef(0);
   const playRequestedRef = useRef(false);
+  const analyticsStartedRef = useRef(false);
+  const analyticsCompletedRef = useRef(false);
   const [status, setStatus] = useState<PlayerStatus>('loading');
   const [errorText, setErrorText] = useState(PLAYBACK_ERROR);
   const [levels, setLevels] = useState<QualityLevel[]>([]);
@@ -107,6 +110,8 @@ export function VideoPlayer({
     setQuality(-1);
     lastSavedRef.current = 0;
     playRequestedRef.current = false;
+    analyticsStartedRef.current = false;
+    analyticsCompletedRef.current = false;
 
     let hls: Hls | null = null;
     let cancelled = false;
@@ -194,6 +199,35 @@ export function VideoPlayer({
     };
   }, [src, retryCount]);
 
+  async function reportMarketplacePlaybackEvent(eventType: "playback_start" | "playback_complete") {
+    if (!analyticsTitleId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(analyticsTitleId)) return;
+    try {
+      const deviceClass = window.matchMedia("(max-width: 640px)").matches ? "mobile"
+        : window.matchMedia("(min-width: 1200px)").matches && /smarttv|tizen|webos|googletv/i.test(navigator.userAgent) ? "tv"
+          : /ipad|tablet/i.test(navigator.userAgent) ? "tablet" : "desktop";
+      await fetch("/api/marketplace-events", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId: crypto.randomUUID(),
+          eventType,
+          titleId: analyticsTitleId,
+          occurredAt: new Date().toISOString(),
+          territory: "ZZ",
+          deviceClass,
+          appVersion: "1.0.0",
+          consentState: "granted",
+          schemaVersion: 1,
+        }),
+        keepalive: true,
+      });
+    } catch {
+      // Measurement is optional; playback must never depend on analytics availability.
+    }
+  }
+
   function reportProgress(video: HTMLVideoElement, completed: boolean) {
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
     const position = video.currentTime;
@@ -278,7 +312,7 @@ export function VideoPlayer({
           controlsList="nodownload"
           playsInline
           autoPlay={autoPlay}
-          onPlay={() => { playRequestedRef.current = true; hlsRef.current?.startLoad(); onPlaybackStateChangeRef.current?.('playing'); }}
+          onPlay={() => { playRequestedRef.current = true; hlsRef.current?.startLoad(); onPlaybackStateChangeRef.current?.('playing'); if (!analyticsStartedRef.current) { analyticsStartedRef.current = true; void reportMarketplacePlaybackEvent('playback_start'); } }}
           muted={isMuted}
           preload={autoPlay ? 'auto' : 'metadata'}
           poster={poster || undefined}
@@ -313,6 +347,7 @@ export function VideoPlayer({
           }}
           onEnded={(event) => {
             reportProgress(event.currentTarget, true);
+            if (!analyticsCompletedRef.current) { analyticsCompletedRef.current = true; void reportMarketplacePlaybackEvent('playback_complete'); }
             onPlaybackStateChangeRef.current?.('ended');
           }}
           onError={handleVideoError}
