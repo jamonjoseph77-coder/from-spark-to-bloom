@@ -136,7 +136,7 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
         </div>
       </header>
 
-      <CinemaPresence key={slug.toLowerCase()} collectionId={slug.toLowerCase()} placement="explore_native" />
+      <CinemaPresence key={slug.toLowerCase()} collectionId={slug.toLowerCase()} placement="category_feature" />
 
       <YourNextWatch titleTypes={['movie', 'series']} categoryLabel={category.title} genreTerms={slug === 'documentaries' ? ['documentary'] : slug === 'animation' ? ['animation', 'anime'] : slug === 'family' ? ['family', 'kids'] : slug === 'reality' ? ['reality'] : undefined} fallbackMediaType={category.shelves[0]?.mediaType} fallbackGenreId={category.shelves[0]?.genreId} />
       <CinemaSeasonalSpotlight categoryLabel={category.title} mediaType={category.shelves[0]?.mediaType} genreId={category.shelves[0]?.genreId} />
