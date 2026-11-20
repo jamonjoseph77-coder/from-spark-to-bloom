@@ -11,6 +11,7 @@ import { deleteTitle, fetchAllTitles, fetchTitleDetail, hasPlayableTitleSource, 
 import { navigateTo } from '@/lib/router';
 import { TITLE_TYPE_LABELS, type Title, type TitleInput } from '@/lib/types';
 import { fetchStudioApplications, setStudioVerificationStatus } from '@/lib/studios';
+import { getStudioRightsApprovalIssues } from '@/lib/studio-rights-review';
 import { fetchStudioTitleSubmissionsForReview, linkStudioSubmissionToTitle, reviewStudioTitleSubmission, type StudioTitleSubmission } from '@/lib/studio-content';
 
 function AdminPageHeader({ title, action }: { title: string; action?: React.ReactNode }) {
@@ -138,6 +139,17 @@ function StudioTitleReviewQueue() {
   }
 
   async function review(item: StudioTitleSubmission, status: 'changes_requested' | 'approved' | 'rejected') {
+    if (status === 'approved') {
+      const issues = getStudioRightsApprovalIssues(item);
+      if (issues.length) {
+        notify(`Cannot approve yet: ${issues.join(' ')}`, 'error');
+        return;
+      }
+      const confirmed = window.confirm(
+        'Before approving, confirm that you personally reviewed the linked rights evidence, verified the submitter’s authority, checked the territory and platform scope, and confirmed the licence window (including any perpetual grant). This approval does not publish the title.'
+      );
+      if (!confirmed) return;
+    }
     const promptText = status === 'approved'
       ? 'Optional Cinema review note for this approval:'
       : status === 'rejected'
