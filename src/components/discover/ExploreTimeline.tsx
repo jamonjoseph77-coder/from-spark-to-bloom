@@ -16,17 +16,15 @@ import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { LetterboxPostCard } from '@/pages/LetterboxPage';
 import { fetchVerifiedStudios } from '@/lib/studios';
 import { publisherHref } from '@/lib/publishers';
-import { fetchFollowedPublishers } from '@/lib/publisherFollows';
-import { loadFriendsSnapshot } from '@/lib/friends';
 
-type ExploreFilter = 'for-you' | 'following' | 'videos' | 'trailers' | 'community';
+type ExploreFilter = 'all' | 'videos' | 'trailers' | 'community' | 'channels';
 
 const EXPLORE_FILTERS: { id: ExploreFilter; label: string }[] = [
-  { id: 'for-you', label: 'For You' },
-  { id: 'following', label: 'Following' },
+  { id: 'all', label: 'All' },
   { id: 'videos', label: 'Videos' },
   { id: 'trailers', label: 'Trailers' },
   { id: 'community', label: 'Community' },
+  { id: 'channels', label: 'Channels' },
 ];
 
 type ExploreEntry =
@@ -37,6 +35,7 @@ type ExploreEntry =
 interface ExploreData {
   posts: LetterboxPost[];
   clips: DiscoverClip[];
+  allClips: DiscoverClip[];
   trailers: TmdbTrailer[];
   postsUnavailable: boolean;
   clipsUnavailable: boolean;
@@ -49,20 +48,20 @@ async function loadExploreData(): Promise<ExploreData> {
     fetchDiscoverTrailers(2),
   ]);
   const posts = postsResult.status === 'fulfilled' ? postsResult.value : [];
-  const clips = clipsResult.status === 'fulfilled'
-    ? clipsResult.value.filter((clip) => {
+  const allClips = clipsResult.status === 'fulfilled' ? clipsResult.value : [];
+  const clips = allClips.filter((clip) => {
       const playable = Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url)));
       // Keep approved Shorts in the dedicated Shorts shelf so the same video
       // is not repeated in both the vertical feed and the mixed Explore timeline.
       if (clip.kind === 'short') return false;
-      if (clip.kind === 'clip') return isPlayableShort(clip);
+      if (clip.kind === 'clip') return playable;
       return playable;
-    })
-    : [];
+    });
   const trailers = trailersResult.status === 'fulfilled' ? trailersResult.value : [];
   return {
     posts,
     clips,
+    allClips,
     trailers,
     postsUnavailable: postsResult.status === 'rejected',
     clipsUnavailable: clipsResult.status === 'rejected',
@@ -127,13 +126,39 @@ export function ExploreTimeline() {
   const { data, error, reload, loading } = useAsyncData(loadExploreData, []);
   const { data: titles } = useAsyncData(fetchPublishedTitles, []);
   const { data: verifiedStudios } = useAsyncData(() => fetchVerifiedStudios().catch(() => []), []);
-  const { data: followedPublishers } = useAsyncData(() => user ? fetchFollowedPublishers(user.id) : Promise.resolve([] as string[]), [user?.id]);
-  const { data: friends } = useAsyncData(() => user ? loadFriendsSnapshot(user.id).catch(() => ({ friends: [], incoming: [], outgoing: [], relations: new Map() })) : Promise.resolve(undefined), [user?.id]);
-  const [activeFilter, setActiveFilter] = useState<ExploreFilter>('for-you');
+  const [activeFilter, setActiveFilter] = useState<ExploreFilter>('all');
   const verifiedPublisherNames = useMemo(
     () => new Set((verifiedStudios ?? []).map((studio) => studio.studio_name.trim().toLocaleLowerCase())),
     [verifiedStudios],
   );
+  const channels = useMemo(() => {
+    const byName = new Map<string, { name: string; logoUrl: string | null; verified: boolean; titleCount: number; videoCount: number }>();
+    const ensure = (rawName: string) => {
+      const name = rawName.trim();
+      if (!name) return null;
+      const key = name.toLocaleLowerCase();
+      const existing = byName.get(key);
+      if (existing) return existing;
+      const created = { name, logoUrl: null as string | null, verified: false, titleCount: 0, videoCount: 0 };
+      byName.set(key, created);
+      return created;
+    };
+    (titles ?? []).forEach((title) => { const channel = ensure(title.publisher ?? ''); if (channel) channel.titleCount += 1; });
+    (data?.allClips ?? []).forEach((clip) => {
+      if (!clip.video_url || !(isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url))) return;
+      const channel = ensure(clip.publisher_name ?? '');
+      if (channel) channel.videoCount += 1;
+    });
+    (verifiedStudios ?? []).forEach((studio) => {
+      const channel = ensure(studio.studio_name);
+      if (channel) { channel.verified = true; channel.logoUrl = studio.logo_url; }
+    });
+    return [...byName.values()].sort((a, b) =>
+      Number(b.verified) - Number(a.verified) ||
+      (b.titleCount + b.videoCount) - (a.titleCount + a.videoCount) ||
+      a.name.localeCompare(b.name),
+    );
+  }, [titles, data?.allClips, verifiedStudios]);
   const [body, setBody] = useState('');
   const [titleId, setTitleId] = useState('');
   const [posting, setPosting] = useState(false);
@@ -169,20 +194,12 @@ export function ExploreTimeline() {
   }, [data]);
 
   const visibleEntries = useMemo(() => {
+    if (activeFilter === 'channels') return [];
     if (activeFilter === 'videos') return entries.filter((entry) => entry.kind === 'clip');
     if (activeFilter === 'trailers') return entries.filter((entry) => entry.kind === 'trailer');
     if (activeFilter === 'community') return entries.filter((entry) => entry.kind === 'post');
-    if (activeFilter === 'for-you') return entries.filter((entry) => entry.kind !== 'post');
-    if (activeFilter === 'following') {
-      const publisherSet = new Set((followedPublishers ?? []).map((name) => name.trim().toLocaleLowerCase()));
-      const friendSet = new Set((friends?.friends ?? []).map((friend) => friend.otherUserId));
-      return entries.filter((entry) =>
-        (entry.kind === 'clip' && publisherSet.has(entry.clip.publisher_name.trim().toLocaleLowerCase())) ||
-        (entry.kind === 'post' && friendSet.has(entry.post.author_id)),
-      );
-    }
     return entries;
-  }, [activeFilter, entries, followedPublishers, friends]);
+  }, [activeFilter, entries]);
 
   async function publish(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -209,11 +226,18 @@ export function ExploreTimeline() {
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[.2em] text-slate-500">Cinema · Discover</p>
           <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Cinema Video Feed</h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Discover videos from studios and creators, official trailers and stories worth watching. Switch to Following to catch new uploads from your circle.</p>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">Discover videos from studios and creators, official trailers, publisher channels and stories worth watching.</p>
         </div>
         <a href="/publishers" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:border-white/20 hover:bg-white/[.07] hover:text-white">Studios & Publishers <Clapperboard className="h-3.5 w-3.5" /></a>
       </header>
 
+      <section className="mb-5 space-y-3" aria-labelledby="explore-channels-heading">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-cinema-300">Creators · Studios · Broadcasters</p><h3 id="explore-channels-heading" className="mt-1 text-lg font-extrabold text-white">Channels On Cinema</h3><p className="mt-1 text-xs text-slate-400">Discover publishers, open their channel pages and explore their available stories.</p></div>
+          <a href="/publishers" className="text-xs font-bold text-cinema-200 transition hover:text-white">All Channels <Clapperboard className="ml-1 inline h-3.5 w-3.5" /></a>
+        </div>
+        {channels.length > 0 ? <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{channels.slice(0, 12).map((channel) => <a key={channel.name.toLocaleLowerCase()} href={publisherHref(channel.name)} className="group flex min-w-[220px] max-w-[260px] items-center gap-3 rounded-2xl border border-white/10 bg-[#0b0e10] p-3 transition hover:border-cinema-300/35 hover:bg-[#101516]" aria-label={`Open ${channel.name} channel`}><span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10 bg-[#18201f] text-base font-black text-white">{channel.logoUrl ? <img src={channel.logoUrl} alt="" loading="lazy" className="h-full w-full object-cover" /> : channel.name.slice(0, 1).toUpperCase()}</span><span className="min-w-0 flex-1"><span className="flex min-w-0 items-center gap-1.5"><span className="truncate text-sm font-extrabold text-white group-hover:text-cinema-100">{channel.name}</span>{channel.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-cinema-200" aria-label="Verified by Cinema" />}</span><span className="mt-1 block truncate text-[11px] text-slate-400">{channel.titleCount} {channel.titleCount === 1 ? 'title' : 'titles'} · {channel.videoCount} {channel.videoCount === 1 ? 'video' : 'videos'}</span><span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-cinema-200">{channel.verified ? 'Verified Channel' : 'Publisher Channel'}</span></span></a>)}</div> : <p className="rounded-xl border border-dashed border-white/10 px-4 py-3 text-xs text-slate-500">Publisher channels will appear here as verified profiles and published content become available.</p>}
+      </section>
       {user && <form onSubmit={(event) => void publish(event)} className="mb-5 rounded-2xl border border-white/10 bg-[#0b0e10] p-4 shadow-[0_12px_36px_rgba(0,0,0,.16)] sm:p-5">
         <div className="flex gap-3">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-[#18201f] text-sm font-black text-white">{(user.email?.slice(0, 1) || 'C').toUpperCase()}</span>
@@ -235,15 +259,14 @@ export function ExploreTimeline() {
       <nav aria-label="Explore video feed filters" className="mb-5 flex gap-2 overflow-x-auto border-b border-white/[.08] pb-3 [scrollbar-width:none]">
         {EXPLORE_FILTERS.map((filter) => <button key={filter.id} type="button" onClick={() => setActiveFilter(filter.id)} aria-pressed={activeFilter === filter.id} className={`shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cinema-200 ${activeFilter === filter.id ? 'border-cinema-200/35 bg-cinema-200/15 text-white shadow-[0_5px_20px_rgba(132,174,146,.1)]' : 'border-white/10 bg-white/[.025] text-slate-400 hover:border-white/20 hover:text-white'}`}>{filter.label}</button>)}
       </nav>
-      {activeFilter === 'following' && !user && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Sign in to see videos from the studios you follow and posts from your friends. <a href="/sign-in" className="font-bold text-cinema-200 hover:text-white">Sign In</a></p>}
-      {activeFilter === 'following' && user && followedPublishers?.length === 0 && (friends?.friends.length ?? 0) === 0 && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Follow a studio or connect with friends to build your Following feed. <a href="/publishers" className="font-bold text-cinema-200 hover:text-white">Find Studios</a> · <a href="/friends" className="font-bold text-cinema-200 hover:text-white">Find Friends</a></p>}
 
       {loading && !data && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-6"><LoadingState label="Loading Cinema Explore" /></div>}
       {error && !data && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-5"><ErrorState onRetry={reload} description="Cinema Explore could not load right now. Your other Cinema destinations remain available." /></div>}
       {data?.postsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Community posts are temporarily unavailable. Publisher videos remain available.</p>}
       {data?.clipsUnavailable && <p className="mb-4 rounded-xl border border-white/10 bg-white/[.025] px-4 py-3 text-xs text-slate-400">Publisher videos are temporarily unavailable. Community posts remain available.</p>}
-      {data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title={activeFilter === 'following' ? 'Your Following Feed Is Ready' : 'Your Video Home Is Getting Started'} description={activeFilter === 'following' ? 'New videos and conversations from the studios and friends you follow will appear here.' : 'Videos and official trailers from across Cinema will appear here as publishers and creators release them.'} /></div>}
+      {data && visibleEntries.length === 0 && <div className="rounded-2xl border border-white/10 bg-[#0b0e10] p-7"><EmptyState icon={<MessageCircle className="h-7 w-7 text-slate-300" />} title="Your Cinema Explore Is Getting Started" description="Videos, official trailers and community stories will appear here as publishers and creators release them." /></div>}
 
+      {activeFilter === 'channels' && <section className="mb-5 space-y-4" aria-label="All Cinema channels"><div><h3 className="text-lg font-extrabold text-white">Explore Channels</h3><p className="mt-1 text-xs text-slate-400">Official profiles are marked as verified. Other publisher channels are identified from their published Cinema content.</p></div>{channels.length > 0 ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{channels.map((channel) => <a key={channel.name.toLocaleLowerCase()} href={publisherHref(channel.name)} className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0b0e10] p-3 transition hover:border-cinema-300/35 hover:bg-[#101516]"><span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10 bg-[#18201f] text-base font-black text-white">{channel.logoUrl ? <img src={channel.logoUrl} alt="" loading="lazy" className="h-full w-full object-cover" /> : channel.name.slice(0, 1).toUpperCase()}</span><span className="min-w-0 flex-1"><span className="flex items-center gap-1.5"><span className="truncate text-sm font-extrabold text-white">{channel.name}</span>{channel.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-cinema-200" aria-label="Verified by Cinema" />}</span><span className="mt-1 block text-[11px] text-slate-400">{channel.titleCount} titles · {channel.videoCount} videos</span></span></a>)}</div> : <EmptyState icon={<Clapperboard className="h-7 w-7 text-slate-300" />} title="Channels Are On Their Way" description="Channels will appear when verified organisations or publishers have content available on Cinema." />}</section>}
       {data && visibleEntries.length > 0 && <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:gap-5">
         {visibleEntries.map((entry) => {
           if (entry.kind === 'post') return <div key={entry.id} className="cinema-explore-post col-span-full overflow-hidden rounded-2xl border border-white/10 bg-[#0b0e10] shadow-[0_12px_36px_rgba(0,0,0,.16)]"><LetterboxPostCard post={entry.post} userId={user?.id} onChanged={() => void reload()} /></div>;

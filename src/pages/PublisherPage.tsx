@@ -4,6 +4,7 @@ import { TitleGrid } from '@/components/catalogue/TitleGrid';
 import { TitleRow } from '@/components/catalogue/TitleRow';
 import { VideoCard } from '@/components/catalogue/VideoCard';
 import { VideoDialog } from '@/components/player/VideoDialog';
+import { ClipCard } from '@/components/discover/ClipCard';
 import { titleTrailerSource } from '@/lib/videoSource';
 import { Artwork } from '@/components/ui/Artwork';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
@@ -12,6 +13,8 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { fetchPublishedTitles } from '@/lib/library';
+import { fetchPublishedClips, type DiscoverClip } from '@/lib/clips';
+import { isDirectVideoUrl, toEmbedUrl } from '@/lib/media';
 import { findPublisher } from '@/lib/publishers';
 import { fetchFollowedPublishers, followPublisher, unfollowPublisher } from '@/lib/publisherFollows';
 import { findVerifiedStudio } from '@/lib/studios';
@@ -19,7 +22,9 @@ import type { Title } from '@/lib/types';
 
 export function PublisherPage({ publisher }: { publisher: string }) {
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, []);
+  const { data: clips } = useAsyncData(() => fetchPublishedClips().catch(() => [] as DiscoverClip[]), []);
   const [trailerTitle, setTrailerTitle] = useState<Title | null>(null);
+  const [activeClip, setActiveClip] = useState<DiscoverClip | null>(null);
   const { user } = useAuth();
   const { notify } = useToast();
   const follows = useAsyncData(
@@ -56,7 +61,8 @@ export function PublisherPage({ publisher }: { publisher: string }) {
   const publisherTitles = profile?.titles ?? [];
   const upcomingTitles = profile?.upcoming ?? [];
   const trailerTitles = profile?.trailers ?? [];
-  const cover = publisherTitles.find((item) => item.backdrop_url)?.backdrop_url ?? '';
+  const publisherClips = (clips ?? []).filter((clip) => clip.publisher_name.trim().toLocaleLowerCase() === publisherName.trim().toLocaleLowerCase() && Boolean(clip.video_url && (isDirectVideoUrl(clip.video_url) || toEmbedUrl(clip.video_url))));
+  const cover = publisherTitles.find((item) => item.backdrop_url)?.backdrop_url ?? publisherClips[0]?.poster_url ?? '';
   const isFollowing = follows.data?.includes(publisherName) ?? false;
 
   async function toggleFollow() {
@@ -124,6 +130,8 @@ export function PublisherPage({ publisher }: { publisher: string }) {
       <div className="mx-auto w-full max-w-7xl space-y-14 px-4 sm:px-6 lg:px-10">
         {upcomingTitles.length > 0 && <TitleRow heading="Upcoming Releases" titles={upcomingTitles} />}
 
+        {publisherClips.length > 0 && <section className="space-y-5" aria-labelledby="publisher-videos-heading"><div><h2 id="publisher-videos-heading" className={SECTION_HEADING}>Videos From This Channel</h2><p className="mt-1 text-sm text-slate-400">Published videos and programmes from {publisherName}.</p></div><div className="grid gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">{publisherClips.map((clip) => <ClipCard key={clip.id} clip={clip} onOpen={setActiveClip} />)}</div></section>}
+
         {trailerTitles.length > 0 && (
           <section className="space-y-5">
             <h2 className={SECTION_HEADING}>Trailers And Previews</h2>
@@ -141,6 +149,7 @@ export function PublisherPage({ publisher }: { publisher: string }) {
       </div>
 
       {trailerTitle && <VideoDialog {...titleTrailerSource(trailerTitle)} onClose={() => setTrailerTitle(null)} />}
+      {activeClip && <VideoDialog url={activeClip.video_url} label={activeClip.headline} heading={publisherName} contentKey={`clip:${activeClip.id}`} imageUrl={activeClip.poster_url} onClose={() => setActiveClip(null)} />}
     </div>
   );
 }
