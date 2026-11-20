@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy, CalendarDays, Building2, BellPlus, BellRing, ArrowRight, UploadCloud } from 'lucide-react';
 import { ExploreTimeline } from '@/components/discover/ExploreTimeline';
+import { PersonalizedExploreSection } from '@/components/discover/PersonalizedExploreSection';
 import { DiscoverShorts } from '@/components/discover/DiscoverShorts';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
@@ -191,6 +192,8 @@ export function DiscoverPage() {
       <DiscoverShorts />
 
       <ExploreTimeline />
+
+      <PersonalizedExploreSection />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Explore Cinema categories">
         <a href="/movies" className="group relative isolate min-h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#0b1421] p-5 transition hover:-translate-y-1 hover:border-sky-200/35"><img src="https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" alt="" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-35 transition duration-500 group-hover:scale-105 group-hover:opacity-50" /><span className="absolute inset-0 -z-10 bg-gradient-to-r from-[#07101d]/95 via-[#07101d]/65 to-transparent" /><Film className="h-5 w-5 text-sky-200" /><h3 className="mt-5 text-lg font-extrabold text-white">Movies</h3><p className="mt-1 text-xs text-slate-300">Films From Every Corner</p></a>
