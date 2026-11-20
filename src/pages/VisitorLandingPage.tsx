@@ -93,6 +93,17 @@ export function VisitorLandingPage() {
         </div>
       </section>
 
+      <section className="relative z-[1] mx-auto w-full max-w-7xl px-5 pb-12 sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-5 rounded-[1.7rem] border border-sky-200/15 bg-gradient-to-br from-sky-300/[.08] via-white/[.035] to-transparent p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-200">For Creators & Rights Holders</p>
+            <h2 className="mt-2 text-xl font-extrabold text-white sm:text-2xl">Have A Story To Bring To Cinema?</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">Filmmakers, studios, producers, distributors and authorised creators can apply to bring their work to Cinema. Every submission is reviewed before publication.</p>
+          </div>
+          <a href="/publishers" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl border border-sky-200/25 bg-sky-300/10 px-5 text-sm font-extrabold text-white transition hover:bg-sky-300/20">Apply As A Creator <ArrowRight className="h-4 w-4" /></a>
+        </div>
+      </section>
+
       <footer className="relative z-[1] mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-3 border-t border-white/[.08] px-5 py-7 text-xs text-slate-500 sm:flex-row sm:items-center sm:px-8 lg:px-12">
         <span>© {new Date().getFullYear()} Cinema. Experience The World Of Stories.</span>
         <div className="flex items-center gap-4"><a href="/about" className="transition hover:text-slate-200">About & Credits</a><a href="/forgot-password" className="transition hover:text-slate-200">Forgot Password?</a><a href="/sign-in" className="transition hover:text-slate-200">Sign In</a></div>
