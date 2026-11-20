@@ -15,7 +15,7 @@ import { useAsyncData } from '@/hooks/useAsyncData';
 import { useAuth } from '@/hooks/useAuth';
 import { useLibrary } from '@/hooks/useLibrary';
 import { progressRatioByTitle, resumeItems, titlesOfType } from '@/lib/catalogue';
-import { fetchPublishedTitles } from '@/lib/library';
+import { fetchPublishedPlayableTitles, fetchPublishedTitles } from '@/lib/library';
 import { fetchPublishedShorts, isPlayableShort, rankPublishedShorts, type DiscoverClip } from '@/lib/clips';
 import { fetchLetterboxFeed, type LetterboxPost } from '@/lib/letterbox';
 import { loadFriendsSnapshot, type FriendsSnapshot } from '@/lib/friends';
@@ -117,6 +117,7 @@ export function HomePage() {
   const openShort = useCallback((clip: DiscoverClip) => navigateTo(`/shorts?clip=${encodeURIComponent(clip.id)}`), []);
   const { progress, watchlistIds, favouriteIds } = useLibrary();
   const { data: titles, error: titlesError, reload: reloadTitles } = useAsyncData(fetchPublishedTitles, []);
+  const { data: playableTitles } = useAsyncData(fetchPublishedPlayableTitles, []);
   const { data: publishedClips, error: clipsError, reload: reloadClips } = useAsyncData(fetchPublishedShorts, []);
   useEffect(() => {
     const refreshShorts = () => { if (document.visibilityState === 'visible') reloadClips(); };
@@ -150,13 +151,14 @@ export function HomePage() {
   const recommendedLiveChannels = useMemo(() => titlesOfType(recommendations.titles, 'live'), [recommendations.titles]);
   const cinemaShelves = useMemo(() => {
     if (!titles) return null;
+    const playableIds = new Set((playableTitles ?? []).map((title) => title.id));
     const today = new Date().toISOString().slice(0, 10);
     const comingSoon = titles.filter((title) => title.release_date != null && title.release_date > today).sort((a, b) => (a.release_date ?? '').localeCompare(b.release_date ?? ''));
     const news = titlesOfType(titles, 'news');
     const live = titlesOfType(titles, 'live');
     const genreMatches = (terms: string[]) => titles.filter((title) => terms.some((term) => title.genre.toLocaleLowerCase().includes(term)));
-    return { movies: titlesOfType(titles, 'movie'), series: titlesOfType(titles, 'series'), sports: titlesOfType(titles, 'sport'), news, live, reality: genreMatches(['reality']), documentaries: genreMatches(['documentary', 'documentaries']), comingSoon, resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
-  }, [titles, progress]);
+    return { movies: titlesOfType(titles, 'movie').filter((title) => playableIds.has(title.id)), series: titlesOfType(titles, 'series').filter((title) => playableIds.has(title.id)), sports: titlesOfType(titles, 'sport'), news, live, reality: genreMatches(['reality']), documentaries: genreMatches(['documentary', 'documentaries']), comingSoon, resume: resumeItems(progress, titles), ratios: progressRatioByTitle(progress) };
+  }, [titles, progress, playableTitles]);
 
   return (
     <div className={`${PAGE_CONTAINER} cinema-home space-y-12 pb-16 sm:space-y-16`}>
@@ -196,6 +198,7 @@ export function HomePage() {
       <CinemaPresence key="home" collectionId="home" placement="home_shelf" />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
+      {playableTitles && <TitleRow heading="Available On Cinema" description="Stories You Can Watch Right Now On Cinema." titles={playableTitles} progressById={cinemaShelves?.ratios} />}
       <section id="home-recommendations" className="cinema-recommendations-sector scroll-mt-28 space-y-8">
         <div><p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-cinema-300">Picked Around Your Taste</p><h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">Your Next Watch</h2><p className="mt-1 text-sm text-slate-400">A personal mix shaped by what you watch, save and follow — with room for new discoveries.</p></div>
         {titles && (recommendedMovies.length > 0 || recommendedSeries.length > 0) && <TitleRow heading="Recommended Movies & Series" description="Stories picked from your Cinema activity, with new discoveries mixed in." titles={[...recommendedMovies, ...recommendedSeries]} landscape action={<a href="/movies" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Movies</a>} />}
@@ -251,13 +254,13 @@ export function HomePage() {
         <TmdbRow heading="Action Movies" description="Fast-moving stories and big-screen excitement." mediaType="movie" list="trending" genreId={28} />
         <TmdbRow heading="A Little More Laughter" description="A lighter collection for your next movie night." mediaType="movie" list="popular" genreId={35} />
         <TmdbRow heading="Animated Movies" description="Animation across styles, studios and generations." mediaType="movie" list="popular" genreId={16} />
-        {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Available On Cinema" description="Movies published in Cinema catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
+        {cinemaShelves && cinemaShelves.movies.length > 0 && <TitleRow heading="Cinema Movies" description="Playable movies in the Cinema catalogue." titles={cinemaShelves.movies} progressById={cinemaShelves.ratios} />}
       </section>
       <section id="home-series" className="scroll-mt-28 space-y-10">
         <TmdbRow heading="Series Everyone Is Exploring" description="Find Your Next Episode-Worthy Story." mediaType="tv" list="trending" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">Explore Series</a>} />
         <TmdbRow heading="Series Worth Settling Into" mediaType="tv" list="popular" action={<a href="/series" className="text-sm font-semibold text-cinema-200 hover:text-white">See All</a>} />
         <TmdbRow heading="Character-Led Stories" description="Series led by memorable characters and stories." mediaType="tv" list="popular" genreId={18} />
-        {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Series Available On Cinema" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
+        {cinemaShelves && cinemaShelves.series.length > 0 && <TitleRow heading="Cinema Series" titles={cinemaShelves.series} progressById={cinemaShelves.ratios} />}
       </section>
       {cinemaShelves && <section id="home-coming-soon" className="scroll-mt-28"><TitleRow heading="Coming Soon" description="Upcoming titles already announced in Cinema." titles={cinemaShelves.comingSoon} />{cinemaShelves.comingSoon.length === 0 && <p className="cinema-home-empty rounded-2xl border border-white/10 p-5 text-sm text-slate-300">New announcements will appear here as upcoming titles are added to Cinema.</p>}</section>}
       <p className="text-center text-[11px] text-slate-500">A little extra to explore: <a href="/free" className="font-semibold text-cinema-200 transition hover:text-white">Free Movies &amp; Series</a>.</p>
