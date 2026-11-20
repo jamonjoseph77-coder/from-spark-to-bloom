@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type SyntheticEvent } fr
 import type Hls from 'hls.js';
 import { AlertTriangle, Loader2, Radio, Volume2, VolumeX } from 'lucide-react';
 import { isHlsUrl } from '@/lib/media';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 
 export interface PlaybackProgress {
   position: number;
@@ -42,7 +43,7 @@ const PLAYBACK_ERROR = 'This Video Could Not Be Played. The Link May Be Offline,
 
 export function VideoPlayer({
   src, title, subtitleUrl, startAt = 0, poster, isLive = false,
-  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress, onPlaybackStateChange,
+  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress, onPlaybackStateChange, pausePresenceTitleId, showPausePresence = false,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
