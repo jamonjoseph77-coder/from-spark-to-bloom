@@ -30,7 +30,11 @@ describe("Cinema → Marketplace event contract", () => {
   });
   it("requires campaign and placement identifiers for placement events", () => {
     expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "pause_frame_render" }, now)).toBeNull();
-    expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "pause_frame_render", campaignId: "campaign_1", placementId: "pause_frame" }, now)).not.toBeNull();
+    expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "pause_frame_render", campaignId: "campaign_1", placementId: "pause_frame" }, now)).toBeNull();
+    expect(normaliseMarketplaceViewerEvent({
+      ...valid, eventType: "pause_frame_render", campaignId: "campaign_1",
+      placementId: "pause_frame", trackingToken: "signed-marketplace-impression-token",
+    }, now)).not.toBeNull();
   });
   it("rejects unsupported event types and out-of-window timestamps", () => {
     expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "invented" }, now)).toBeNull();
