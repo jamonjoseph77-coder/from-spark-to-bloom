@@ -220,7 +220,7 @@ export function TitlePage({ titleId }: { titleId: string }) {
           <TitleRow heading="More like this" titles={related} />
         </section>
       </div>
-      {trailerOpen && <VideoDialog {...titleTrailerSource(title)} onClose={() => setTrailerOpen(false)} />}
+      {trailerOpen && <VideoDialog {...titleTrailerSource(title)} presenceTitleId={title.id} onClose={() => setTrailerOpen(false)} />}
       {activeVideo && <VideoDialog url={activeVideo.video_url} label={activeVideo.headline} heading={activeVideo.title?.title || activeVideo.publisher_name || title.title} onClose={() => setActiveVideo(null)} />}
     </div>
   );
