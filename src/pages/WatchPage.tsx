@@ -100,6 +100,8 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
               startAt={startAt}
               isLive={title.type === 'live'}
               onPlaybackStateChange={setPlaybackState}
+              pausePresenceTitleId={title.id}
+              showPausePresence={playbackState === 'paused'}
               onProgress={(playback) =>
                 void saveProgress({
                   content_id: contentId,
@@ -139,9 +141,6 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
             />
           )}
 
-          {source.trim() && directSource && playbackState === 'paused' && (
-            <CinemaPresence key={`${contentId}:pause`} titleId={title.id} placement="pause_frame" />
-          )}
           {source.trim() && directSource && playbackState === 'ended' && (
             <CinemaPresence key={`${contentId}:closing`} titleId={title.id} placement="closing_slate" />
           )}

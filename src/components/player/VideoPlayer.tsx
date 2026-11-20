@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type SyntheticEvent } fr
 import type Hls from 'hls.js';
 import { AlertTriangle, Loader2, Radio, Volume2, VolumeX } from 'lucide-react';
 import { isHlsUrl } from '@/lib/media';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 
 export interface PlaybackProgress {
   position: number;
@@ -24,6 +25,8 @@ interface VideoPlayerProps {
   layout?: 'landscape' | 'portrait';
   onProgress?: (progress: PlaybackProgress) => void;
   onPlaybackStateChange?: (state: 'playing' | 'paused' | 'ended') => void;
+  pausePresenceTitleId?: string;
+  showPausePresence?: boolean;
 }
 
 interface QualityLevel {
@@ -40,7 +43,7 @@ const PLAYBACK_ERROR = 'This Video Could Not Be Played. The Link May Be Offline,
 
 export function VideoPlayer({
   src, title, subtitleUrl, startAt = 0, poster, isLive = false,
-  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress, onPlaybackStateChange,
+  autoPlay = false, muted = false, showControls = true, showMuteToggle = false, onMutedChange, layout = 'landscape', onProgress, onPlaybackStateChange, pausePresenceTitleId, showPausePresence = false,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -316,6 +319,14 @@ export function VideoPlayer({
         >
           {subtitleUrl && <track kind="subtitles" src={subtitleUrl} srcLang="en" label="Subtitles" />}
         </video>
+
+        {showPausePresence && pausePresenceTitleId && status !== 'error' && (
+          <div className="pointer-events-none absolute inset-x-4 bottom-20 z-30 flex justify-center">
+            <div className="pointer-events-auto w-full max-w-xl">
+              <CinemaPresence key={`${pausePresenceTitleId}:pause-overlay`} titleId={pausePresenceTitleId} placement="pause_frame" />
+            </div>
+          </div>
+        )}
 
         {showMuteToggle && status !== 'error' && (
           <button
