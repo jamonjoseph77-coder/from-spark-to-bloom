@@ -73,3 +73,10 @@ Full performance metrics remain pending:
 - sponsored placement impressions and clicks.
 
 Those require player and placement event instrumentation plus an approved persistence and retention design. Do not infer them from saved progress.
+
+
+## Signed proof for sponsorship placement events
+
+The official Cinema server forwarder accepts the short-lived opaque `trackingToken` returned by Marketplace `GET /api/ads/serve` for each eligible placement. For placement event types, the forwarder also carries the matching campaign ID, placement ID and optional collection ID. The Marketplace receiver verifies the HMAC-signed token, expiry, allowed Cinema origin, campaign ID, title/collection scope and placement before storing the event. Caller-supplied campaign IDs alone are not proof that a placement was actually served.
+
+The tracking token is an impression-scoped signed proof, not the Marketplace server credential. The separate `CINEMA_MARKETPLACE_ANALYTICS_TOKEN` remains server-only and is never sent to browser code. No browser event producers are enabled by this change.

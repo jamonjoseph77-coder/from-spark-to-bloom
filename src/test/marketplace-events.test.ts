@@ -30,10 +30,31 @@ describe("Cinema → Marketplace event contract", () => {
   });
   it("requires campaign and placement identifiers for placement events", () => {
     expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "pause_frame_render" }, now)).toBeNull();
-    expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "pause_frame_render", campaignId: "campaign_1", placementId: "pause_frame" }, now)).not.toBeNull();
+    expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "pause_frame_render", campaignId: "campaign_1", placementId: "pause_frame" }, now)).toBeNull();
+    expect(normaliseMarketplaceViewerEvent({
+      ...valid, eventType: "pause_frame_render", campaignId: "campaign_1",
+      placementId: "pause_frame", trackingToken: "signed-marketplace-impression-token",
+    }, now)).not.toBeNull();
+    expect(normaliseMarketplaceViewerEvent({
+      ...valid, eventType: "pause_frame_render", campaignId: "campaign_1",
+      placementId: "pause_frame", trackingToken: "signed-marketplace-impression-token",
+      collectionId: "collection_1",
+    }, now)).not.toBeNull();
   });
   it("rejects unsupported event types and out-of-window timestamps", () => {
     expect(normaliseMarketplaceViewerEvent({ ...valid, eventType: "invented" }, now)).toBeNull();
     expect(normaliseMarketplaceViewerEvent({ ...valid, occurredAt: "2026-11-01T00:00:00.000Z" }, now)).toBeNull();
+  });
+});
+
+describe("signed Marketplace placement proof", () => {
+  it("rejects placement events without a signed token or with malformed collection scope", () => {
+    const placement = {
+      ...valid, eventType: "pause_frame_render", campaignId: "campaign_1",
+      placementId: "pause_frame", trackingToken: "signed-marketplace-impression-token",
+    };
+    expect(normaliseMarketplaceViewerEvent({...placement, trackingToken: ""}, now)).toBeNull();
+    expect(normaliseMarketplaceViewerEvent({...placement, collectionId: "../other"}, now)).toBeNull();
+    expect(normaliseMarketplaceViewerEvent({...placement, trackingToken: "x".repeat(4097)}, now)).toBeNull();
   });
 });
