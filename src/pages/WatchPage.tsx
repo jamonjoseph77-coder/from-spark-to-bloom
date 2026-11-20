@@ -101,6 +101,7 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
               isLive={title.type === 'live'}
               onPlaybackStateChange={setPlaybackState}
               pausePresenceTitleId={title.id}
+              analyticsTitleId={title.id}
               showPausePresence={playbackState === 'paused'}
               onProgress={(playback) =>
                 void saveProgress({

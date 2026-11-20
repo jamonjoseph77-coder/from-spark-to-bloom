@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { normaliseMarketplaceViewerEvent } from "@/lib/marketplace-events";
 import { readAnalyticsConsent } from "@/lib/analytics-consent";
 
@@ -62,6 +61,7 @@ export const Route = createFileRoute("/api/marketplace-events")({
 
       try {
         // Resolve the canonical published Cinema title before forwarding. No viewer identity is read or transmitted.
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: title, error: titleError } = await supabaseAdmin
           .from("titles").select("id").eq("id", event.titleId).eq("is_published", true).maybeSingle();
         if (titleError || !title) return Response.json({ error: "published_title_not_found" }, { status: 404 });
