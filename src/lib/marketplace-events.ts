@@ -19,6 +19,8 @@ export type MarketplaceEvent = {
   schemaVersion: 1;
   campaignId?: string;
   placementId?: string;
+  collectionId?: string;
+  trackingToken?: string;
 };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -36,6 +38,8 @@ export function normaliseMarketplaceViewerEvent(input: unknown, now = Date.now()
   const appVersion = typeof row.appVersion === "string" ? row.appVersion : "";
   const campaignId = typeof row.campaignId === "string" ? row.campaignId : "";
   const placementId = typeof row.placementId === "string" ? row.placementId : "";
+  const collectionId = typeof row.collectionId === "string" ? row.collectionId : "";
+  const trackingToken = typeof row.trackingToken === "string" ? row.trackingToken : "";
   if (!UUID.test(eventId) || !UUID.test(titleId)
     || !MARKETPLACE_EVENT_TYPES.includes(eventType as MarketplaceEvent["eventType"])
     || !Number.isFinite(Date.parse(occurredAt))
@@ -46,14 +50,21 @@ export function normaliseMarketplaceViewerEvent(input: unknown, now = Date.now()
     || !/^[A-Za-z0-9._+-]{1,40}$/.test(appVersion)
     || row.consentState !== "granted" || row.schemaVersion !== 1) return null;
   if (PLACEMENT_EVENTS.has(eventType as string)
-    && (!/^[A-Za-z0-9:_-]{1,160}$/.test(campaignId) || !/^[A-Za-z0-9:_-]{1,100}$/.test(placementId))) return null;
+    && (!/^[A-Za-z0-9:_-]{1,160}$/.test(campaignId)
+      || !/^[A-Za-z0-9:_-]{1,100}$/.test(placementId)
+      || trackingToken.length < 20 || trackingToken.length > 4096)) return null;
   if (campaignId && !/^[A-Za-z0-9:_-]{1,160}$/.test(campaignId)) return null;
   if (placementId && !/^[A-Za-z0-9:_-]{1,100}$/.test(placementId)) return null;
+  if (Boolean(campaignId) !== Boolean(placementId)) return null;
+  if (collectionId && !/^[A-Za-z0-9:_-]{1,160}$/.test(collectionId)) return null;
+  if (trackingToken && (!PLACEMENT_EVENTS.has(eventType as string) || trackingToken.length > 4096)) return null;
+  if (collectionId && !trackingToken) return null;
   return {
     eventId, eventType: eventType as MarketplaceEvent["eventType"], titleId,
     occurredAt: new Date(Date.parse(occurredAt)).toISOString(),
     source: "cinema_web", territory, deviceClass: deviceClass as MarketplaceEvent["deviceClass"],
     appVersion, consentState: "granted", schemaVersion: 1,
     ...(campaignId ? { campaignId } : {}), ...(placementId ? { placementId } : {}),
+    ...(collectionId ? { collectionId } : {}), ...(trackingToken ? { trackingToken } : {}),
   };
 }
