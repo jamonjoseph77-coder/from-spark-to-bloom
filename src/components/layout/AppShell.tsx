@@ -3,6 +3,7 @@ import { SideNav } from '@/components/layout/SideNav';
 import { TopBar } from '@/components/layout/TopBar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { CinemaLogo } from '@/components/ui/CinemaLogo';
+import { AnalyticsConsent } from '@/components/layout/AnalyticsConsent';
 import type { Route } from '@/lib/router';
 import './cinema-premium-polish.css';
 
@@ -23,6 +24,7 @@ export function AppShell({ route, children }: AppShellProps) {
         </footer>
       </div>
       <MobileNav route={route} />
+      <AnalyticsConsent />
     </div>
   );
 }
