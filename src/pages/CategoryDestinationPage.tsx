@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
 import { PAGE_CONTAINER } from '@/components/ui/styles';
 import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
@@ -134,6 +135,8 @@ export function CategoryDestinationPage({ slug }: { slug: string }) {
           </div>
         </div>
       </header>
+
+      <CinemaPresence key={slug.toLowerCase()} collectionId={slug.toLowerCase()} placement="explore_native" />
 
       <YourNextWatch titleTypes={['movie', 'series']} categoryLabel={category.title} genreTerms={slug === 'documentaries' ? ['documentary'] : slug === 'animation' ? ['animation', 'anime'] : slug === 'family' ? ['family', 'kids'] : slug === 'reality' ? ['reality'] : undefined} fallbackMediaType={category.shelves[0]?.mediaType} fallbackGenreId={category.shelves[0]?.genreId} />
       <CinemaSeasonalSpotlight categoryLabel={category.title} mediaType={category.shelves[0]?.mediaType} genreId={category.shelves[0]?.genreId} />
