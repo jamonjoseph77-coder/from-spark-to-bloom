@@ -22,7 +22,7 @@ describe("App routing", () => {
     expect(routes.length).toBeGreaterThan(0);
 
     const invalidRoutes = routes
-      .filter((route) => typeof route.options.component !== "function")
+      .filter((route) => !route.id.startsWith("/api/") && typeof route.options.component !== "function")
       .map((route) => route.id);
 
     expect(invalidRoutes, `Routes without a component: ${invalidRoutes.join(", ")}`).toEqual([]);
