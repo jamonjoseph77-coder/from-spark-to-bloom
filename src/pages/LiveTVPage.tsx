@@ -5,6 +5,7 @@ import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSp
 import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
 import { KeepUpButton } from '@/components/social/KeepUpButton';
 import { Artwork } from '@/components/ui/Artwork';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/StatusViews';
 import { CHIP_BASE, INPUT, LABEL, PAGE_CONTAINER, chipClass } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -79,6 +80,7 @@ export function LiveTVPage() {
           </div>
         </div>
       </header>
+      <CinemaPresence key="live-tv" collectionId="live-tv" placement="category_feature" />
 
       <YourNextWatch titleTypes={['live']} categoryLabel="Live TV" heading="Channels Picked For You" />
       <CinemaSeasonalSpotlight categoryLabel="Live TV" titleTypes={['live']} />
