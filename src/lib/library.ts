@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { isDirectVideoUrl } from '@/lib/media';
+import { isPlayableMediaSource, filterPlayableCatalogueTitles, type PlayableCatalogueSeason } from '@/lib/playable-catalogue';
 import type {
   EpisodeInput,
   ProgressEntry,
@@ -43,6 +44,22 @@ export async function fetchPublishedTitles(): Promise<Title[]> {
     if (publishedTitlesCache?.promise === promise) publishedTitlesCache = null;
     throw error;
   }
+}
+
+/** Returns only published titles with a player-supported source. */
+export async function fetchPublishedPlayableTitles(): Promise<Title[]> {
+  const titles = await fetchPublishedTitles();
+  const series = titles.filter((title) => title.type === 'series');
+  let seasons: PlayableCatalogueSeason[] = [];
+  if (series.length) {
+    const { data, error } = await supabase
+      .from('seasons')
+      .select('title_id, episodes(playback_url)')
+      .in('title_id', series.map((title) => title.id));
+    if (error) throw error;
+    seasons = (data ?? []) as PlayableCatalogueSeason[];
+  }
+  return filterPlayableCatalogueTitles(titles, seasons, isPlayableMediaSource);
 }
 
 export async function fetchAllTitles(): Promise<Title[]> {
