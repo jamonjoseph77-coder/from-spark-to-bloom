@@ -24,7 +24,9 @@ interface BrokerReply {
 
 const RESULT = 'lovable-preview-auth:result';
 
-function memoryStorage(): PreviewAuthStorage {
+type SyncAuthStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+function memoryStorage(): SyncAuthStorage {
   const values = new Map<string, string>();
   return {
     getItem: (key) => values.get(key) ?? null,
@@ -51,7 +53,7 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   if (typeof window === 'undefined') return undefined;
   let browserStorage: Storage | undefined;
   try { browserStorage = window.localStorage; } catch { browserStorage = undefined; }
-  const fallbackStorage: PreviewAuthStorage = browserStorage ?? memoryStorage();
+  const fallbackStorage: SyncAuthStorage = browserStorage ?? memoryStorage();
   const host = location.hostname;
   const PREVIEW_ZONES = ['lovableproject.com', 'lovableproject-dev.com', 'lovable.app', 'gpt-eng.com', 'gptengineer.run'];
   const onPreviewZone = PREVIEW_ZONES.some((z) => host === z || host.endsWith('.' + z));
