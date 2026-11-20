@@ -33,9 +33,21 @@ describe('Cinema media URL validation', () => {
     expect(getYouTubeVideoId('https://youtube.evil.com/shorts/abcdefgh')).toBeNull();
   });
 
-  it('builds safe YouTube and Vimeo embeds', () => {
-    expect(toEmbedUrl('https://youtu.be/abcdefgh')).toContain('youtube.com/embed/abcdefgh');
+  it('builds YouTube embeds without disabling standard player controls', () => {
+    const embed = toEmbedUrl('https://youtu.be/abcdefgh');
+    expect(embed).toContain('youtube.com/embed/abcdefgh');
+    const parsed = new URL(embed!);
+    expect(parsed.searchParams.get('autoplay')).toBe('0');
+    expect(parsed.searchParams.has('controls')).toBe(false);
+    expect(parsed.searchParams.has('disablekb')).toBe(false);
     expect(toEmbedUrl('https://www.youtube.com/shorts/abcdefgh')).toContain('youtube.com/embed/abcdefgh');
+  });
+
+  it('preserves YouTube privacy-enhanced embed mode', () => {
+    expect(toEmbedUrl('https://www.youtube-nocookie.com/embed/abcdefgh')).toContain('youtube-nocookie.com/embed/abcdefgh');
+  });
+
+  it('builds Vimeo embeds and rejects unsupported or insecure providers', () => {
     expect(toEmbedUrl('https://vimeo.com/123456')).toContain('player.vimeo.com/video/123456');
     expect(toEmbedUrl('https://evilvimeo.com/123456')).toBeNull();
     expect(toEmbedUrl('http://youtu.be/abcdefgh')).toBeNull();
