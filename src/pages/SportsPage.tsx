@@ -13,6 +13,7 @@ import { fetchPublishedTitles } from '@/lib/library';
 import { genresOf, matchesQuery } from '@/lib/catalogue';
 import type { Title } from '@/lib/types';
 import { Artwork } from '@/components/ui/Artwork';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 
 const ALL_SPORTS = 'All Sports';
 
@@ -84,6 +85,7 @@ export function SportsPage() {
           <span className="inline-flex items-center gap-2"><Activity className="h-4 w-4 text-sky-300" /> Highlights & Replays</span>
         </div>
       </header>
+      <CinemaPresence key="sports" collectionId="sports" placement="category_feature" />
 
       <YourNextWatch titleTypes={['sport']} categoryLabel="Sports" />
       <CinemaSeasonalSpotlight categoryLabel="Sports" />
