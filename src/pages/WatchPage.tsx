@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Clapperboard } from 'lucide-react';
 import { EpisodeList } from '@/components/title/EpisodeList';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 import { ErrorState, EmptyState, LoadingState } from '@/components/ui/StatusViews';
 import { BUTTON_PRIMARY, PAGE_CONTAINER, CARD } from '@/components/ui/styles';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -32,6 +33,8 @@ function findCurrentEpisode(seasons: SeasonWithEpisodes[], title: Title, episode
 
 export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: string | null }) {
   const { user } = useAuth();
+  const [playbackState, setPlaybackState] = useState<'idle' | 'playing' | 'paused' | 'ended'>('idle');
+  useEffect(() => { setPlaybackState('idle'); }, [titleId, episodeId]);
   const { progress, saveProgress } = useLibrary();
   const { data, error, reload } = useAsyncData(() => fetchTitleDetail(titleId), [titleId]);
 
@@ -84,6 +87,9 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-6">
+          {source.trim() && directSource && playbackState === 'idle' && (
+            <CinemaPresence key={`${contentId}:opening`} titleId={title.id} placement="opening_slate" />
+          )}
           {source.trim() && directSource ? (
             <VideoPlayer
               key={contentId}
@@ -93,6 +99,7 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
               subtitleUrl={subtitle}
               startAt={startAt}
               isLive={title.type === 'live'}
+              onPlaybackStateChange={setPlaybackState}
               onProgress={(playback) =>
                 void saveProgress({
                   content_id: contentId,
@@ -132,6 +139,12 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
             />
           )}
 
+          {source.trim() && directSource && playbackState === 'paused' && (
+            <CinemaPresence key={`${contentId}:pause`} titleId={title.id} placement="pause_frame" />
+          )}
+          {source.trim() && directSource && playbackState === 'ended' && (
+            <CinemaPresence key={`${contentId}:closing`} titleId={title.id} placement="closing_slate" />
+          )}
           <div className="space-y-2">
             <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">{title.title}</h1>
             {subheading && <p className="text-sm text-slate-400">{subheading}</p>}

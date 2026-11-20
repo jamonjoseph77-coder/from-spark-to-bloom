@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 const PRESENCE_SCRIPT_URL = 'https://cinema-presence-marketplace.lovable.app/cinema-presence.js';
-type Placement = 'title_badge' | 'poster_ribbon' | 'trailer_header' | 'showtime_card' | 'explore_native';
+type Placement = 'title_badge' | 'poster_ribbon' | 'trailer_header' | 'showtime_card' | 'explore_native' | 'opening_slate' | 'pause_frame' | 'ambient_lobby' | 'companion_offer' | 'closing_slate' | 'home_shelf' | 'category_feature' | 'premiere_feature';
 
 export function CinemaPresence({
   titleId, collectionId, placement = 'title_badge', territory = 'GHA',
