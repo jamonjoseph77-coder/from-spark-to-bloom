@@ -24,6 +24,17 @@ interface BrokerReply {
 
 const RESULT = 'lovable-preview-auth:result';
 
+type SyncAuthStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+function memoryStorage(): SyncAuthStorage {
+  const values = new Map<string, string>();
+  return {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => { values.set(key, value); },
+    removeItem: (key) => { values.delete(key); },
+  };
+}
+
 function readBrokerReply(data: unknown, requestId: string): BrokerReply | null {
   if (typeof data !== 'object' || data === null) return null;
   if (!('type' in data) || data.type !== RESULT) return null;
@@ -40,6 +51,9 @@ function readBrokerReply(data: unknown, requestId: string): BrokerReply | null {
  */
 export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   if (typeof window === 'undefined') return undefined;
+  let browserStorage: Storage | undefined;
+  try { browserStorage = window.localStorage; } catch { browserStorage = undefined; }
+  const fallbackStorage: SyncAuthStorage = browserStorage ?? memoryStorage();
   const host = location.hostname;
   const PREVIEW_ZONES = ['lovableproject.com', 'lovableproject-dev.com', 'lovable.app', 'gpt-eng.com', 'gptengineer.run'];
   const onPreviewZone = PREVIEW_ZONES.some((z) => host === z || host.endsWith('.' + z));
@@ -55,7 +69,7 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   // detached frame has no parent and not every browser implements ancestorOrigins.
   const parentWindow = window.parent as Window | null;
   const framed = parentWindow !== null && parentWindow !== window;
-  if (!projectId || !framed) return localStorage;
+  if (!projectId || !framed) return fallbackStorage;
 
   // Post only to the real editor ancestor, validated as a Lovable origin, so the
   // session token can never reach an untrusted embedder.
@@ -99,7 +113,7 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
   let firstGet = true;
   const RETRY_DELAY = 250;
   // Blocked third-party storage throws here; seeding must not break broker reads.
-  const readLocal = (key: string): string | null | undefined => { try { return localStorage.getItem(key); } catch { return undefined; } };
+  const readLocal = (key: string): string | null | undefined => { try { return fallbackStorage.getItem(key); } catch { return undefined; } };
 
   return {
     getItem: async (key) => {
@@ -115,29 +129,29 @@ export function brokeredPreviewStorage(): PreviewAuthStorage | undefined {
       // the broker later goes silent. A null value means never-synced -> keep local.
       if (res?.ok && res.value !== null) {
         if (res.value === '') {
-          if (local !== undefined && readLocal(key) === local) localStorage.removeItem(key);
+          if (local !== undefined && readLocal(key) === local) fallbackStorage.removeItem(key);
           return null;
         }
         // Seed this origin so a new tab, whose editor holds no session, stays signed in.
         if (local === null && readLocal(key) === null) {
-          try { localStorage.setItem(key, res.value); } catch { /* storage full: still return the editor's session */ }
+          try { fallbackStorage.setItem(key, res.value); } catch { /* storage full: still return the editor's session */ }
         }
         return res.value;
       }
-      return localStorage.getItem(key);
+      return fallbackStorage.getItem(key);
     },
     setItem: (key, value) => {
-      localStorage.setItem(key, value);
+      fallbackStorage.setItem(key, value);
       return request('lovable-preview-auth:set', key, value).then((res) => {
-        if (res?.ok && res.value !== null && localStorage.getItem(key) === value) {
-          if (res.value === '') localStorage.removeItem(key);
-          else localStorage.setItem(key, res.value);
+        if (res?.ok && res.value !== null && fallbackStorage.getItem(key) === value) {
+          if (res.value === '') fallbackStorage.removeItem(key);
+          else fallbackStorage.setItem(key, res.value);
         }
       });
     },
     removeItem: (key) => {
       const local = readLocal(key);
-      localStorage.removeItem(key);
+      fallbackStorage.removeItem(key);
       return request('lovable-preview-auth:remove', key, local ?? undefined).then(() => {});
     },
   };

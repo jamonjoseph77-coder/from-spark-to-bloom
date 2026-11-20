@@ -90,6 +90,8 @@ export type Database = {
           created_at: string
           description: string
           duration_seconds: number | null
+          download_allowed: boolean
+          views_count: number
           headline: string
           id: string
           is_published: boolean
@@ -105,6 +107,8 @@ export type Database = {
           created_at?: string
           description?: string
           duration_seconds?: number | null
+          download_allowed?: boolean
+          views_count?: number
           headline: string
           id?: string
           is_published?: boolean
@@ -120,6 +124,8 @@ export type Database = {
           created_at?: string
           description?: string
           duration_seconds?: number | null
+          download_allowed?: boolean
+          views_count?: number
           headline?: string
           id?: string
           is_published?: boolean
@@ -140,6 +146,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      discover_clip_reactions: {
+        Row: { id: string; clip_id: string; user_id: string; created_at: string }
+        Insert: { id?: string; clip_id: string; user_id: string; created_at?: string }
+        Update: { id?: string; clip_id?: string; user_id?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: "discover_clip_reactions_clip_id_fkey"; columns: ["clip_id"]; isOneToOne: false; referencedRelation: "discover_clips"; referencedColumns: ["id"] }]
+      }
+      discover_clip_comments: {
+        Row: { id: string; clip_id: string; author_id: string; body: string; status: string; created_at: string }
+        Insert: { id?: string; clip_id: string; author_id: string; body: string; status?: string; created_at?: string }
+        Update: { id?: string; clip_id?: string; author_id?: string; body?: string; status?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: "discover_clip_comments_clip_id_fkey"; columns: ["clip_id"]; isOneToOne: false; referencedRelation: "discover_clips"; referencedColumns: ["id"] }]
+      }
+      discover_clip_saves: {
+        Row: { clip_id: string; user_id: string; created_at: string }
+        Insert: { clip_id: string; user_id: string; created_at?: string }
+        Update: { clip_id?: string; user_id?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: "discover_clip_saves_clip_id_fkey"; columns: ["clip_id"]; isOneToOne: false; referencedRelation: "discover_clips"; referencedColumns: ["id"] }]
+      }
+      discover_content_reactions: {
+        Row: { id: string; content_key: string; user_id: string; created_at: string }
+        Insert: { id?: string; content_key: string; user_id: string; created_at?: string }
+        Update: { id?: string; content_key?: string; user_id?: string; created_at?: string }
+        Relationships: []
+      }
+      discover_content_comments: {
+        Row: { id: string; content_key: string; author_id: string; body: string; status: string; created_at: string }
+        Insert: { id?: string; content_key: string; author_id: string; body: string; status?: string; created_at?: string }
+        Update: { id?: string; content_key?: string; author_id?: string; body?: string; status?: string; created_at?: string }
+        Relationships: []
+      }
+      discover_content_shares: {
+        Row: { id: string; content_key: string; content_title: string; content_url: string; image_url: string; sender_id: string; recipient_id: string; message: string; created_at: string }
+        Insert: { id?: string; content_key: string; content_title: string; content_url: string; image_url?: string; sender_id: string; recipient_id: string; message?: string; created_at?: string }
+        Update: { id?: string; content_key?: string; content_title?: string; content_url?: string; image_url?: string; sender_id?: string; recipient_id?: string; message?: string; created_at?: string }
+        Relationships: []
+      }
+      series_follows: {
+        Row: { user_id: string; title_id: string; followed_at: string }
+        Insert: { user_id: string; title_id: string; followed_at?: string }
+        Update: { user_id?: string; title_id?: string; followed_at?: string }
+        Relationships: [{ foreignKeyName: "series_follows_title_id_fkey"; columns: ["title_id"]; isOneToOne: false; referencedRelation: "titles"; referencedColumns: ["id"] }]
+      }
+      studio_title_submissions: {
+        Row: { id: string; studio_id: string; submitted_by: string; content_type: string; title: string; synopsis: string; genre: string; release_year: number | null; duration_minutes: number | null; poster_url: string; backdrop_url: string | null; trailer_url: string | null; playback_url: string | null; rights_holder: string; rights_basis: string; territories: string[]; languages: string[]; platforms: string[]; rights_start: string | null; rights_end: string | null; is_exclusive: boolean; promotional_rights_confirmed: boolean; rights_evidence_url: string | null; delivery_notes: string; published_title_id: string | null; status: string; review_note: string; reviewed_at: string | null; reviewed_by: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; studio_id: string; submitted_by: string; content_type: string; title: string; synopsis: string; genre?: string; release_year?: number | null; duration_minutes?: number | null; poster_url: string; backdrop_url?: string | null; trailer_url?: string | null; playback_url?: string | null; rights_holder: string; rights_basis: string; territories: string[]; languages: string[]; platforms: string[]; rights_start?: string | null; rights_end?: string | null; is_exclusive?: boolean; promotional_rights_confirmed?: boolean; rights_evidence_url?: string | null; delivery_notes?: string; published_title_id?: string | null; status?: string; review_note?: string; reviewed_at?: string | null; reviewed_by?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; studio_id?: string; submitted_by?: string; content_type?: string; title?: string; synopsis?: string; genre?: string; release_year?: number | null; duration_minutes?: number | null; poster_url?: string; backdrop_url?: string | null; trailer_url?: string | null; playback_url?: string | null; rights_holder?: string; rights_basis?: string; territories?: string[]; languages?: string[]; platforms?: string[]; rights_start?: string | null; rights_end?: string | null; is_exclusive?: boolean; promotional_rights_confirmed?: boolean; rights_evidence_url?: string | null; delivery_notes?: string; published_title_id?: string | null; status?: string; review_note?: string; reviewed_at?: string | null; reviewed_by?: string | null; created_at?: string; updated_at?: string }
+        Relationships: [{ foreignKeyName: "studio_title_submissions_studio_id_fkey"; columns: ["studio_id"]; isOneToOne: false; referencedRelation: "studio_accounts"; referencedColumns: ["id"] }, { foreignKeyName: "studio_title_submissions_published_title_id_fkey"; columns: ["published_title_id"]; isOneToOne: false; referencedRelation: "titles"; referencedColumns: ["id"] }]
+      }
+      studio_title_submission_episodes: {
+        Row: { id: string; submission_id: string; season_number: number; episode_number: number; episode_title: string; synopsis: string; duration_minutes: number | null; poster_url: string | null; playback_url: string | null; release_at: string | null; delivery_status: string; created_at: string; updated_at: string }
+        Insert: { id?: string; submission_id: string; season_number: number; episode_number: number; episode_title: string; synopsis?: string; duration_minutes?: number | null; poster_url?: string | null; playback_url?: string | null; release_at?: string | null; delivery_status?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; submission_id?: string; season_number?: number; episode_number?: number; episode_title?: string; synopsis?: string; duration_minutes?: number | null; poster_url?: string | null; playback_url?: string | null; release_at?: string | null; delivery_status?: string; created_at?: string; updated_at?: string }
+        Relationships: [{ foreignKeyName: "studio_title_submission_episodes_submission_id_fkey"; columns: ["submission_id"]; isOneToOne: false; referencedRelation: "studio_title_submissions"; referencedColumns: ["id"] }]
       }
       episodes: {
         Row: {
@@ -387,7 +447,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          id: string
           bio: string
+          avatar_url: string | null
+          share_watching_activity: boolean
           created_at: string
           display_name: string
           is_discoverable: boolean
@@ -396,7 +459,10 @@ export type Database = {
           username: string
         }
         Insert: {
+          id?: string
           bio?: string
+          avatar_url?: string | null
+          share_watching_activity?: boolean
           created_at?: string
           display_name: string
           is_discoverable?: boolean
@@ -405,7 +471,10 @@ export type Database = {
           username: string
         }
         Update: {
+          id?: string
           bio?: string
+          avatar_url?: string | null
+          share_watching_activity?: boolean
           created_at?: string
           display_name?: string
           is_discoverable?: boolean
@@ -763,6 +832,11 @@ export type Database = {
       is_party_host: { Args: { p_party_id: string }; Returns: boolean }
       is_party_member: { Args: { p_party_id: string }; Returns: boolean }
       join_watch_party: { Args: { p_invite_code: string }; Returns: string }
+      get_discover_clip_engagement: { Args: { p_clip_id: string }; Returns: { reaction_count: number; liked_by_current_user: boolean }[] }
+      get_discover_content_engagement: { Args: { p_content_key: string }; Returns: { reaction_count: number; liked_by_current_user: boolean }[] }
+      get_letterbox_post_engagement: { Args: { p_post_ids: string[] }; Returns: { post_id: string; reaction_count: number; liked_by_current_user: boolean }[] }
+      record_discover_clip_view: { Args: { p_clip_id: string }; Returns: number }
+      update_my_verified_studio_profile: { Args: { p_description: string; p_website_url?: string | null; p_logo_url?: string | null }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

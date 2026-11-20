@@ -17,13 +17,13 @@ describe("App routing", () => {
   });
 
   it("registers a renderable component for every generated top-level route", () => {
-    const routes = Object.entries(routeTree.children ?? {});
+    const routes = Object.values(routeTree.children ?? {});
 
     expect(routes.length).toBeGreaterThan(0);
 
     const invalidRoutes = routes
-      .filter(([, route]) => typeof route.options.component !== "function")
-      .map(([name]) => name);
+      .filter((route) => !route.id.startsWith("/api/") && typeof route.options.component !== "function")
+      .map((route) => route.id);
 
     expect(invalidRoutes, `Routes without a component: ${invalidRoutes.join(", ")}`).toEqual([]);
   });
