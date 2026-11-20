@@ -17,10 +17,15 @@ export function AppShell({ route, children }: AppShellProps) {
       <div className="flex min-h-screen flex-col lg:pl-64">
         <TopBar />
         <main className="flex-1 pb-20 lg:pb-12">{children}</main>
-        <footer className="hidden border-t border-white/5 px-10 py-6 lg:block">
-          <div className="flex items-center justify-between gap-6 text-xs text-slate-500">
+        <footer className="border-t border-white/5 px-4 py-5 sm:px-6 lg:px-10">
+          <div className="flex flex-col items-start justify-between gap-3 text-xs text-slate-500 sm:flex-row sm:items-center">
             <CinemaLogo compact />
-            <div className="flex items-center gap-5"><p>Experience the World of Stories.</p><a href="/about" className="font-semibold text-slate-400 transition hover:text-white">About & Credits</a></div>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <p>Experience the World of Stories.</p>
+              <a href="/about" className="font-semibold text-slate-400 transition hover:text-white">About & Credits</a>
+              <a href="https://cinema-presence-marketplace.lovable.app" target="_blank" rel="noreferrer"
+                className="font-semibold text-cinema-300 transition hover:text-white">Partner With Cinema</a>
+            </div>
           </div>
         </footer>
       </div>
