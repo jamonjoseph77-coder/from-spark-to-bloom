@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { normaliseMarketplaceViewerEvent } from "@/lib/marketplace-events";
+import { readAnalyticsConsent } from "@/lib/analytics-consent";
 
 const MAX_BODY_BYTES = 8 * 1024;
 const MARKETPLACE_EVENTS_URL = "https://cinema-presence-marketplace.lovable.app/api/marketplace/events";
@@ -43,8 +44,12 @@ export const Route = createFileRoute("/api/marketplace-events")({
         return Response.json({ error: "application_json_required" }, { status: 415 });
       }
       const token = process.env.CINEMA_MARKETPLACE_ANALYTICS_TOKEN;
-      if (!token) {
+      if (!token || token.length < 32 || token.length > 512) {
         return Response.json({ error: "event_forwarding_not_configured" }, { status: 503, headers: { "Cache-Control": "no-store" } });
+      }
+      const consent = await readAnalyticsConsent(request.headers.get("cookie"), token);
+      if (consent !== "granted") {
+        return Response.json({ error: "measurement_consent_required" }, { status: 403, headers: { "Cache-Control": "no-store" } });
       }
       const raw = await readBoundedBody(request);
       if (raw === null) return Response.json({ error: "invalid_or_oversized_body" }, { status: 413 });
