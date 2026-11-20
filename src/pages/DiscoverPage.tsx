@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Compass, Sparkles, Film, Tv, Radio, Users, BadgeCheck, Flame, Trophy, CalendarDays, Building2, BellPlus, BellRing, ArrowRight, UploadCloud } from 'lucide-react';
 import { ExploreTimeline } from '@/components/discover/ExploreTimeline';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 import { PersonalizedExploreSection } from '@/components/discover/PersonalizedExploreSection';
 import { DiscoverShorts } from '@/components/discover/DiscoverShorts';
 import { TmdbRow } from '@/components/tmdb/TmdbRow';
@@ -188,6 +189,8 @@ export function DiscoverPage() {
           </div>
         </div>
       </header>
+
+      <CinemaPresence key="discover" collectionId="discover" placement="explore_native" />
 
       <DiscoverShorts />
 

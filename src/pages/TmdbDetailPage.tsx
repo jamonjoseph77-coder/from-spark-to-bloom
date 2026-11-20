@@ -13,6 +13,7 @@ import { fetchKinoCheckVideos, type KinoCheckVideo } from '@/lib/kinocheck';
 import { uniqueVideos } from '@/lib/videoIdentity';
 import { fetchPublishedTitles } from '@/lib/library';
 import { findCanonicalCinemaTitle } from '@/lib/canonicalTitle';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 
 function formatReleaseDate(value: string): string {
   const date = new Date(`${value}T00:00:00`);
@@ -80,6 +81,7 @@ export function TmdbDetailPage({ mediaType, id }: { mediaType: TmdbMediaType; id
                 </span>
               ))}
             </div>
+            {!canonicalTitle && <CinemaPresence key={`tmdb-${id}`} titleId={`tmdb:${id}`} placement="poster_ribbon" />}
           </div>
         </div>
       </section>

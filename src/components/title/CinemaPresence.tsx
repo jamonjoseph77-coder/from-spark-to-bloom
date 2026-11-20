@@ -1,18 +1,18 @@
 import { useEffect, useRef } from 'react';
 
 const PRESENCE_SCRIPT_URL = 'https://cinema-presence-marketplace.lovable.app/cinema-presence.js';
+type Placement = 'title_badge' | 'poster_ribbon' | 'trailer_header' | 'showtime_card' | 'explore_native';
 
-/**
- * The single launch placement: a compact, disclosed Presence association
- * beneath a published title's primary information. The server remains the
- * authority for title rights, territory, campaign and payment eligibility.
- */
-export function CinemaPresence({ titleId }: { titleId: string }) {
+export function CinemaPresence({
+  titleId, collectionId, placement = 'title_badge', territory = 'GHA',
+}: {
+  titleId?: string; collectionId?: string; placement?: Placement; territory?: string;
+}) {
   const slotRef = useRef<HTMLDivElement>(null);
+  const targetKey = titleId || collectionId || '';
 
   useEffect(() => {
-    if (!titleId || !slotRef.current) return;
-
+    if (!targetKey || !slotRef.current) return;
     const existing = document.querySelector<HTMLScriptElement>(
       'script[data-cinema-presence-loader="true"]',
     );
@@ -28,17 +28,19 @@ export function CinemaPresence({ titleId }: { titleId: string }) {
     return () => {
       slotRef.current?.replaceChildren();
     };
-  }, [titleId]);
+  }, [targetKey]);
 
+  if (!targetKey) return null;
   return (
     <div
       ref={slotRef}
       data-cinema-presence
-      data-title-id={titleId}
-      data-placement="title_badge"
-      data-territory="GHA"
+      data-title-id={titleId || undefined}
+      data-collection-id={collectionId || undefined}
+      data-placement={placement}
+      data-territory={territory}
       className="mt-5 w-full max-w-xl"
-      aria-label="Cinema Presence title partner"
+      aria-label="Cinema Presence partner"
     />
   );
 }
