@@ -4,9 +4,9 @@ const PRESENCE_SCRIPT_URL = 'https://cinema-presence-marketplace.lovable.app/cin
 type Placement = 'title_badge' | 'poster_ribbon' | 'trailer_header' | 'showtime_card' | 'explore_native' | 'opening_slate' | 'pause_frame' | 'ambient_lobby' | 'companion_offer' | 'closing_slate' | 'home_shelf' | 'category_feature' | 'premiere_feature';
 
 export function CinemaPresence({
-  titleId, collectionId, placement = 'title_badge', territory = 'GHA',
+  titleId, collectionId, placement = 'title_badge', territory = 'GHA', className,
 }: {
-  titleId?: string; collectionId?: string; placement?: Placement; territory?: string;
+  titleId?: string; collectionId?: string; placement?: Placement; territory?: string; className?: string;
 }) {
   const slotRef = useRef<HTMLDivElement>(null);
   const targetKey = titleId || collectionId || '';
@@ -56,7 +56,7 @@ export function CinemaPresence({
       data-collection-id={collectionId || undefined}
       data-placement={placement}
       data-territory={territory}
-      className="mt-5 w-full max-w-xl"
+      className={className || "mt-5 w-full max-w-xl"}
       aria-label="Cinema Presence partner"
     />
   );
