@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-const PRESENCE_SCRIPT_URL = 'https://cinema-presence-marketplace.lovable.app/cinema-presence.js?v=20261120-consent-gated';
+const PRESENCE_SCRIPT_URL = 'https://cinema-presence-marketplace.lovable.app/cinema-presence.js?v=20261120-edge-country';
 type Placement = 'title_badge' | 'poster_ribbon' | 'trailer_header' | 'showtime_card' | 'explore_native' | 'opening_slate' | 'pause_frame' | 'ambient_lobby' | 'companion_offer' | 'closing_slate' | 'home_shelf' | 'category_feature' | 'premiere_feature';
 
 export function CinemaPresence({
-  titleId, collectionId, placement = 'title_badge', territory = 'GHA', className,
+  titleId, collectionId, placement = 'title_badge', className,
 }: {
-  titleId?: string; collectionId?: string; placement?: Placement; territory?: string; className?: string;
+  titleId?: string; collectionId?: string; placement?: Placement; className?: string;
 }) {
   const slotRef = useRef<HTMLDivElement>(null);
   const targetKey = titleId || collectionId || '';
@@ -55,7 +55,6 @@ export function CinemaPresence({
       data-title-id={titleId || undefined}
       data-collection-id={collectionId || undefined}
       data-placement={placement}
-      data-territory={territory}
       className={className || "mt-5 w-full max-w-xl"}
       aria-label="Cinema Presence partner"
     />
