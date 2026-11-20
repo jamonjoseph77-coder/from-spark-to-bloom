@@ -12,6 +12,7 @@ import { CinemaCategoryNav } from '@/components/layout/CinemaCategoryNav';
 import { CategoryCinemaFeed } from '@/components/catalogue/CategoryCinemaFeed';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { YourNextWatch } from '@/components/catalogue/YourNextWatch';
+import { CinemaPresence } from '@/components/title/CinemaPresence';
 
 type LocalBrowseKind = Exclude<TitleType, 'movie' | 'series'>;
 const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: string }> = {
@@ -20,6 +21,11 @@ const COPY: Record<LocalBrowseKind, { heading: string; intro: string; empty: str
   news: { heading: 'News', intro: 'News, Documentaries And Current Affairs.', empty: 'News Programmes Will Appear Here As Verified Publishers Make Them Available.' },
 };
 const ALL_GENRES = 'All';
+const PRESENCE_COLLECTION: Record<LocalBrowseKind, string> = {
+  sport: 'sports',
+  live: 'live-tv',
+  news: 'news',
+};
 
 export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
   const { data: titles, error, reload } = useAsyncData(fetchPublishedTitles, [kind]);
@@ -51,6 +57,7 @@ export function BrowsePage({ kind }: { kind: LocalBrowseKind }) {
           <a href="/search" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#087cff] px-5 py-3 text-xs font-extrabold text-white shadow-[0_8px_26px_rgba(8,124,255,.25)] transition hover:bg-[#168cff]">Find More On Cinema</a>
         </div>
       </header>
+      <CinemaPresence key={`category-${kind}`} collectionId={PRESENCE_COLLECTION[kind]} placement="category_feature" />
       {kind === 'news' && <YourNextWatch titleTypes={['news']} categoryLabel="News" heading="News In Your Focus" />}
       {kind === 'news' && <CinemaSeasonalSpotlight categoryLabel="News" titleTypes={['news']} />}
       {!titles && (error ? <ErrorState onRetry={reload} /> : <LoadingState />)}
