@@ -140,6 +140,9 @@ export function WatchPage({ titleId, episodeId }: { titleId: string; episodeId: 
               description="A playback link has not been added for this title. It will appear here once it is connected."
             />
           )}
+          {title.is_published && source.trim() && directSource && playbackState === 'playing' && (
+            <CinemaPresence key={`${contentId}:companion`} titleId={title.id} placement="companion_offer" />
+          )}
 
           {source.trim() && directSource && playbackState === 'ended' && (
             <CinemaPresence key={`${contentId}:closing`} titleId={title.id} placement="closing_slate" />

@@ -192,6 +192,7 @@ export function HomePage() {
         </nav>
       </section>
       <TmdbHero />
+      <CinemaPresence key="home-ambient" collectionId="home" placement="ambient_lobby" />
       <CinemaPresence key="home" collectionId="home" placement="home_shelf" />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
