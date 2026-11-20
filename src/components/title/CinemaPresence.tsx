@@ -50,6 +50,7 @@ export function CinemaPresence({
   if (!targetKey) return null;
   return (
     <div
+      hidden
       ref={slotRef}
       data-cinema-presence
       data-title-id={titleId || undefined}
