@@ -106,6 +106,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script async src="https://cinema-presence-marketplace.lovable.app/cinema-presence.js" data-api="https://cinema-presence-marketplace.lovable.app" />
       </head>
       <body>
         {children}
