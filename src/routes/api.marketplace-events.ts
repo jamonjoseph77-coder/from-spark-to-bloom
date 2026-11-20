@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { normaliseMarketplaceViewerEvent } from "@/lib/marketplace-events";
 import { readAnalyticsConsent } from "@/lib/analytics-consent";
 import { resolveMarketplaceForwardingConfig } from "@/lib/marketplace-forwarding-config";
+import { resolveTrustedViewerCountry } from "@/lib/marketplace-viewer-location";
 
 const MAX_BODY_BYTES = 8 * 1024;
 
@@ -67,10 +68,11 @@ export const Route = createFileRoute("/api/marketplace-events")({
           .from("titles").select("id").eq("id", event.titleId).eq("is_published", true).maybeSingle();
         if (titleError || !title) return Response.json({ error: "published_title_not_found" }, { status: 404 });
 
+        const trustedEvent = { ...event, territory: resolveTrustedViewerCountry(request) };
         const upstream = await fetch(config.eventsUrl, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-          body: JSON.stringify(event),
+          body: JSON.stringify(trustedEvent),
           signal: AbortSignal.timeout(5000),
         });
         const result = await upstream.json().catch(() => ({})) as { accepted?: boolean; duplicate?: boolean };

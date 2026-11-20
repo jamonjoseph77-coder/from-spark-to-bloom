@@ -33,7 +33,8 @@ export function normaliseMarketplaceViewerEvent(input: unknown, now = Date.now()
   const titleId = typeof row.titleId === "string" ? row.titleId : "";
   const eventType = row.eventType;
   const occurredAt = typeof row.occurredAt === "string" ? row.occurredAt : "";
-  const territory = typeof row.territory === "string" ? row.territory.toUpperCase() : "";
+  // The route replaces this placeholder with trusted edge metadata before forwarding.
+  const territory = "ZZ";
   const deviceClass = row.deviceClass;
   const appVersion = typeof row.appVersion === "string" ? row.appVersion : "";
   const campaignId = typeof row.campaignId === "string" ? row.campaignId : "";
@@ -45,7 +46,6 @@ export function normaliseMarketplaceViewerEvent(input: unknown, now = Date.now()
     || !Number.isFinite(Date.parse(occurredAt))
     || Date.parse(occurredAt) < now - 7 * 86_400_000
     || Date.parse(occurredAt) > now + 5 * 60_000
-    || !/^[A-Z]{2}$/.test(territory)
     || !["mobile", "desktop", "tablet", "tv", "unknown"].includes(String(deviceClass))
     || !/^[A-Za-z0-9._+-]{1,40}$/.test(appVersion)
     || row.consentState !== "granted" || row.schemaVersion !== 1) return null;
