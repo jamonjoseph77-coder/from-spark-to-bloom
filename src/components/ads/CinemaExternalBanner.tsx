@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const MARKETPLACE_ORIGIN = "https://cinema-presence-marketplace.lovable.app";
 
@@ -41,5 +41,32 @@ export function CinemaExternalBanner({
         className="block w-full border-0"
       />
     </aside>
+  );
+}
+
+/**
+ * Home-page wrapper: optional ads remain off unless the published build has an
+ * explicit placement approval flag and the visitor has granted advertising
+ * consent. The Marketplace endpoint independently enforces publisher, policy,
+ * creative, privacy, territory and placement approvals before loading a banner.
+ */
+export function CinemaExternalBannerSlot() {
+  const [consentGranted, setConsentGranted] = useState(false);
+  const placementApproved = import.meta.env.VITE_CINEMA_ADSTERRA_HOME_SLOT_APPROVED === "true";
+
+  useEffect(() => {
+    const syncConsent = () => {
+      setConsentGranted(document.documentElement.dataset.cinemaAdvertisingConsent === "granted");
+    };
+    syncConsent();
+    window.addEventListener("cinema:advertising-consent-changed", syncConsent);
+    return () => window.removeEventListener("cinema:advertising-consent-changed", syncConsent);
+  }, []);
+
+  return (
+    <CinemaExternalBanner
+      consentGranted={consentGranted}
+      placementApproved={placementApproved}
+    />
   );
 }
