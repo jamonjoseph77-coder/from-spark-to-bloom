@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createAnalyticsConsentValue, readAnalyticsConsent } from "@/lib/analytics-consent";
 
-const ALLOWED_ORIGINS = new Set(["https://from-spark-to-bloom.lovable.app"]);
 const COOKIE_NAME = "cinema_analytics_consent";
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
 const MAX_BODY_BYTES = 1024;
@@ -46,7 +45,9 @@ export const Route = createFileRoute("/api/marketplace-analytics-consent")({
     },
     POST: async ({ request }) => {
       const origin = request.headers.get("origin") ?? "";
-      if (!ALLOWED_ORIGINS.has(origin)) {
+      let requestOrigin = "";
+      try { requestOrigin = new URL(request.url).origin; } catch { /* reject malformed request URL */ }
+      if (!origin || !requestOrigin || origin !== requestOrigin) {
         return Response.json({ error: "origin_not_allowed" }, { status: 403, headers: { "Cache-Control": "no-store" } });
       }
       if (!(request.headers.get("content-type") ?? "").toLowerCase().includes("application/json")) {
