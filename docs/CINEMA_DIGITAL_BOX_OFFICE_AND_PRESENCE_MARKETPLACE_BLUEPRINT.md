@@ -105,45 +105,47 @@ A title must never go live just because a sponsor is ready to pay.
 
 ## 5. What exists today versus what still needs building
 
-| Capability | Current position | Next requirement |
-|---|---|---|
-| Studios & Publishers directory | Existing route and verified profile flow | Improve profile completeness and real catalogue visibility |
-| Studio application | Existing application flow | Clear status, review communication and adult-supervised onboarding |
-| Full-title submission | Existing submission desk for verified studios | Rights evidence, delivery QA and review-to-publication tracking |
-| Digital Box Office | Informational Coming Soon page only | Commercial records, package definitions, approvals, reporting and settlement |
-| Presence Marketplace | No complete transactional marketplace confirmed | Listings, campaign briefs, proposals, permissions and admin workflow |
-| Sponsor reporting | No complete commercial reporting workflow confirmed | Metric definitions, delivery evidence and campaign reports |
-| Revenue settlement | No complete settlement workflow confirmed | Contract-backed ledger and adult-authorised finance process |
+**Repository state reviewed 21 November 2026.** The Cinema viewer and Cinema Presence Marketplace are separate applications and separate data/security boundaries. The Marketplace repository now contains substantially more operational code than the earlier blueprint snapshot. Code in GitHub is not proof that production hosting, Firebase rules, server secrets, provider accounts or live transactions are configured.
 
-Do not describe Coming Soon pages as working marketplaces. Do not create sample deals that look real or display fake revenue, sponsor logos, audience numbers or partner commitments.
+| Capability | Current code position | Still required before calling it live |
+|---|---|---|
+| Studios & Publishers directory | Viewer has publisher discovery/profile routes and publisher channel content. | Verify production catalogue quality, profile ownership and territory-specific rights. |
+| Studio application and title submission | Viewer has organisation/studio applications, title submission and rights declarations/review flows. | Confirm every title's evidence, publication decision, technical delivery and licence scope. |
+| Marketplace organisation onboarding | Marketplace has organisation applications, admin review, memberships and role-scoped workspaces. | Verify production Firebase rules and hosting; confirm authorised organisation members can complete the journey. |
+| Presence relationship intake | Marketplace supports brand, studio/rights, publisher distribution, creator collaboration, partner-cinema programming, production, event and licensing briefs with separate deliverables from ad placements. | Complete dedicated agreements, milestones, notifications and fulfilment workflows for each relationship type. |
+| Rights and inventory | Marketplace has rights-evidence submissions, admin verification and rights-backed inventory approval. | Independently verify the evidence and actual rights for every title, territory, term and format. TMDB metadata is not a licence. |
+| Commercial offers | Marketplace has Cinema-admin proposal creation and organisation response workflows. | Add and verify executed agreement capture, authorised signatories and immutable contract history. An accepted proposal is not a signed contract. |
+| Cinema Presence viewer placements | Viewer has 13 contextual Presence placement mounts and a consent/measurement boundary. Marketplace has server-side eligibility, signed event and reporting code. | Verify every placement against the viewer integration, rights, territory, consent, schedule, delivery capacity and reconciliation. |
+| Advertising demand | Marketplace has fail-closed Adsterra assessment and GAM connection/readiness checks. Meta Audience Network and Pixel are not established as working web demand integrations. | Provider/domain approval, format validation, adult-authorised account, privacy review, creative/territory approval and verified delivery. Advertising remains optional. |
+| Digital Box Office and Paystack | Marketplace has order, webhook verification, funding ledger, delivery review, settlement reconciliation, 70/30 net-pool calculation and payout-request code behind readiness gates. | Reconcile the open fixed-price activation work without regressing approved CPM/CPC exceptions; verify test-mode payment-to-delivery-to-settlement and adult/legal account ownership. No live collection or payout has been proven here. |
+| Reporting | Marketplace has event and financial reporting code. | Verify actual viewer events, attribution, completeness, retention and reconciliation before presenting any figures as commercial results. |
+
+Do not describe a Coming Soon page as a working marketplace. Do not create sample deals that look real or display fake revenue, sponsor logos, audience numbers or partner commitments. Distinguish **implemented in code**, **configured**, **tested end-to-end**, and **live/verified** in every status report.
 
 ## 6. Safe, low-cost implementation sequence
 
-### Phase 1 — operational foundation (no production schema changes)
-- Keep the existing Studios & Publishers and rights-review flows.
-- Publish clear explanations of the Digital Box Office and marketplace.
-- Prepare standard internal checklists for content eligibility, sponsor eligibility, deliverables and reporting.
-- Use a supervised, manual pilot process only after the relevant adults and rights holders approve it.
-- Keep the TMDB discovery experience until authorised playable replacement content is actually onboarded.
+### Phase 1 — operational foundation
+- Keep the viewer and Marketplace as separate applications with separate permissions and data stores.
+- Continue building the broader Presence network: verified organisations, publisher channels, studio/rights participation, creator-business proposals, partner-cinema relationships and event/production partnerships.
+- Keep ad placements as one optional Presence product family, not the definition of the platform.
+- Maintain title, territory, term, creative, audience-suitability and placement approvals as independent gates.
+- Do not make production schema, RLS, secrets, financial-account or deployment changes without the required explicit authorisation and adult/legal review.
 
 ### Phase 2 — controlled pilot
-- Select one to three fully authorised titles.
-- Confirm playback, territories, classification and sponsor permissions.
-- Prepare one measurable sponsorship package.
-- Agree the deal in writing through authorised adult representatives.
-- Deliver the campaign and produce a factual report.
-- Review the economics before repeating it.
+- Select one to three fully authorised titles and verify playback and territory restrictions.
+- Confirm the relevant rights holder permits the exact commercial use and promotional materials.
+- Agree a specific sponsorship or non-ad partnership package in writing through appropriately authorised adult representatives.
+- Test viewer placement delivery, measurement, reporting, payment reconciliation and settlement using non-production/test configuration.
+- Review actual economics and delivery evidence before repeating the pilot.
 
-### Phase 3 — real marketplace product
-Only after the business has adult-approved operating rules and the technical design is reviewed:
-- Add persistent listings, campaign briefs, proposals and status history.
-- Add role-based access for studios, brands, agencies and Cinema administrators.
-- Add contract metadata and permission checks.
-- Add an auditable campaign ledger and settlement reconciliation.
-- Add secure file handling for contracts and rights evidence.
-- Add notifications, expiry handling and dispute/escalation paths.
+### Phase 3 — complete Presence operations
+- Complete public organisation discovery using only explicitly approved profile fields; never expose private briefs, contacts, rights evidence or financial records.
+- Complete agreement signing/recording, relationship-specific deliverables, milestones, notifications, expiry and dispute workflows.
+- Complete partner-cinema distribution and settlement, creator commissioning, publisher distribution contracts and production/event agreements.
+- Complete reservation expiry/release, delivery-cap enforcement, reporting reconciliation and finance audit trails.
+- Complete provider integrations only where format, privacy, account authority and viewer experience are proven.
 
-Phase 3 requires a separately reviewed database and security plan. It is deliberately not implemented in this documentation-only change because current project constraints prohibit production schema, RLS and data changes.
+These are remaining implementation and verification tasks, not claims that the entire marketplace is already operational.
 
 ## 7. Launch gates — do not skip
 
