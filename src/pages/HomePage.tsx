@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Clapperboard, Compass, Film, MessageCircle, Newspaper, Play, Radio, Sparkles, Users, WandSparkles } from 'lucide-react';
 import { ContinueWatchingRow } from '@/components/catalogue/ContinueWatchingRow';
+import { CinemaExternalBannerSlot } from '@/components/ads/CinemaExternalBanner';
 import { CinemaSeasonalSpotlight } from '@/components/catalogue/CinemaSeasonalSpotlight';
 import { ShortCard } from '@/components/discover/ShortCard';
 import { CinemaSpotlights } from '@/components/discover/CinemaSpotlights';
@@ -196,6 +197,7 @@ export function HomePage() {
       <TmdbHero />
       <CinemaPresence key="home-ambient" collectionId="home" placement="ambient_lobby" />
       <CinemaPresence key="home" collectionId="home" placement="home_shelf" />
+      <CinemaExternalBannerSlot />
       <HomeEngagement />
       <CinemaSeasonalSpotlight categoryLabel="Cinema Home" mediaType="movie" />
       {playableTitles && <TitleRow heading="Available On Cinema" description="Stories You Can Watch Right Now On Cinema." titles={playableTitles} progressById={cinemaShelves?.ratios} />}
