@@ -1,6 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 
-const MARKETPLACE_ORIGIN = "https://cinema-presence-marketplace.lovable.app";
+const MARKETPLACE_ORIGIN = import.meta.env.VITE_CINEMA_PRESENCE_MARKETPLACE_ORIGIN ?? "";
+
+function getMarketplaceBannerUrl() {
+  try {
+    const parsed = new URL(MARKETPLACE_ORIGIN);
+    if (parsed.protocol !== "https:" || parsed.origin !== MARKETPLACE_ORIGIN
+      || parsed.username || parsed.password) return null;
+    return `${parsed.origin}/api/ads/external-banner-frame?slot=marketplace_banner`;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Renders the approved external banner in a sandboxed, isolated frame.
@@ -16,16 +27,13 @@ export function CinemaExternalBanner({
   placementApproved: boolean;
   className?: string;
 }) {
-  const src = useMemo(
-    () => `${MARKETPLACE_ORIGIN}/api/ads/external-banner-frame?slot=marketplace_banner`,
-    [],
-  );
+  const src = useMemo(() => getMarketplaceBannerUrl(), []);
 
-  if (!consentGranted || !placementApproved) return null;
+  if (!src || !consentGranted || !placementApproved) return null;
 
   return (
     <aside
-      className={className ?? "my-4 w-full overflow-hidden"}
+      className={className ?? "my-4 w-full max-w-[300px] mx-auto overflow-hidden"}
       aria-label="Sponsored advertisement"
       data-cinema-external-banner
     >
@@ -35,10 +43,10 @@ export function CinemaExternalBanner({
         loading="lazy"
         referrerPolicy="strict-origin"
         sandbox="allow-scripts allow-popups"
-        width="100%"
-        height="120"
+        width="300"
+        height="250"
         scrolling="no"
-        className="block w-full border-0"
+        className="mx-auto block w-full max-w-[300px] border-0"
       />
     </aside>
   );
